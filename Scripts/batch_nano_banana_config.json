@@ -1,0 +1,43 @@
+{
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+    },
+    "output": {
+        "directory": "/Users/ethanhsu/Desktop/GAI/Report",
+        "comment": "Directory where PowerPoint reports will be saved. Can be relative or absolute path"
+    },
+    "tasks": [
+        {
+            "folder": "../Nano Banana/0908 Figure Box",
+            "prompt": "Use the nano-banana model to create a 1/7 scale commercialised figure of the characters in the illustration, in a realistic style and environment. Place the figure on a computer desk, using a circular transparent acrylic base without any text. On the computer screen, display the Brush modelling process of the figure, Next to the computer screen, place a toy packaging box printed with the original artwork(or image) with the title \"cyberlink\".",
+            "additional_images": {
+                "image1": "",
+                "image2": "",
+                "comment_additional_images": "Optional: Paths to additional images for comparison or reference. Leave empty strings if not needed."
+            },
+            "design_link": "https://docs.google.com/presentation/d/1tfh6ui_fEDvE13xCoHnTeO-9YzfMJrXx8h5ulCRNMXI/edit#slide=id.g37802998321_3_56",
+            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EnanoBananaFigureBox?e=example1",
+            "comment_task": "Each task represents a folder containing images to process with Google Flash API"
+        }
+    ],
+    "comments": {
+        "folder_structure": "Each task folder should contain a 'Source' subfolder with images to process",
+        "output_structure": "Generated outputs will be saved in 'Generated_Output' subfolder",
+        "metadata_structure": "Processing metadata will be saved in 'Metadata' subfolder",
+        "api_info": "Uses Google Flash API endpoint /nano_banana",
+        "supported_formats": "Supported image formats: JPG, JPEG, PNG, BMP, TIFF",
+        "image_requirements": "Images must be < 10MB and each side > 100px",
+        "api_parameters": {
+            "prompt": "Required string - the main prompt for analysis",
+            "image1": "Main source image from Source folder (automatically handled)",
+            "image2": "Optional additional image for comparison",
+            "image3": "Optional additional image for comparison"
+        },
+        "api_returns": {
+            "response_id": "String - unique identifier for the response",
+            "error_msg": "String - error message if any",
+            "response_data": "List of dictionaries containing response data with types 'Text' or 'Image'"
+        }
+    }
+}
