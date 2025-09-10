@@ -16,8 +16,8 @@
             "negative_prompt": "transition, do a spin, spinning, turn around, turn to the side, blurry arms, fog on body, clip through, wings on the chest, break model, split wings, back view, asymmetrical wing, outfit changed, multi people, blurry, pixelated, wrong outfit design, wrong fabric texture, missing black wings, wings with wrong color, wings too small, wings floating awkwardly, deformed wings, stiff or broken wings, deformed body, duplicated limbs, low resolution, awkward pose, background too cluttered, bad lighting,  back view​",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
-            "use_comparison_template": false
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Reveal Me New",
+            "use_comparison_template": true
         },
         {
             "folder": "../Wan2.2_vs_Kling/0515 Cheerleading V2",
@@ -25,8 +25,8 @@
             "negative_prompt": "",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
-            "use_comparison_template": false
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Cheerleading V2 New",
+            "use_comparison_template": true
         },
         {
             "folder": "../Wan2.2_vs_Kling/0515 Hotpants V2",
@@ -34,8 +34,8 @@
             "negative_prompt": "",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
-            "use_comparison_template": false
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Hotpants V2 New",
+            "use_comparison_template": true
         },
         {
             "folder": "../Wan2.2_vs_Kling/0708 Wonder V1",
@@ -43,7 +43,7 @@
             "negative_prompt": "",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Wonder V1 New",
             "use_comparison_template": false
         },
         {
@@ -52,7 +52,7 @@
             "negative_prompt": "",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Wonder V2 New",
             "use_comparison_template": false
         },
         {
@@ -61,7 +61,7 @@
             "negative_prompt": "",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Wonder V3 New",
             "use_comparison_template": false
         },
         {
@@ -70,7 +70,7 @@
             "negative_prompt": "",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Hanabi V1 New",
             "use_comparison_template": false
         },
         {
@@ -79,7 +79,7 @@
             "negative_prompt": "",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Hanabi V2 New",
             "use_comparison_template": false
         },
         {
@@ -88,7 +88,7 @@
             "negative_prompt": "",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Hanabi V3 New",
             "use_comparison_template": false
         },
         {
@@ -97,7 +97,7 @@
             "negative_prompt": "",
             "design_link": "",
             "source_video_link": "",
-            "reference_folder": "",
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Hanabi V3-2 New",
             "use_comparison_template": false
         }
     ]

@@ -2,7 +2,7 @@ import json, logging, re, sys
 from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Dict
+from typing import List
 from PIL import Image
 from pptx import Presentation
 from pptx.dml.color import RGBColor
@@ -14,247 +14,183 @@ logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 @dataclass
-class NanoBananaMediaPair:
-    source_image_file: str
-    source_image_path: Path
-    generated_image_paths: List[Path] = None
-    metadata: Dict = None
+class MediaPair:
+    source_file: str
+    source_path: Path
+    gen_paths: List[Path] = None
+    ref_paths: List[Path] = None
+    metadata: dict = None
     failed: bool = False
 
-def get_report_filename(folder_name: str, model_name: str = '') -> str:
-    """Generate standardized report filename: [date] Model Name Style Name"""
-    match = re.match(r'(\d{4})\s+(.+)', folder_name)
-    if match:
-        date_part, style_name = match.groups()
-    else:
-        date_part, style_name = datetime.now().strftime("%m%d"), folder_name
-    
-    parts = [f"[{date_part}]"]
-    if model_name and model_name.lower() not in style_name.lower():
-        parts.append(model_name)
-    parts.append(style_name)
+def get_filename(folder, model=''):
+    m = re.match(r'(\d{4})\s+(.+)', Path(folder).name)
+    d,s = m.groups() if m else (datetime.now().strftime("%m%d"), Path(folder).name)
+    parts = [f"[{d}]"]
+    if model and model.lower() not in s.lower(): parts.append(model)
+    parts.append(s)
     return ' '.join(parts)
 
-class NanoBananaReportGenerator:
-    def __init__(self, config_file: str = "batch_nano_banana_config.json"):
-        with open(config_file, 'r', encoding='utf-8') as f:
-            self.config = json.load(f)
-        self.positions = {'source': (2.59, 3.26, 12.5, 12.5), 'generated': (18.78, 3.26, 12.5, 12.5)}
-        
-    def match_files_batch(self):
-        """Process folders and match files efficiently"""
-        def process_folder(task_folder):
-            folder_path = Path(task_folder)
-            folders = {'source': folder_path / "Source", 'output': folder_path / "Generated_Output", 'metadata': folder_path / "Metadata"}
+def get_cmp_filename(folder1, folder2, model=''):
+    m1, m2 = re.match(r'(\d{4})\s+(.+)', Path(folder1).name), re.match(r'(\d{4})\s+(.+)', Path(folder2).name)
+    d,s1 = m1.groups() if m1 else (datetime.now().strftime("%m%d"), Path(folder1).name)
+    _,s2 = m2.groups() if m2 else ('', Path(folder2).name)
+    parts = [f"[{d}]"]
+    if model and model.lower() not in s1.lower(): parts.append(model)
+    parts.append(f"{s1} vs {s2}")
+    return ' '.join(parts)
+
+class NanoBananaReport:
+    def __init__(self, config_file="batch_nano_banana_config.json"):
+        self.config = json.load(open(config_file, 'r', encoding='utf-8'))
+        self.pos = {'source': (2.59,3.26,12.5,12.5), 'generated': (18.78,3.26,12.5,12.5), 'reference': (35.0,3.26,12.5,12.5)}
+        self.exts = {'.jpg','.jpeg','.png','.webp'}
+
+    def match_batch(self):
+        def proc(task):
+            fp = Path(task['folder'])
+            ref_folder, use_cmp = task.get('reference_folder', ''), task.get('use_comparison_template', False)
+            folders = {'source': fp/"Source", 'output': fp/"Generated_Output", 'metadata': fp/"Metadata"}
+            if ref_folder and use_cmp: folders['reference'] = Path(ref_folder)/"Generated_Output"
+            if not folders['source'].exists(): return fp, [], task
             
-            if not folders['source'].exists():
-                return folder_path, []
-            
-            # Get files
-            source_files = {f.stem: f for f in folders['source'].iterdir() if f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.webp'}}
-            output_files = {}
+            src_files = {f.stem: f for f in folders['source'].iterdir() if f.suffix.lower() in self.exts}
+            out_files, ref_files = {}, {}
             
             if folders['output'].exists():
                 for f in folders['output'].iterdir():
-                    if f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.webp'} and '_image_' in f.name:
-                        base_name = f.name.split('_image_')[0]
-                        output_files.setdefault(base_name, []).append(f)
+                    if f.suffix.lower() in self.exts and '_image_' in f.name:
+                        out_files.setdefault(f.name.split('_image_')[0], []).append(f)
             
-            # Create pairs
+            if 'reference' in folders and folders['reference'].exists():
+                for f in folders['reference'].iterdir():
+                    if f.suffix.lower() in self.exts and '_image_' in f.name:
+                        ref_files.setdefault(f.name.split('_image_')[0], []).append(f)
+            
             pairs = []
-            for base_name in sorted(source_files.keys()):
-                metadata = {}
-                metadata_file = folders['metadata'] / f"{base_name}_metadata.json"
-                if metadata_file.exists():
-                    try:
-                        with open(metadata_file, 'r') as f:
-                            metadata = json.load(f)
+            for b in sorted(src_files.keys()):
+                md = {}
+                md_file = folders['metadata'] / f"{b}_metadata.json"
+                if md_file.exists():
+                    try: md = json.load(open(md_file))
                     except: pass
-                
-                generated_files = sorted(output_files.get(base_name, []), key=lambda x: x.name)
-                pairs.append(NanoBananaMediaPair(
-                    source_image_file=source_files[base_name].name,
-                    source_image_path=source_files[base_name],
-                    generated_image_paths=generated_files,
-                    metadata=metadata,
-                    failed=not generated_files or not metadata.get('success', False)
-                ))
-            
-            return folder_path, pairs
+                gen = sorted(out_files.get(b, []), key=lambda x: x.name)
+                ref = sorted(ref_files.get(b, []), key=lambda x: x.name)
+                pairs.append(MediaPair(src_files[b].name, src_files[b], gen, ref, md, not gen or not md.get('success',False)))
+            return fp, pairs, task
         
-        # Process in parallel
-        results = {}
-        with ThreadPoolExecutor(max_workers=4) as executor:
-            futures = [executor.submit(process_folder, task['folder']) for task in self.config.get('tasks', [])]
-            for future in futures:
-                folder_path, pairs = future.result()
-                results[str(folder_path)] = pairs
-        return results
-    
-    def calc_position(self, image_path, box_x, box_y, box_w, box_h):
-        """Calculate position with aspect ratio"""
+        with ThreadPoolExecutor(max_workers=4) as ex:
+            results = {}
+            for p,pairs,task in [f.result() for f in [ex.submit(proc,t) for t in self.config.get('tasks',[])]]:
+                results[str(p)] = {'pairs': pairs, 'task': task}
+            return results
+
+    def calc_pos(self, path, x,y,w,h):
         try:
-            with Image.open(image_path) as img:
-                aspect_ratio = img.size[0] / img.size[1]
-            
-            box_width, box_height = Cm(box_w), Cm(box_h)
-            if aspect_ratio > box_width / box_height:
-                scaled_w, scaled_h = box_width, box_width / aspect_ratio
-            else:
-                scaled_h, scaled_w = box_height, box_height * aspect_ratio
-            
-            x_offset, y_offset = (box_width - scaled_w) / 2, (box_height - scaled_h) / 2
-            return Cm(box_x) + x_offset, Cm(box_y) + y_offset, scaled_w, scaled_h
-        except:
-            return Cm(box_x + 0.5), Cm(box_y + 0.5), Cm(box_w - 1), Cm(box_h - 1)
-    
-    def add_to_placeholder(self, slide, placeholder, media_path=None, error_msg=None):
-        """Replace placeholder with media or error message"""
-        p_left, p_top, p_width, p_height = placeholder.left, placeholder.top, placeholder.width, placeholder.height
-        placeholder._element.getparent().remove(placeholder._element)
-        
-        if media_path:
-            # Add image with aspect ratio
+            with Image.open(path) as img: ar = img.width / img.height
+            bw,bh = Cm(w), Cm(h)
+            sw,sh = (bw, bw/ar) if ar > bw/bh else (bh*ar, bh)
+            return Cm(x)+(bw-sw)/2, Cm(y)+(bh-sh)/2, sw, sh
+        except: return Cm(x+0.5), Cm(y+0.5), Cm(w-1), Cm(h-1)
+
+    def add_media(self, slide, ph, media=None, error=None):
+        l,t,w,h = ph.left, ph.top, ph.width, ph.height
+        ph._element.getparent().remove(ph._element)
+        if media:
             try:
-                with Image.open(media_path) as img:
-                    aspect_ratio = img.size[0] / img.size[1]
-                
-                if aspect_ratio > p_width / p_height:
-                    scaled_w, scaled_h = p_width, p_width / aspect_ratio
-                else:
-                    scaled_w, scaled_h = p_height * aspect_ratio, p_height
-                
-                final_left = p_left + (p_width - scaled_w) / 2
-                final_top = p_top + (p_height - scaled_h) / 2
+                with Image.open(media) as img: ar = img.width / img.height
+                sw,sh = (w, w/ar) if ar > w/h else (h*ar, h)
+                slide.shapes.add_picture(str(media), l+(w-sw)/2, t+(h-sh)/2, sw, sh)
             except:
-                scaled_w, scaled_h = p_width * 0.8, p_height * 0.8
-                final_left, final_top = p_left + p_width * 0.1, p_top + p_height * 0.1
-            
-            slide.shapes.add_picture(str(media_path), final_left, final_top, scaled_w, scaled_h)
+                slide.shapes.add_picture(str(media), l+w*0.1, t+h*0.1, w*0.8, h*0.8)
         else:
-            # Add error message
-            fail_box = slide.shapes.add_textbox(p_left, p_top, p_width, p_height)
-            fail_box.text_frame.text = f"❌ GENERATION FAILED\n\n{error_msg}"
-            
-            for p in fail_box.text_frame.paragraphs:
-                p.font.size, p.alignment = Inches(16/72), PP_ALIGN.CENTER
-                p.font.color.rgb = RGBColor(255, 0, 0)
-            
-            fail_box.fill.solid()
-            fail_box.fill.fore_color.rgb = RGBColor(255, 240, 240)
-            fail_box.line.color.rgb = RGBColor(255, 0, 0)
-            fail_box.line.width = Inches(0.02)
-    
-    def create_slide(self, ppt, pair, template_loaded):
-        """Create content slide using template or fallback"""
-        if template_loaded and len(ppt.slides) >= 4:
+            box = slide.shapes.add_textbox(l,t,w,h)
+            box.text_frame.text = f"❌ GENERATION FAILED\n\n{error}"
+            for p in box.text_frame.paragraphs:
+                p.font.size, p.alignment, p.font.color.rgb = Inches(16/72), PP_ALIGN.CENTER, RGBColor(255,0,0)
+            box.fill.solid()
+            box.fill.fore_color.rgb, box.line.color.rgb, box.line.width = RGBColor(255,240,240), RGBColor(255,0,0), Inches(0.02)
+
+    def create_slide(self, ppt, pair, loaded, use_cmp):
+        if loaded and len(ppt.slides) >= 4:
             slide = ppt.slides.add_slide(ppt.slides[3].slide_layout)
-            
-            # Handle title - only show for failures
             for p in slide.placeholders:
                 if p.placeholder_format.type == 1:
-                    if pair.failed:
-                        p.text = "❌ GENERATION FAILED"
-                        if p.text_frame.paragraphs:
-                            p.text_frame.paragraphs[0].font.color.rgb = RGBColor(255, 0, 0)
-                    else:
-                        p.text = ""
+                    p.text = "❌ GENERATION FAILED" if pair.failed else ""
+                    if pair.failed and p.text_frame.paragraphs: p.text_frame.paragraphs[0].font.color.rgb = RGBColor(255,0,0)
                     break
             
-            # Handle content placeholders
-            content_placeholders = sorted([p for p in slide.placeholders if p.placeholder_format.type in [6, 7, 8, 13, 18, 19]], 
-                                        key=lambda x: x.left if hasattr(x, 'left') else 0)
-            
-            if len(content_placeholders) >= 2:
-                self.add_to_placeholder(slide, content_placeholders[0], str(pair.source_image_path))
-                
-                if pair.generated_image_paths:
-                    self.add_to_placeholder(slide, content_placeholders[1], str(pair.generated_image_paths[0]))
-                else:
-                    error_msg = pair.metadata.get('error', 'No images generated') if pair.metadata else 'No images generated'
-                    self.add_to_placeholder(slide, content_placeholders[1], error_msg=error_msg)
+            phs = sorted([p for p in slide.placeholders if p.placeholder_format.type in {6,7,8,13,18,19}], key=lambda x: getattr(x,'left',0))
+            if use_cmp and len(phs) >= 3:
+                self.add_media(slide, phs[0], str(pair.source_path))
+                self.add_media(slide, phs[1], str(pair.gen_paths[0]) if pair.gen_paths else None, "No images generated")
+                self.add_media(slide, phs[2], str(pair.ref_paths[0]) if pair.ref_paths else None, "No reference images")
+            elif len(phs) >= 2:
+                self.add_media(slide, phs[0], str(pair.source_path))
+                self.add_media(slide, phs[1], str(pair.gen_paths[0]) if pair.gen_paths else None, "No images generated")
         else:
-            # Fallback manual creation
             slide = ppt.slides.add_slide(ppt.slide_layouts[6])
-            
             if pair.failed:
-                title_box = slide.shapes.add_textbox(Cm(2), Cm(1), Cm(20), Cm(2))
-                title_box.text_frame.text = "❌ GENERATION FAILED"
-                title_box.text_frame.paragraphs[0].font.size = Inches(18/72)
-                title_box.text_frame.paragraphs[0].font.color.rgb = RGBColor(255, 0, 0)
+                tb = slide.shapes.add_textbox(Cm(2), Cm(1), Cm(20), Cm(2))
+                tb.text_frame.text, tb.text_frame.paragraphs[0].font.size, tb.text_frame.paragraphs[0].font.color.rgb = "❌ GENERATION FAILED", Inches(18/72), RGBColor(255,0,0)
             
-            # Add source image
-            src_pos = self.positions['source']
-            src_x, src_y, src_w, src_h = self.calc_position(pair.source_image_path, *src_pos)
-            slide.shapes.add_picture(str(pair.source_image_path), src_x, src_y, src_w, src_h)
+            slide.shapes.add_picture(str(pair.source_path), *self.calc_pos(pair.source_path, *self.pos['source']))
+            if pair.gen_paths:
+                slide.shapes.add_picture(str(pair.gen_paths[0]), *self.calc_pos(pair.gen_paths[0], *self.pos['generated']))
+            else: self._add_err(slide, self.pos['generated'], "No images generated")
             
-            # Add generated image or error
-            gen_pos = self.positions['generated']
-            if pair.generated_image_paths:
-                gen_x, gen_y, gen_w, gen_h = self.calc_position(pair.generated_image_paths[0], *gen_pos)
-                slide.shapes.add_picture(str(pair.generated_image_paths[0]), gen_x, gen_y, gen_w, gen_h)
-            else:
-                error_msg = pair.metadata.get('error', 'No images generated') if pair.metadata else 'No images generated'
-                error_box = slide.shapes.add_textbox(Cm(gen_pos[0]), Cm(gen_pos[1]), Cm(gen_pos[2]), Cm(gen_pos[3]))
-                error_box.text_frame.text = f"❌ FAILED\n\n{error_msg}"
-                
-                for p in error_box.text_frame.paragraphs:
-                    p.font.size, p.alignment = Inches(14/72), PP_ALIGN.CENTER
-                    p.font.color.rgb = RGBColor(255, 0, 0)
-                
-                error_box.fill.solid()
-                error_box.fill.fore_color.rgb, error_box.line.color.rgb = RGBColor(255, 240, 240), RGBColor(255, 0, 0)
+            if use_cmp:
+                if pair.ref_paths:
+                    slide.shapes.add_picture(str(pair.ref_paths[0]), *self.calc_pos(pair.ref_paths[0], *self.pos['reference']))
+                else: self._add_err(slide, self.pos['reference'], "No reference images")
+
+        mb = slide.shapes.add_textbox(Cm(5),Cm(16),Cm(12),Cm(3))
+        mb.text_frame.text = f"File Name: {pair.source_file}\nResponse ID: {pair.metadata.get('response_id','N/A') if pair.metadata else 'N/A'}\nTime: {pair.metadata.get('processing_time_seconds','N/A') if pair.metadata else 'N/A'}s"
+        for p in mb.text_frame.paragraphs: p.font.size = Inches(10/72)
+
+    def _add_err(self, slide, pos, msg):
+        box = slide.shapes.add_textbox(Cm(pos[0]), Cm(pos[1]), Cm(pos[2]), Cm(pos[3]))
+        box.text_frame.text = f"❌ FAILED\n\n{msg}"
+        for p in box.text_frame.paragraphs:
+            p.font.size, p.alignment, p.font.color.rgb = Inches(14/72), PP_ALIGN.CENTER, RGBColor(255,0,0)
+        box.fill.solid()
+        box.fill.fore_color.rgb, box.line.color.rgb = RGBColor(255,240,240), RGBColor(255,0,0)
+
+    def create_presentation(self, folder_path, pairs, task):
+        if not pairs: return False
+        use_cmp, ref_folder = task.get('use_comparison_template', False), task.get('reference_folder', '')
+        tpath = self.config.get('comparison_template_path' if use_cmp else 'template_path') or ('I2V Comparison Template.pptx' if use_cmp else 'I2V templates.pptx')
         
-        # Add simplified metadata
-        meta_text = f"File Name: {pair.source_image_file}\n"
-        meta_text += f"Response ID: {pair.metadata.get('response_id', 'N/A') if pair.metadata else 'N/A'}\n"
-        meta_text += f"Time: {pair.metadata.get('processing_time_seconds', 'N/A') if pair.metadata else 'N/A'}s"
-        
-        meta_box = slide.shapes.add_textbox(Cm(5), Cm(16), Cm(12), Cm(3))
-        meta_box.text_frame.text = meta_text
-        for p in meta_box.text_frame.paragraphs:
-            p.font.size = Inches(10/72)
-    
-    def create_presentation(self, folder_path, pairs):
-        """Create presentation using template with standardized filename"""
-        if not pairs:
-            return False
-        
-        # Load template
-        template_path = self.config.get('template_path', 'I2V templates.pptx')
-        try:
-            ppt = Presentation(template_path) if Path(template_path).exists() else Presentation()
-            template_loaded = Path(template_path).exists()
-        except:
-            ppt, template_loaded = Presentation(), False
+        try: ppt, loaded = (Presentation(tpath), True) if Path(tpath).exists() else (Presentation(), False)
+        except: ppt, loaded = Presentation(), False
         
         ppt.slide_width, ppt.slide_height = Cm(33.87), Cm(19.05)
+        fname = Path(folder_path).name
         
-        # Update title slide
-        folder_name = Path(folder_path).name
         if ppt.slides and ppt.slides[0].shapes:
-            match = re.match(r'(\d{4})\s+(.+)', folder_name)
-            date_part, project_part = match.groups() if match else (datetime.now().strftime("%m%d"), folder_name)
-            ppt.slides[0].shapes[0].text_frame.text = f"[{date_part}] Nano Banana\n{project_part}"
+            if use_cmp and ref_folder:
+                m1, m2 = re.match(r'(\d{4})\s+(.+)', fname), re.match(r'(\d{4})\s+(.+)', Path(ref_folder).name)
+                d,s1 = m1.groups() if m1 else (datetime.now().strftime("%m%d"), fname)
+                _,s2 = m2.groups() if m2 else ('', Path(ref_folder).name)
+                title = f"[{d}] Nano Banana\n{s1} vs {s2}"
+            else:
+                m = re.match(r'(\d{4})\s+(.+)', fname)
+                d,s = m.groups() if m else (datetime.now().strftime("%m%d"), fname)
+                title = f"[{d}] Nano Banana\n{s}"
+            ppt.slides[0].shapes[0].text_frame.text = title
         
-        # Create content slides
-        for pair in pairs:
-            self.create_slide(ppt, pair, template_loaded)
+        for p in pairs: self.create_slide(ppt, p, loaded, use_cmp)
         
-        # Save with standardized filename
-        filename = get_report_filename(folder_name, "Nano Banana")
-        output_dir = Path(self.config.get('output', {}).get('directory', './'))
-        output_path = output_dir / f"{filename}.pptx"
-        ppt.save(str(output_path))
-        logger.info(f"✓ Saved: {output_path}")
+        filename = get_cmp_filename(folder_path, ref_folder, "Nano Banana") if use_cmp and ref_folder else get_filename(fname, "Nano Banana")
+        opath = Path(self.config.get('output', {}).get('directory', './')) / f"{filename}.pptx"
+        ppt.save(str(opath))
+        logger.info(f"✓ Saved: {opath}")
         return True
-    
+
     def run(self):
-        """Main execution"""
-        results = self.match_files_batch()
-        successful = sum(1 for folder_path, pairs in results.items() if self.create_presentation(folder_path, pairs))
+        results = self.match_batch()
+        successful = sum(1 for _, data in results.items() if self.create_presentation(_, data['pairs'], data['task']))
         logger.info(f"✓ Generated {successful}/{len(results)} presentations")
         return successful > 0
 
-if __name__ == "__main__":
-    sys.exit(0 if NanoBananaReportGenerator().run() else 1)
+if __name__ == '__main__':
+    sys.exit(0 if NanoBananaReport().run() else 1)
