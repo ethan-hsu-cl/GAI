@@ -6,3 +6,7 @@
 **/Wan2.2_vs_Kling/
 **/Report/
 **/*.mp4
+**/*.log
+**/*.DS_Store
+**/.DS_Store
+**/*.log
