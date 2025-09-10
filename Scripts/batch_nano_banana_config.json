@@ -9,8 +9,8 @@
     },
     "tasks": [
         {
-            "folder": "../Nano Banana/0908 Figure Box",
-            "prompt": "Use the nano-banana model to create a 1/7 scale commercialised figure of the characters in the illustration, in a realistic style and environment. Place the figure on a computer desk, using a circular transparent acrylic base without any text. On the computer screen, display the Brush modelling process of the figure, Next to the computer screen, place a toy packaging box printed with the original artwork(or image) with the title \"cyberlink\".",
+            "folder": "../Nano Banana/0910 Figure Box 3",
+            "prompt": "Use the nano-banana model to create a 1/7 scale commercialised plastic figure of the subject in the illustration, in a realistic style and environment, keeping their original proportions. Place the figure on a computer desk, using a circular transparent acrylic base without any text. On the computer screen, display the Brush modelling process of the figure, Next to the computer screen, place a toy packaging box printed with the original artwork(or image) with the title \"cyberlink\".",
             "additional_images": {
                 "image1": "",
                 "image2": "",
