@@ -1,3 +1,4 @@
+# Project directories
 **/Kling 2.1/
 **/Kling 1.6/
 **/CL I2V/
@@ -5,14 +6,15 @@
 **/Vidu/
 **/Wan2.2_vs_Kling/
 **/Report/
-**/*.mp4
-**/*.log
-**/*.DS_Store
-**/.DS_Store
-**/*.log
-**/__pycache__/
-**/*.pyc
 **/auto_report/
 **/ID problem/
 **/Wan2.2 vs. Kling/
-.DS_Store
+
+# File types
+**/*.mp4
+**/*.log
+**/*.pyc
+
+# System files
+**/.DS_Store
+**/__pycache__/
