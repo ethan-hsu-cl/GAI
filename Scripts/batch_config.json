@@ -44,7 +44,7 @@
             "design_link": "",
             "source_video_link": "",
             "reference_folder": "../Wan2.2_vs_Kling/0908 Wonder V1 New",
-            "use_comparison_template": false
+            "use_comparison_template": true
         },
         {
             "folder": "../Wan2.2_vs_Kling/0708 Wonder V2",
@@ -53,7 +53,7 @@
             "design_link": "",
             "source_video_link": "",
             "reference_folder": "../Wan2.2_vs_Kling/0908 Wonder V2 New",
-            "use_comparison_template": false
+            "use_comparison_template": true
         },
         {
             "folder": "../Wan2.2_vs_Kling/0711 Wonder v3",
@@ -62,7 +62,7 @@
             "design_link": "",
             "source_video_link": "",
             "reference_folder": "../Wan2.2_vs_Kling/0908 Wonder V3 New",
-            "use_comparison_template": false
+            "use_comparison_template": true
         },
         {
             "folder": "../Wan2.2_vs_Kling/0714 Hanabi V1",
@@ -71,7 +71,7 @@
             "design_link": "",
             "source_video_link": "",
             "reference_folder": "../Wan2.2_vs_Kling/0908 Hanabi V1 New",
-            "use_comparison_template": false
+            "use_comparison_template": true
         },
         {
             "folder": "../Wan2.2_vs_Kling/0714 Hanabi V2",
@@ -80,7 +80,7 @@
             "design_link": "",
             "source_video_link": "",
             "reference_folder": "../Wan2.2_vs_Kling/0908 Hanabi V2 New",
-            "use_comparison_template": false
+            "use_comparison_template": true
         },
         {
             "folder": "../Wan2.2_vs_Kling/0718 Hanabi V3",
@@ -89,7 +89,7 @@
             "design_link": "",
             "source_video_link": "",
             "reference_folder": "../Wan2.2_vs_Kling/0908 Hanabi V3 New",
-            "use_comparison_template": false
+            "use_comparison_template": true
         },
         {
             "folder": "../Wan2.2_vs_Kling/0718 Hanabi V3-2",
@@ -98,7 +98,7 @@
             "design_link": "",
             "source_video_link": "",
             "reference_folder": "../Wan2.2_vs_Kling/0908 Hanabi V3-2 New",
-            "use_comparison_template": false
+            "use_comparison_template": true
         }
     ]
 }
