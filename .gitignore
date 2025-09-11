@@ -12,3 +12,6 @@
 **/*.log
 **/__pycache__/
 **/*.pyc
+**/auto_report/
+**/ID problem/
+**/Wan2.2 vs. Kling/
