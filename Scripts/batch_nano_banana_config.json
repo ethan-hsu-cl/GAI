@@ -11,8 +11,8 @@
     },
     "tasks": [
         {
-            "folder": "../Nano Banana/0911 Figure Box V2",
-            "prompt": "Use the nano-banana model to create a 1/7 scale commercialised figure of the subject in the illustration, in a realistic style and environment. Place the figure on a computer desk, using a circular transparent acrylic base without any text. On the computer screen, display the Brush modelling process of the figure, Next to the computer screen, place a toy packaging box.",
+            "folder": "../Nano Banana/0910 Cosplay Event",
+            "prompt": "Generate a highly detailed photo of a girl cosplaying this illustration, at Comiket. Exactly replicate the same pose, body posture, hand gestures, facial expression, and camera framing as in the original illustration. Keep the same angle, perspective, and composition, without any deviation.",
             "reference_folder": "",
             "use_comparison_template": false,
             "design_link": "",
