@@ -145,11 +145,15 @@ project_root/
 │   │   ├── Source/           # Input images
 │   │   ├── Generated_Output/ # Generated images/videos  
 │   │   └── Metadata/        # Processing metadata
-│   ├── 0908 Figure Box 2/
+│   ├── 0910 Cosplay Event/
 │   └── ...
 ├── Vidu/                     # Vidu effects
 │   ├── 0829 8 Styles/
 │   └── 0909 1 Style/
+├── Wan2.2_vs_Kling/         # Comparison projects
+│   ├── 0508 Reveal Me/
+│   ├── 0908 Reveal Me New/
+│   └── ...
 ├── Scripts/                  # **← WORK FROM HERE**
 │   ├── run_all_processors.py        # Main orchestration script
 │   ├── advanced_batch_processor.py  # Kling processor
@@ -180,56 +184,101 @@ Each platform requires a JSON configuration file in the `Scripts/` directory:
 
 ```json
 {
-  "tasks": [
-    {
-      "folder": "../Kling 2.1/0909 Angel"
+    "template_path": "I2V templates.pptx",
+    "comparison_template_path": "I2V Comparison Template.pptx",
+    "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+    "model_version": "v2.1",
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
     },
-    {
-      "folder": "../Kling 2.1/0811 Demon Slayer V3"
-    }
-  ],
-  "template_path": "I2V templates.pptx",
-  "output_directory": "../Report/"
+    "tasks": [
+        {
+            "folder": "../Wan2.2_vs_Kling/0508 Reveal Me",
+            "prompt": "The main character stands up first. Suddenly, large fluttering white angel wings appear...",
+            "negative_prompt": "transition, do a spin, spinning, turn around, blurry arms...",
+            "design_link": "",
+            "source_video_link": "",
+            "reference_folder": "../Wan2.2_vs_Kling/0908 Reveal Me New",
+            "use_comparison_template": true
+        }
+    ]
 }
 ```
+
+**Key Kling Features:**
+
+- **Model Version**: Specify `"v1.6"` or `"v2.1"`
+- **Comparison Mode**: Set `use_comparison_template: true` for 3-way comparisons
+- **Custom Prompts**: Detailed positive and negative prompts per task
+- **Reference Folders**: Point to comparison datasets
+- **Scheduling**: Optional delayed execution with `start_time`
 
 #### `batch_vidu_config.json` (Vidu)
 
 ```json
 {
-  "base_folder": "../Vidu/0909 1 Style",
-  "tasks": [
-    {
-      "effect": "Parallax",
-      "category": "Camera Movement"
-    }
-  ],
-  "template_path": "I2V templates.pptx",
-  "output_directory": "../Report/"
+    "base_folder": "../Vidu/0909 1 Style",
+    "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+    "template_path": "I2V templates.pptx",
+    "prompt": "",
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+    },
+    "design_link": "https://platform.vidu.com/docs/templates",
+    "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/...",
+    "tasks": [
+        {
+            "category": "Funny",
+            "effect": "Eat mushrooms, turn young",
+            "prompt": ""
+        }
+    ]
 }
 ```
+
+**Key Vidu Features:**
+
+- **Base Folder**: Single folder containing multiple effect subfolders
+- **Effect Categorization**: Organize effects by category (Funny, Dramatic, etc.)
+- **External Links**: Embed design documentation and source video links
+- **Effect-Based Structure**: Each task represents a specific effect type
 
 #### `batch_nano_banana_config.json` (Nano Banana)
 
 ```json
 {
-  "tasks": [
-    {
-      "folder": "../Nano Banana/0910 Figure Box 3",
-      "design_link": "https://link-to-design",
-      "source_video_link": "https://source-video-link",
-      "use_comparison_template": false,
-      "reference_folder": "../Nano Banana/0908 Figure Box 2"
-    }
-  ],
-  "template_path": "I2V templates.pptx",
-  "comparison_template_path": "I2V Comparison Template.pptx",
-  "output": {
-    "directory": "../Report/"
-  },
-  "testbed": "http://192.168.4.3:8000/video_effect/"
+    "template_path": "I2V templates.pptx",
+    "comparison_template_path": "I2V Comparison Template.pptx",
+    "testbed": "http://192.168.4.3:8000/google_flash_image/",
+    "output": {
+        "directory": "/Users/ethanhsu/Desktop/GAI/Report"
+    },
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+    },
+    "tasks": [
+        {
+            "folder": "../Nano Banana/0910 Cosplay Event",
+            "prompt": "Generate a highly detailed photo of a girl cosplaying this illustration, at Comiket. Exactly replicate the same pose, body posture, hand gestures, facial expression, and camera framing as in the original illustration. Keep the same angle, perspective, and composition, without any deviation.",
+            "reference_folder": "",
+            "use_comparison_template": false,
+            "design_link": "",
+            "source_video_link": ""
+        }
+    ]
 }
 ```
+
+**Key Nano Banana Features:**
+
+- **Testbed Integration**: Direct link to processing server
+- **Detailed Prompts**: Comprehensive generation instructions per task
+- **Comparison Support**: Optional 3-way comparison with reference folders
+- **Flexible Templates**: Switch between 2-placeholder and 3-placeholder layouts
+- **Comprehensive Comments**: Built-in documentation for configuration options
 
 ## 🎯 Features
 
@@ -240,6 +289,8 @@ Each platform requires a JSON configuration file in the `Scripts/` directory:
 - **Metadata extraction** from JSON files
 - **Error handling** for failed generations
 - **Progress logging** with detailed status updates
+- **Scheduled execution** support (HH:MM format)
+- **Model version selection** (Kling v1.6/v2.1)
 
 ### Report Generation
 
@@ -249,36 +300,37 @@ Each platform requires a JSON configuration file in the `Scripts/` directory:
 - **Error visualization** with styled failure indicators
 - **Metadata display** (processing time, IDs, status)
 - **Standardized naming** with date prefixes
+- **Comparison mode** for A/B testing workflows
 
 ### Template System
 
 - **Smart placeholder detection** and replacement
 - **Fallback manual positioning** when templates unavailable
-- **Comparison mode** for side-by-side analysis
+- **Dual template support** (standard vs comparison)
 - **Hyperlink integration** for design and testbed links
+- **Dynamic layout switching** based on comparison mode
 
 ## 📊 Output Examples
 
 ### Generated Reports
 
-Reports are saved in the `../Report/` directory with standardized filenames:
+Reports are saved in the configured output directory with standardized filenames:
 
 ```bash
-[0910] Kling 2.1 Angel.pptx
+[0910] Kling 2.1 Reveal Me vs Reveal Me New.pptx
 [0909] Vidu Effects 1 Style.pptx  
-[0910] Nano Banana Figure Box 3.pptx
-[0910] Nano Banana Figure Box 3 vs Figure Box 2.pptx  # Comparison mode
+[0910] Nano Banana Cosplay Event.pptx
 ```
 
 ### Console Output
 
 ```bash
 === Running Kling BatchVideoProcessor ===
-✓ Processed: ../Kling 2.1/0909 Angel
-✓ Processed: ../Kling 2.1/0811 Demon Slayer V3
+✓ Processed: ../Wan2.2_vs_Kling/0508 Reveal Me
+✓ Processed: ../Wan2.2_vs_Kling/0515 Cheerleading V2
 
 === Generating Kling Report ===
-✓ Saved: ../Report/[0909] Kling 2.1 Angel.pptx
+✓ Saved: /Users/ethanhsu/Desktop/GAI/Report/[0508] Kling 2.1 Reveal Me vs Reveal Me New.pptx
 
 📊 Processing: 2/2 successful
 📈 Reports: 1/1 generated
@@ -286,24 +338,30 @@ Reports are saved in the `../Report/` directory with standardized filenames:
 
 ## 📂 Expected Folder Structure Per Platform
 
-### Kling Projects (`Kling 1.6/`, `Kling 2.1/`)
+### Kling Projects (`Kling 1.6/`, `Kling 2.1/`, `Wan2.2_vs_Kling/`)
 
 ```bash
-0909 Angel/
+0508 Reveal Me/
 ├── Source/              # Input images (.jpg, .png, .webp)
 ├── Generated_Video/     # Output videos (.mp4, .mov)  
 └── Metadata/           # Processing metadata (.json)
+
+# For comparison mode
+0908 Reveal Me New/     # Reference folder
+├── Source/
+├── Generated_Video/
+└── Metadata/
 ```
 
 ### Vidu Effects (`Vidu/`)
 
 ```bash
 0909 1 Style/
-├── Effect1/
+├── Eat_mushrooms_turn_young/
 │   ├── Source/          # Input images
 │   ├── Generated_Video/ # Effect videos
 │   └── Metadata/        # Processing logs
-└── Effect2/
+└── Another_Effect/
     ├── Source/
     ├── Generated_Video/
     └── Metadata/
@@ -312,32 +370,38 @@ Reports are saved in the `../Report/` directory with standardized filenames:
 ### Nano Banana (`Nano Banana/`)
 
 ```bash
-0910 Figure Box 3/
+0910 Cosplay Event/
 ├── Source/              # Input images
 ├── Generated_Output/    # Generated images/videos
-└── Metadata/           # Processing metadata
+└── Metadata/           # Processing metadata (.json)
 ```
 
 ## 🔧 Troubleshooting
 
 ### Common Issues
 
+#### "Configuration file missing"
+
+- Ensure you're running from `Scripts/` directory
+- Verify JSON config files exist and are valid
+- Check file paths use `../` to reference parent directories
+
 #### "Template not found"
 
 - Ensure PowerPoint templates exist in `Scripts/` directory
-- Check `template_path` in configuration files
+- Check `template_path` and `comparison_template_path` in configuration files
+
+#### "Output directory not accessible"
+
+- Verify the absolute path in `output_directory` exists
+- Check write permissions for the output directory
+- Ensure parent directories exist
 
 #### "No images found"
 
 - Verify folder structure matches expected layout
 - Check file paths in JSON config are relative to `Scripts/` directory
 - Verify file extensions are supported (.jpg, .png, .webp)
-
-#### "Configuration file missing"
-
-- Ensure you're running from `Scripts/` directory
-- Verify JSON config files exist and are valid
-- Check file paths use `../` to reference parent directories
 
 #### "Video embedding failed"
 
@@ -350,34 +414,41 @@ Reports are saved in the `../Report/` directory with standardized filenames:
 - Process folders with fewer files first to test configuration
 - Use `report` command to regenerate reports after template changes
 - Enable parallel processing by ensuring adequate system resources
+- Set `start_time` for scheduled execution during off-peak hours
 
 ## 📈 Advanced Usage
 
-### Batch Operations
+### Comparison Workflows
 
 ```bash
-# Process multiple platforms sequentially
-python run_all_processors.py kling process
-python run_all_processors.py vidu process  
+# Generate comparison reports with reference folders
+python run_all_processors.py kling report    # Uses comparison_template when configured
+
+# Process multiple comparison sets
+python run_all_processors.py all process
 python run_all_processors.py all report
 ```
 
-### Integration with Testing Workflows
+### Scheduled Execution
 
-```bash
-# In your CI/CD pipeline
-python run_all_processors.py all || exit 1
+Set `start_time` in configuration files:
 
-# For automated testing reports
-python run_all_processors.py vidu report
+```json
+{
+    "schedule": {
+        "start_time": "02:30",
+        "comment": "Start processing at 2:30 AM"
+    }
+}
 ```
 
 ### Custom Configuration
 
 Modify JSON configuration files to:
 
-- Add new project folders (use `../` for parent directories)
-- Change output directories
-- Update template paths
-- Configure comparison modes
-- Set custom metadata fields
+- **Add new project folders** (use `../` for parent directories)
+- **Configure absolute output paths** for centralized report storage
+- **Set up comparison workflows** with reference folders
+- **Customize prompts and negative prompts** for specific tasks
+- **Enable scheduled execution** with start times
+- **Integrate external links** for documentation and resources
