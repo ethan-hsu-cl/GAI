@@ -10,30 +10,97 @@ A comprehensive automation toolkit for processing and reporting on AI video gene
 cd Scripts
 ```
 
-### Basic Usage
+### Simple Commands
 
 ```bash
-# Run all processors and generate all reports
+# Process Nano Banana data and auto-generate report
+python run_all_processors.py nano
+
+# Just generate Nano Banana report (no processing)
+python run_all_processors.py nano report
+
+# Just run Nano Banana processor (no report)
+python run_all_processors.py nano process
+
+# Run processor + auto-generate report (explicit)
+python run_all_processors.py nano auto
+```
+
+### All Platforms
+
+```bash
+# Run everything - all processors + all reports
 python run_all_processors.py all
 
-# Run specific platform
-python run_all_processors.py kling
-python run_all_processors.py vidu  
+# Generate all reports only
+python run_all_processors.py all report
+
+# Run all processors only
+python run_all_processors.py all process
+```
+
+### Platform-Specific Examples
+
+```bash
+# Kling workflow
+python run_all_processors.py kling          # Process + Report
+python run_all_processors.py kling process  # Process only
+python run_all_processors.py kling report   # Report only
+
+# Vidu workflow  
+python run_all_processors.py vidu           # Process + Report
+python run_all_processors.py vidu process   # Process only
+python run_all_processors.py vidu report    # Report only
+
+# Nano Banana workflow
+python run_all_processors.py nano           # Process + Report
+python run_all_processors.py nano process   # Process only  
+python run_all_processors.py nano report    # Report only
+```
+
+### Command Reference
+
+| Command | Action |
+|---------|---------|
+| `process` | Run data processors only (no reports) |
+| `report` | Generate PowerPoint reports only (no processing) |
+| `auto` | Run processor then auto-generate report (default behavior) |
+
+### Typical Workflows
+
+#### Development/Testing
+
+```bash
+# Test processing first
+python run_all_processors.py nano process
+
+# Then generate report if processing succeeded
+python run_all_processors.py nano report
+```
+
+#### Production/Automation
+
+```bash
+# Complete end-to-end workflow
+python run_all_processors.py nano auto
+# or simply
 python run_all_processors.py nano
 ```
 
-### Advanced Usage
+#### Report Regeneration
 
 ```bash
-# Generate reports only (no processing)
-python run_all_processors.py all --reports-only
-
-# Run processing only (no reports)
-python run_all_processors.py vidu --processing-only
-
-# Regenerate specific report
-python run_all_processors.py nano --reports-only
+# Regenerate reports after template changes
+python run_all_processors.py all report
 ```
+
+### Key Benefits of New Command Structure
+
+1. **Simplified Syntax**: `nano report` instead of `nano --reports-only`
+2. **Auto Mode**: Default behavior runs processing + reporting in one command
+3. **Clearer Intent**: Commands clearly indicate what will happen
+4. **Better Error Handling**: Each phase wrapped in try-catch blocks
+5. **Flexible Workflows**: Easy to run individual steps or complete pipelines
 
 ## 📋 Prerequisites
 
@@ -279,9 +346,9 @@ Reports are saved in the `../Report/` directory with standardized filenames:
 
 ### Performance Tips
 
-- Use `--processing-only` to separate processing from reporting
+- Use `process` command to separate processing from reporting
 - Process folders with fewer files first to test configuration
-- Use `--reports-only` to regenerate reports after template changes
+- Use `report` command to regenerate reports after template changes
 - Enable parallel processing by ensuring adequate system resources
 
 ## 📈 Advanced Usage
@@ -290,9 +357,9 @@ Reports are saved in the `../Report/` directory with standardized filenames:
 
 ```bash
 # Process multiple platforms sequentially
-python run_all_processors.py kling --processing-only
-python run_all_processors.py vidu --processing-only  
-python run_all_processors.py all --reports-only
+python run_all_processors.py kling process
+python run_all_processors.py vidu process  
+python run_all_processors.py all report
 ```
 
 ### Integration with Testing Workflows
@@ -302,7 +369,7 @@ python run_all_processors.py all --reports-only
 python run_all_processors.py all || exit 1
 
 # For automated testing reports
-python run_all_processors.py vidu --reports-only
+python run_all_processors.py vidu report
 ```
 
 ### Custom Configuration
