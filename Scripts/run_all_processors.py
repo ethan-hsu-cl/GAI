@@ -1,28 +1,39 @@
 import sys
 import logging
+
+# Import existing processors and reports
 from advanced_batch_processor import BatchVideoProcessor
 from effect_processor import ViduEffectProcessor
 from google_flash_processor import GoogleFlashProcessor
-
-# Import the auto report generators
 from nano_banana_auto_report import NanoBananaReport
 from vidu_auto_report import ViduReportGenerator
 from auto_report_optimized import OptimizedVideoReportGenerator
+
+# Import new reference processor and report
+from reference_processor import ViduReferenceProcessor
+from vidu_reference_auto_report import ViduReferenceReportGenerator
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python run_all_processors.py [kling|vidu|nano|all] [process|report|auto]")
+        print("Usage: python run_all_processors.py [kling|vidu|viduref|nano|all] [process|report|auto]")
         print("Commands:")
         print("  process - Run processors only")
         print("  report  - Generate reports only")
         print("  auto    - Run processor + auto-generate report (default)")
+        print("Platforms:")
+        print("  kling   - Kling video generation")
+        print("  vidu    - Vidu effects processing")
+        print("  viduref - Vidu reference-based processing")
+        print("  nano    - Nano Banana processing")
+        print("  all     - Run all platforms")
         print("Examples:")
         print("  python run_all_processors.py nano report")
         print("  python run_all_processors.py kling process")
         print("  python run_all_processors.py vidu auto")
+        print("  python run_all_processors.py viduref auto")
         print("  python run_all_processors.py all")
         sys.exit(1)
 
@@ -30,11 +41,11 @@ def main():
     command = sys.argv[2].lower() if len(sys.argv) > 2 else "auto"
     
     # Determine what to run based on command
-    if command == "process":
+    if command.startswith("process"):
         run_processing, run_reports = True, False
-    elif command == "report":
+    elif command.startswith("report"):
         run_processing, run_reports = False, True
-    elif command == "auto":
+    elif command.startswith("auto"):
         run_processing, run_reports = True, True
     else:
         logger.error(f"Unknown command: {command}")
@@ -65,6 +76,15 @@ def main():
             except Exception as e:
                 logger.error(f"❌ Vidu processing failed: {e}")
                 results['vidu_processing'] = False
+
+        if platform in ("viduref", "all"):
+            logger.info("\n=== Running ViduReferenceProcessor ===")
+            try:
+                vidu_ref_proc = ViduReferenceProcessor()
+                results['viduref_processing'] = vidu_ref_proc.run()
+            except Exception as e:
+                logger.error(f"❌ Vidu Reference processing failed: {e}")
+                results['viduref_processing'] = False
 
         if platform in ("nano", "all"):
             logger.info("\n=== Running GoogleFlashProcessor ===")
@@ -98,6 +118,15 @@ def main():
             except Exception as e:
                 logger.error(f"❌ Vidu report failed: {e}")
                 results['vidu_report'] = False
+
+        if platform in ("viduref", "all"):
+            logger.info("\n=== Generating Vidu Reference Report ===")
+            try:
+                vidu_ref_report = ViduReferenceReportGenerator("batch_vidu_reference_config.json")
+                results['viduref_report'] = vidu_ref_report.run()
+            except Exception as e:
+                logger.error(f"❌ Vidu Reference report failed: {e}")
+                results['viduref_report'] = False
 
         if platform in ("nano", "all"):
             logger.info("\n=== Generating Nano Banana Report ===")
