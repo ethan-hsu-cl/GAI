@@ -12,6 +12,8 @@ from auto_report_optimized import OptimizedVideoReportGenerator
 # Import new reference processor and report
 from reference_processor import ViduReferenceProcessor
 from vidu_reference_auto_report import ViduReferenceReportGenerator
+from runway_batch_processor import RunwayBatchVideoProcessor
+from runway_auto_report import RunwaySlideGenerator
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
@@ -95,6 +97,15 @@ def main():
                 logger.error(f"❌ Nano processing failed: {e}")
                 results['nano_processing'] = False
 
+        if platform in ("runway", "all"):
+            logger.info("\n=== Running RunwayBatchVideoProcessor ===")
+            try:
+                runway_proc = RunwayBatchVideoProcessor()
+                results['runway_processing'] = runway_proc.run()
+            except Exception as e:
+                logger.error(f"❌ Runway processing failed: {e}")
+                results['runway_processing'] = False
+
     # === REPORT GENERATION PHASE ===
     if run_reports:
         logger.info(f"\n{'='*50}")
@@ -136,6 +147,15 @@ def main():
             except Exception as e:
                 logger.error(f"❌ Nano Banana report failed: {e}")
                 results['nano_report'] = False
+
+        if platform in ("runway", "all"):
+            logger.info("\n=== Generating Runway Report ===")
+            try:
+                runway_report = RunwaySlideGenerator("batch_runway_config.json")
+                results['runway_report'] = runway_report.run()
+            except Exception as e:
+                logger.error(f"❌ Runway report failed: {e}")
+                results['runway_report'] = False
 
     # === SUMMARY ===
     logger.info(f"\n{'='*50}")

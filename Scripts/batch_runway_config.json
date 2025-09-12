@@ -1,0 +1,25 @@
+{
+    "template_path": "I2V templates.pptx",
+    "comparison_template_path": "I2V Comparison Template.pptx",
+    "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+    "comment_output_directory": "Optional: Global output directory for all generated PPTX files. Can be overridden per task. Default is current directory.",
+    "model": "gen4_aleph",
+    "ratio": "1280:720",
+    "public_figure_moderation": "low",
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+    },
+    "tasks": [
+        {
+            "folder": "../Runway/0912 Face Swap",
+            "prompt": "Change the woman's face",
+            "pairing_strategy": "all_combinations",
+            "comment_pairing_strategy": "How to pair videos with reference images: 'one_to_one' (pair by index) or 'all_combinations' (every video with every reference)",
+            "design_link": "",
+            "source_video_link": "",
+            "reference_folder": "../Runway/0912 Face Swap/Reference",
+            "use_comparison_template": true
+        }
+    ]
+}

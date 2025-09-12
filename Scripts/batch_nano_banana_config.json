@@ -11,10 +11,10 @@
     },
     "tasks": [
         {
-            "folder": "../Nano Banana/0910 Cosplay Event",
+            "folder": "../Nano Banana/0910 Figure Box 4",
             "prompt": "Generate a highly detailed photo of a girl cosplaying this illustration, at Comiket. Exactly replicate the same pose, body posture, hand gestures, facial expression, and camera framing as in the original illustration. Keep the same angle, perspective, and composition, without any deviation.",
-            "reference_folder": "",
-            "use_comparison_template": false,
+            "reference_folder": "../Nano Banana/0910 Figure Box 3",
+            "use_comparison_template": true,
             "design_link": "",
             "source_video_link": ""
         }
