@@ -1,4 +1,4 @@
-import json, logging, sys, re
+import json, logging, sys, re, tempfile, os
 from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass
@@ -42,6 +42,43 @@ class ViduReferenceReportGenerator:
         with open(config_file, 'r', encoding='utf-8') as f: 
             self.config = json.load(f)
         self.positions = {'img': (2.59, 3.26, 12.5, 12.5), 'vid': (18.78, 3.26, 12.5, 12.5)}
+        self._frame_cache = {}
+    
+    def extract_first_frame(self, video_path: Path) -> str | None:
+        """Extract first frame from video and return path to saved image"""
+        if not cv2:
+            return None
+        
+        video_key = str(video_path)
+        if video_key in self._frame_cache:
+            return self._frame_cache[video_key]
+        
+        try:
+            cap = cv2.VideoCapture(str(video_path))
+            if not cap.isOpened():
+                return None
+            
+            ret, frame = cap.read()
+            cap.release()
+            
+            if not ret or frame is None:
+                return None
+            
+            # Create temporary file for the frame
+            temp_dir = tempfile.gettempdir()
+            frame_filename = f"vidu_frame_{video_path.stem}_{hash(video_key) % 10000}.jpg"
+            frame_path = Path(temp_dir) / frame_filename
+            
+            # Save frame as JPEG
+            cv2.imwrite(str(frame_path), frame)
+            
+            # Cache the result
+            self._frame_cache[video_key] = str(frame_path)
+            return str(frame_path)
+            
+        except Exception as e:
+            logger.warning(f"Failed to extract frame from {video_path}: {e}")
+            return None
     
     def get_aspect_ratio(self, path: Path, is_video=False) -> float:
         name = path.name.lower()
@@ -75,9 +112,11 @@ class ViduReferenceReportGenerator:
         
         try:
             if is_video:
-                if poster_image: 
-                    slide.shapes.add_movie(str(media_path), final_left, final_top, scaled_w, scaled_h, poster_frame_image=str(poster_image))
-                else: 
+                # Extract first frame from video to use as poster
+                first_frame_path = self.extract_first_frame(Path(media_path))
+                if first_frame_path and Path(first_frame_path).exists():
+                    slide.shapes.add_movie(str(media_path), final_left, final_top, scaled_w, scaled_h, poster_frame_image=first_frame_path)
+                else:
                     slide.shapes.add_movie(str(media_path), final_left, final_top, scaled_w, scaled_h)
             else:
                 slide.shapes.add_picture(str(media_path), final_left, final_top, scaled_w, scaled_h)
@@ -204,8 +243,8 @@ class ViduReferenceReportGenerator:
             if len(content_pls) >= 2:
                 self.fit_media_in_placeholder(slide, content_pls[0], str(pair.image_path), False)
                 if pair.video_path and pair.video_path.exists():
-                    self.fit_media_in_placeholder(slide, content_pls[1], str(pair.video_path), 
-                                                True, str(pair.image_path))
+                    # Updated: No longer passing pair.image_path as poster_image - will use first frame
+                    self.fit_media_in_placeholder(slide, content_pls[1], str(pair.video_path), True, None)
                 else:
                     error_msg = pair.metadata.get('error_message', 'Reference generation failed') if pair.metadata else 'No processing'
                     self.add_error_to_placeholder(slide, content_pls[1], error_msg)
@@ -224,9 +263,14 @@ class ViduReferenceReportGenerator:
             # Add video or error
             if pair.video_path and pair.video_path.exists():
                 vid_x, vid_y, vid_w, vid_h = self.calc_position(pair.video_path, *self.positions['vid'], True)
-                try: 
-                    slide.shapes.add_movie(str(pair.video_path), vid_x, vid_y, vid_w, vid_h, 
-                                         poster_frame_image=str(pair.image_path))
+                try:
+                    # Updated: Extract first frame and use as poster
+                    first_frame = self.extract_first_frame(pair.video_path)
+                    if first_frame and Path(first_frame).exists():
+                        slide.shapes.add_movie(str(pair.video_path), vid_x, vid_y, vid_w, vid_h, 
+                                             poster_frame_image=first_frame)
+                    else:
+                        slide.shapes.add_movie(str(pair.video_path), vid_x, vid_y, vid_w, vid_h)
                 except: 
                     slide.shapes.add_movie(str(pair.video_path), vid_x, vid_y, vid_w, vid_h)
             else:
@@ -263,6 +307,16 @@ class ViduReferenceReportGenerator:
         except:
             return Cm(x + 0.5), Cm(y + 0.5), Cm(w - 1), Cm(h - 1)
     
+    def _cleanup_temp_frames(self):
+        """Clean up temporary frame files"""
+        for frame_path in self._frame_cache.values():
+            try:
+                if Path(frame_path).exists():
+                    os.unlink(frame_path)
+            except:
+                pass
+        self._frame_cache.clear()
+    
     def run(self):
         try:
             pairs = self.process_folders()
@@ -294,7 +348,7 @@ class ViduReferenceReportGenerator:
             
             for style_name, style_pairs in sorted(grouped.items()):
                 
-                # **UPDATED: Insert section slide using Title and Content layout**
+                # Insert section slide using Title and Content layout
                 try:
                     # Use Title and Content layout (typically layout 1)
                     section_slide = ppt.slides.add_slide(ppt.slide_layouts[1])
@@ -322,10 +376,15 @@ class ViduReferenceReportGenerator:
             
             logger.info(f"✓ Saved: {output_path}")
             logger.info(f"📊 Summary: {total_styles} styles, {len(pairs)} total references")
+            
+            # Clean up temporary frame files
+            self._cleanup_temp_frames()
             return True
             
         except Exception as e:
             logger.error(f"Report generation failed: {e}")
+            # Clean up on error too
+            self._cleanup_temp_frames()
             return False
 
 if __name__ == "__main__":

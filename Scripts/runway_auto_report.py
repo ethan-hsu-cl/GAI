@@ -1,4 +1,4 @@
-import re, sys, json, logging
+import re, sys, json, logging, tempfile, os
 from pathlib import Path
 from dataclasses import dataclass
 from datetime import datetime
@@ -42,11 +42,48 @@ def get_runway_filename(folder_name, model_name="Runway", use_comparison=False, 
 class RunwaySlideGenerator:
     def __init__(self, config_file="batch_runway_config.json"):
         self._ar_cache = {}
+        self._frame_cache = {}
         logging.basicConfig(level=logging.INFO, format='%(message)s')
         self.logger = logging.getLogger(__name__)
         with open(config_file, 'r', encoding='utf-8') as f:
             self.config = json.load(f)
         self.logger.info(f"✓ Configuration loaded from {config_file}")
+
+    def extract_first_frame(self, video_path):
+        """Extract first frame from video and return path to saved image"""
+        if not cv2:
+            return None
+        
+        video_key = str(video_path)
+        if video_key in self._frame_cache:
+            return self._frame_cache[video_key]
+        
+        try:
+            cap = cv2.VideoCapture(str(video_path))
+            if not cap.isOpened():
+                return None
+            
+            ret, frame = cap.read()
+            cap.release()
+            
+            if not ret or frame is None:
+                return None
+            
+            # Create temporary file for the frame
+            temp_dir = tempfile.gettempdir()
+            frame_filename = f"frame_{video_path.stem}_{hash(video_key) % 10000}.jpg"
+            frame_path = Path(temp_dir) / frame_filename
+            
+            # Save frame as JPEG
+            cv2.imwrite(str(frame_path), frame)
+            
+            # Cache the result
+            self._frame_cache[video_key] = str(frame_path)
+            return str(frame_path)
+            
+        except Exception as e:
+            self.logger.warning(f"Failed to extract frame from {video_path}: {e}")
+            return None
 
     def get_aspect_ratio(self, path, is_video=False):
         fn = path.name.lower()
@@ -81,8 +118,10 @@ class RunwaySlideGenerator:
                 sw, sh = (w, w/ar) if ar > w/h else (h*ar, h)
                 fl, ft = l+(w-sw)/2, t+(h-sh)/2
                 if is_video:
-                    if poster and Path(poster).exists():
-                        slide.shapes.add_movie(media, fl, ft, sw, sh, poster_frame_image=poster)
+                    # Extract first frame from video to use as poster
+                    first_frame_path = self.extract_first_frame(Path(media))
+                    if first_frame_path and Path(first_frame_path).exists():
+                        slide.shapes.add_movie(media, fl, ft, sw, sh, poster_frame_image=first_frame_path)
                     else:
                         slide.shapes.add_movie(media, fl, ft, sw, sh)
                 else:
@@ -163,11 +202,11 @@ class RunwaySlideGenerator:
             phs = sorted([p for p in slide.placeholders if p.placeholder_format.type in {6,7,8,13,18,19}], key=lambda x: getattr(x,'left',0))
             if len(phs) >= 3:
                 self.add_media_to_slide(slide, phs[0], str(pair.image_path))
-                self.add_media_to_slide(slide, phs[1], str(pair.source_video_path) if pair.source_video_path and pair.source_video_path.exists() else None, True, str(pair.image_path), "Source video not found")
-                self.add_media_to_slide(slide, phs[2], str(pair.video_path) if pair.video_path and pair.video_path.exists() else None, True, str(pair.image_path), pair.metadata.get('error','Face swap generation failed') if pair.metadata else 'Generation failed')
+                self.add_media_to_slide(slide, phs[1], str(pair.source_video_path) if pair.source_video_path and pair.source_video_path.exists() else None, True, None, "Source video not found")
+                self.add_media_to_slide(slide, phs[2], str(pair.video_path) if pair.video_path and pair.video_path.exists() else None, True, None, pair.metadata.get('error','Face swap generation failed') if pair.metadata else 'Generation failed')
             elif len(phs) >= 2:
                 self.add_media_to_slide(slide, phs[0], str(pair.image_path))
-                self.add_media_to_slide(slide, phs[1], str(pair.video_path) if pair.video_path and pair.video_path.exists() else None, True, str(pair.image_path), pair.metadata.get('error','Face swap generation failed') if pair.metadata else 'Generation failed')
+                self.add_media_to_slide(slide, phs[1], str(pair.video_path) if pair.video_path and pair.video_path.exists() else None, True, None, pair.metadata.get('error','Face swap generation failed') if pair.metadata else 'Generation failed')
             
             self._add_runway_metadata(slide, pair, use_cmp, len(phs) >= 3)
         else:
@@ -183,11 +222,16 @@ class RunwaySlideGenerator:
             w, h = 10, 10
             slide.shapes.add_picture(str(pair.image_path), Cm(pos[0][0]), Cm(pos[0][1]), Cm(w), Cm(h))
             
+            # Updated to extract first frame for each video
             for i, (vid_path, err_msg) in enumerate([(pair.source_video_path, "Source video not found"), 
                                                    (pair.video_path, pair.metadata.get('error','Face swap generation failed') if pair.metadata else 'Generation failed')], 1):
                 if vid_path and vid_path.exists():
                     try:
-                        slide.shapes.add_movie(str(vid_path), Cm(pos[i][0]), Cm(pos[i][1]), Cm(w), Cm(h), poster_frame_image=str(pair.image_path))
+                        first_frame = self.extract_first_frame(vid_path)
+                        if first_frame and Path(first_frame).exists():
+                            slide.shapes.add_movie(str(vid_path), Cm(pos[i][0]), Cm(pos[i][1]), Cm(w), Cm(h), poster_frame_image=first_frame)
+                        else:
+                            slide.shapes.add_movie(str(vid_path), Cm(pos[i][0]), Cm(pos[i][1]), Cm(w), Cm(h))
                     except:
                         slide.shapes.add_movie(str(vid_path), Cm(pos[i][0]), Cm(pos[i][1]), Cm(w), Cm(h))
                 else:
@@ -275,7 +319,20 @@ class RunwaySlideGenerator:
         opath = Path(self.config.get('output_directory', './')) / f"{filename}.pptx"
         ppt.save(str(opath))
         self.logger.info(f"✓ Saved: {opath}")
+        
+        # Clean up temporary frame files
+        self._cleanup_temp_frames()
         return True
+
+    def _cleanup_temp_frames(self):
+        """Clean up temporary frame files"""
+        for frame_path in self._frame_cache.values():
+            try:
+                if Path(frame_path).exists():
+                    os.unlink(frame_path)
+            except:
+                pass
+        self._frame_cache.clear()
 
     def validate_task_structure(self, task):
         folder = Path(task['folder'])
