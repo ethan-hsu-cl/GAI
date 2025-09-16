@@ -1,0 +1,27 @@
+{
+    "template_path": "templates/I2V templates.pptx",
+    "comparison_template_path": "templates/I2V Comparison Template.pptx",
+    "testbed": "http://192.168.4.3:8000/google_flash_image/",
+    "output": {
+        "directory": "/Users/ethanhsu/Desktop/GAI/Report"
+    },
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+    },
+    "tasks": [
+        {
+            "folder": "../Nano Banana/0916 Figure Box 5",
+            "prompt": "Use the nano-banana model to create a 1/7 scale commercialised figure of the subject in the illustration, in a realistic style and environment. Place the figure on a computer desk, using a circular transparent acrylic base without any text. On the computer screen, display the Brush modelling process of the figure, Next to the computer screen, place a toy packaging box.",
+            "reference_folder": "../Nano Banana/0910 Figure Box 3",
+            "use_comparison_template": false,
+            "design_link": "",
+            "source_video_link": ""
+        }
+    ],
+    "comments": {
+        "folder_structure": "Each task folder should contain 'Source' and 'Generated_Output' subfolders",
+        "reference_folder": "Optional: Path to folder containing third set of images for 3-way comparison",
+        "template_usage": "use_comparison_template: true uses comparison_template_path (3 placeholders), false uses template_path (2 placeholders)"
+    }
+}

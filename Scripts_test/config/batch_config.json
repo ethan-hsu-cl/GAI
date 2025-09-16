@@ -1,0 +1,23 @@
+{
+    "template_path": "templates/I2V templates.pptx",
+    "comparison_template_path": "templates/I2V Comparison Template.pptx",
+    "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+    "comment_output_directory": "Optional: Global output directory for all generated PPTX files. Can be overridden per task. Default is current directory.",
+    "model_version": "v2.1",
+    "comment_model_version": "Model version to use for video generation. Options: 'v1.6', 'v2.1'. Default is 'v2.1' if not specified.",
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+    },
+    "tasks": [
+        {
+            "folder": "../Kling 2.1/0916 Dark Angel",
+            "prompt": "The main character fluttering huge black wings appear , adding a dark, stylish angelic vibe to the look. The fabric has a soft, rich texture and reflects subtle highlights under warm indoor lighting. The outfit hugs the body naturally and flows slightly as the character shifts pose, with the wings gently moving in sync with her motion. She completes the transformation by striking a confident pose with one hand resting on her hip.",
+            "negative_prompt": "back view, asymmetrical wing, outfit changed, multi people, blurry, pixelated, wrong outfit design, wrong fabric texture, missing black wings, wings with wrong color, wings too small, wings floating awkwardly, deformed wings, stiff or broken wings, deformed body, duplicated limbs, low resolution, awkward pose, background too cluttered, bad lighting,  back view",
+            "design_link": "",
+            "source_video_link": "",
+            "reference_folder": "",
+            "use_comparison_template": false
+        }
+    ]
+}

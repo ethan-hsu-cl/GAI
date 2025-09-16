@@ -1,0 +1,19 @@
+{
+    "base_folder": "../Vidu/0909 1 Style",
+    "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+    "template_path": "templates/I2V templates.pptx",
+    "prompt": "",
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+    },
+    "design_link": "https://platform.vidu.com/docs/templates",
+    "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/Er97SInSrEFNpWK8B3rFnr0BWOGWxlJOKq8L7faowSrwFw?e=r5j0b4",
+    "tasks": [
+        {
+            "category": "Funny",
+            "effect": "Eat mushrooms, turn young",
+            "prompt": ""
+        }
+    ]
+}

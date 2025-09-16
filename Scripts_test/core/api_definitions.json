@@ -1,0 +1,283 @@
+{
+    "kling": {
+        "endpoint": "http://192.168.4.3:8000/kling/",
+        "api_name": "/Image2Video",
+        "file_types": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".bmp",
+            ".tiff"
+        ],
+        "validation": {
+            "max_size_mb": 10,
+            "min_dimension": 300,
+            "aspect_ratio": [
+                0.4,
+                2.5
+            ]
+        },
+        "folders": {
+            "input": "Source",
+            "output": "Generated_Video",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 3,
+        "task_delay": 10,
+        "max_retries": 3,
+        "config_structure": "task_folders",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "comparison_template_path": "templates/I2V Comparison Template.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": true
+        },
+        "task_fields": [
+            "folder",
+            "prompt",
+            "negative_prompt",
+            "design_link",
+            "source_video_link",
+            "reference_folder",
+            "use_comparison_template"
+        ],
+        "api_params": {
+            "mode": "std",
+            "duration": 5,
+            "cfg": 0.5,
+            "model_version": "v2.1"
+        }
+    },
+    "nano_banana": {
+        "endpoint": "http://192.168.4.3:8000/google_flash_image/",
+        "api_name": "/nano_banana",
+        "file_types": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".bmp",
+            ".tiff"
+        ],
+        "validation": {
+            "max_size_mb": 10,
+            "min_dimension": 100
+        },
+        "folders": {
+            "input": "Source",
+            "output": "Generated_Output",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 5,
+        "task_delay": 10,
+        "max_retries": 3,
+        "special_handling": "base64_images",
+        "config_structure": "task_folders",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "comparison_template_path": "templates/I2V Comparison Template.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": true
+        },
+        "task_fields": [
+            "folder",
+            "prompt",
+            "reference_folder",
+            "use_comparison_template",
+            "design_link",
+            "source_video_link"
+        ],
+        "additional_features": {
+            "additional_images": true,
+            "testbed_url_override": true
+        }
+    },
+    "vidu_effects": {
+        "endpoint": "http://192.168.4.3:8000/video_effect/",
+        "api_name": "/effect_submit_api",
+        "file_types": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp"
+        ],
+        "validation": {
+            "max_size_mb": 50,
+            "min_dimension": 128,
+            "aspect_ratio": [
+                0.25,
+                4.0
+            ]
+        },
+        "folders": {
+            "input": "Source",
+            "output": "Generated_Video",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 3,
+        "task_delay": 10,
+        "max_retries": 3,
+        "api_params": {
+            "aspect_ratio": "as input image",
+            "area": "auto",
+            "beast": "auto",
+            "bgm": false
+        },
+        "structure_type": "base_folder",
+        "config_structure": "base_folder",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": false
+        },
+        "task_fields": [
+            "category",
+            "effect",
+            "prompt"
+        ],
+        "additional_features": {
+            "design_link": true,
+            "source_video_link": true
+        }
+    },
+    "vidu_reference": {
+        "endpoint": "http://192.168.4.3:8000/video_effect/",
+        "api_name": "/reference_api",
+        "file_types": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp"
+        ],
+        "validation": {
+            "max_size_mb": 50,
+            "min_dimension": 128,
+            "aspect_ratio": [
+                0.25,
+                4.0
+            ]
+        },
+        "folders": {
+            "input": "Source",
+            "reference": "Reference",
+            "output": "Generated_Video",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 3,
+        "task_delay": 10,
+        "max_retries": 3,
+        "special_handling": "multi_image_reference",
+        "structure_type": "base_folder",
+        "aspect_ratios": [
+            "9:16",
+            "16:9",
+            "1:1"
+        ],
+        "config_structure": "base_folder",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": false
+        },
+        "task_fields": [
+            "effect",
+            "prompt",
+            "model",
+            "duration",
+            "resolution"
+        ],
+        "api_params": {
+            "default_model": "viduq1",
+            "default_duration": 5,
+            "default_resolution": "1080p",
+            "default_movement": "auto"
+        },
+        "additional_features": {
+            "design_link": true,
+            "source_video_link": true,
+            "multilingual_prompts": true
+        }
+    },
+    "runway": {
+        "endpoint": "http://192.168.4.3:8000/runway/",
+        "api_name": "/submit_1",
+        "file_types": {
+            "video": [
+                ".mp4",
+                ".mov",
+                ".avi",
+                ".mkv",
+                ".webm"
+            ],
+            "image": [
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".bmp"
+            ]
+        },
+        "validation": {
+            "video": {
+                "max_size_mb": 500,
+                "min_dimension": 320,
+                "duration": [
+                    1,
+                    30
+                ]
+            },
+            "image": {
+                "max_size_mb": 10,
+                "min_dimension": 320
+            }
+        },
+        "folders": {
+            "input": "Source",
+            "reference": "Reference",
+            "output": "Generated_Video",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 3,
+        "task_delay": 10,
+        "max_retries": 3,
+        "special_handling": "video_with_reference",
+        "config_structure": "task_folders",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "comparison_template_path": "templates/I2V Comparison Template.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": true
+        },
+        "task_fields": [
+            "folder",
+            "prompt",
+            "pairing_strategy",
+            "design_link",
+            "source_video_link",
+            "reference_folder",
+            "use_comparison_template"
+        ],
+        "api_params": {
+            "model": "gen4_aleph",
+            "ratio": "1280:720",
+            "public_figure_moderation": "low"
+        },
+        "pairing_strategies": [
+            "one_to_one",
+            "all_combinations"
+        ],
+        "available_ratios": [
+            "1280:720",
+            "720:1280",
+            "1104:832",
+            "960:960",
+            "832:1104",
+            "1584:672",
+            "848:480",
+            "640:480"
+        ]
+    }
+}
