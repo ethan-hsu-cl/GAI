@@ -1,4 +1,4 @@
-# Automated Processing \& Reporting Automation Suite
+# AI Processing \& Reporting Automation Suite
 
 A powerful Python automation framework for batch processing images and videos through multiple AI APIs (Kling 2.1, Google Flash/Nano Banana, Vidu Effects, Vidu Reference, and Runway) with automated PowerPoint report generation.
 
@@ -6,38 +6,43 @@ A powerful Python automation framework for batch processing images and videos th
 
 ### **Basic Usage**
 
+The scripts are run from the `Scripts/` directory using the `core/` subfolder:
+
 ```bash
+# Navigate to Scripts directory first
+cd Scripts
+
 # Process and generate reports for a single API
-python runall.py kling auto
-python runall.py nano auto  
-python runall.py vidu auto
-python runall.py runway auto
+python core/runall.py kling auto
+python core/runall.py nano auto  
+python core/runall.py vidu auto
+python core/runall.py runway auto
 
 # Process all APIs at once
-python runall.py all auto
+python core/runall.py all auto
 
 # Generate reports only (after processing)
-python runall.py kling report
-python runall.py nano report
+python core/runall.py kling report
+python core/runall.py nano report
 
 # Process only (no reports)
-python runall.py kling process
+python core/runall.py kling process
 ```
 
 ### **Advanced Usage**
 
 ```bash
 # Run all APIs in parallel for faster execution
-python runall.py all auto --parallel
+python core/runall.py all auto --parallel
 
 # Use custom configuration file
-python runall.py kling auto --config my_custom_config.json
+python core/runall.py kling auto --config custom_config.json
 
 # Enable verbose logging for debugging
-python runall.py runway auto --verbose
+python core/runall.py runway auto --verbose
 
 # Combine options
-python runall.py all auto --parallel --verbose
+python core/runall.py all auto --parallel --verbose
 ```
 
 ## 📋 Platform Commands
@@ -51,12 +56,34 @@ python runall.py all auto --parallel --verbose
 | `runway` | Runway | Face swap and video processing |
 | `all` | All Platforms | Process all APIs sequentially or in parallel |
 
-## 📁 Required Folder Structure
-
-### **Task-Based APIs** (Kling, Nano Banana, Runway)
+## 📁 Project Structure
 
 ```bash
-YourProject/
+GAI/                                    # Project root
+└── Scripts/                           # Main scripts directory
+    ├── config/                        # Configuration files
+    │   ├── batch_config.json         # Kling configuration
+    │   ├── batch_nano_banana_config.json
+    │   ├── batch_runway_config.json
+    │   ├── batch_vidu_config.json
+    │   └── batch_vidu_reference_config.json
+    ├── core/                          # Core automation framework
+    │   ├── api_definitions.json      # API specifications
+    │   ├── runall.py                 # Main execution script
+    │   ├── unified_api_processor.py  # API processing engine
+    │   └── unified_report_generator.py # Report generation engine
+    ├── processors/                    # Legacy individual processors
+    ├── reports/                       # Legacy individual report generators
+    ├── templates/                     # PowerPoint templates
+    │   ├── I2V Comparison Template.pptx
+    │   └── I2V templates.pptx
+    └── requirements.txt
+```
+
+### **Task Data Folder Structure** (Kling, Nano Banana, Runway)
+
+```bash
+YourTaskFolder/
 ├── TaskName1/
 │   ├── Source/              # Input images/videos
 │   ├── Reference/           # Reference images (Runway only)
@@ -67,7 +94,7 @@ YourProject/
 └── config.json
 ```
 
-### **Base Folder APIs** (Vidu Effects, Vidu Reference)
+### **Base Folder Structure** (Vidu Effects, Vidu Reference)
 
 ```bash
 BaseFolder/
@@ -82,6 +109,8 @@ BaseFolder/
 ```
 
 ## ⚙️ Configuration Files
+
+All configuration files are located in the `Scripts/config/` directory and follow API-specific naming conventions.
 
 ### **Kling Configuration** (`config/batch_config.json`)
 
@@ -169,27 +198,28 @@ Reports are automatically generated in PowerPoint format with:
 - **Hyperlinks** to design files and source materials
 - **Error reporting** for failed generations
 
-### **Report Naming Convention**
-
-- Format: `[MMDD] API Name Style Name.pptx`
-- Examples:
-  - `[^0916] Kling 2.1 Portrait Animation.pptx`
-  - `[^0916] Nano Banana vs Vidu Effects.pptx`
-
 ### **Report Templates**
 
-Place PowerPoint templates in `templates/` directory:
+PowerPoint templates are located in `Scripts/templates/`:
 
 - `I2V templates.pptx` - Standard template
 - `I2V Comparison Template.pptx` - Comparison template
+
+### **Report Output**
+
+- **Default location**: `/Users/ethanhsu/Desktop/GAI/Report/` (configurable)
+- **Naming format**: `[MMDD] API Name Style Name.pptx`
 
 ## 🔧 Installation \& Setup
 
 ### **Prerequisites**
 
 ```bash
+# Navigate to Scripts directory
+cd Scripts
+
 # Install required Python packages
-pip install requests pillow python-pptx gradio-client opencv-python
+pip install -r requirements.txt
 
 # For video processing (required for Runway and video features)
 # macOS
@@ -206,15 +236,16 @@ sudo apt install ffmpeg
 - **Python 3.8+**
 - **FFmpeg** (for video processing)
 - **8GB+ RAM** (for parallel processing)
-- **Network access** to API endpoints
+- **Network access** to API endpoints (default: <http://192.168.4.3:8000/>)
 
 ### **Initial Setup**
 
 1. Clone/download the automation suite
-2. Create configuration files in `config/` directory
-3. Set up folder structure according to your API choice
-4. Place input files in appropriate `Source/` folders
-5. Run validation: `python runall.py [platform] process --verbose`
+2. Navigate to the `Scripts/` directory
+3. Create configuration files in `config/` directory
+4. Set up folder structure according to your API choice
+5. Place input files in appropriate `Source/` folders
+6. Run validation: `python core/runall.py [platform] process --verbose`
 
 ## 📈 File Validation \& Requirements
 
@@ -274,11 +305,14 @@ sudo apt install ffmpeg
 ### **Common Issues**
 
 ```bash
+# Ensure you're in the Scripts directory
+cd Scripts
+
 # Check file validation
-python runall.py [platform] process --verbose
+python core/runall.py [platform] process --verbose
 
 # Test single API connection
-python unified_api_processor.py kling
+python core/unified_api_processor.py kling
 
 # Validate configuration
 python -c "import json; print(json.load(open('config/batch_config.json')))"
@@ -305,12 +339,45 @@ ls -la YourTaskFolder/
 
 ### **Generated Content**
 
-- Videos: `{filename}_generated.mp4` (Kling), `{filename}_{effect}_effect.mp4` (Vidu)
-- Images: `{filename}_image_{index}.{ext}` (Nano Banana)
-- Metadata: `{filename}_metadata.json` (all APIs)
+- **Videos**: `{filename}_generated.mp4` (Kling), `{filename}_{effect}_effect.mp4` (Vidu)
+- **Images**: `{filename}_image_{index}.{ext}` (Nano Banana)
+- **Metadata**: `{filename}_metadata.json` (all APIs)
 
 ### **Reports**
 
-- Location: Configured in `api_definitions.json` or config files
-- Default: `/Users/ethanhsu/Desktop/GAI/Report/`
-- Format: PowerPoint (.pptx) with embedded media
+- **Location**: Configured in `core/api_definitions.json` or config files
+- **Default**: `/Users/ethanhsu/Desktop/GAI/Report/`
+- **Format**: PowerPoint (.pptx) with embedded media
+
+## 🚀 Command Reference
+
+### **Core Execution**
+
+```bash
+# Always run from Scripts directory
+cd Scripts
+
+# Basic commands
+python core/runall.py [platform] [action] [options]
+```
+
+### **Supported Platforms**
+
+- `kling` - Kling 2.1 Image2Video
+- `nano` - Google Flash/Nano Banana
+- `vidu` - Vidu Effects
+- `viduref` - Vidu Reference
+- `runway` - Runway face swap
+- `all` - All platforms
+
+### **Available Actions**
+
+- `process` - Run API processing only
+- `report` - Generate PowerPoint reports only
+- `auto` - Process + generate reports (default)
+
+### **Options**
+
+- `--config FILE` - Custom configuration file
+- `--parallel` - Run platforms in parallel (for 'all')
+- `--verbose` - Enable detailed logging
