@@ -1,4 +1,4 @@
-# AI Processing \& Reporting Automation Suite
+# Automated Processing \& Reporting Automation Suite
 
 A powerful Python automation framework for batch processing images and videos through multiple AI APIs (Kling 2.1, Google Flash/Nano Banana, Vidu Effects, Vidu Reference, and Runway) with automated PowerPoint report generation.
 
