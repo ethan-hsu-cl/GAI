@@ -225,11 +225,11 @@
                 "min_dimension": 320,
                 "duration": [
                     1,
-                    30
+                    300
                 ]
             },
             "image": {
-                "max_size_mb": 10,
+                "max_size_mb": 500,
                 "min_dimension": 320
             }
         },

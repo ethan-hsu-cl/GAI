@@ -56,6 +56,13 @@ python core/runall.py all auto --parallel --verbose
 | `runway` | Runway | Face swap and video processing |
 | `all` | All Platforms | Process all APIs sequentially or in parallel |
 
+## Video Download Command Example
+
+```bash
+# File download command example:
+yt-dlp -f "bv*[vcodec~='^(h264|avc)']+ba[acodec~='^(mp?4a|aac)']" "https://youtube.com/playlist?list=PLSgBrV2b0XA_ofBZ4c3e85sTNBh3BKN2y&si=_5VpzvdI7hsF-a4o"
+```
+
 ## 📁 Project Structure
 
 ```bash

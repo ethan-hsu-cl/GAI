@@ -12,13 +12,23 @@
     },
     "tasks": [
         {
-            "folder": "../Runway/0916 Face Swap 2",
-            "prompt": "Change the woman's face",
+            "folder": "../Runway/0917 Face Swap 3 Male",
+            "prompt": "Change the man's face to the reference image, keep the background and other elements unchanged",
             "pairing_strategy": "all_combinations",
             "comment_pairing_strategy": "How to pair videos with reference images: 'one_to_one' (pair by index) or 'all_combinations' (every video with every reference)",
-            "design_link": "",
+            "design_link": "https://cyberlinkcorp-my.sharepoint.com/:p:/g/personal/dept_onedrive_cyberlink_com/Edkqc7lHCiJJtUhAc5J4ItABVfW3mFOiMpEC7YA7IIwqkA?e=Gasbf9",
             "source_video_link": "",
-            "reference_folder": "../Runway/0916 Face Swap 2/Reference",
+            "reference_folder": "../Runway/0917 Face Swap 3 Male/Reference",
+            "use_comparison_template": true
+        },
+        {
+            "folder": "../Runway/0917 Face Swap 3 Female",
+            "prompt": "change the woman's face to the reference image, keep the background and other elements unchanged",
+            "pairing_strategy": "all_combinations",
+            "comment_pairing_strategy": "How to pair videos with reference images: 'one_to_one' (pair by index) or 'all_combinations' (every video with every reference)",
+            "design_link": "https://cyberlinkcorp-my.sharepoint.com/:p:/g/personal/dept_onedrive_cyberlink_com/Edkqc7lHCiJJtUhAc5J4ItABVfW3mFOiMpEC7YA7IIwqkA?e=Gasbf9",
+            "source_video_link": "",
+            "reference_folder": "../Runway/0917 Face Swap 3 Female/Reference",
             "use_comparison_template": true
         }
     ]

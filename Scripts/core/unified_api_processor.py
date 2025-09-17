@@ -12,6 +12,11 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 import logging
 
+"""
+file download command example:
+yt-dlp -f "bv*[vcodec~='^(h264|avc)']+ba[acodec~='^(mp?4a|aac)']" "https://youtube.com/playlist?list=PLSgBrV2b0XA_ofBZ4c3e85sTNBh3BKN2y&si=_5VpzvdI7hsF-a4o"
+"""
+
 class UnifiedAPIProcessor:
     """
     Enhanced Consolidated API processor supporting multiple endpoints with all individual processor features:
@@ -90,15 +95,6 @@ class UnifiedAPIProcessor:
                 "output_filename": "{base_name}_ref_{ref_stem}_runway_generated.mp4",
                 "pairing_strategies": ["one_to_one", "all_combinations"],
                 "available_ratios": ["1280:720", "720:1280", "1104:832", "960:960", "832:1104", "1584:672", "848:480", "640:480"],
-                "validation": {
-                    "video": {"max_size_mb": 500, "min_dimension": 320, "duration": [1, 30]},
-                    "image": {"max_size_mb": 10, "min_dimension": 320}
-                },
-                "folders": {"input": "Source", "reference": "Reference", "output": "Generated_Video", "metadata": "Metadata"},
-                "rate_limit": 3, "task_delay": 10, "max_retries": 3,
-                "special_handling": "video_with_reference",
-                "output_filename": "{base_name}_ref_{ref_stem}_runway_generated.mp4",
-                "pairing_strategies": ["one_to_one", "all_combinations"]
             },
     
             "vidu_effects": {
@@ -276,7 +272,7 @@ class UnifiedAPIProcessor:
         elif self.api_name == "vidu_reference":
             return self._validate_vidu_reference_structure()
         else:
-            return self._validate_standard_structure()
+            raise ValueError(f"Validation failed for unknown API: {self.api_name}")
 
     def _validate_kling_structure(self):
         """Enhanced Kling validation with task folder structure (from working processor)"""
@@ -385,58 +381,86 @@ class UnifiedAPIProcessor:
         return valid_tasks
 
     def _validate_runway_structure(self):
-        """Enhanced Runway validation with video and reference image support"""
+        """Enhanced Runway validation with optional reference image support"""
         valid_tasks = []
-        invalid_files = []
-        folders = self.api_definitions.get('folders', {})
-        file_types = self.api_definitions.get('file_types', {})
-
+        invalid_videos = []
+        
         for i, task in enumerate(self.config.get('tasks', []), 1):
             folder = Path(task['folder'])
-            source_folder = folder / folders.get('input', 'Source')
-            reference_folder = folder / folders.get('reference', 'Reference')
-
-            # Early exit for missing folders
-            if not (source_folder.exists() and reference_folder.exists()):
-                self.logger.warning(f"❌ Missing folders in task {i}")
+            source_folder = folder / "Source"
+            
+            if not source_folder.exists():
+                self.logger.warning(f"Missing source {source_folder}")
                 continue
-
-            # Get files using list comprehensions for better performance
-            video_files = [f for f in source_folder.iterdir()
-                         if f.suffix.lower() in file_types.get('video', [])]
-            reference_images = [f for f in reference_folder.iterdir()
-                              if f.suffix.lower() in file_types.get('image', [])]
-
-            if not (video_files and reference_images):
-                self.logger.warning(f"❌ Missing videos or references in task {i}")
+            
+            # Check if reference is required
+            use_comparison_template = task.get('use_comparison_template', False)
+            reference_folder_path = task.get('reference_folder', '').strip()
+            requires_reference = use_comparison_template or bool(reference_folder_path)
+            
+            # Validate reference folder if required
+            reference_images = []
+            if requires_reference:
+                if reference_folder_path:
+                    ref_folder = Path(reference_folder_path)
+                else:
+                    ref_folder = folder / "Reference"
+                
+                if not ref_folder.exists():
+                    self.logger.warning(f"Missing reference folder {ref_folder}")
+                    continue
+                
+                reference_images = [f for f in ref_folder.iterdir() 
+                                if f.suffix.lower() in ['.jpg', '.jpeg', '.png', '.bmp']]
+                
+                if not reference_images:
+                    self.logger.warning(f"Empty reference folder {ref_folder}")
+                    continue
+            
+            # Get video files
+            video_files = [f for f in source_folder.iterdir() 
+                        if f.suffix.lower() in self.api_definitions['file_types']['video']]
+            
+            if not video_files:
+                self.logger.warning(f"Empty source folder {source_folder}")
                 continue
-
-            # Validate files in batch
-            valid_videos = sum(1 for f in video_files if self.validate_file(f, 'video')[0])
-            valid_refs = sum(1 for f in reference_images if self.validate_file(f, 'image')[0])
-
-            # Add invalid files to list (simplified)
-            invalid_files.extend([
-                {'name': f.name, 'folder': str(folder), 'type': 'video', 'reason': 'Invalid'}
-                for f in video_files if not self.validate_file(f, 'video')[0]
-            ])
-            invalid_files.extend([
-                {'name': f.name, 'folder': str(folder), 'type': 'reference', 'reason': 'Invalid'}
-                for f in reference_images if not self.validate_file(f, 'image')[0]
-            ])
-
-            if valid_videos and valid_refs:
-                # Create output directories
-                for subdir in ["Generated_Video", "Metadata"]:
-                    (folder / subdir).mkdir(exist_ok=True)
-                valid_tasks.append(task)
-                self.logger.info(f"✓ Task {i}: {valid_videos} videos, {valid_refs} references")
-
-        if invalid_files:
-            self._write_invalid_report(invalid_files)
-            raise Exception(f"{len(invalid_files)} invalid files found")
-
+            
+            # Validate videos
+            valid_count = 0
+            for video_file in video_files:
+                is_valid, reason = self.validate_file(video_file, 'video')
+                if not is_valid:
+                    invalid_videos.append({
+                        'path': str(video_file),
+                        'folder': str(folder),
+                        'name': video_file.name,
+                        'reason': reason
+                    })
+                else:
+                    valid_count += 1
+            
+            if valid_count == 0:
+                continue
+            
+            # Create output directories
+            (folder / "Generated_Video").mkdir(exist_ok=True)
+            (folder / "Metadata").mkdir(exist_ok=True)
+            
+            # Update task config
+            task['requires_reference'] = requires_reference
+            if requires_reference:
+                task['reference_images'] = reference_images
+            
+            valid_tasks.append(task)
+            self.logger.info(f"Task {i}: {valid_count}/{len(video_files)} valid videos" + 
+                            (f", {len(reference_images)} reference images" if requires_reference else " (text-to-video mode)"))
+        
+        if invalid_videos:
+            self._write_invalid_report(invalid_videos, 'runway')
+            raise Exception(f"{len(invalid_videos)} invalid videos found")
+        
         return valid_tasks
+
 
     def _validate_vidu_effects_structure(self):
         """Enhanced Vidu Effects validation with parallel processing"""
@@ -772,15 +796,19 @@ class UnifiedAPIProcessor:
 
                 # API-specific processing
                 if self.api_name == "kling":
-                    return self._process_kling(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
+                    result = self._process_kling(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
                 elif self.api_name == "nano_banana":
-                    return self._process_nano_banana(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
+                    result = self._process_nano_banana(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
                 elif self.api_name == "runway":
-                    return self._process_runway(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
+                    result = self._process_runway(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
                 elif self.api_name == "vidu_effects":
-                    return self._process_vidu_effects(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
+                    result = self._process_vidu_effects(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
                 elif self.api_name == "vidu_reference":
-                    return self._process_vidu_reference(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
+                    result = self._process_vidu_reference(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
+
+                if not result and attempt < max_retries - 1:
+                    continue  # Retry
+                return result
 
             except Exception as e:
                 if attempt == max_retries - 1:
@@ -960,109 +988,150 @@ class UnifiedAPIProcessor:
             raise e
 
     def _process_runway(self, video_path, task_config, output_folder, metadata_folder, attempt, max_retries):
-        """Process Runway API call using the working runway processor approach with automatic aspect ratio detection"""
-        base_name = Path(video_path).stem
+        """Process Runway API call with optional reference image support"""
+        basename = Path(video_path).stem
         video_name = Path(video_path).name
-        reference_image_path = task_config.get('reference_image', '')
-
-        if not reference_image_path or not Path(reference_image_path).exists():
-            raise Exception("Reference image not found")
-
-        ref_stem = Path(reference_image_path).stem
+        
+        # Check if reference image is required based on config
+        use_comparison_template = task_config.get('use_comparison_template', False)
+        reference_folder = task_config.get('reference_folder', '').strip()
+        requires_reference = bool(use_comparison_template) or bool(reference_folder)
+        
+        # Handle reference image conditionally
+        reference_image_path = None
+        ref_stem = ""
+        
+        if requires_reference:
+            reference_image_path = task_config.get('reference_image', '')
+            if not reference_image_path or not Path(reference_image_path).exists():
+                raise Exception("Reference image required but not found")
+            ref_stem = Path(reference_image_path).stem
+        
         start_time = time.time()
-
+        
         try:
-            # Get video dimensions to determine optimal aspect ratio
+            # Get video info for optimal ratio
             video_info = self._get_video_info(video_path)
             if video_info:
                 optimal_ratio = self._get_optimal_runway_ratio(video_info['width'], video_info['height'])
-                self.logger.info(f" 📐 Video {video_info['width']}x{video_info['height']} -> Using ratio {optimal_ratio}")
+                self.logger.info(f"Video {video_info['width']}x{video_info['height']} - Using ratio {optimal_ratio}")
             else:
-                # Fallback to config or default
                 optimal_ratio = self.config.get('ratio', '1280:720')
-                self.logger.info(f" ⚠️ Could not read video dimensions, using default ratio {optimal_ratio}")
-
-            # Make API call using the working structure from runway_batch_processor.py
-            result = self.client.predict(
-                video_path={"video": handle_file(str(video_path))},
-                prompt=task_config['prompt'],
-                model=self.config.get('model', 'gen4_aleph'),
-                ratio=optimal_ratio,  # Use the calculated optimal ratio
-                reference_image=handle_file(str(reference_image_path)),
-                public_figure_moderation=self.config.get('public_figure_moderation', 'low'),
-                api_name=self.api_definitions['api_name']
-            )
-
-            # Extract results - matching working processor logic
-            output_url, output_video, error_message = result[:3]
-
-            if error_message and error_message.strip():
-                raise ValueError(f"API Error: {error_message}")
-
-            # Try to save video
-            output_filename = f"{base_name}_ref_{ref_stem}_runway_generated.mp4"
+                self.logger.warning(f"Could not get video info, using default ratio {optimal_ratio}")
+            
+            # Make API call with or without reference image
+            if requires_reference:
+                result = self.client.predict(
+                    video_path={"video": handle_file(str(video_path))},
+                    prompt=task_config['prompt'],
+                    model=self.config.get('model', 'gen4_aleph'),
+                    ratio=optimal_ratio,
+                    reference_image=handle_file(str(reference_image_path)),
+                    public_figure_moderation=self.config.get('public_figure_moderation', 'low'),
+                    api_name=self.api_definitions['api_name']
+                )
+            else:
+                # Text-to-video without reference image
+                result = self.client.predict(
+                    video_path={"video": handle_file(str(video_path))},
+                    prompt=task_config['prompt'],
+                    model=self.config.get('model', 'gen4_aleph'),
+                    ratio=optimal_ratio,
+                    reference_image = None,
+                    public_figure_moderation=self.config.get('public_figure_moderation', 'low'),
+                    api_name=self.api_definitions['api_name']
+                )
+            
+            # Extract results
+            output_url = result[0] if len(result) > 0 else None
+            
+            if not output_url:
+                self.logger.info("No output URL received")
+                processing_time = time.time() - start_time
+                metadata = {
+                    'source_video': video_name,
+                    'source_dimensions': f"{video_info['width']}x{video_info['height']}" if video_info else "unknown",
+                    'reference_image': Path(reference_image_path).name if reference_image_path else None,
+                    'prompt': task_config['prompt'],
+                    'model': self.config.get('model', 'gen4_aleph'),
+                    'ratio': optimal_ratio,
+                    'public_figure_moderation': self.config.get('public_figure_moderation', 'low'),
+                    'error': "No output URL received",
+                    'processing_time_seconds': round(processing_time, 1),
+                    'processing_timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    'attempts': attempt + 1,
+                    'success': False,
+                    'api_name': self.api_name
+                }
+                
+                self._save_runway_metadata(Path(metadata_folder), basename, ref_stem, video_name, 
+                                        Path(reference_image_path).name if reference_image_path else None, 
+                                        metadata, task_config)
+                return False
+            
+            # Generate output filename based on whether reference is used
+            if reference_image_path:
+                output_filename = f"{basename}_ref_{ref_stem}_runway_generated.mp4"
+            else:
+                output_filename = f"{basename}_text_runway_generated.mp4"
+                
             output_path = Path(output_folder) / output_filename
-            video_saved = False
-
-            # Download from URL or copy local file (matching working processor)
-            if output_url and output_url.strip():
-                video_saved = self._download_file(output_url, output_path)
-
-            if not video_saved and output_video and 'video' in output_video:
-                local_path = Path(output_video['video'])
-                if local_path.exists():
-                    shutil.copy2(local_path, output_path)
-                    video_saved = True
-
-            if not video_saved:
-                raise IOError("Video download/save failed")
-
-            # Save success metadata (matching working processor structure)
+            
+            # Download video
+            video_saved = self._download_file(output_url, output_path)
+            
             processing_time = time.time() - start_time
             metadata = {
-                "source_video": video_name,
-                "source_dimensions": f"{video_info['width']}x{video_info['height']}" if video_info else "unknown",
-                "reference_image": Path(reference_image_path).name,
-                "prompt": task_config['prompt'],
-                "model": self.config.get('model', 'gen4_aleph'),
-                "ratio": optimal_ratio,  # Save the actual ratio used
-                "public_figure_moderation": self.config.get('public_figure_moderation', 'low'),
-                "output_url": output_url,
-                "generated_video": output_filename,
-                "processing_time_seconds": round(processing_time, 1),
-                "processing_timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                "attempts": attempt + 1,
-                "success": True,
-                "api_name": self.api_name
+                'source_video': video_name,
+                'source_dimensions': f"{video_info['width']}x{video_info['height']}" if video_info else "unknown",
+                'reference_image': Path(reference_image_path).name if reference_image_path else None,
+                'prompt': task_config['prompt'],
+                'model': self.config.get('model', 'gen4_aleph'),
+                'ratio': optimal_ratio,
+                'public_figure_moderation': self.config.get('public_figure_moderation', 'low'),
+                'output_url': output_url,
+                'generated_video': output_filename,
+                'processing_time_seconds': round(processing_time, 1),
+                'processing_timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'attempts': attempt + 1,
+                'success': video_saved,
+                'api_name': self.api_name,
+                'generation_type': 'image_to_video' if reference_image_path else 'text_to_video'
             }
 
-            self._save_runway_metadata(Path(metadata_folder), base_name, ref_stem, video_name,
-                                     Path(reference_image_path).name, metadata, task_config)
-
-            self.logger.info(f" ✅ Generated: {output_filename} (ratio: {optimal_ratio})")
-            return True
-
+            self._save_runway_metadata(Path(metadata_folder), basename, ref_stem, video_name,
+                                    Path(reference_image_path).name if reference_image_path else None,
+                                    metadata, task_config)
+            
+            if video_saved:
+                self.logger.info(f"Generated {output_filename} (ratio {optimal_ratio})")
+                return True
+            else:
+                self.logger.info("Video generation succeeded but file save failed")
+                return False
+                
         except Exception as e:
-            # Save failure metadata
             processing_time = time.time() - start_time
             metadata = {
-                "source_video": video_name,
-                "source_dimensions": f"{video_info['width']}x{video_info['height']}" if 'video_info' in locals() and video_info else "unknown",
-                "reference_image": Path(reference_image_path).name,
-                "prompt": task_config['prompt'],
-                "model": self.config.get('model', 'gen4_aleph'),
-                "ratio": optimal_ratio if 'optimal_ratio' in locals() else self.config.get('ratio', '1280:720'),
-                "public_figure_moderation": self.config.get('public_figure_moderation', 'low'),
-                "error": str(e),
-                "processing_time_seconds": round(processing_time, 1),
-                "processing_timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                "attempts": attempt + 1,
-                "success": False,
-                "api_name": self.api_name
+                'source_video': video_name,
+                'source_dimensions': f"{video_info['width']}x{video_info['height']}" if 'video_info' in locals() and video_info else "unknown",
+                'reference_image': Path(reference_image_path).name if reference_image_path else None,
+                'prompt': task_config['prompt'],
+                'model': self.config.get('model', 'gen4_aleph'),
+                'ratio': optimal_ratio if 'optimal_ratio' in locals() else self.config.get('ratio', '1280:720'),
+                'public_figure_moderation': self.config.get('public_figure_moderation', 'low'),
+                'error': str(e),
+                'processing_time_seconds': round(processing_time, 1),
+                'processing_timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'attempts': attempt + 1,
+                'success': False,
+                'api_name': self.api_name,
+                'generation_type': 'image_to_video' if reference_image_path else 'text_to_video'
             }
-
-            self._save_runway_metadata(Path(metadata_folder), base_name, ref_stem, video_name,
-                                     Path(reference_image_path).name, metadata, task_config)
+            
+            self._save_runway_metadata(Path(metadata_folder), basename, ref_stem, video_name, 
+                                    Path(reference_image_path).name if reference_image_path else None, 
+                                    metadata, task_config)
             raise e
 
     def _get_optimal_runway_ratio(self, video_width, video_height):
@@ -1408,62 +1477,83 @@ class UnifiedAPIProcessor:
         self.logger.info(f"✓ Task {task_num}: {successful}/{len(image_files)} successful")
 
     def _process_runway_task(self, task, task_num, total_tasks):
-        """Process Runway task with video+reference pairing strategies"""
+        """Process Runway task with optional video-reference pairing strategies"""
         folder = Path(task['folder'])
-        self.logger.info(f"📁 Task {task_num}/{total_tasks}: {folder.name}")
-
-        # Get files
-        file_types = self.api_definitions.get('file_types', {})
-        video_files = [f for f in (folder / "Source").iterdir()
-                      if f.suffix.lower() in file_types.get('video', [])]
-        reference_images = [f for f in (folder / "Reference").iterdir()
-                           if f.suffix.lower() in file_types.get('image', [])]
-
+        self.logger.info(f"Task {task_num}/{total_tasks}: {folder.name}")
+        
+        source_folder = folder / "Source"
         output_folder = folder / "Generated_Video"
         metadata_folder = folder / "Metadata"
-        pairing_strategy = task.get('pairing_strategy', 'one_to_one')
-
-        successful = 0
-
-        if pairing_strategy == 'one_to_one':
-            pairs = list(zip(video_files, reference_images))
-            total = len(pairs)
-
-            for i, (video_file, ref_file) in enumerate(pairs, 1):
-                self.logger.info(f" 🎬 {i}/{total}: {video_file.name} + {ref_file.name}")
-
-                # Create combined task config with reference image
-                combined_task = task.copy()
-                combined_task['reference_image'] = str(ref_file)
-
-                if self.process_file(video_file, combined_task, output_folder, metadata_folder):
-                    successful += 1
-
-                if i < total:
-                    rate_limit = self.api_definitions.get('rate_limit', 3)
-                    time.sleep(rate_limit)
-
-        else:  # all_combinations
-            total = len(video_files) * len(reference_images)
-            count = 0
-
-            for video_file in video_files:
-                for ref_file in reference_images:
-                    count += 1
-                    self.logger.info(f" 🎬 {count}/{total}: {video_file.name} + {ref_file.name}")
-
-                    # Create combined task config with reference image
-                    combined_task = task.copy()
-                    combined_task['reference_image'] = str(ref_file)
-
-                    if self.process_file(video_file, combined_task, output_folder, metadata_folder):
+        
+        # Get video files
+        video_files = [f for f in source_folder.iterdir() 
+                    if f.suffix.lower() in self.api_definitions['file_types']['video']]
+        
+        requires_reference = task.get('requires_reference', False)
+        
+        if requires_reference:
+            # Process with reference images
+            reference_images = task.get('reference_images', [])
+            pairing_strategy = task.get('pairing_strategy', 'one_to_one')
+            
+            if pairing_strategy == "all_combinations":
+                # Every video with every reference image
+                total_combinations = len(video_files) * len(reference_images)
+                successful = 0
+                
+                for i, (video_file, ref_image) in enumerate(
+                    [(v, r) for v in video_files for r in reference_images], 1):
+                    
+                    self.logger.info(f"{i}/{total_combinations}: {video_file.name} + {ref_image.name}")
+                    
+                    task_config = task.copy()
+                    task_config['reference_image'] = str(ref_image)
+                    
+                    if self.process_file(str(video_file), task_config, output_folder, metadata_folder):
                         successful += 1
-
-                    if count < total:
+                    
+                    if i < total_combinations:
                         rate_limit = self.api_definitions.get('rate_limit', 3)
                         time.sleep(rate_limit)
+                
+            else:  # one_to_one
+                # Pair videos with reference images by index
+                successful = 0
+                pairs = list(zip(video_files, reference_images))
+                
+                for i, (video_file, ref_image) in enumerate(pairs, 1):
+                    self.logger.info(f"{i}/{len(pairs)}: {video_file.name} + {ref_image.name}")
+                    
+                    task_config = task.copy()
+                    task_config['reference_image'] = str(ref_image)
+                    
+                    if self.process_file(str(video_file), task_config, output_folder, metadata_folder):
+                        successful += 1
+                    
+                    if i < len(pairs):
+                        rate_limit = self.api_definitions.get('rate_limit', 3)
+                        time.sleep(rate_limit)
+        
+        else:
+            # Process text-to-video without reference images
+            successful = 0
+            
+            for i, video_file in enumerate(video_files, 1):
+                self.logger.info(f"{i}/{len(video_files)}: {video_file.name} (text-to-video)")
+                
+                if self.process_file(str(video_file), task, output_folder, metadata_folder):
+                    successful += 1
+                
+                if i < len(video_files):
+                    rate_limit = self.api_definitions.get('rate_limit', 3)
+                    time.sleep(rate_limit)
+        
+        expected_total = (len(video_files) * len(task.get('reference_images', [])) 
+                        if requires_reference and task.get('pairing_strategy') == 'all_combinations'
+                        else len(video_files))
+        
+        self.logger.info(f"Task {task_num}: {successful}/{expected_total} successful")
 
-        self.logger.info(f"✓ Task {task_num}: {successful}/{total if 'total' in locals() else len(pairs)} successful")
 
     def _process_vidu_effects_task(self, task, task_num, total_tasks):
         """Process Vidu Effects task"""
