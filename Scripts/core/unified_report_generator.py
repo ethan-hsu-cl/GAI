@@ -1010,8 +1010,81 @@ class UnifiedReportGenerator:
 
     # ================ VIDU SLIDES =================
     def _create_vidu_slides(self, ppt, pairs, template_loaded):
-        for i, pair in enumerate(pairs, 1):
-            self._create_vidu_slide(ppt, pair, i, template_loaded)
+        # for i, pair in enumerate(pairs, 1):
+        #     self._create_vidu_slide(ppt, pair, i, template_loaded)
+
+                # Group pairs by effect_name (style)
+        effects_groups = {}
+        for pair in pairs:
+            effect_name = pair.effect_name
+            if effect_name not in effects_groups:
+                effects_groups[effect_name] = []
+            effects_groups[effect_name].append(pair)
+        
+        # Process each effect group with section divider
+        slide_index = 1
+        for effect_name in sorted(effects_groups.keys()):
+            effect_pairs = effects_groups[effect_name]
+            
+            # ADD SECTION DIVIDER SLIDE BEFORE EACH STYLE
+            self._create_section_divider_slide(ppt, effect_name, template_loaded)
+            
+            # Create slides for this effect
+            for pair in effect_pairs:
+                self._create_vidu_slide(ppt, pair, slide_index, template_loaded)
+                slide_index += 1
+    
+    def _create_section_divider_slide(self, ppt, style_name, template_loaded):
+        """Create a section divider slide with the style name as title"""
+        try:
+            # Try to use "Title and Content" layout (usually index 1)
+            if template_loaded and len(ppt.slide_layouts) > 1:
+                slide = ppt.slides.add_slide(ppt.slide_layouts[1])  # Title and Content layout
+            else:
+                # Fallback to blank layout
+                slide = ppt.slides.add_slide(ppt.slide_layouts[6] if len(ppt.slide_layouts) > 6 else ppt.slide_layouts[0])
+            
+            # Set title
+            title_text = style_name.title().replace('_', ' ')
+            
+            # Find title placeholder
+            title_placeholder = None
+            for placeholder in slide.placeholders:
+                if placeholder.placeholder_format.type == 1:  # Title placeholder
+                    title_placeholder = placeholder
+                    break
+            
+            if title_placeholder:
+                # Use title placeholder
+                title_placeholder.text = title_text
+                # Style the title
+                if title_placeholder.text_frame.paragraphs:
+                    para = title_placeholder.text_frame.paragraphs[0]
+                    para.font.size = Pt(44)
+                    para.font.bold = True
+                    para.alignment = PP_ALIGN.CENTER
+            else:
+                # Manual title creation if no placeholder found
+                title_box = slide.shapes.add_textbox(Cm(2), Cm(2), Cm(30), Cm(4))
+                title_box.text_frame.text = title_text
+                para = title_box.text_frame.paragraphs[0]
+                para.font.size = Pt(44)
+                para.font.bold = True
+                para.alignment = PP_ALIGN.CENTER
+                
+            logger.info(f"✅ Added section divider for style: {title_text}")
+            
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to create section divider slide for {style_name}: {e}")
+            # Create simple fallback slide
+            slide = ppt.slides.add_slide(ppt.slide_layouts[0])
+            title_box = slide.shapes.add_textbox(Cm(5), Cm(8), Cm(24), Cm(4))
+            title_box.text_frame.text = style_name.title().replace('_', ' ')
+            para = title_box.text_frame.paragraphs[0]
+            para.font.size = Pt(40)
+            para.font.bold = True
+            para.alignment = PP_ALIGN.CENTER
+
 
     def _create_vidu_slide(self, ppt, pair, idx, loaded):
         """Create single Vidu slide - EXACT from working versions"""
