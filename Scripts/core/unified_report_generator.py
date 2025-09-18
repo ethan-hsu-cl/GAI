@@ -224,6 +224,8 @@ class UnifiedReportGenerator:
         """Universal batch processing for all API types"""
         if self.api_name in ["vidu_effects", "vidu_reference"]:
             return self._process_base_folder_structure(task)
+        elif self.api_name == "genvideo":
+            return self._process_genvideo_batch(task)
         else:
             return self._process_task_folder_structure(task)
 
@@ -621,6 +623,8 @@ class UnifiedReportGenerator:
             self._create_nano_banana_slides(ppt, pairs, template_loaded, use_comparison)
         elif self.api_name in ["vidu_effects", "vidu_reference"]:
             self._create_vidu_slides(ppt, pairs, template_loaded)
+        elif self.api_name == "genvideo":
+            self._create_genvideo_slides(ppt, pairs, template_loaded, use_comparison)
         else:  # kling and others
             self._create_standard_slides(ppt, pairs, template_loaded, use_comparison)
 
@@ -645,8 +649,10 @@ class UnifiedReportGenerator:
             'nano_banana': 'Nano Banana',
             'runway': 'Runway',
             'vidu_effects': 'Vidu Effects',
-            'vidu_reference': 'Vidu Reference'
+            'vidu_reference': 'Vidu Reference',
+            'genvideo': 'GenVideo'
         }
+
         api_display = api_display_names.get(self.api_name, self.api_name.title())
 
         # Generate title using working patterns
@@ -1382,6 +1388,240 @@ class UnifiedReportGenerator:
         meta_box.text_frame.word_wrap = True
         for para in meta_box.text_frame.paragraphs:
             para.font.size = Inches(10/72)
+
+    # ================== GENVIDEO SLIDES ==================
+    def _process_genvideo_batch(self, task: Dict) -> List[MediaPair]:
+        """Process GenVideo batch - collect source images and generated images with metadata"""
+        folder = Path(task['folder'])
+        source_folder = folder / "Source"
+        generated_folder = folder / "Generated_Image"
+        metadata_folder = folder / "Metadata"
+        
+        pairs = []
+        
+        if not source_folder.exists():
+            logger.warning(f"❌ Source folder not found: {source_folder}")
+            return pairs
+            
+        if not generated_folder.exists():
+            logger.warning(f"❌ Generated folder not found: {generated_folder}")
+            return pairs
+        
+        # Get source images
+        source_images = [f for f in source_folder.iterdir() 
+                        if f.suffix.lower() in ['.jpg', '.jpeg', '.png', '.bmp', '.tiff']]
+        source_images.sort()
+        
+        logger.info(f"🔍 Found {len(source_images)} source images in {source_folder}")
+        
+        # Process each source image
+        for src_img in source_images:
+            base_name = src_img.stem
+            
+            # Find corresponding generated image
+            gen_img = generated_folder / f"{base_name}_generated.png"
+            
+            # ✅ FIXED: Try multiple metadata file patterns
+            metadata_patterns = [
+                f"{base_name}_{src_img.name}_metadata.json",  # Original pattern
+                f"{base_name}_metadata.json",                 # Simplified pattern
+                f"{src_img.stem}_metadata.json"               # Alternative pattern
+            ]
+            
+            metadata = {}
+            meta_file = None
+            
+            # Try each pattern until we find the file
+            for pattern in metadata_patterns:
+                potential_file = metadata_folder / pattern
+                if potential_file.exists():
+                    meta_file = potential_file
+                    logger.info(f"✓ Found metadata: {pattern}")
+                    break
+            
+            # Load metadata if found
+            if meta_file:
+                try:
+                    with open(meta_file, 'r', encoding='utf-8') as f:
+                        metadata = json.load(f)
+                    logger.info(f"✓ Loaded metadata for {src_img.name}: {list(metadata.keys())}")
+                except Exception as e:
+                    logger.warning(f"⚠️ Failed to load metadata {meta_file}: {e}")
+            else:
+                logger.warning(f"⚠️ No metadata file found for {src_img.name} (tried: {metadata_patterns})")
+            
+            # Create media pair
+            pair = MediaPair(
+                source_file=src_img.name,
+                source_path=src_img,
+                api_type='genvideo',
+                generated_paths=[gen_img] if gen_img.exists() else [],
+                reference_paths=[],
+                metadata=metadata,
+                failed=not gen_img.exists() or not metadata.get('success', False)
+            )
+            pairs.append(pair)
+            
+            if pair.failed:
+                logger.warning(f"⚠️ Failed pair: {src_img.name}")
+            else:
+                logger.info(f"✓ Valid pair: {src_img.name} → {gen_img.name}")
+        
+        logger.info(f"✅ Created {len(pairs)} GenVideo media pairs")
+        return pairs
+
+
+    def _create_genvideo_slides(self, ppt, pairs, template_loaded, use_comparison):
+        """Create GenVideo slides with before/after image comparisons"""
+        for i, pair in enumerate(pairs, 1):
+            self._create_genvideo_slide(ppt, pair, i, template_loaded, use_comparison)
+
+    def _create_genvideo_slide(self, ppt, pair, index, template_loaded, use_comparison):
+        """Create single GenVideo slide with source and generated images"""
+        if template_loaded and len(ppt.slides) >= 4:
+            # Use template with placeholders
+            slide = ppt.slides.add_slide(ppt.slides[3].slide_layout)
+            
+            # Update title
+            for p in slide.placeholders:
+                if p.placeholder_format.type == 1:
+                    title = f"GenVideo {index}: {pair.source_file}"
+                    if pair.failed:
+                        title += " ❌ FAILED"
+                    p.text = title
+                    if pair.failed and p.text_frame.paragraphs:
+                        p.text_frame.paragraphs[0].font.color.rgb = RGBColor(255, 0, 0)
+                    break
+            
+            # Handle content placeholders
+            phs = sorted([p for p in slide.placeholders if p.placeholder_format.type in {6,7,8,13,18,19}], 
+                        key=lambda x: getattr(x,'left',0))
+            
+            if len(phs) >= 2:
+                # Source image in first placeholder
+                self._add_media_genvideo(slide, phs[0], str(pair.source_path))
+                
+                # Generated image in second placeholder
+                if pair.primary_generated and pair.primary_generated.exists():
+                    self._add_media_genvideo(slide, phs[1], str(pair.primary_generated))
+                else:
+                    error_msg = pair.metadata.get('error', 'Generation failed') if pair.metadata else 'No image generated'
+                    self._add_error_genvideo(slide, phs[1], error_msg)
+        
+        else:
+            # Manual slide creation
+            slide = ppt.slides.add_slide(ppt.slide_layouts[6])
+            
+            # Title
+            title = f"GenVideo {index}: {pair.source_file}"
+            if pair.failed:
+                title += " ❌ FAILED"
+                title_box = slide.shapes.add_textbox(Cm(2), Cm(1), Cm(28), Cm(2))
+                title_box.text_frame.text = title
+                title_box.text_frame.paragraphs[0].font.size = Inches(18/72)
+                title_box.text_frame.paragraphs[0].font.color.rgb = RGBColor(255, 0, 0)
+            
+            # Manual positioning - source and generated side by side
+            positions = [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)]
+            
+            # Source image (left)
+            if pair.source_path.exists():
+                x, y, w, h = self.calc_pos(pair.source_path, *positions[0])
+                slide.shapes.add_picture(str(pair.source_path), x, y, w, h)
+                
+                # Add "Original" label
+                label_box = slide.shapes.add_textbox(Cm(positions[0][0]), Cm(positions[0][1] - 0.5), Cm(positions[0][2]), Cm(0.8))
+                label_box.text_frame.text = "Original Image"
+                label_box.text_frame.paragraphs[0].font.size = Inches(12/72)
+                label_box.text_frame.paragraphs[0].font.bold = True
+                label_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+            
+            # Generated image (right)
+            if pair.primary_generated and pair.primary_generated.exists():
+                x, y, w, h = self.calc_pos(pair.primary_generated, *positions[1])
+                slide.shapes.add_picture(str(pair.primary_generated), x, y, w, h)
+                
+                # Add "Generated" label
+                label_box = slide.shapes.add_textbox(Cm(positions[1][0]), Cm(positions[1][1] - 0.5), Cm(positions[1][2]), Cm(0.8))
+                label_box.text_frame.text = "Generated Image"
+                label_box.text_frame.paragraphs[0].font.size = Inches(12/72)
+                label_box.text_frame.paragraphs[0].font.bold = True
+                label_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+            else:
+                # Error box for failed generation
+                error_msg = pair.metadata.get('error', 'Generation failed') if pair.metadata else 'No image generated'
+                self._add_error_box(slide, Cm(positions[1][0]), Cm(positions[1][1]), 
+                                Cm(positions[1][2]), Cm(positions[1][3]), error_msg)
+        
+        # Add metadata
+        self._add_genvideo_metadata(slide, pair)
+
+    def _add_media_genvideo(self, slide, placeholder, media_path):
+        """Add media to GenVideo slide with proper aspect ratio"""
+        p_left, p_top, p_width, p_height = placeholder.left, placeholder.top, placeholder.width, placeholder.height
+        placeholder._element.getparent().remove(placeholder._element)
+        
+        try:
+            # Calculate proper aspect ratio
+            with Image.open(media_path) as img:
+                ar = img.width / img.height
+            
+            if ar > p_width / p_height:
+                scaled_w, scaled_h = p_width, p_width / ar
+            else:
+                scaled_h, scaled_w = p_height, p_height * ar
+            
+            final_left = p_left + (p_width - scaled_w) / 2
+            final_top = p_top + (p_height - scaled_h) / 2
+            
+            slide.shapes.add_picture(str(media_path), final_left, final_top, scaled_w, scaled_h)
+        except Exception as e:
+            logger.warning(f"Failed to add media with aspect ratio: {e}")
+            slide.shapes.add_picture(str(media_path), p_left + p_width*0.1, p_top + p_height*0.1, 
+                                    p_width*0.8, p_height*0.8)
+
+    def _add_error_genvideo(self, slide, placeholder, error_msg):
+        """Add error to GenVideo slide"""
+        p_left, p_top, p_width, p_height = placeholder.left, placeholder.top, placeholder.width, placeholder.height
+        placeholder._element.getparent().remove(placeholder._element)
+        
+        error_box = slide.shapes.add_textbox(p_left, p_top, p_width, p_height)
+        error_box.text_frame.text = f"❌ GENERATION FAILED\n\n{error_msg}"
+        
+        for p in error_box.text_frame.paragraphs:
+            p.font.size, p.alignment, p.font.color.rgb = Inches(16/72), PP_ALIGN.CENTER, RGBColor(255, 0, 0)
+        
+        error_box.fill.solid()
+        error_box.fill.fore_color.rgb = RGBColor(255, 240, 240)
+        error_box.line.color.rgb = RGBColor(255, 0, 0)
+        error_box.line.width = Inches(0.02)
+
+    def _add_genvideo_metadata(self, slide, pair):
+        """Add GenVideo metadata information"""
+        meta_lines = []
+        if pair.metadata:
+            model = pair.metadata.get('model', 'N/A')
+            quality = pair.metadata.get('quality', 'N/A')
+            proc_time = pair.metadata.get('processing_time_seconds', 'N/A')
+            success = '✓' if pair.metadata.get('success', False) else '❌'
+            prompt = pair.metadata.get('img_prompt', 'N/A')
+            
+            meta_lines = [
+                f"File: {pair.source_file}",
+                f"Model: {model} | Quality: {quality}",
+                f"Processing Time: {proc_time}s",
+                f"Status: {success}",
+                f"Prompt: {prompt[:60]}..." if len(str(prompt)) > 60 else f"Prompt: {prompt}"
+            ]
+        else:
+            meta_lines = [f"File: {pair.source_file}", "No metadata available"]
+        
+        meta_box = slide.shapes.add_textbox(Cm(2), Cm(16), Cm(28), Cm(3))
+        meta_box.text_frame.text = "\n".join(meta_lines)
+        meta_box.text_frame.word_wrap = True
+        for para in meta_box.text_frame.paragraphs:
+            para.font.size = Inches(10/72)
+
             
     # ================== ERROR HANDLING ==================
 
@@ -1502,8 +1742,13 @@ class UnifiedReportGenerator:
         finally:
             self._cleanup_temp_frames()
 
-def create_report_generator(api_name: str, config_file: str = None):
+def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""
+    supported_apis = ['kling', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo']  # ← ADD 'genvideo'
+    
+    if api_name not in supported_apis:
+        raise ValueError(f"Unsupported API: {api_name}. Supported: {supported_apis}")
+    
     return UnifiedReportGenerator(api_name, config_file)
 
 def main():

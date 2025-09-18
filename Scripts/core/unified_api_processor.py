@@ -118,6 +118,23 @@ class UnifiedAPIProcessor:
                 "special_handling": "multi_image_reference",
                 "output_filename": "{base_name}_{effect_clean}.mp4",
                 "max_references": 6, "aspect_ratios": ["9:16", "16:9", "1:1"]
+            },
+            "genvideo": {
+                "endpoint": "http://192.168.4.3:8000/genvideo/",
+                "api_name": "/submit_img2img",
+                "file_types": [".jpg", ".jpeg", ".png", ".bmp", ".tiff"],
+                "validation": {"max_size_mb": 50, "min_dimension": 128},
+                "folders": {"input": "Source", "output": "Generated_Image", "metadata": "Metadata"},
+                "rate_limit": 3, "task_delay": 10, "max_retries": 3,
+                "config_structure": "task_folders",
+                "output_filename": "{base_name}_generated.png",
+                "api_params": {
+                    "model": "gpt-image-1",
+                    "img_prompt": "Generate a portrait-oriented image of a realistic, clear plastic gashapon capsule being held between two fingers as depicted in the provided image. Inside the capsule is a Chibi-style, full-figure miniature version of the person in the uploaded photo. The focus should be on the hand holding the capsule and the clear plastic material.",
+                    "quality": "low"
+                },
+                "model_options": ["gpt-image-1", "gemini-2.5-flash-image-preview"],
+                "quality_options": ["low", "medium", "high"]
             }
         }
         self.api_definitions = defaults.get(self.api_name, {})
@@ -271,6 +288,8 @@ class UnifiedAPIProcessor:
             return self._validate_vidu_effects_structure()
         elif self.api_name == "vidu_reference":
             return self._validate_vidu_reference_structure()
+        elif self.api_name == "genvideo":
+            return self._validate_genvideo_structure()
         else:
             raise ValueError(f"Validation failed for unknown API: {self.api_name}")
 
@@ -805,6 +824,9 @@ class UnifiedAPIProcessor:
                     result = self._process_vidu_effects(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
                 elif self.api_name == "vidu_reference":
                     result = self._process_vidu_reference(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
+                elif self.api_name == "genvideo":
+                    result = self._process_genvideo(file_path, task_config, output_folder, metadata_folder, attempt, max_retries)
+
 
                 if not result and attempt < max_retries - 1:
                     continue  # Retry
@@ -1422,6 +1444,9 @@ class UnifiedAPIProcessor:
             self._process_vidu_effects_task(task, task_num, total_tasks)
         elif self.api_name == "vidu_reference":
             self._process_vidu_reference_task(task, task_num, total_tasks)
+        elif self.api_name == "genvideo":
+            self._process_genvideo_task(task, task_num, total_tasks)
+
 
     def _process_kling_task(self, task, task_num, total_tasks):
         """Process Kling task with task folder structure (matching working processor)"""
@@ -1609,6 +1634,186 @@ class UnifiedAPIProcessor:
 
         self.logger.info(f"✓ Task {task_num}: {successful}/{total_sets} successful")
 
+
+    def _validate_genvideo_structure(self):
+        """Validate genvideo folder structure and images"""
+        valid_tasks = []
+        invalid_images = []
+
+        for i, task in enumerate(self.config.get('tasks', []), 1):
+            folder = Path(task['folder'])
+            source_folder = folder / "Source"
+
+            if not source_folder.exists():
+                self.logger.warning(f"❌ Missing source: {source_folder}")
+                continue
+
+            # Get all image files
+            image_files = [f for f in source_folder.iterdir()
+                          if f.suffix.lower() in self.api_definitions['file_types']]
+
+            if not image_files:
+                self.logger.warning(f"❌ Empty source: {source_folder}")
+                continue
+
+            # Validate images
+            valid_count = 0
+            for img_file in image_files:
+                is_valid, reason = self.validate_file(img_file)
+                if not is_valid:
+                    invalid_images.append({
+                        'path': str(img_file), 'folder': str(folder),
+                        'name': img_file.name, 'reason': reason
+                    })
+                else:
+                    valid_count += 1
+
+            if valid_count > 0:
+                # Create output directories
+                (folder / "Generated_Image").mkdir(exist_ok=True)
+                (folder / "Metadata").mkdir(exist_ok=True)
+                valid_tasks.append(task)
+                self.logger.info(f"✓ Task {i}: {valid_count}/{len(image_files)} valid images")
+
+        if invalid_images:
+            self._write_invalid_report(invalid_images, "genvideo")
+            raise Exception(f"{len(invalid_images)} invalid images found")
+
+        return valid_tasks
+
+    def _process_genvideo(self, image_path, task_config, output_folder, metadata_folder, attempt, max_retries):
+        """Process GenVideo API call for image-to-image generation"""
+        base_name = Path(image_path).stem
+        image_name = Path(image_path).name
+        start_time = time.time()
+
+        try:
+            # Get parameters from task config with fallbacks to API defaults
+            model = task_config.get('model', self.api_definitions['api_params']['model'])
+            img_prompt = task_config.get('img_prompt', self.api_definitions['api_params']['img_prompt'])
+            quality = task_config.get('quality', self.api_definitions['api_params']['quality'])
+
+            self.logger.info(f"   Model: {model}, Quality: {quality}")
+
+            # Make API call
+            result = self.client.predict(
+                model=model,
+                img_prompt=img_prompt,
+                input_image=handle_file(str(image_path)),
+                quality=quality,
+                api_name="/submit_img2img"
+            )
+
+            # Validate result
+            if not result:
+                raise ValueError("No result returned from API")
+
+            self.logger.info(f"   API result type: {type(result)}, value: {result}")
+
+            # Handle both dict and string results
+            source_path = None
+            output_filename = f"{base_name}_generated.png"
+            output_path = Path(output_folder) / output_filename
+
+            if isinstance(result, str):
+                # API returned direct file path (actual behavior)
+                source_path = Path(result)
+                self.logger.info(f"   Got string result: {result}")
+                
+            elif isinstance(result, dict):
+                # API returned dict with path/url (documented behavior)
+                if 'path' in result and result['path']:
+                    source_path = Path(result['path'])
+                    self.logger.info(f"   Got dict result with path: {result['path']}")
+                elif 'url' in result and result['url']:
+                    # Handle URL case
+                    self.logger.info(f"   Got dict result with URL: {result['url']}")
+                    image_saved = self._download_file(result['url'], output_path)
+                    source_path = None  # Already handled by download
+                else:
+                    raise ValueError(f"Dict result missing path/url: {result}")
+            else:
+                raise ValueError(f"Unexpected result type {type(result)}: {result}")
+
+            # Copy file if we have a source path
+            if source_path:
+                if not source_path.exists():
+                    raise ValueError(f"Generated image path does not exist: {source_path}")
+                
+                shutil.copy2(source_path, output_path)
+                image_saved = True
+                self.logger.info(f"   ✅ Copied from: {source_path}")
+
+            processing_time = time.time() - start_time
+
+            if image_saved:
+                # Save success metadata
+                metadata = {
+                    "source_image": image_name,
+                    "model": model,
+                    "img_prompt": img_prompt,
+                    "quality": quality,
+                    "generated_image": output_filename,
+                    "processing_time_seconds": round(processing_time, 1),
+                    "processing_timestamp": datetime.now().isoformat(),
+                    "attempts": attempt + 1,
+                    "success": True,
+                    "api_name": self.api_name,
+                    "api_result": str(result)
+                }
+                self._save_metadata(Path(metadata_folder), base_name, image_name, metadata, task_config)
+                self.logger.info(f"   ✅ Generated: {output_filename}")
+                return True
+            else:
+                raise IOError("Image generation succeeded but file save failed")
+
+        except Exception as e:
+            # Save failure metadata
+            processing_time = time.time() - start_time
+            metadata = {
+                "source_image": image_name,
+                "model": task_config.get('model', ''),
+                "img_prompt": task_config.get('img_prompt', ''),
+                "quality": task_config.get('quality', ''),
+                "error": str(e),
+                "processing_time_seconds": round(processing_time, 1),
+                "processing_timestamp": datetime.now().isoformat(),
+                "attempts": attempt + 1,
+                "success": False,
+                "api_name": self.api_name
+            }
+            self._save_metadata(Path(metadata_folder), base_name, image_name, metadata, task_config)
+            self.logger.error(f"   ❌ Processing failed: {str(e)}")
+            raise e
+
+
+    def _process_genvideo_task(self, task, task_num, total_tasks):
+        """Process GenVideo task with folder structure"""
+        folder = Path(task['folder'])
+        source_folder = folder / "Source"
+        output_folder = folder / "Generated_Image"
+        metadata_folder = folder / "Metadata"
+
+        self.logger.info(f"📁 Task {task_num}/{total_tasks}: {folder.name}")
+
+        # Get valid images (pre-validated)
+        image_files = [f for f in source_folder.iterdir()
+                      if f.suffix.lower() in self.api_definitions['file_types']]
+
+        # Process images sequentially
+        successful = 0
+        for i, img_file in enumerate(image_files, 1):
+            self.logger.info(f"   🖼️ {i}/{len(image_files)}: {img_file.name}")
+            if self.process_file(img_file, task, output_folder, metadata_folder):
+                successful += 1
+
+            if i < len(image_files):
+                rate_limit = self.api_definitions.get('rate_limit', 3)
+                time.sleep(rate_limit)
+
+        self.logger.info(f"✓ Task {task_num}: {successful}/{len(image_files)} successful")
+
+
     def _download_file(self, url, path):
         """Standard file download method"""
         try:
@@ -1669,7 +1874,7 @@ if __name__ == "__main__":
     # Enhanced command line support
     if len(sys.argv) < 2:
         print("Usage: python unified_api_processor.py [api_name] [config_file]")
-        print("Supported APIs: kling, nano_banana, vidu_effects, vidu_reference, runway")
+        print("Supported APIs: kling, nano_banana, vidu_effects, vidu_reference, runway, genvideo")
         sys.exit(1)
 
     api_name = sys.argv[1]

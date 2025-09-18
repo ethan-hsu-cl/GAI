@@ -15,16 +15,18 @@ API_MAPPING = {
     'vidu': 'vidu_effects', 
     'viduref': 'vidu_reference',
     'nano': 'nano_banana',
-    'runway': 'runway'
+    'runway': 'runway',
+    'genvideo': 'genvideo'  
 }
 
 # Config file mapping
 CONFIG_MAPPING = {
     'kling': 'config/batch_config.json',
     'vidu_effects': 'config/batch_vidu_config.json',
-    'vidu_reference': 'config/batch_vidu_reference_config.json',
+    'vidu_reference': 'config/batch_vidu_reference_config.json', 
     'nano_banana': 'config/batch_nano_banana_config.json',
-    'runway': 'config/batch_runway_config.json'
+    'runway': 'config/batch_runway_config.json',
+    'genvideo': 'config/batch_genvideo_config.json'
 }
 
 def show_usage():
@@ -37,6 +39,7 @@ def show_usage():
     print("  viduref   - Vidu Reference processing")
     print("  nano      - Google Flash/Nano Banana processing")
     print("  runway    - Runway face swap processing")
+    print("  genvideo - GenVideo image generation processing")
     print("  all       - Run all platforms")
     print()
     print("ACTIONS:")
@@ -56,6 +59,7 @@ def show_usage():
     print("  python runall.py viduref auto --verbose")
     print("  python runall.py all auto --parallel")
     print("  python runall.py runway process --config custom_runway_config.json")
+    print("  python runall.py genvideo process")
 
 def parse_arguments():
     """Parse command line arguments"""

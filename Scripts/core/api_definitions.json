@@ -279,5 +279,60 @@
             "848:480",
             "640:480"
         ]
+    },
+    "genvideo": {
+        "endpoint": "http://192.168.4.3:8000/genvideo/",
+        "api_name": "/submit_img2img",
+        "file_types": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".bmp",
+            ".tiff"
+        ],
+        "validation": {
+            "max_size_mb": 50,
+            "min_dimension": 128
+        },
+        "folders": {
+            "input": "Source",
+            "output": "Generated_Image",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 3,
+        "task_delay": 10,
+        "max_retries": 3,
+        "config_structure": "task_folders",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "comparison_template_path": "templates/I2V Comparison Template.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": true
+        },
+        "task_fields": [
+            "folder",
+            "img_prompt",
+            "model",
+            "quality",
+            "design_link",
+            "source_video_link",
+            "reference_folder",
+            "use_comparison_template"
+        ],
+        "api_params": {
+            "model": "gpt-image-1",
+            "img_prompt": "Generate a portrait-oriented image of a realistic, clear plastic gashapon capsule being held between two fingers as depicted in the provided image. Inside the capsule is a Chibi-style, full-figure miniature version of the person in the uploaded photo. The focus should be on the hand holding the capsule and the clear plastic material.",
+            "quality": "low"
+        },
+        "model_options": [
+            "gpt-image-1",
+            "gemini-2.5-flash-image-preview"
+        ],
+        "quality_options": [
+            "low",
+            "medium",
+            "high"
+        ]
     }
 }
