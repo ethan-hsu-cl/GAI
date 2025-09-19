@@ -301,7 +301,7 @@
         },
         "rate_limit": 3,
         "task_delay": 10,
-        "max_retries": 3,
+        "max_retries": 2,
         "config_structure": "task_folders",
         "report": {
             "enabled": true,

@@ -424,25 +424,24 @@ class UnifiedReportGenerator:
         return pairs
 
     def _process_base_folder_structure(self, task: Dict) -> List[MediaPair]:
-        """FIXED: Process base folder structure for vidu APIs - EXACT from working versions"""
+        """FIXED: Process base folder structure for vidu APIs - proper metadata loading"""
         base_folder = Path(self.config.get('base_folder', ''))
         if not base_folder.exists():
             logger.warning(f"❌ Base folder not found: {base_folder}")
             return []
 
         logger.info(f"🔍 Processing Vidu base folder: {base_folder}")
-
         pairs = []
 
         if self.api_name == "vidu_effects":
-            # EXACT from vidu_auto_report.py
+            # FIXED: Process Vidu Effects with proper metadata loading
             for task_config in self.config.get('tasks', []):
                 effect, category = task_config.get('effect', ''), task_config.get('category', 'Unknown')
                 if not effect:
                     continue
 
                 folders = {k: base_folder / effect / v for k, v in
-                          {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
+                        {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
 
                 if not folders['src'].exists():
                     logger.warning(f"⚠️ Source folder not found for effect: {effect}")
@@ -450,9 +449,9 @@ class UnifiedReportGenerator:
 
                 logger.info(f"Processing Vidu effect: {effect}")
 
-                # Get normalized file mappings - EXACT from vidu_auto_report.py
+                # Get normalized file mappings
                 images = {self.normalize_key(f.stem): f for f in folders['src'].iterdir()
-                         if f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.webp'}}
+                        if f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.webp'}}
 
                 videos = {}
                 if folders['vid'].exists():
@@ -461,21 +460,33 @@ class UnifiedReportGenerator:
                             key = self.extract_video_key(f.name, effect)
                             videos[key] = f
 
-                logger.info(f"📊 Images: {len(images)}, Videos: {len(videos)}")
+                # FIXED: Load metadata files properly like working APIs
+                metadata_files = {}
+                if folders['meta'].exists():
+                    for f in folders['meta'].iterdir():
+                        if f.suffix.lower() == '.json':
+                            # Match metadata to source files by removing '_metadata' suffix
+                            key = f.stem.replace('_metadata', '')
+                            metadata_files[self.normalize_key(key)] = f
 
-                # Create pairs - EXACT from vidu_auto_report.py
+                logger.info(f"📊 Images: {len(images)}, Videos: {len(videos)}, Metadata: {len(metadata_files)}")
+
+                # Create pairs with proper metadata loading
                 for key, img in images.items():
-                    meta_file = folders['meta'] / f"{img.stem}_metadata.json"
                     metadata = {}
-                    if meta_file.exists():
+                    meta_file = metadata_files.get(key)
+                    if meta_file and meta_file.exists():
                         try:
-                            with open(meta_file, 'r') as f:
+                            with open(meta_file, 'r', encoding='utf-8') as f:
                                 metadata = json.load(f)
-                        except:
+                            logger.info(f"✓ Loaded metadata for {key}")
+                        except Exception as e:
+                            logger.warning(f"⚠️ Failed to load metadata for {key}: {e}")
                             pass
+                    else:
+                        logger.warning(f"⚠️ No metadata file found for {key}")
 
                     vid = videos.get(key)
-
                     pair = MediaPair(
                         source_file=img.name,
                         source_path=img,
@@ -484,18 +495,18 @@ class UnifiedReportGenerator:
                         reference_paths=[],
                         effect_name=effect,
                         category=category,
-                        metadata=metadata,
+                        metadata=metadata,  # Now properly loaded
                         failed=not vid or not metadata.get('success', False)
                     )
                     pairs.append(pair)
 
         elif self.api_name == "vidu_reference":
-            # EXACT from vidu_reference_auto_report.py
+            # FIXED: Process Vidu Reference with proper metadata loading
             try:
                 # Try to discover folders automatically
                 effect_names = sorted(f.name for f in base_folder.iterdir()
-                                     if f.is_dir() and not f.name.startswith(('.', '_'))
-                                     and (f / 'Source').exists())
+                                    if f.is_dir() and not f.name.startswith(('.', '_'))
+                                    and (f / 'Source').exists())
                 logger.info(f"🔍 Discovered {len(effect_names)} effect folders")
             except:
                 # Fall back to configured tasks
@@ -507,7 +518,7 @@ class UnifiedReportGenerator:
                     continue
 
                 folders = {k: base_folder / effect / v for k, v in
-                          {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
+                        {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
 
                 if not folders['src'].exists():
                     logger.warning(f"⚠️ Source folder not found for effect: {effect}")
@@ -515,9 +526,9 @@ class UnifiedReportGenerator:
 
                 logger.info(f"Processing Vidu Reference: {effect}")
 
-                # Get images and videos - EXACT from vidu_reference_auto_report.py
+                # Get images and videos
                 images = {self.normalize_key(f.stem): f for f in folders['src'].iterdir()
-                         if f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.webp'}}
+                        if f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.webp'}}
 
                 videos = {}
                 if folders['vid'].exists():
@@ -525,21 +536,33 @@ class UnifiedReportGenerator:
                         if f.suffix.lower() in {'.mp4', '.mov', '.avi'}:
                             videos[self.extract_key_reference(f.name, effect)] = f
 
-                logger.info(f"📊 Images: {len(images)}, Videos: {len(videos)}")
+                # FIXED: Load metadata files properly like working APIs
+                metadata_files = {}
+                if folders['meta'].exists():
+                    for f in folders['meta'].iterdir():
+                        if f.suffix.lower() == '.json':
+                            # Match metadata to source files by removing '_metadata' suffix
+                            key = f.stem.replace('_metadata', '')
+                            metadata_files[self.normalize_key(key)] = f
 
-                # Create pairs - EXACT from vidu_reference_auto_report.py
+                logger.info(f"📊 Images: {len(images)}, Videos: {len(videos)}, Metadata: {len(metadata_files)}")
+
+                # Create pairs with proper metadata loading
                 for key, img in images.items():
-                    meta_file = folders['meta'] / f"{img.stem}_metadata.json"
                     metadata = {}
-                    if meta_file.exists():
+                    meta_file = metadata_files.get(key)
+                    if meta_file and meta_file.exists():
                         try:
                             with open(meta_file, 'r', encoding='utf-8') as f:
                                 metadata = json.load(f)
-                        except:
+                            logger.info(f"✓ Loaded metadata for {key}")
+                        except Exception as e:
+                            logger.warning(f"⚠️ Failed to load metadata for {key}: {e}")
                             pass
+                    else:
+                        logger.warning(f"⚠️ No metadata file found for {key}")
 
                     vid = videos.get(key)
-
                     pair = MediaPair(
                         source_file=img.name,
                         source_path=img,
@@ -548,7 +571,7 @@ class UnifiedReportGenerator:
                         reference_paths=[],
                         effect_name=effect,
                         category="Reference",
-                        metadata=metadata,
+                        metadata=metadata,  # Now properly loaded
                         failed=not vid or not metadata.get('success', False)
                     )
                     pairs.append(pair)
@@ -1016,17 +1039,15 @@ class UnifiedReportGenerator:
 
     # ================ VIDU SLIDES =================
     def _create_vidu_slides(self, ppt, pairs, template_loaded):
-        # for i, pair in enumerate(pairs, 1):
-        #     self._create_vidu_slide(ppt, pair, i, template_loaded)
-
-                # Group pairs by effect_name (style)
+        """FIXED: Create Vidu slides with proper metadata display"""
+        # Group pairs by effect_name (style)
         effects_groups = {}
         for pair in pairs:
             effect_name = pair.effect_name
             if effect_name not in effects_groups:
                 effects_groups[effect_name] = []
             effects_groups[effect_name].append(pair)
-        
+
         # Process each effect group with section divider
         slide_index = 1
         for effect_name in sorted(effects_groups.keys()):
@@ -1035,209 +1056,193 @@ class UnifiedReportGenerator:
             # ADD SECTION DIVIDER SLIDE BEFORE EACH STYLE
             self._create_section_divider_slide(ppt, effect_name, template_loaded)
             
-            # Create slides for this effect
+            # Create individual slides for each pair
             for pair in effect_pairs:
                 self._create_vidu_slide(ppt, pair, slide_index, template_loaded)
                 slide_index += 1
-    
-    def _create_section_divider_slide(self, ppt, style_name, template_loaded):
-        """Create a section divider slide with the style name as title"""
-        try:
-            # Try to use "Title and Content" layout (usually index 1)
-            if template_loaded and len(ppt.slide_layouts) > 1:
-                slide = ppt.slides.add_slide(ppt.slide_layouts[1])  # Title and Content layout
-            else:
-                # Fallback to blank layout
-                slide = ppt.slides.add_slide(ppt.slide_layouts[6] if len(ppt.slide_layouts) > 6 else ppt.slide_layouts[0])
-            
-            # Set title
-            title_text = style_name.title().replace('_', ' ')
-            
-            # Find title placeholder
-            title_placeholder = None
-            for placeholder in slide.placeholders:
-                if placeholder.placeholder_format.type == 1:  # Title placeholder
-                    title_placeholder = placeholder
-                    break
-            
-            if title_placeholder:
-                # Use title placeholder
-                title_placeholder.text = title_text
-                # Style the title
-                if title_placeholder.text_frame.paragraphs:
-                    para = title_placeholder.text_frame.paragraphs[0]
-                    para.font.size = Pt(44)
-                    para.font.bold = True
-                    para.alignment = PP_ALIGN.CENTER
-            else:
-                # Manual title creation if no placeholder found
-                title_box = slide.shapes.add_textbox(Cm(2), Cm(2), Cm(30), Cm(4))
-                title_box.text_frame.text = title_text
-                para = title_box.text_frame.paragraphs[0]
-                para.font.size = Pt(44)
-                para.font.bold = True
-                para.alignment = PP_ALIGN.CENTER
-                
-            logger.info(f"✅ Added section divider for style: {title_text}")
-            
-        except Exception as e:
-            logger.warning(f"⚠️ Failed to create section divider slide for {style_name}: {e}")
-            # Create simple fallback slide
-            slide = ppt.slides.add_slide(ppt.slide_layouts[0])
-            title_box = slide.shapes.add_textbox(Cm(5), Cm(8), Cm(24), Cm(4))
-            title_box.text_frame.text = style_name.title().replace('_', ' ')
-            para = title_box.text_frame.paragraphs[0]
-            para.font.size = Pt(40)
-            para.font.bold = True
-            para.alignment = PP_ALIGN.CENTER
 
-
-    def _create_vidu_slide(self, ppt, pair, idx, loaded):
-        """Create single Vidu slide - EXACT from working versions"""
-        # Try template first
+    def _create_vidu_slide(self, ppt, pair, num, loaded):
+        """FIXED: Create single Vidu slide with metadata and proper aspect ratios"""
         if loaded and len(ppt.slides) >= 4:
             slide = ppt.slides.add_slide(ppt.slides[3].slide_layout)
-
-            # Update title
+            
+            # Set title with failure status
             for p in slide.placeholders:
                 if p.placeholder_format.type == 1:
-                    if self.api_name == "vidu_effects":
-                        title = f"Effect {idx}: {pair.effect_name} - {pair.source_file}"
-                    else:  # vidu_reference
-                        ref_count = pair.metadata.get('reference_count', 0) if pair.metadata else 0
-                        title = f"{pair.effect_name} #{idx}: {pair.source_file} (+{ref_count} refs)"
-
+                    title = f"Generation {num}: {pair.source_file}"
                     if pair.failed:
                         title += " ❌ FAILED"
                     p.text = title
                     if pair.failed and p.text_frame.paragraphs:
                         p.text_frame.paragraphs[0].font.color.rgb = RGBColor(255, 0, 0)
                     break
-
-            # Handle content placeholders
-            content_placeholders = [p for p in slide.placeholders if p.placeholder_format.type in {6, 7, 8, 13, 18, 19}]
-            content_placeholders.sort(key=lambda x: x.left if hasattr(x, 'left') else 0)
-
-            if len(content_placeholders) >= 2:
-                self._add_media_vidu(slide, content_placeholders[0], str(pair.source_path), False)
+            
+            # Get placeholders for media
+            phs = sorted([p for p in slide.placeholders if p.placeholder_format.type in {6, 7, 8, 13, 18, 19}], 
+                        key=lambda x: getattr(x, 'left', 0))
+            
+            if len(phs) >= 2:
+                # Add source image with proper aspect ratio
+                self._add_media_vidu(slide, phs[0], str(pair.source_path), is_video=False)
+                
+                # Add generated video or error with proper aspect ratio
                 if pair.primary_generated and pair.primary_generated.exists():
-                    self._add_media_vidu(slide, content_placeholders[1], str(pair.primary_generated), True)
+                    self._add_media_vidu(slide, phs[1], str(pair.primary_generated), is_video=True)
                 else:
-                    error_msg = pair.metadata.get('error_message', 'Effect failed') if pair.metadata else 'No processing'
-                    self._add_error_vidu(slide, content_placeholders[1], error_msg)
+                    error_msg = pair.metadata.get('error', 'Generation failed') if pair.metadata else 'Generation failed'
+                    self._add_error_box_vidu(slide, phs[1], error_msg)
         else:
-            # Manual slide creation
+            # Manual slide creation when no template - USE ORIGINAL CALC_POS METHOD
             slide = ppt.slides.add_slide(ppt.slide_layouts[6])
-
-            # Title
-            if self.api_name == "vidu_effects":
-                title = f"Effect {idx}: {pair.effect_name} - {pair.source_file}"
-            else:  # vidu_reference
-                ref_count = pair.metadata.get('reference_count', 0) if pair.metadata else 0
-                title = f"{pair.effect_name} #{idx}: {pair.source_file} (+{ref_count} refs)"
-
+            
+            # Add title
+            title = f"Generation {num}: {pair.source_file}"
             if pair.failed:
                 title += " ❌ FAILED"
-
-            title_box = slide.shapes.add_textbox(Cm(1), Cm(0.5), Cm(30), Cm(2))
-            title_box.text_frame.text = title
-            title_box.text_frame.paragraphs[0].font.size = Inches(18/72)
+            
+            tb = slide.shapes.add_textbox(Cm(2), Cm(1), Cm(20), Cm(2))
+            tb.text_frame.text = title
+            tb.text_frame.paragraphs[0].font.size = Inches(20/72)
             if pair.failed:
-                title_box.text_frame.paragraphs[0].font.color.rgb = RGBColor(255, 0, 0)
-
-            # Manual positioning with aspect ratio
-            positions = {'img': (2.59, 3.26, 12.5, 12.5), 'vid': (18.78, 3.26, 12.5, 12.5)}
-
-            img_x, img_y, img_w, img_h = self.calc_pos(pair.source_path, *positions['img'])
-            slide.shapes.add_picture(str(pair.source_path), img_x, img_y, img_w, img_h)
-
+                tb.text_frame.paragraphs[0].font.color.rgb = RGBColor(255, 0, 0)
+            
+            # Add media manually with ORIGINAL calc_pos method
+            pos = [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)]
+            
+            # Source image - USING ORIGINAL CALC_POS
+            slide.shapes.add_picture(str(pair.source_path), *self.calc_pos(pair.source_path, *pos[0]))
+            
+            # Generated video or error - USING ORIGINAL CALC_POS
             if pair.primary_generated and pair.primary_generated.exists():
-                vid_x, vid_y, vid_w, vid_h = self.calc_pos(pair.primary_generated, *positions['vid'])
                 try:
                     first_frame = self.extract_first_frame(pair.primary_generated)
                     if first_frame and Path(first_frame).exists():
-                        slide.shapes.add_movie(str(pair.primary_generated), vid_x, vid_y, vid_w, vid_h, poster_frame_image=first_frame)
+                        slide.shapes.add_movie(str(pair.primary_generated), 
+                                            *self.calc_pos(pair.primary_generated, *pos[1]), 
+                                            poster_frame_image=first_frame)
                     else:
-                        slide.shapes.add_movie(str(pair.primary_generated), vid_x, vid_y, vid_w, vid_h)
+                        slide.shapes.add_movie(str(pair.primary_generated), 
+                                            *self.calc_pos(pair.primary_generated, *pos[1]))
                 except:
-                    slide.shapes.add_movie(str(pair.primary_generated), vid_x, vid_y, vid_w, vid_h)
+                    slide.shapes.add_movie(str(pair.primary_generated), 
+                                        *self.calc_pos(pair.primary_generated, *pos[1]))
             else:
-                pos = positions['vid']
-                error_box = slide.shapes.add_textbox(Cm(pos[0]), Cm(pos[1]), Cm(pos[2]), Cm(pos[3]))
-                error_msg = pair.metadata.get('error_message', 'Effect failed') if pair.metadata else 'No processing'
-                error_box.text_frame.text = f"❌ {'EFFECT' if self.api_name == 'vidu_effects' else 'REFERENCE'} FAILED\n\n{error_msg}"
+                error_msg = pair.metadata.get('error', 'Generation failed') if pair.metadata else 'Generation failed'
+                self._add_error_box(slide, Cm(pos[1][0]), Cm(pos[1][1]), Cm(pos[1][2]), Cm(pos[1][3]), error_msg)
+        
+        # Add metadata to slide
+        self._add_vidu_metadata(slide, pair)
 
-                for p in error_box.text_frame.paragraphs:
-                    p.font.size, p.alignment, p.font.color.rgb = Inches(14/72), PP_ALIGN.CENTER, RGBColor(255, 0, 0)
-                error_box.fill.solid()
-                error_box.fill.fore_color.rgb, error_box.line.color.rgb = RGBColor(255, 240, 240), RGBColor(255, 0, 0)
 
-            # Add metadata - EXACT from working versions
-            processing_time = pair.metadata.get('processing_time_seconds', 'N/A') if pair.metadata else 'N/A'
-            status = 'FAILED' if pair.failed else 'SUCCESS'
-
-            if self.api_name == "vidu_effects":
-                meta_text = f"{pair.source_file}\n{pair.category} | {pair.effect_name}\n{processing_time}s \\ {status}"
-                meta_box = slide.shapes.add_textbox(Cm(2), Cm(16.5), Cm(8), Cm(2))
-            else:  # vidu_reference
-                ref_count = pair.metadata.get('reference_count', 0) if pair.metadata else 0
-                aspect_ratio = pair.metadata.get('detected_aspect_ratio', 'N/A') if pair.metadata else 'N/A'
-                meta_text = f"{pair.source_file}\n{pair.effect_name} | +{ref_count} refs\n{aspect_ratio} | {processing_time}s\n{status}"
-                meta_box = slide.shapes.add_textbox(Cm(2), Cm(16.5), Cm(10), Cm(2.5))
-
-            meta_box.text_frame.text = meta_text
-            meta_box.text_frame.word_wrap = True
-            for p in meta_box.text_frame.paragraphs:
-                p.font.size, p.alignment = Inches(9/72), PP_ALIGN.LEFT
-
-    def _add_media_vidu(self, slide, placeholder, media_path, is_video=False):
-        """Add media to Vidu slide - EXACT from working versions"""
-        p_left, p_top, p_width, p_height = placeholder.left, placeholder.top, placeholder.width, placeholder.height
-        aspect_ratio = self.get_aspect_ratio(Path(media_path), is_video)
-
-        # Calculate size maintaining aspect ratio
-        if aspect_ratio > p_width / p_height:
-            scaled_w, scaled_h = p_width, p_width / aspect_ratio
-        else:
-            scaled_h, scaled_w = p_height, p_height * aspect_ratio
-
-        # Center media
-        final_left = p_left + (p_width - scaled_w) / 2
-        final_top = p_top + (p_height - scaled_h) / 2
-
-        # Remove placeholder and add media
-        placeholder._element.getparent().remove(placeholder._element)
-
-        try:
-            if is_video:
-                first_frame_path = self.extract_first_frame(Path(media_path))
-                if first_frame_path and Path(first_frame_path).exists():
-                    slide.shapes.add_movie(str(media_path), final_left, final_top, scaled_w, scaled_h, poster_frame_image=first_frame_path)
+    def _add_media_vidu(self, slide, ph, media=None, is_video=False, error=None):
+        """FIXED: Add media to Vidu slide placeholders with proper aspect ratio"""
+        l, t, w, h = ph.left, ph.top, ph.width, ph.height
+        ph._element.getparent().remove(ph._element)
+        
+        if media and Path(media).exists():
+            try:
+                if is_video:
+                    # Calculate proper aspect ratio for video - SAME AS WORKING APIS
+                    ar = self.get_aspect_ratio(Path(media), is_video=True)
+                    sw, sh = (w, w/ar) if ar > w/h else (h*ar, h)
+                    fl, ft = l+(w-sw)/2, t+(h-sh)/2
+                    
+                    # Extract first frame for video poster
+                    first_frame_path = self.extract_first_frame(Path(media))
+                    if first_frame_path and Path(first_frame_path).exists():
+                        slide.shapes.add_movie(media, fl, ft, sw, sh, poster_frame_image=first_frame_path)
+                    else:
+                        slide.shapes.add_movie(media, fl, ft, sw, sh)
                 else:
-                    slide.shapes.add_movie(str(media_path), final_left, final_top, scaled_w, scaled_h)
-            else:
-                slide.shapes.add_picture(str(media_path), final_left, final_top, scaled_w, scaled_h)
-        except:
-            if is_video:
-                slide.shapes.add_movie(str(media_path), final_left, final_top, scaled_w, scaled_h)
-            else:
-                slide.shapes.add_picture(str(media_path), final_left, final_top, scaled_w, scaled_h)
+                    # Image with proper aspect ratio - SAME AS WORKING APIS
+                    ar = self.get_aspect_ratio(Path(media))
+                    sw, sh = (w, w/ar) if ar > w/h else (h*ar, h)
+                    slide.shapes.add_picture(media, l+(w-sw)/2, t+(h-sh)/2, sw, sh)
+            except Exception as e:
+                self._add_error_box_vidu(slide, (l, t, w, h), f"Failed to load media: {e}")
+        else:
+            self._add_error_box_vidu(slide, (l, t, w, h), error or "Media file not found")
 
-    def _add_error_vidu(self, slide, placeholder, error_msg):
-        """Add error to Vidu slide - EXACT from working versions"""
-        p_left, p_top, p_width, p_height = placeholder.left, placeholder.top, placeholder.width, placeholder.height
-        placeholder._element.getparent().remove(placeholder._element)
-
-        error_box = slide.shapes.add_textbox(p_left, p_top, p_width, p_height)
-        error_name = 'EFFECT' if self.api_name == 'vidu_effects' else 'REFERENCE'
-        error_box.text_frame.text = f"❌ {error_name} FAILED\n\n{error_msg}"
-
-        for p in error_box.text_frame.paragraphs:
+    def _add_error_box_vidu(self, slide, dimensions, error_msg):
+        """FIXED: Add error box for Vidu slides with proper dimensions handling"""
+        if isinstance(dimensions, tuple):
+            l, t, w, h = dimensions
+        else:
+            l, t, w, h = dimensions.left, dimensions.top, dimensions.width, dimensions.height
+        
+        box = slide.shapes.add_textbox(l, t, w, h)
+        box.text_frame.text = f"❌ GENERATION FAILED\n\n{error_msg}"
+        for p in box.text_frame.paragraphs:
             p.font.size, p.alignment, p.font.color.rgb = Inches(16/72), PP_ALIGN.CENTER, RGBColor(255, 0, 0)
+        box.fill.solid()
+        box.fill.fore_color.rgb, box.line.color.rgb, box.line.width = RGBColor(255, 240, 240), RGBColor(255, 0, 0), Inches(0.02)
 
-        error_box.fill.solid()
-        error_box.fill.fore_color.rgb, error_box.line.color.rgb = RGBColor(255, 240, 240), RGBColor(255, 0, 0)
-        error_box.line.width = Inches(0.02)
+    def _add_vidu_metadata(self, slide, pair):
+        """MISSING METHOD: Add Vidu metadata to slide - this was completely missing!"""
+        # Create metadata text
+        meta_lines = []
+        
+        if pair.metadata:
+            # Add common metadata fields
+            meta_lines.append(f"File: {pair.source_file}")
+            meta_lines.append(f"Effect: {pair.effect_name}")
+            meta_lines.append(f"Category: {pair.category}")
+            
+            # Add processing info if available
+            if 'processing_time_seconds' in pair.metadata:
+                meta_lines.append(f"Time: {pair.metadata['processing_time_seconds']}s")
+                
+            if 'duration' in pair.metadata:
+                meta_lines.append(f"Duration: {pair.metadata['duration']}s")
+            
+            # Add success status
+            success = pair.metadata.get('success', False)
+            meta_lines.append(f"Status: {'✓ Success' if success else '❌ Failed'}")
+            
+            # Add error if present
+            if 'error' in pair.metadata:
+                meta_lines.append(f"Error: {pair.metadata['error']}")
+                
+            # Add prompt if present and not too long
+            if 'prompt' in pair.metadata and len(pair.metadata['prompt']) < 100:
+                meta_lines.append(f"Prompt: {pair.metadata['prompt'][:100]}...")
+                
+        else:
+            meta_lines = [
+                f"File: {pair.source_file}",
+                f"Effect: {pair.effect_name}",
+                f"Category: {pair.category}",
+                "Status: ❌ No metadata available"
+            ]
+        
+        # Add metadata box to slide
+        mb = slide.shapes.add_textbox(Cm(2), Cm(16), Cm(20), Cm(3))
+        mb.text_frame.text = "\n".join(meta_lines)
+        
+        # Style the metadata text
+        for p in mb.text_frame.paragraphs:
+            p.font.size = Inches(10/72)
+            # Color failed items red
+            if "❌" in p.text:
+                p.font.color.rgb = RGBColor(255, 0, 0)
+
+    def _create_section_divider_slide(self, ppt, effect_name, template_loaded):
+        """Create section divider slide for Vidu effects"""
+        if template_loaded and len(ppt.slides) >= 2:
+            slide = ppt.slides.add_slide(ppt.slides[1].slide_layout)  # Use section layout
+        else:
+            slide = ppt.slides.add_slide(ppt.slide_layouts[6])  # Blank layout
+        
+        # Add section title
+        tb = slide.shapes.add_textbox(Cm(5), Cm(8), Cm(24), Cm(4))
+        tb.text_frame.text = f"{effect_name}"
+        
+        # Style the title
+        for p in tb.text_frame.paragraphs:
+            p.font.size = Pt(48)
+            p.font.bold = True
+            p.alignment = PP_ALIGN.CENTER
+
 
     # ================ STANDARD SLIDES (KLING) =================
     def _create_standard_slides(self, ppt, pairs, template_loaded, use_comparison):
