@@ -1,4 +1,5 @@
-"""Runway processor using refactored architecture."""
+"""Pixverse Effects processor using refactored architecture."""
+
 import sys
 from pathlib import Path
 
@@ -10,23 +11,23 @@ from core.services.config_manager import ConfigManager
 import logging
 
 def main():
-    """Run Runway processing."""
+    """Run Pixverse Effects processing."""
     logging.basicConfig(level=logging.INFO, format='%(message)s')
-    
+
     # Load configuration
-    config = ConfigManager.load_config('config/batch_runway_config.json')
+    config = ConfigManager.load_config('config/batch_pixverse_config.json')
     if not config:
         print("Failed to load configuration")
         return
-    
+
     # Create processor
-    processor = ProcessorFactory.create_processor('runway', config)
-    
+    processor = ProcessorFactory.create_processor('pixverse_effects', config)
+
     # Initialize client
     if not processor.initialize_client():
         print("Failed to initialize client")
         return
-    
+
     # Process tasks
     for i, task in enumerate(config.get('tasks', []), 1):
         processor.process_task(task, i, len(config['tasks']))

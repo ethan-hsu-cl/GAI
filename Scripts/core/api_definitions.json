@@ -334,5 +334,112 @@
             "medium",
             "high"
         ]
+    },
+    "pixverse_effects": {
+        "endpoint": "http://192.168.4.3:8000/video_effect/",
+        "api_name": "/submit_3",
+        "file_types": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".bmp",
+            ".tiff"
+        ],
+        "validation": {
+            "max_size_mb": 50,
+            "min_dimension": 128,
+            "aspect_ratio": [
+                0.25,
+                4.0
+            ]
+        },
+        "folders": {
+            "input": "Source",
+            "output": "Generated_Video",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 3,
+        "task_delay": 10,
+        "max_retries": 3,
+        "config_structure": "base_folder",
+        "structure_type": "base_folder",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": false
+        },
+        "task_fields": [
+            "effect",
+            "custom_effect_id",
+            "prompt",
+            "negative_prompt"
+        ],
+        "api_params": {
+            "model": "v4.5",
+            "duration": "5s",
+            "motion_mode": "normal",
+            "quality": "720p",
+            "style": "none"
+        },
+        "model_options": [
+            "v3.5",
+            "v4",
+            "v4.5",
+            "v5"
+        ],
+        "duration_options": [
+            "5s",
+            "8s"
+        ],
+        "motion_mode_options": [
+            "normal",
+            "fast"
+        ],
+        "quality_options": [
+            "360p",
+            "540p",
+            "720p",
+            "1080p"
+        ],
+        "style_options": [
+            "anime",
+            "3d_animation",
+            "clay",
+            "comic",
+            "cyberpunk",
+            "none"
+        ],
+        "effect_options": [
+            "Eye Zoom Challenge",
+            "Punch Face",
+            "360° Microwave",
+            "Suit Swagger",
+            "PUBG winner hit",
+            "Subject 3 Fever",
+            "Vroom Vroom Step",
+            "Jiggle Jiggle",
+            "Emergency Beat",
+            "Creepy Devil Smile",
+            "Boom Drop",
+            "Skeleton Dance",
+            "The Tiger's Touch",
+            "Let's YMCA",
+            "My Boyfriendsssss",
+            "My Girlfriendssss",
+            "US Yearbook Flash",
+            "Earth Zoom Challenge",
+            "Welcome to My House",
+            "Private Airplane",
+            "Ride My Porsche",
+            "Figurine Me Up!",
+            "3D Figurine Factory",
+            "none"
+        ],
+        "additional_features": {
+            "design_link": true,
+            "source_video_link": true,
+            "custom_effect_override": true
+        }
     }
 }

@@ -11,20 +11,12 @@
     },
     "tasks": [
         {
-            "folder": "../Nano Banana/0917 Figure Box V3",
+            "folder": "../Nano Banana/0919 Figure Box 6",
             "prompt": "Use the nano-banana model to create a 1/7 scale commercialised figure of the subjects in the illustration, in a realistic style and environment. Place the figure on a computer desk, using a circular transparent acrylic base without any text. On the computer screen, display the Brush modelling process of the figure, Next to the computer screen, place a toy packaging box printed with the original artwork(or image) with the title suitable for this object and a CL icon in the bottom right .",
             "reference_folder": "",
             "use_comparison_template": false,
             "design_link": "https://docs.google.com/presentation/d/14rZvaHyWNEmeGfRWAbLDqCE-de1Ckp1t4IfqPonOOhg/edit?slide=id.g3801b5cf5a1_2_0#slide=id.g3801b5cf5a1_2_0",
             "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EuvMvS7_eAlLn6xT9wwDEVABwQejHNI6_6BnwNlGfyb7cQ?e=OyGQE4"
-        },
-        {
-            "folder": "../Nano Banana/0917 Figure Box V3-2",
-            "prompt": "Create a 1/7 scale commercialized figurine of the subjects in the picture, in a realistic style, placed on a computer desk in a real environment. The figurine has a round transparent acrylic base with no text. On the computer screen, show the ZBrush modeling process of this figurine. Next to the screen, place a packaging box with rounded corners and a transparent front window. The side of the box should also feature the character’s photo. The box design should be cute with a touch of luxury, and the figurine inside the box should be clearly visible.",
-            "reference_folder": "",
-            "use_comparison_template": false,
-            "design_link": "https://docs.google.com/presentation/d/14rZvaHyWNEmeGfRWAbLDqCE-de1Ckp1t4IfqPonOOhg/edit?slide=id.g3801b5cf5a1_2_0#slide=id.g3801b5cf5a1_2_0",
-            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/Em0y66nDuoxHnJRbeVP2yIwBIY0XrMd1y0nBxi1fqb22pQ?e=dVkp4P"
         }
     ],
     "comments": {

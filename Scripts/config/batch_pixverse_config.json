@@ -1,0 +1,32 @@
+{
+    "base_folder": "../Pixverse/0919 2 Styles",
+    "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+    "template_path": "templates/I2V templates.pptx",
+    "prompt": "",
+    "negative_prompt": "",
+    "model": "v4.5",
+    "duration": "5s",
+    "motion_mode": "normal",
+    "quality": "720p",
+    "style": "none",
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+    },
+    "design_link": "https://platform.vidu.com/docs/templates",
+    "source_video_link": "",
+    "tasks": [
+        {
+            "effect": "Figurine Me Up!",
+            "custom_effect_id": "",
+            "prompt": "",
+            "negative_prompt": ""
+        },
+        {
+            "effect": "3D Figurine Factory",
+            "custom_effect_id": "",
+            "prompt": "",
+            "negative_prompt": ""
+        }
+    ]
+}

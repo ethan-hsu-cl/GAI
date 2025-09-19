@@ -1,15 +1,114 @@
-#!/usr/bin/env python3
-"""
-Runway Report Generator
-Lightweight wrapper for the unified report generator
-"""
+"""Runway report generator using refactored architecture."""
 import sys
-from core.unified_report_generator import create_report_generator
+from pathlib import Path
+import json
+from typing import List
+
+# Add core to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from core.services.report_generator import ReportGenerator
+from core.services.config_manager import ConfigManager
+from core.models.media_pair import MediaPair
+
+def collect_runway_media_pairs(config_file: str) -> List[MediaPair]:
+    """Collect media pairs from Runway processing results."""
+    config = ConfigManager.load_config(config_file)
+    if not config:
+        return []
+    
+    media_pairs = []
+    
+    for task in config.get('tasks', []):
+        folder = Path(task['folder'])
+        source_folder = folder / 'Source'
+        generated_folder = folder / 'Generated_Video'
+        metadata_folder = folder / 'Metadata'
+        
+        if not source_folder.exists():
+            continue
+        
+        # Process each source video
+        for source_file in source_folder.glob('*.mp4'):
+            basename = source_file.stem
+            
+            # Look for generated videos with runway pattern
+            generated_videos = []
+            
+            # Pattern 1: {basename}_runway_generated.mp4
+            runway_video1 = generated_folder / f"{basename}_runway_generated.mp4"
+            if runway_video1.exists():
+                generated_videos.append(runway_video1)
+            
+            # Pattern 2: {basename}_text_runway_generated.mp4
+            runway_video2 = generated_folder / f"{basename}_text_runway_generated.mp4"
+            if runway_video2.exists():
+                generated_videos.append(runway_video2)
+            
+            # Pattern 3: {basename}_{ref}_{refname}_runway_generated.mp4
+            runway_videos_ref = list(generated_folder.glob(f"{basename}*_runway_generated.mp4"))
+            generated_videos.extend([v for v in runway_videos_ref if v not in generated_videos])
+            
+            # Process each generated video
+            for gen_video in generated_videos:
+                # Extract metadata filename pattern
+                if "_text_runway_generated" in gen_video.stem:
+                    meta_pattern = gen_video.stem.replace("_text_runway_generated", "_runway_metadata")
+                elif "_runway_generated" in gen_video.stem:
+                    meta_pattern = gen_video.stem.replace("_runway_generated", "_runway_metadata")
+                else:
+                    meta_pattern = f"{basename}_runway_metadata"
+                
+                metadata_file = metadata_folder / f"{meta_pattern}.json"
+                
+                # Create media pair
+                media_pair = MediaPair(
+                    source_file=source_file.name,
+                    source_path=source_file,
+                    api_type='runway',
+                    generated_paths=[gen_video],
+                    source_video_path=source_file  # Runway uses video sources
+                )
+                
+                # Load metadata if available
+                if metadata_file.exists():
+                    try:
+                        with open(metadata_file) as f:
+                            media_pair.metadata = json.load(f)
+                    except:
+                        pass
+                
+                # Set failed flag
+                media_pair.failed = (
+                    not gen_video.exists() or 
+                    not media_pair.metadata.get('success', False) if media_pair.metadata else True
+                )
+                
+                media_pairs.append(media_pair)
+    
+    return media_pairs
 
 def main():
-    generator = create_report_generator("runway")
-    success = generator.run()
-    sys.exit(0 if success else 1)
+    """Generate Runway report - SIMPLIFIED VERSION."""
+    config_file = 'config/batch_runway_config.json'
+    
+    # Collect media pairs
+    media_pairs = collect_runway_media_pairs(config_file)
+    
+    if not media_pairs:
+        print("No media pairs found")
+        return
+    
+    # ✅ SIMPLIFIED: Let ReportGenerator handle everything
+    generator = ReportGenerator('runway', config_file)
+    
+    # Create a dummy output path - ReportGenerator will determine the real filename
+    output_path = Path('../Report/temp.pptx')  # This will be overridden
+    
+    if generator.create_presentation(media_pairs, output_path):
+        print("Report generation completed successfully")
+    else:
+        print("Failed to generate report")
 
 if __name__ == "__main__":
     main()
