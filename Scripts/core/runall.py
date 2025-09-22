@@ -16,7 +16,8 @@ API_MAPPING = {
     'viduref': 'vidu_reference',
     'nano': 'nano_banana',
     'runway': 'runway',
-    'genvideo': 'genvideo'  
+    'genvideo': 'genvideo',
+    'pixverse': 'pixverse',
 }
 
 # Config file mapping
@@ -26,7 +27,8 @@ CONFIG_MAPPING = {
     'vidu_reference': 'config/batch_vidu_reference_config.json', 
     'nano_banana': 'config/batch_nano_banana_config.json',
     'runway': 'config/batch_runway_config.json',
-    'genvideo': 'config/batch_genvideo_config.json'
+    'genvideo': 'config/batch_genvideo_config.json',
+    'pixverse': 'config/batch_pixverse_config.json'  # Add this line
 }
 
 def show_usage():
@@ -34,29 +36,31 @@ def show_usage():
     print("Usage: python runall.py [platform] [action] [options]")
     print()
     print("PLATFORMS:")
-    print("  kling     - Kling Image2Video processing")
-    print("  vidu      - Vidu Effects processing")
-    print("  viduref   - Vidu Reference processing")
-    print("  nano      - Google Flash/Nano Banana processing")
-    print("  runway    - Runway face swap processing")
+    print("  kling - Kling Image2Video processing")
+    print("  vidu - Vidu Effects processing")
+    print("  viduref - Vidu Reference processing")
+    print("  nano - Google Flash/Nano Banana processing")
+    print("  runway - Runway face swap processing")
     print("  genvideo - GenVideo image generation processing")
-    print("  all       - Run all platforms")
+    print("  pixverse - Pixverse Effects processing")  # Add this line
+    print("  all - Run all platforms")
     print()
     print("ACTIONS:")
-    print("  process   - Run API processors only")
-    print("  report    - Generate PowerPoint reports only")
-    print("  auto      - Run processor + generate report (default)")
+    print("  process - Run API processors only")
+    print("  report - Generate PowerPoint reports only")
+    print("  auto - Run processor + generate report (default)")
     print()
     print("OPTIONS:")
-    print("  --config FILE  - Override config file path")
-    print("  --parallel     - Run platforms in parallel (for 'all')")
-    print("  --verbose      - Enable verbose logging")
+    print("  --config FILE - Override config file path")
+    print("  --parallel - Run platforms in parallel (for 'all')")
+    print("  --verbose - Enable verbose logging")
     print()
     print("EXAMPLES:")
     print("  python runall.py nano report")
     print("  python runall.py kling process")
     print("  python runall.py vidu auto")
     print("  python runall.py viduref auto --verbose")
+    print("  python runall.py pixverse process")  # Add this line
     print("  python runall.py all auto --parallel")
     print("  python runall.py runway process --config custom_runway_config.json")
     print("  python runall.py genvideo process")

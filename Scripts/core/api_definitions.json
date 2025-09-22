@@ -334,5 +334,58 @@
             "medium",
             "high"
         ]
+    },
+    "pixverse": {
+        "endpoint": "http://192.168.4.3:8000/video_effect/",
+        "api_name": "/submit_3",
+        "file_types": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".bmp",
+            ".tiff"
+        ],
+        "validation": {
+            "max_size_mb": 20,
+            "min_dimension": 128,
+            "aspect_ratio": [
+                0.25,
+                4.0
+            ]
+        },
+        "folders": {
+            "input": "Source",
+            "output": "Generated_Video",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 3,
+        "task_delay": 10,
+        "max_retries": 3,
+        "structure_type": "base_folder",
+        "config_structure": "base_folder",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": false
+        },
+        "task_fields": [
+            "effect",
+            "prompt",
+            "custom_effect_id",
+            "negative_prompt"
+        ],
+        "api_params": {
+            "model": "v4.5",
+            "duration": "5s",
+            "motion_mode": "normal",
+            "quality": "720p",
+            "style": "none",
+            "effect": "none",
+            "custom_effect_id": "",
+            "negative_prompt": "",
+            "prompt": ""
+        },
+        "parallel_validation": true
     }
 }

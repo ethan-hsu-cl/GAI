@@ -1,0 +1,28 @@
+{
+    "base_folder": "../Pixverse/0919 2 Styles",
+    "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+    "template_path": "templates/I2V templates.pptx",
+    "design_link": "https://platform.pixverse.ai/effect-list",
+    "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/Eru_qv3eLWBLkrcmnqFVj8QB5e1FXIQXdjFYifU4nrEOfQ?e=pZvWj2",
+    "default_settings": {
+        "model": "v4.5",
+        "duration": "5s", 
+        "motion_mode": "normal",
+        "quality": "720p",
+        "style": "none"
+    },
+    "tasks": [
+        {
+            "effect": "Figurine Me Up!",
+            "prompt": "",
+            "custom_effect_id": "",
+            "negative_prompt": ""
+        },
+        {
+            "effect": "3D Figurine Factory",
+            "prompt": "",
+            "custom_effect_id": "",
+            "negative_prompt": ""
+        }
+    ]
+}

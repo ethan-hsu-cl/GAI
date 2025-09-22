@@ -71,10 +71,10 @@ class UnifiedReportGenerator:
         self._frame_cache = {}
 
         # Load configurations
-        self._load_config()
-        self._load_report_definitions()
+        self.load_config()
+        self.load_report_definitions()
 
-    def _load_config(self):
+    def load_config(self):
         """Load API-specific configuration"""
         try:
             with open(self.config_file, 'r', encoding='utf-8') as f:
@@ -84,7 +84,7 @@ class UnifiedReportGenerator:
             logger.error(f"❌ Config error: {e}")
             sys.exit(1)
 
-    def _load_report_definitions(self):
+    def load_report_definitions(self):
         """Load report definitions from api_definitions.json"""
         definition_paths = [
             "core/api_definitions.json",
@@ -103,9 +103,9 @@ class UnifiedReportGenerator:
                 continue
 
         logger.warning(f"⚠️ API definitions not found, using defaults")
-        self._set_default_report_definitions()
+        self.set_default_report_definitions()
 
-    def _set_default_report_definitions(self):
+    def set_default_report_definitions(self):
         """Set default report definitions"""
         self.report_definitions = {
             "enabled": True,
@@ -222,25 +222,25 @@ class UnifiedReportGenerator:
 
     def process_batch(self, task: Dict) -> List[MediaPair]:
         """Universal batch processing for all API types"""
-        if self.api_name in ["vidu_effects", "vidu_reference"]:
-            return self._process_base_folder_structure(task)
+        if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
+            return self.process_base_folder_structure(task)
         elif self.api_name == "genvideo":
-            return self._process_genvideo_batch(task)
+            return self.process_genvideo_batch(task)
         else:
-            return self._process_task_folder_structure(task)
+            return self.process_task_folder_structure(task)
 
-    def _process_task_folder_structure(self, task: Dict) -> List[MediaPair]:
+    def process_task_folder_structure(self, task: Dict) -> List[MediaPair]:
         """Process APIs with individual task folders"""
         folder = Path(task['folder'])
         ref_folder = Path(task.get('reference_folder', '')) if task.get('reference_folder') else None
         use_comparison = task.get('use_comparison_template', False)
 
         if self.api_name == "runway":
-            return self._create_runway_media_pairs(folder, ref_folder, task, use_comparison)
+            return self.create_runway_media_pairs(folder, ref_folder, task, use_comparison)
         else:
-            return self._create_standard_media_pairs(folder, ref_folder, task, use_comparison)
+            return self.create_standard_media_pairs(folder, ref_folder, task, use_comparison)
 
-    def _create_standard_media_pairs(self, folder: Path, ref_folder: Optional[Path], 
+    def create_standard_media_pairs(self, folder: Path, ref_folder: Optional[Path], 
                                    task: Dict, use_comparison: bool) -> List[MediaPair]:
         """Create standard media pairs for Kling/Nano Banana"""
         pairs = []
@@ -338,7 +338,7 @@ class UnifiedReportGenerator:
 
         return pairs
 
-    def _create_runway_media_pairs(self, folder: Path, ref_folder: Optional[Path],
+    def create_runway_media_pairs(self, folder: Path, ref_folder: Optional[Path],
                                  task: Dict, use_comparison: bool) -> List[MediaPair]:
         """FIXED: Create Runway media pairs - handles both reference-based and non-reference tasks"""
         folders = {k: folder/v for k,v in {'reference':'Reference','source':'Source','generated':'Generated_Video','metadata':'Metadata'}.items()}
@@ -423,7 +423,7 @@ class UnifiedReportGenerator:
         logger.info(f"✅ Created {len(pairs)} Runway media pairs")
         return pairs
 
-    def _process_base_folder_structure(self, task: Dict) -> List[MediaPair]:
+    def process_base_folder_structure(self, task: Dict) -> List[MediaPair]:
         """FIXED: Process base folder structure for vidu APIs - proper metadata loading"""
         base_folder = Path(self.config.get('base_folder', ''))
         if not base_folder.exists():
@@ -575,6 +575,72 @@ class UnifiedReportGenerator:
                         failed=not vid or not metadata.get('success', False)
                     )
                     pairs.append(pair)
+        elif self.api_name == 'pixverse':
+            # Process Pixverse with base folder structure like Vidu Effects
+            for task_config in self.config.get('tasks', []):
+                effect, category = task_config.get('effect', ''), task_config.get('category', 'unknown')
+                if not effect:
+                    continue
+                
+                folders = {k: base_folder / effect / v for k, v in {
+                    'src': 'source', 'vid': 'generated_video', 'meta': 'metadata'
+                }.items()}
+                
+                if not folders['src'].exists():
+                    logger.warning(f"source_folder_not_found_for_effect_{effect}")
+                    continue
+                    
+                logger.info(f"processing_pixverse_effect_{effect}")
+                
+                # Get normalized file mappings
+                images = {self.normalize_key(f.stem): f for f in folders['src'].iterdir()
+                        if f.suffix.lower() in ('.jpg', '.jpeg', '.png', '.webp')}
+                
+                videos = {}
+                if folders['vid'].exists():
+                    for f in folders['vid'].iterdir():
+                        if f.suffix.lower() in ('.mp4', '.mov', '.avi'):
+                            key = self.extract_video_key(f.name, effect)
+                            videos[key] = f
+                
+                # Load metadata files properly like working APIs
+                metadata_files = {}
+                if folders['meta'].exists():
+                    for f in folders['meta'].iterdir():
+                        if f.suffix.lower() == '.json':
+                            key = f.stem.replace('metadata', '')
+                            metadata_files[self.normalize_key(key)] = f
+                
+                logger.info(f"images_{len(images)}_videos_{len(videos)}_metadata_{len(metadata_files)}")
+                
+                # Match metadata to source files
+                for key, img in images.items():
+                    metadata = {}
+                    meta_file = metadata_files.get(key)
+                    if meta_file and meta_file.exists():
+                        try:
+                            with open(meta_file, 'r', encoding='utf-8') as f:
+                                metadata = json.load(f)
+                            logger.info(f"loaded_metadata_for_{key}")
+                        except Exception as e:
+                            logger.warning(f"failed_to_load_metadata_for_{key}_{e}")
+                            pass
+                    else:
+                        logger.warning(f"no_metadata_file_found_for_{key}")
+                    
+                    vid = videos.get(key)
+                    pair = MediaPair(
+                        source_file=img.name,
+                        source_path=img,
+                        api_type=self.api_name,
+                        generated_paths=[vid] if vid else [],
+                        reference_paths=[],
+                        effect_name=effect,
+                        category=category,
+                        metadata=metadata,
+                        failed=not vid or not metadata.get('success', False)
+                    )
+                    pairs.append(pair)
 
         logger.info(f"✅ Created {len(pairs)} Vidu media pairs")
         return pairs
@@ -637,30 +703,32 @@ class UnifiedReportGenerator:
         ppt.slide_width, ppt.slide_height = Cm(33.87), Cm(19.05)
 
         # Create title slide
-        self._create_title_slide(ppt, task, use_comparison)
+        self.create_title_slide(ppt, task, use_comparison)
 
         # Add content slides using API-specific methods
         if self.api_name == "runway":
-            self._create_runway_slides(ppt, pairs, template_loaded, use_comparison)
+            self.create_runway_slides(ppt, pairs, template_loaded, use_comparison)
         elif self.api_name == "nano_banana":
-            self._create_nano_banana_slides(ppt, pairs, template_loaded, use_comparison)
+            self.create_nano_banana_slides(ppt, pairs, template_loaded, use_comparison)
         elif self.api_name in ["vidu_effects", "vidu_reference"]:
-            self._create_vidu_slides(ppt, pairs, template_loaded)
+            self.create_vidu_slides(ppt, pairs, template_loaded)
         elif self.api_name == "genvideo":
-            self._create_genvideo_slides(ppt, pairs, template_loaded, use_comparison)
+            self.create_genvideo_slides(ppt, pairs, template_loaded, use_comparison)
+        elif self.api_name == 'pixverse':
+            self.create_pixverse_slides(ppt, pairs, template_loaded)
         else:  # kling and others
-            self._create_standard_slides(ppt, pairs, template_loaded, use_comparison)
+            self.create_standard_slides(ppt, pairs, template_loaded, use_comparison)
 
         # Save presentation
-        return self._save_presentation(ppt, task, use_comparison)
+        return self.save_presentation(ppt, task, use_comparison)
 
-    def _create_title_slide(self, ppt: Presentation, task: Dict, use_comparison: bool):
+    def create_title_slide(self, ppt: Presentation, task: Dict, use_comparison: bool):
         """Create title slide - using working patterns"""
         if not ppt.slides:
             return
 
         # Get folder names for title generation
-        if self.api_name in ["vidu_effects", "vidu_reference"]:
+        if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
             folder_name = Path(self.config.get('base_folder', '')).name
         else:
             folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
@@ -673,7 +741,8 @@ class UnifiedReportGenerator:
             'runway': 'Runway',
             'vidu_effects': 'Vidu Effects',
             'vidu_reference': 'Vidu Reference',
-            'genvideo': 'GenVideo'
+            'genvideo': 'GenVideo',
+            'pixverse': 'Pixverse'
         }
 
         api_display = api_display_names.get(self.api_name, self.api_name.title())
@@ -714,7 +783,7 @@ class UnifiedReportGenerator:
                     p1.text, p2.text = f"[{d}] Runway", s
                     for p, size in [(p1, 60), (p2, 40)]:
                         p.font.size, p.font.bold, p.alignment = Pt(size), True, PP_ALIGN.CENTER
-            elif self.api_name in ["vidu_effects", "vidu_reference"]:
+            elif self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
                 # Vidu-specific title formatting - EXACT from working versions
                 match = re.match(r'(\d{4})\s+(.+)', folder_name)
                 date, project = match.groups() if match else (datetime.now().strftime("%m%d"), folder_name)
@@ -725,9 +794,9 @@ class UnifiedReportGenerator:
                 ppt.slides[0].shapes[0].text_frame.text = title
 
         # FIXED: Add links for all APIs including Vidu
-        self._add_links_working_pattern(ppt, task)
+        self.add_links_working_pattern(ppt, task)
 
-    def _add_links_working_pattern(self, ppt: Presentation, task: Dict):
+    def add_links_working_pattern(self, ppt: Presentation, task: Dict):
         """FIXED: Add hyperlinks for ALL APIs including Vidu with correct config links"""
         if not ppt.slides:
             return
@@ -759,7 +828,7 @@ class UnifiedReportGenerator:
                 else:
                     para.text, para.font.size, para.alignment = f"{pre}{txt}", Inches(24/72), PP_ALIGN.CENTER
 
-        elif self.api_name in ["vidu_effects", "vidu_reference"]:
+        elif self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
             # FIXED: Add Vidu-specific link pattern with testbed link included
             info_box = next((s for s in slide.shapes if hasattr(s,'text_frame') and s.text_frame.text and any(k in s.text_frame.text.lower() for k in ['design','testbed','source'])), None)
             if not info_box: 
@@ -767,7 +836,10 @@ class UnifiedReportGenerator:
             info_box.text_frame.clear()
             
             # Use the links from the Vidu config files + add testbed
-            design_link = self.config.get('design_link', 'https://platform.vidu.com/docs/templates')
+            if self.api_name == "vidu_effects" or self.api_name == "vidu_reference":
+                design_link = self.config.get('design_link', 'https://platform.vidu.com/docs/effects')
+            else:  # pixverse
+                design_link = self.config.get('design_link', 'https://platform.pixverse.ai/effect-list')
             testbed_url = self.config.get('testbed', f'http://192.168.4.3:8000/video_effect/')  # ADD THIS
             source_link = self.config.get('source_video_link', '')
             
@@ -803,13 +875,13 @@ class UnifiedReportGenerator:
                 p.text, p.font.size, p.alignment = line, Inches(24/72), PP_ALIGN.CENTER
 
                 if "Design:" in line and task.get('design_link'):
-                    self._add_hyperlink(p, "Design: ", "Link", task['design_link'])
+                    self.add_hyperlink(p, "Design: ", "Link", task['design_link'])
                 elif "Testbed:" in line:
-                    self._add_hyperlink(p, "Testbed: ", testbed_url, testbed_url)
+                    self.add_hyperlink(p, "Testbed: ", testbed_url, testbed_url)
                 elif "Source + Video:" in line and task.get('source_video_link'):
-                    self._add_hyperlink(p, "Source + Video: ", "Link", task['source_video_link'])
+                    self.add_hyperlink(p, "Source + Video: ", "Link", task['source_video_link'])
 
-    def _add_hyperlink(self, para, pre, link_text, url):
+    def add_hyperlink(self, para, pre, link_text, url):
         """Simple hyperlink creation - EXACT from nano_banana_auto_report.py"""
         para.clear()
         r1 = para.add_run()
@@ -820,11 +892,11 @@ class UnifiedReportGenerator:
         para.alignment = PP_ALIGN.CENTER
 
     # ================ RUNWAY SLIDES =================
-    def _create_runway_slides(self, ppt, pairs, template_loaded, use_comparison):
+    def create_runway_slides(self, ppt, pairs, template_loaded, use_comparison):
         for i, pair in enumerate(pairs, 1):
-            self._create_runway_slide(ppt, pair, i, template_loaded, use_comparison)
+            self.create_runway_slide(ppt, pair, i, template_loaded, use_comparison)
 
-    def _create_runway_slide(self, ppt, pair, num, loaded, use_cmp=False):
+    def create_runway_slide(self, ppt, pair, num, loaded, use_cmp=False):
         """FIXED: Create single Runway slide - handles both image and video sources"""
         if loaded and len(ppt.slides) >= 4:
             slide = ppt.slides.add_slide(ppt.slides[3].slide_layout)
@@ -839,17 +911,17 @@ class UnifiedReportGenerator:
             phs = sorted([p for p in slide.placeholders if p.placeholder_format.type in {6,7,8,13,18,19}], key=lambda x: getattr(x,'left',0))
             if len(phs) >= 3:
                 # FIXED: Handle different source types
-                self._add_media_to_slide_runway(slide, phs[0], str(pair.source_path), 
+                self.add_media_to_slide_runway(slide, phs[0], str(pair.source_path), 
                                                pair.source_path.suffix.lower() in {'.mp4', '.mov', '.avi'})
-                self._add_media_to_slide_runway(slide, phs[1], str(pair.source_video_path) if pair.source_video_path and pair.source_video_path.exists() else None, True, None, "Source video not found")
-                self._add_media_to_slide_runway(slide, phs[2], str(pair.primary_generated) if pair.primary_generated and pair.primary_generated.exists() else None, True, None, pair.metadata.get('error','Generation failed') if pair.metadata else 'Generation failed')
+                self.add_media_to_slide_runway(slide, phs[1], str(pair.source_video_path) if pair.source_video_path and pair.source_video_path.exists() else None, True, None, "Source video not found")
+                self.add_media_to_slide_runway(slide, phs[2], str(pair.primary_generated) if pair.primary_generated and pair.primary_generated.exists() else None, True, None, pair.metadata.get('error','Generation failed') if pair.metadata else 'Generation failed')
             elif len(phs) >= 2:
                 # FIXED: Handle different source types
-                self._add_media_to_slide_runway(slide, phs[0], str(pair.source_path),
+                self.add_media_to_slide_runway(slide, phs[0], str(pair.source_path),
                                                pair.source_path.suffix.lower() in {'.mp4', '.mov', '.avi'})
-                self._add_media_to_slide_runway(slide, phs[1], str(pair.primary_generated) if pair.primary_generated and pair.primary_generated.exists() else None, True, None, pair.metadata.get('error','Generation failed') if pair.metadata else 'Generation failed')
+                self.add_media_to_slide_runway(slide, phs[1], str(pair.primary_generated) if pair.primary_generated and pair.primary_generated.exists() else None, True, None, pair.metadata.get('error','Generation failed') if pair.metadata else 'Generation failed')
 
-            self._add_runway_metadata(slide, pair, use_cmp, len(phs) >= 3)
+            self.add_runway_metadata(slide, pair, use_cmp, len(phs) >= 3)
         else:
             # Manual slide creation - EXACT from runway_auto_report.py but with video source support
             slide = ppt.slides.add_slide(ppt.slide_layouts[6])
@@ -898,11 +970,11 @@ class UnifiedReportGenerator:
                     except:
                         slide.shapes.add_movie(str(vid_path), Cm(pos[i][0]), Cm(pos[i][1]), Cm(w), Cm(h))
                 else:
-                    self._add_error_box(slide, Cm(pos[i][0]), Cm(pos[i][1]), Cm(w), Cm(h), err_msg)
+                    self.add_error_box(slide, Cm(pos[i][0]), Cm(pos[i][1]), Cm(w), Cm(h), err_msg)
 
-            self._add_runway_metadata(slide, pair, use_cmp, True)
+            self.add_runway_metadata(slide, pair, use_cmp, True)
 
-    def _add_media_to_slide_runway(self, slide, ph, media=None, is_video=False, poster=None, error=None):
+    def add_media_to_slide_runway(self, slide, ph, media=None, is_video=False, poster=None, error=None):
         """Add media to slide - EXACT from runway_auto_report.py"""
         l, t, w, h = ph.left, ph.top, ph.width, ph.height
         ph._element.getparent().remove(ph._element)
@@ -923,11 +995,11 @@ class UnifiedReportGenerator:
                 else:
                     slide.shapes.add_picture(media, fl, ft, sw, sh)
             except Exception as e:
-                self._add_error_box(slide, l, t, w, h, f"Failed to load media: {e}")
+                self.add_error_box(slide, l, t, w, h, f"Failed to load media: {e}")
         else:
-            self._add_error_box(slide, l, t, w, h, error or "Media file not found")
+            self.add_error_box(slide, l, t, w, h, error or "Media file not found")
 
-    def _add_runway_metadata(self, slide, pair, use_cmp, is_three_col):
+    def add_runway_metadata(self, slide, pair, use_cmp, is_three_col):
         """Add Runway metadata - EXACT from runway_auto_report.py"""
         meta = [f"{k}: {pair.metadata.get(k,'N/A') if k != 'success' else ('✓' if pair.metadata.get(k) else '❌')}" for k in ['prompt','reference_image','source_video','model','processing_time_seconds','success']] if pair.metadata else ["No metadata available"]
         if pair.metadata and len(meta) > 1 and 'processing_time_seconds' in meta[-2]: 
@@ -942,11 +1014,11 @@ class UnifiedReportGenerator:
             p.font.size = Inches(10/72)
 
     # ================ NANO BANANA SLIDES =================
-    def _create_nano_banana_slides(self, ppt, pairs, template_loaded, use_comparison):
+    def create_nano_banana_slides(self, ppt, pairs, template_loaded, use_comparison):
         for pair in pairs:
-            self._create_nano_banana_slide(ppt, pair, template_loaded, use_comparison)
+            self.create_nano_banana_slide(ppt, pair, template_loaded, use_comparison)
 
-    def _create_nano_banana_slide(self, ppt, pair, loaded, use_cmp):
+    def create_nano_banana_slide(self, ppt, pair, loaded, use_cmp):
         """Create single Nano Banana slide - EXACT from nano_banana_auto_report.py"""
         if loaded and len(ppt.slides)>=4:
             slide=ppt.slides.add_slide(ppt.slides[3].slide_layout)
@@ -959,12 +1031,12 @@ class UnifiedReportGenerator:
 
             phs=sorted([p for p in slide.placeholders if p.placeholder_format.type in {6,7,8,13,18,19}], key=lambda x:getattr(x,'left',0))
             if use_cmp and len(phs)>=3:
-                self._add_media_nano(slide, phs[0], str(pair.source_path))
-                self._add_media_nano(slide, phs[1], str(pair.primary_generated) if pair.primary_generated else None, "No images generated")
-                self._add_media_nano(slide, phs[2], str(pair.primary_reference) if pair.primary_reference else None, "No reference images")
+                self.add_media_nano(slide, phs[0], str(pair.source_path))
+                self.add_media_nano(slide, phs[1], str(pair.primary_generated) if pair.primary_generated else None, "No images generated")
+                self.add_media_nano(slide, phs[2], str(pair.primary_reference) if pair.primary_reference else None, "No reference images")
             elif len(phs)>=2:
-                self._add_media_nano(slide, phs[0], str(pair.source_path))
-                self._add_media_nano(slide, phs[1], str(pair.primary_generated) if pair.primary_generated else None, "No images generated")
+                self.add_media_nano(slide, phs[0], str(pair.source_path))
+                self.add_media_nano(slide, phs[1], str(pair.primary_generated) if pair.primary_generated else None, "No images generated")
         else:
             # Manual positioning - EXACT from nano_banana_auto_report.py
             slide=ppt.slides.add_slide(ppt.slide_layouts[6])
@@ -979,13 +1051,13 @@ class UnifiedReportGenerator:
             if pair.primary_generated:
                 slide.shapes.add_picture(str(pair.primary_generated), *self.calc_pos(pair.primary_generated, *pos['generated']))
             else: 
-                self._add_err_nano(slide, pos['generated'], "No images generated")
+                self.add_err_nano(slide, pos['generated'], "No images generated")
 
             if use_cmp:
                 if pair.primary_reference:
                     slide.shapes.add_picture(str(pair.primary_reference), *self.calc_pos(pair.primary_reference, *pos['reference']))
                 else: 
-                    self._add_err_nano(slide, pos['reference'], "No reference images")
+                    self.add_err_nano(slide, pos['reference'], "No reference images")
 
             # Add metadata - EXACT from nano_banana_auto_report.py
             mb=slide.shapes.add_textbox(Cm(5),Cm(16),Cm(12),Cm(3))
@@ -993,9 +1065,9 @@ class UnifiedReportGenerator:
             for p in mb.text_frame.paragraphs: 
                 p.font.size=Inches(10/72)
         
-        self._add_nano_banana_metadata(slide, pair)
+        self.add_nano_banana_metadata(slide, pair)
 
-    def _add_nano_banana_metadata(self, slide, pair):
+    def add_nano_banana_metadata(self, slide, pair):
         """FIXED: Add Nano Banana metadata - EXACT from working version"""
         mb = slide.shapes.add_textbox(Cm(5), Cm(16), Cm(12), Cm(3))
         
@@ -1007,7 +1079,7 @@ class UnifiedReportGenerator:
         for p in mb.text_frame.paragraphs: 
             p.font.size = Inches(10/72)
 
-    def _add_media_nano(self, slide, ph, media=None, error=None):
+    def add_media_nano(self, slide, ph, media=None, error=None):
         """Add media to nano banana slide - EXACT from nano_banana_auto_report.py"""
         l, t, w, h = ph.left, ph.top, ph.width, ph.height
         ph._element.getparent().remove(ph._element)
@@ -1028,7 +1100,7 @@ class UnifiedReportGenerator:
             box.fill.solid()
             box.fill.fore_color.rgb, box.line.color.rgb, box.line.width = RGBColor(255,240,240), RGBColor(255,0,0), Inches(0.02)
 
-    def _add_err_nano(self, slide, pos, msg):
+    def add_err_nano(self, slide, pos, msg):
         """Add error box for nano banana - EXACT from nano_banana_auto_report.py"""
         box = slide.shapes.add_textbox(Cm(pos[0]), Cm(pos[1]), Cm(pos[2]), Cm(pos[3]))
         box.text_frame.text = f"❌ FAILED\n\n{msg}"
@@ -1038,7 +1110,7 @@ class UnifiedReportGenerator:
         box.fill.fore_color.rgb, box.line.color.rgb = RGBColor(255,240,240), RGBColor(255,0,0)
 
     # ================ VIDU SLIDES =================
-    def _create_vidu_slides(self, ppt, pairs, template_loaded):
+    def create_vidu_slides(self, ppt, pairs, template_loaded):
         """FIXED: Create Vidu slides with proper metadata display"""
         # Group pairs by effect_name (style)
         effects_groups = {}
@@ -1054,14 +1126,14 @@ class UnifiedReportGenerator:
             effect_pairs = effects_groups[effect_name]
             
             # ADD SECTION DIVIDER SLIDE BEFORE EACH STYLE
-            self._create_section_divider_slide(ppt, effect_name, template_loaded)
+            self.create_section_divider_slide(ppt, effect_name, template_loaded)
             
             # Create individual slides for each pair
             for pair in effect_pairs:
-                self._create_vidu_slide(ppt, pair, slide_index, template_loaded)
+                self.create_vidu_slide(ppt, pair, slide_index, template_loaded)
                 slide_index += 1
 
-    def _create_vidu_slide(self, ppt, pair, num, loaded):
+    def create_vidu_slide(self, ppt, pair, num, loaded):
         """FIXED: Create single Vidu slide with metadata and proper aspect ratios"""
         if loaded and len(ppt.slides) >= 4:
             slide = ppt.slides.add_slide(ppt.slides[3].slide_layout)
@@ -1083,14 +1155,14 @@ class UnifiedReportGenerator:
             
             if len(phs) >= 2:
                 # Add source image with proper aspect ratio
-                self._add_media_vidu(slide, phs[0], str(pair.source_path), is_video=False)
+                self.add_media_vidu(slide, phs[0], str(pair.source_path), is_video=False)
                 
                 # Add generated video or error with proper aspect ratio
                 if pair.primary_generated and pair.primary_generated.exists():
-                    self._add_media_vidu(slide, phs[1], str(pair.primary_generated), is_video=True)
+                    self.add_media_vidu(slide, phs[1], str(pair.primary_generated), is_video=True)
                 else:
                     error_msg = pair.metadata.get('error', 'Generation failed') if pair.metadata else 'Generation failed'
-                    self._add_error_box_vidu(slide, phs[1], error_msg)
+                    self.add_error_box_vidu(slide, phs[1], error_msg)
         else:
             # Manual slide creation when no template - USE ORIGINAL CALC_POS METHOD
             slide = ppt.slides.add_slide(ppt.slide_layouts[6])
@@ -1128,13 +1200,13 @@ class UnifiedReportGenerator:
                                         *self.calc_pos(pair.primary_generated, *pos[1]))
             else:
                 error_msg = pair.metadata.get('error', 'Generation failed') if pair.metadata else 'Generation failed'
-                self._add_error_box(slide, Cm(pos[1][0]), Cm(pos[1][1]), Cm(pos[1][2]), Cm(pos[1][3]), error_msg)
+                self.add_error_box(slide, Cm(pos[1][0]), Cm(pos[1][1]), Cm(pos[1][2]), Cm(pos[1][3]), error_msg)
         
         # Add metadata to slide
-        self._add_vidu_metadata(slide, pair)
+        self.add_vidu_metadata(slide, pair)
 
 
-    def _add_media_vidu(self, slide, ph, media=None, is_video=False, error=None):
+    def add_media_vidu(self, slide, ph, media=None, is_video=False, error=None):
         """FIXED: Add media to Vidu slide placeholders with proper aspect ratio"""
         l, t, w, h = ph.left, ph.top, ph.width, ph.height
         ph._element.getparent().remove(ph._element)
@@ -1159,11 +1231,11 @@ class UnifiedReportGenerator:
                     sw, sh = (w, w/ar) if ar > w/h else (h*ar, h)
                     slide.shapes.add_picture(media, l+(w-sw)/2, t+(h-sh)/2, sw, sh)
             except Exception as e:
-                self._add_error_box_vidu(slide, (l, t, w, h), f"Failed to load media: {e}")
+                self.add_error_box_vidu(slide, (l, t, w, h), f"Failed to load media: {e}")
         else:
-            self._add_error_box_vidu(slide, (l, t, w, h), error or "Media file not found")
+            self.add_error_box_vidu(slide, (l, t, w, h), error or "Media file not found")
 
-    def _add_error_box_vidu(self, slide, dimensions, error_msg):
+    def add_error_box_vidu(self, slide, dimensions, error_msg):
         """FIXED: Add error box for Vidu slides with proper dimensions handling"""
         if isinstance(dimensions, tuple):
             l, t, w, h = dimensions
@@ -1177,7 +1249,7 @@ class UnifiedReportGenerator:
         box.fill.solid()
         box.fill.fore_color.rgb, box.line.color.rgb, box.line.width = RGBColor(255, 240, 240), RGBColor(255, 0, 0), Inches(0.02)
 
-    def _add_vidu_metadata(self, slide, pair):
+    def add_vidu_metadata(self, slide, pair):
         """MISSING METHOD: Add Vidu metadata to slide - this was completely missing!"""
         # Create metadata text
         meta_lines = []
@@ -1226,30 +1298,37 @@ class UnifiedReportGenerator:
             if "❌" in p.text:
                 p.font.color.rgb = RGBColor(255, 0, 0)
 
-    def _create_section_divider_slide(self, ppt, effect_name, template_loaded):
+    def create_section_divider_slide(self, ppt, effect_name, template_loaded):
         """Create section divider slide for Vidu effects"""
         if template_loaded and len(ppt.slides) >= 2:
             slide = ppt.slides.add_slide(ppt.slides[1].slide_layout)  # Use section layout
+            
+            # Set title in placeholder - SAME AS WORKING VIDU
+            for p in slide.placeholders:
+                if p.placeholder_format.type == 1:  # Title placeholder
+                    p.text = f"{effect_name}"
+                    if p.text_frame.paragraphs:
+                        p.text_frame.paragraphs[0].font.size = Pt(48)
+                        p.text_frame.paragraphs[0].font.bold = True
+                        p.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
+                    break
         else:
             slide = ppt.slides.add_slide(ppt.slide_layouts[6])  # Blank layout
-        
-        # Add section title
-        tb = slide.shapes.add_textbox(Cm(5), Cm(8), Cm(24), Cm(4))
-        tb.text_frame.text = f"{effect_name}"
-        
-        # Style the title
-        for p in tb.text_frame.paragraphs:
-            p.font.size = Pt(48)
-            p.font.bold = True
-            p.alignment = PP_ALIGN.CENTER
-
+            
+            # Add title text box - FALLBACK WHEN NO TEMPLATE
+            tb = slide.shapes.add_textbox(Cm(5), Cm(8), Cm(24), Cm(4))
+            tb.text_frame.text = f"{effect_name}"
+            for p in tb.text_frame.paragraphs:
+                p.font.size = Pt(48)
+                p.font.bold = True
+                p.alignment = PP_ALIGN.CENTER
 
     # ================ STANDARD SLIDES (KLING) =================
-    def _create_standard_slides(self, ppt, pairs, template_loaded, use_comparison):
+    def create_standard_slides(self, ppt, pairs, template_loaded, use_comparison):
         for i, pair in enumerate(pairs, 1):
-            self._create_standard_slide(ppt, pair, i, template_loaded, use_comparison)
+            self.create_standard_slide(ppt, pair, i, template_loaded, use_comparison)
 
-    def _create_standard_slide(self, ppt, pair, index, template_loaded, use_comparison):
+    def create_standard_slide(self, ppt, pair, index, template_loaded, use_comparison):
         """COMPLETE: Create standard slide for Kling with proper placeholder handling and aspect ratios"""
         if template_loaded and len(ppt.slides) >= 4:
             # Use template with placeholders - EXACT pattern from other working APIs
@@ -1272,17 +1351,17 @@ class UnifiedReportGenerator:
             
             if len(phs) >= 2:
                 # Source image in first placeholder
-                self._add_media_standard(slide, phs[0], str(pair.source_path), False)
+                self.add_media_standard(slide, phs[0], str(pair.source_path), False)
                 
                 # Generated content in second placeholder
                 if pair.primary_generated and pair.primary_generated.exists():
                     is_video = pair.primary_generated.suffix.lower() in {'.mp4', '.mov', '.avi'}
-                    self._add_media_standard(slide, phs[1], str(pair.primary_generated), is_video)
+                    self.add_media_standard(slide, phs[1], str(pair.primary_generated), is_video)
                 else:
-                    self._add_error_standard(slide, phs[1], "Generation failed")
+                    self.add_error_standard(slide, phs[1], "Generation failed")
             
             # Add metadata
-            self._add_kling_metadata(slide, pair)
+            self.add_kling_metadata(slide, pair)
         
         else:
             # Manual slide creation with proper aspect ratios
@@ -1314,13 +1393,13 @@ class UnifiedReportGenerator:
                 else:
                     slide.shapes.add_picture(str(pair.primary_generated), x, y, w, h)
             else:
-                self._add_error_box(slide, Cm(positions[1][0]), Cm(positions[1][1]), 
+                self.add_error_box(slide, Cm(positions[1][0]), Cm(positions[1][1]), 
                                 Cm(positions[1][2]), Cm(positions[1][3]), "Generation failed")
             
             # Add metadata
-            self._add_kling_metadata(slide, pair)
+            self.add_kling_metadata(slide, pair)
 
-    def _add_media_standard(self, slide, placeholder, media_path, is_video=False):
+    def add_media_standard(self, slide, placeholder, media_path, is_video=False):
         """Add media to placeholder with proper aspect ratio"""
         p_left, p_top, p_width, p_height = placeholder.left, placeholder.top, placeholder.width, placeholder.height
         placeholder._element.getparent().remove(placeholder._element)
@@ -1352,7 +1431,7 @@ class UnifiedReportGenerator:
                 slide.shapes.add_picture(str(media_path), p_left + p_width*0.1, p_top + p_height*0.1, 
                                     p_width*0.8, p_height*0.8)
 
-    def _add_error_standard(self, slide, placeholder, error_msg):
+    def add_error_standard(self, slide, placeholder, error_msg):
         """Add error to placeholder"""
         p_left, p_top, p_width, p_height = placeholder.left, placeholder.top, placeholder.width, placeholder.height
         placeholder._element.getparent().remove(placeholder._element)
@@ -1368,7 +1447,7 @@ class UnifiedReportGenerator:
         error_box.line.color.rgb = RGBColor(255, 0, 0)
         error_box.line.width = Inches(0.02)
 
-    def _add_kling_metadata(self, slide, pair):
+    def add_kling_metadata(self, slide, pair):
         """Add Kling metadata"""
         meta_lines = []
         if pair.metadata:
@@ -1395,7 +1474,7 @@ class UnifiedReportGenerator:
             para.font.size = Inches(10/72)
 
     # ================== GENVIDEO SLIDES ==================
-    def _process_genvideo_batch(self, task: Dict) -> List[MediaPair]:
+    def process_genvideo_batch(self, task: Dict) -> List[MediaPair]:
         """Process GenVideo batch - collect source images and generated images with metadata"""
         folder = Path(task['folder'])
         source_folder = folder / "Source"
@@ -1476,12 +1555,12 @@ class UnifiedReportGenerator:
         return pairs
 
 
-    def _create_genvideo_slides(self, ppt, pairs, template_loaded, use_comparison):
+    def create_genvideo_slides(self, ppt, pairs, template_loaded, use_comparison):
         """Create GenVideo slides with before/after image comparisons"""
         for i, pair in enumerate(pairs, 1):
-            self._create_genvideo_slide(ppt, pair, i, template_loaded, use_comparison)
+            self.create_genvideo_slide(ppt, pair, i, template_loaded, use_comparison)
 
-    def _create_genvideo_slide(self, ppt, pair, index, template_loaded, use_comparison):
+    def create_genvideo_slide(self, ppt, pair, index, template_loaded, use_comparison):
         """Create single GenVideo slide with source and generated images"""
         if template_loaded and len(ppt.slides) >= 4:
             # Use template with placeholders
@@ -1504,14 +1583,14 @@ class UnifiedReportGenerator:
             
             if len(phs) >= 2:
                 # Source image in first placeholder
-                self._add_media_genvideo(slide, phs[0], str(pair.source_path))
+                self.add_media_genvideo(slide, phs[0], str(pair.source_path))
                 
                 # Generated image in second placeholder
                 if pair.primary_generated and pair.primary_generated.exists():
-                    self._add_media_genvideo(slide, phs[1], str(pair.primary_generated))
+                    self.add_media_genvideo(slide, phs[1], str(pair.primary_generated))
                 else:
                     error_msg = pair.metadata.get('error', 'Generation failed') if pair.metadata else 'No image generated'
-                    self._add_error_genvideo(slide, phs[1], error_msg)
+                    self.add_error_genvideo(slide, phs[1], error_msg)
         
         else:
             # Manual slide creation
@@ -1555,13 +1634,13 @@ class UnifiedReportGenerator:
             else:
                 # Error box for failed generation
                 error_msg = pair.metadata.get('error', 'Generation failed') if pair.metadata else 'No image generated'
-                self._add_error_box(slide, Cm(positions[1][0]), Cm(positions[1][1]), 
+                self.add_error_box(slide, Cm(positions[1][0]), Cm(positions[1][1]), 
                                 Cm(positions[1][2]), Cm(positions[1][3]), error_msg)
         
         # Add metadata
-        self._add_genvideo_metadata(slide, pair)
+        self.add_genvideo_metadata(slide, pair)
 
-    def _add_media_genvideo(self, slide, placeholder, media_path):
+    def add_media_genvideo(self, slide, placeholder, media_path):
         """Add media to GenVideo slide with proper aspect ratio"""
         p_left, p_top, p_width, p_height = placeholder.left, placeholder.top, placeholder.width, placeholder.height
         placeholder._element.getparent().remove(placeholder._element)
@@ -1585,7 +1664,7 @@ class UnifiedReportGenerator:
             slide.shapes.add_picture(str(media_path), p_left + p_width*0.1, p_top + p_height*0.1, 
                                     p_width*0.8, p_height*0.8)
 
-    def _add_error_genvideo(self, slide, placeholder, error_msg):
+    def add_error_genvideo(self, slide, placeholder, error_msg):
         """Add error to GenVideo slide"""
         p_left, p_top, p_width, p_height = placeholder.left, placeholder.top, placeholder.width, placeholder.height
         placeholder._element.getparent().remove(placeholder._element)
@@ -1601,7 +1680,7 @@ class UnifiedReportGenerator:
         error_box.line.color.rgb = RGBColor(255, 0, 0)
         error_box.line.width = Inches(0.02)
 
-    def _add_genvideo_metadata(self, slide, pair):
+    def add_genvideo_metadata(self, slide, pair):
         """Add GenVideo metadata information"""
         meta_lines = []
         if pair.metadata:
@@ -1627,10 +1706,197 @@ class UnifiedReportGenerator:
         for para in meta_box.text_frame.paragraphs:
             para.font.size = Inches(10/72)
 
+    # ================== PIXVERSE SLIDES ==================
+    def create_pixverse_slides(self, ppt, pairs, template_loaded):
+        """Create Pixverse slides with proper metadata display"""
+        # Group pairs by effect name
+        effects_groups = {}
+        for pair in pairs:
+            effect_name = pair.effect_name
+            if effect_name not in effects_groups:
+                effects_groups[effect_name] = []
+            effects_groups[effect_name].append(pair)
+        
+        slide_index = 1
+        for effect_name in sorted(effects_groups.keys()):
+            effect_pairs = effects_groups[effect_name]
+            
+            # Add section divider slide before each effect
+            self.create_section_divider_slide(ppt, effect_name, template_loaded)
+            
+            # Create individual slides for each pair
+            for pair in effect_pairs:
+                self.create_pixverse_slide(ppt, pair, slide_index, template_loaded)
+                slide_index += 1
+
+    def create_pixverse_slide(self, ppt, pair, num, loaded):
+        """Create single Pixverse slide with metadata and proper aspect ratios"""
+        if loaded and len(ppt.slides) >= 4:
+            slide = ppt.slides.add_slide(ppt.slides[3].slide_layout)
+            
+            # Set title
+            for p in slide.placeholders:
+                if p.placeholder_format.type == 1:  # Title
+                    title = f"pixverse_{num}_{pair.source_file}"
+                    if pair.failed:
+                        title += "_failed"
+                    p.text = title
+                    if pair.failed and p.text_frame.paragraphs:
+                        p.text_frame.paragraphs[0].font.color.rgb = RGBColor(255, 0, 0)
+                    break
+            
+            # Get placeholders for media
+            phs = sorted([p for p in slide.placeholders 
+                        if p.placeholder_format.type in (6,7,8,13,18,19)], 
+                        key=lambda x: getattr(x,'left',0))
+            
+            if len(phs) >= 2:
+                # Source image in first placeholder
+                self.add_media_pixverse(slide, phs[0], str(pair.source_path))
+                
+                # Generated video in second placeholder  
+                if pair.primary_generated and pair.primary_generated.exists():
+                    self.add_media_pixverse(slide, phs[1], str(pair.primary_generated), is_video=True)
+                else:
+                    error_msg = pair.metadata.get('error', 'generation_failed') if pair.metadata else 'generation_failed'
+                    self.add_error_box_pixverse(slide, phs[1], error_msg)
+            
+            # Add metadata
+            self.add_pixverse_metadata(slide, pair)
+        else:
+            # Manual slide creation
+            slide = ppt.slides.add_slide(ppt.slide_layouts[6])
+            
+            title = f"pixverse_{num}_{pair.source_file}"
+            if pair.failed:
+                title += "_failed"
+            tb = slide.shapes.add_textbox(Cm(2), Cm(1), Cm(20), Cm(2))
+            tb.text_frame.text = title
+            tb.text_frame.paragraphs[0].font.size = Inches(20/72)
+            if pair.failed:
+                tb.text_frame.paragraphs[0].font.color.rgb = RGBColor(255,0,0)
+            
+            # Add source and generated content with proper positioning
+            pos = [(2.59,3.26), (15.5,3.26)]  # source, generated
+            w, h = 12, 10
+            
+            # Source image
+            slide.shapes.add_picture(str(pair.source_path), 
+                                *self.calc_pos(pair.source_path, pos[0][0], pos[0][1], w, h))
+            
+            # Generated video or error
+            if pair.primary_generated and pair.primary_generated.exists():
+                try:
+                    first_frame = self.extract_first_frame(pair.primary_generated)
+                    if first_frame and Path(first_frame).exists():
+                        slide.shapes.add_movie(str(pair.primary_generated), 
+                                            Cm(pos[1][0]), Cm(pos[1][1]), Cm(w), Cm(h),
+                                            poster_frame_image=first_frame)
+                    else:
+                        slide.shapes.add_movie(str(pair.primary_generated), 
+                                            Cm(pos[1][0]), Cm(pos[1][1]), Cm(w), Cm(h))
+                except:
+                    slide.shapes.add_movie(str(pair.primary_generated), 
+                                        Cm(pos[1][0]), Cm(pos[1][1]), Cm(w), Cm(h))
+            else:
+                error_msg = pair.metadata.get('error', 'generation_failed') if pair.metadata else 'generation_failed'
+                self.add_error_box(slide, Cm(pos[1][0]), Cm(pos[1][1]), Cm(w), Cm(h), error_msg)
+            
+            # Add metadata
+            self.add_pixverse_metadata(slide, pair)
+
+    def add_media_pixverse(self, slide, ph, media=None, is_video=False, error=None):
+        """Add media to Pixverse slide placeholders with proper aspect ratio"""
+        l, t, w, h = ph.left, ph.top, ph.width, ph.height
+        ph.element.getparent().remove(ph.element)
+        
+        if media and Path(media).exists():
+            try:
+                if is_video:
+                    # Calculate proper aspect ratio for video - SAME AS WORKING APIS
+                    ar = self.get_aspect_ratio(Path(media), is_video=True)
+                    sw, sh = (w, w/ar) if ar > w/h else (h*ar, h)
+                    fl, ft = l+(w-sw)/2, t+(h-sh)/2
+                    
+                    # Extract first frame for video poster
+                    first_frame_path = self.extract_first_frame(Path(media))
+                    if first_frame_path and Path(first_frame_path).exists():
+                        slide.shapes.add_movie(media, fl, ft, sw, sh, poster_frame_image=first_frame_path)
+                    else:
+                        slide.shapes.add_movie(media, fl, ft, sw, sh)
+                else:
+                    # Image with proper aspect ratio - SAME AS WORKING APIS
+                    ar = self.get_aspect_ratio(Path(media))
+                    sw, sh = (w, w/ar) if ar > w/h else (h*ar, h)
+                    slide.shapes.add_picture(media, l+(w-sw)/2, t+(h-sh)/2, sw, sh)
+            except Exception as e:
+                logger.warning(f"failed_to_add_media_with_aspect_ratio_{e}")
+                # Fallback positioning
+                if is_video:
+                    slide.shapes.add_movie(media, l + w*0.1, t + h*0.1, w*0.8, h*0.8)
+                else:
+                    slide.shapes.add_picture(media, l + w*0.1, t + h*0.1, w*0.8, h*0.8)
+        else:
+            self.add_error_box_pixverse(slide, (l, t, w, h), error or "media_file_not_found")
+
+
+    def add_error_box_pixverse(self, slide, dimensions, error_msg):
+        """Add error box for Pixverse slides with proper dimensions handling"""
+        if isinstance(dimensions, tuple):
+            l, t, w, h = dimensions
+        else:
+            l, t, w, h = dimensions.left, dimensions.top, dimensions.width, dimensions.height
+        
+        box = slide.shapes.add_textbox(l, t, w, h)
+        box.text_frame.text = f"generation_failed\n{error_msg}"
+        for p in box.text_frame.paragraphs:
+            p.font.size, p.alignment, p.font.color.rgb = Inches(16/72), PP_ALIGN.CENTER, RGBColor(255, 0, 0)
+        box.fill.solid()
+        box.fill.fore_color.rgb, box.line.color.rgb, box.line.width = RGBColor(255, 240, 240), RGBColor(255, 0, 0), Inches(0.02)
+
+    def add_pixverse_metadata(self, slide, pair):
+        """Add Pixverse metadata to slide"""
+        meta_lines = []
+        if pair.metadata:
+            model = pair.metadata.get('model', 'na')
+            duration = pair.metadata.get('duration', 'na') 
+            quality = pair.metadata.get('quality', 'na')
+            effect = pair.metadata.get('effect_name', pair.effect_name)
+            proc_time = pair.metadata.get('processing_time_seconds', 'na')
+            success = pair.metadata.get('success', False)
+            
+            meta_lines = [
+                f"file: {pair.source_file}",
+                f"effect: {effect}",
+                f"model: {model} duration: {duration}",
+                f"quality: {quality}",
+                f"processing_time: {proc_time}s",
+                f"status: {'success' if success else 'failed'}"
+            ]
+            
+            if 'prompt' in pair.metadata and pair.metadata['prompt']:
+                prompt = pair.metadata['prompt']
+                if len(prompt) > 80:
+                    meta_lines.append(f"prompt: {prompt[:80]}...")
+                else:
+                    meta_lines.append(f"prompt: {prompt}")
+                    
+            if 'error' in pair.metadata:
+                meta_lines.append(f"error_{pair.metadata['error']}")
+        else:
+            meta_lines = [f"file: {pair.source_file}", "no_metadata_available"]
+        
+        # Add metadata box
+        meta_box = slide.shapes.add_textbox(Cm(2), Cm(16), Cm(28), Cm(3))
+        meta_box.text_frame.text = '\n'.join(meta_lines)
+        meta_box.text_frame.word_wrap = True
+        for para in meta_box.text_frame.paragraphs:
+            para.font.size = Inches(10/72)
+
             
     # ================== ERROR HANDLING ==================
 
-    def _add_error_box(self, slide, left, top, width, height, message: str):
+    def add_error_box(self, slide, left, top, width, height, message: str):
         """Add error box with proper styling"""
         box = slide.shapes.add_textbox(left, top, width, height)
         box.text_frame.text = f"❌ GENERATION FAILED\n\n{message}"
@@ -1647,11 +1913,11 @@ class UnifiedReportGenerator:
 
     # ================== SAVE AND CLEANUP ==================
 
-    def _save_presentation(self, ppt, task, use_comparison):
+    def save_presentation(self, ppt, task, use_comparison):
         """Save the presentation"""
         try:
             # Generate filename
-            if self.api_name in ["vidu_effects", "vidu_reference"]:
+            if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
                 folder_name = Path(self.config.get('base_folder', '')).name
             else:
                 folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
@@ -1692,7 +1958,7 @@ class UnifiedReportGenerator:
             logger.error(f"❌ Save failed: {e}")
             return False
 
-    def _cleanup_temp_frames(self):
+    def cleanup_temp_frames(self):
         """Clean up temporary frame files"""
         for frame_path in self._frame_cache.values():
             try:
@@ -1708,7 +1974,7 @@ class UnifiedReportGenerator:
 
         try:
             # Process tasks
-            if self.api_name in ["vidu_effects", "vidu_reference"]:
+            if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
                 # Base folder structure - single task
                 pairs = self.process_batch({})
                 if pairs:
@@ -1745,11 +2011,11 @@ class UnifiedReportGenerator:
             logger.error(f"❌ Report generation failed: {e}")
             return False
         finally:
-            self._cleanup_temp_frames()
+            self.cleanup_temp_frames()
 
 def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""
-    supported_apis = ['kling', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo']  # ← ADD 'genvideo'
+    supported_apis = ['kling', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse']
     
     if api_name not in supported_apis:
         raise ValueError(f"Unsupported API: {api_name}. Supported: {supported_apis}")
