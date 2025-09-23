@@ -4,7 +4,7 @@ from pathlib import Path
 
 # Import unified processors and report generators
 from unified_api_processor import create_processor
-from unified_report_generator import create_report_generator
+from unified_report_generator_final import create_report_generator
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
