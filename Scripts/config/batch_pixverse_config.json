@@ -1,5 +1,5 @@
 {
-    "base_folder": "../Pixverse/0919 2 Styles",
+    "base_folder": "../Pixverse/0922 4 Styles",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "template_path": "templates/I2V templates.pptx",
     "design_link": "https://platform.pixverse.ai/effect-list",
@@ -13,15 +13,27 @@
     },
     "tasks": [
         {
-            "effect": "Figurine Me Up!",
+            "effect": "Skull Multiverse",
             "prompt": "",
-            "custom_effect_id": "",
+            "custom_effect_id": "356317200152960",
             "negative_prompt": ""
         },
         {
-            "effect": "3D Figurine Factory",
+            "effect": "Vampire Royalty",
             "prompt": "",
-            "custom_effect_id": "",
+            "custom_effect_id": "359516293494080",
+            "negative_prompt": ""
+        },
+        {
+            "effect": "Wizard Hat",
+            "prompt": "",
+            "custom_effect_id": "302325299661888",
+            "negative_prompt": ""
+        },
+        {
+            "effect": "Ninja Shadow Clone",
+            "prompt": "",
+            "custom_effect_id": "354371350649280",
             "negative_prompt": ""
         }
     ]

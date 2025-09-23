@@ -35,4 +35,4 @@ def resize_images(input_folder, output_folder=None, max_size=4000):
             print(f"Error processing {image_file.name}: {e}")
 
 # Usage
-resize_images("/Users/ethanhsu/Desktop/GAI/Pixverse/0919 2 Styles/Figurine Me Up!/Source")
+resize_images("/Users/ethanhsu/Desktop/GAI/Pixverse/0922 4 Styles/Skull Multiverse/Source")

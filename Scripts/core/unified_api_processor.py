@@ -1920,8 +1920,12 @@ class UnifiedAPIProcessor:
             quality = default_settings.get("quality", "720p")
             style = default_settings.get("style", "none")
             
-            effect = task_config.get("effect", "none")
             custom_effect_id = task_config.get("custom_effect_id", "")
+            # keep custom_effect_id over effect if both provided
+            if custom_effect_id:
+                effect = None
+            else:
+                effect = task_config.get("effect", "none")
             negative_prompt = task_config.get("negative_prompt", "")
             prompt = task_config.get("prompt", "")
             
@@ -1944,7 +1948,8 @@ class UnifiedAPIProcessor:
                 raise ValueError(f"Invalid API response format: {result}")
             
             output_url, output_video, error_message, completion_time, elapsed_time = result
-
+            
+            effect = task_config.get("effect", "none") 
             processing_time = time.time() - start_time
             base_metadata = {
                 'source_image': image_name,

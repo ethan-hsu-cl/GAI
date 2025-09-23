@@ -646,16 +646,35 @@ class UnifiedReportGenerator:
         return pairs
 
     def extract_video_key(self, filename: str, effect_name: str) -> str:
-        """Extract video key - EXACT from vidu_auto_report.py"""
+        """Extract video key - FIXED for proper effect name removal"""
         stem = Path(filename).stem
-        effect_clean = effect_name.lower().replace(' ', '_')
-        pattern = re.escape(effect_clean) + r'_effect$'
-        key = re.sub(pattern, '', stem, flags=re.IGNORECASE)
-
-        for pattern in [r'_effect$', r'_generated$', r'_output$', r'_result$']:
-            key = re.sub(pattern, '', key, flags=re.IGNORECASE)
-
-        return self.normalize_key(key)
+        
+        # First remove the _effect suffix
+        stem = re.sub(r"_effect$", "", stem, flags=re.IGNORECASE)
+        
+        # Create multiple possible effect patterns to match
+        effect_variations = [
+            effect_name.replace(' ', '_'),  # Space to underscore
+            effect_name.replace('-', '_'),  # Dash to underscore  
+            effect_name.replace(' ', '_').replace('-', '_'),  # Both replacements
+            effect_name  # Original with spaces/dashes
+        ]
+        
+        # Try to remove each variation (case insensitive)
+        for effect_var in effect_variations:
+            # Remove with underscore prefix
+            pattern = f"_{re.escape(effect_var)}"
+            stem = re.sub(pattern, "", stem, flags=re.IGNORECASE)
+            
+            # Remove without underscore prefix  
+            pattern = re.escape(effect_var)
+            stem = re.sub(pattern, "", stem, flags=re.IGNORECASE)
+        
+        # Clean up any trailing underscores or effect patterns
+        for pattern in [r"_generated", r"_output", r"_result"]:
+            stem = re.sub(pattern, "", stem, flags=re.IGNORECASE)
+        
+        return self.normalize_key(stem)
 
     def extract_key_reference(self, filename: str, effect: str) -> str:
         """Extract key for reference - EXACT from vidu_reference_auto_report.py"""
@@ -1467,7 +1486,7 @@ class UnifiedReportGenerator:
         else:
             meta_lines = ["No metadata available"]
         
-        meta_box = slide.shapes.add_textbox(Cm(2), Cm(16), Cm(15), Cm(3))
+        meta_box = slide.shapes.add_textbox(Cm(2), Cm(16), Cm(10), Cm(3))
         meta_box.text_frame.text = "\n".join(meta_lines)
         meta_box.text_frame.word_wrap = True
         for para in meta_box.text_frame.paragraphs:
@@ -1700,7 +1719,7 @@ class UnifiedReportGenerator:
         else:
             meta_lines = [f"File: {pair.source_file}", "No metadata available"]
         
-        meta_box = slide.shapes.add_textbox(Cm(2), Cm(16), Cm(28), Cm(3))
+        meta_box = slide.shapes.add_textbox(Cm(2), Cm(16), Cm(10), Cm(3))
         meta_box.text_frame.text = "\n".join(meta_lines)
         meta_box.text_frame.word_wrap = True
         for para in meta_box.text_frame.paragraphs:
@@ -1887,7 +1906,7 @@ class UnifiedReportGenerator:
             meta_lines = [f"file: {pair.source_file}", "no_metadata_available"]
         
         # Add metadata box
-        meta_box = slide.shapes.add_textbox(Cm(2), Cm(16), Cm(28), Cm(3))
+        meta_box = slide.shapes.add_textbox(Cm(2), Cm(16), Cm(10), Cm(3))
         meta_box.text_frame.text = '\n'.join(meta_lines)
         meta_box.text_frame.word_wrap = True
         for para in meta_box.text_frame.paragraphs:
