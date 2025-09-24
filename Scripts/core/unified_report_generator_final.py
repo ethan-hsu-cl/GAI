@@ -102,7 +102,7 @@ class UnifiedReportGenerator:
                 'media_types': ['source', 'generated'],
                 'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
                 'title_format': 'Generation {index}: {source_file}',
-                'metadata_fields': ['effect_name', 'category', 'processing_time_seconds', 'duration', 'success'],
+                'metadata_fields': ['effect_name', 'category', 'task_id', 'processing_time_seconds', 'duration', 'success'],
                 'metadata_position': (5.19, 15.99, 7.29, 3.06),
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
                 'use_section_dividers': True,
@@ -112,7 +112,7 @@ class UnifiedReportGenerator:
                 'media_types': ['source', 'generated'],
                 'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
                 'title_format': 'Generation {index}: {source_file}',
-                'metadata_fields': ['effect_name', 'category', 'processing_time_seconds', 'duration', 'success'],
+                'metadata_fields': ['effect_name', 'category', 'task_id', 'processing_time_seconds', 'duration', 'success'],
                 'metadata_position': (5.19, 15.99, 7.29, 3.06),
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
                 'use_section_dividers': True,
@@ -130,7 +130,7 @@ class UnifiedReportGenerator:
                 'media_types': ['source', 'generated'],
                 'positions': [(2.59, 3.26, 12, 10), (15.5, 3.26, 12, 10)],
                 'title_format': 'pixverse_{index}_{source_file}',
-                'metadata_fields': ['effect_name', 'model', 'duration', 'quality', 'processing_time_seconds', 'success'],
+                'metadata_fields': ['effect_name', 'task_id', 'model', 'duration', 'quality', 'processing_time_seconds', 'success'],
                 'metadata_position': (5.19, 15.99, 7.29, 3.06),
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
                 'use_section_dividers': True,
@@ -238,7 +238,7 @@ class UnifiedReportGenerator:
             self.add_media_universal(slide, pos, media_path, is_video, slide_config)
 
         # Add metadata
-        self.add_metadata_universal(slide, pair, slide_config)
+        self.add_metadata_universal(slide, pair, slide_config, use_comparison)
 
     def get_media_path_and_type(self, pair, media_type):
         """Get media path and determine if it's video"""
@@ -346,6 +346,9 @@ class UnifiedReportGenerator:
             elif field == 'response_id':
                 value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
                 meta_lines.append(f"Response ID: {value}")
+            elif field == 'task_id':
+                value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
+                meta_lines.append(f"Task ID: {value}")
             elif field in ['prompt', 'img_prompt']:
                 value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
                 if len(str(value)) > 60:
