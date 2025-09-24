@@ -2,6 +2,7 @@
     "base_folder": "../Vidu/0923 2 Styles",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "template_path": "templates/I2V templates.pptx",
+    "testbed": "http://192.168.4.3:8000/video_effect/",
     "default_prompt": "",
     "model": "viduq1",
     "duration": 5,

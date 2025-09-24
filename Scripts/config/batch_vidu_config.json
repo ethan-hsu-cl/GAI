@@ -1,6 +1,7 @@
 {
     "base_folder": "../Vidu/0922 5 Styles",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+    "testbed": "http://192.168.4.3:8000/video_effect/",
     "template_path": "templates/I2V templates.pptx",
     "prompt": "",
     "schedule": {
