@@ -1201,6 +1201,7 @@ class UnifiedAPIProcessor:
         base_name = Path(image_path).stem
         image_name = Path(image_path).name
         start_time = time.time()
+        task_id = None
 
         try:
             # Get prompt (task-level or global)
@@ -1224,8 +1225,13 @@ class UnifiedAPIProcessor:
                 raise ValueError(f"Invalid API response format")
 
             output_urls = result[0]
+
+            task_id = result[2] if len(result) >= 3 else ''
+            self.logger.info(f" Task ID: {task_id}")
+
             if not output_urls:
-                raise ValueError("No output URLs returned")
+                error_msg = result 
+                raise ValueError("No output URLs returned\n", error_msg)
 
             # Extract URL (handle both single URL and list of URLs)
             output_url = output_urls[0] if isinstance(output_urls, (tuple, list)) else output_urls
@@ -1249,6 +1255,7 @@ class UnifiedAPIProcessor:
                 "generated_video": output_video_name,
                 "processing_time_seconds": round(processing_time, 1),
                 "processing_timestamp": datetime.now().isoformat(),
+                "task_id": task_id,
                 "attempts": attempt + 1,
                 "success": True,
                 "api_name": self.api_name
@@ -1269,6 +1276,7 @@ class UnifiedAPIProcessor:
                 "error_message": str(e),
                 "processing_time_seconds": round(processing_time, 1),
                 "processing_timestamp": datetime.now().isoformat(),
+                "task_id": task_id if task_id else 'N/A',
                 "attempts": attempt + 1,
                 "success": False,
                 "api_name": self.api_name
