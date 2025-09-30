@@ -1185,12 +1185,98 @@ class UnifiedReportGenerator:
             logger.warning(f"⚠ Template load failed: {e}, using blank presentation")
             ppt = Presentation()
             template_loaded = False
+
+        # Set slide dimensions
+        ppt.slide_width, ppt.slide_height = Cm(33.87), Cm(19.05)
+
+        # Create title slide
+        self.create_title_slide(ppt, task, use_comparison)
         
         # Create content slides using UNIFIED SYSTEM
         self.create_slides(ppt, pairs, template_loaded, use_comparison)
         
         # Save presentation
         return self.save_presentation(ppt, task, use_comparison)
+
+    def create_title_slide(self, ppt: Presentation, task: Dict, use_comparison: bool):
+        """Create title slide"""
+        if not ppt.slides:
+            return
+
+        # Get folder names for title generation
+        if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
+            folder_name = Path(self.config.get('base_folder', '')).name
+        else:
+            folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
+
+        if isinstance(folder_name, str):
+            folder_name = Path(folder_name).name
+
+        api_display_names = {
+            'kling': 'Kling 2.1',
+            'nano_banana': 'Nano Banana', 
+            'runway': 'Runway',
+            'vidu_effects': 'Vidu Effects',
+            'vidu_reference': 'Vidu Reference',
+            'genvideo': 'GenVideo',
+            'pixverse': 'Pixverse'
+        }
+
+        api_display = api_display_names.get(self.api_name, self.api_name.title())
+
+        # Generate title
+        if use_comparison and task.get('reference_folder'):
+            ref_name = Path(task['reference_folder']).name
+            title = self.get_cmp_filename(folder_name, ref_name, api_display)
+        else:
+            title = self.get_filename(folder_name, api_display)
+
+        # Update title slide
+        if ppt.slides and ppt.slides[0].shapes:
+            ppt.slides[0].shapes[0].text_frame.text = title
+
+        # Add links
+        self.add_links(ppt, task)
+
+    def add_links(self, ppt: Presentation, task: Dict):
+        """Add hyperlinks to title slide"""
+        if not ppt.slides:
+            return
+
+        slide = ppt.slides[0]
+
+        # Find or create info box
+        info_box = next((s for s in slide.shapes if hasattr(s,'text_frame') and s.text_frame.text and 
+                        any(k in s.text_frame.text.lower() for k in ['design','testbed','source'])), None)
+
+        if not info_box:
+            info_box = slide.shapes.add_textbox(Cm(5), Cm(13), Cm(20), Cm(4))
+
+        info_box.text_frame.clear()
+
+        # Get API-specific links
+        testbed_url = self.config.get('testbed', f'http://192.168.4.3:8000/{self.api_name}/')
+        design_link = self.config.get('design_link', '') if self.config.get('design_link', '') else task.get('design_link', '')
+        source_link = self.config.get('source_video_link', '') if self.config.get('source_video_link', '') else task.get('source_video_link', '')
+
+        links = [
+            ("Design: ", "Link", design_link),
+            ("Testbed: ", testbed_url, testbed_url),
+            ("Source + Video: ", "Link", source_link)
+        ]
+
+        for i, (pre, txt, url) in enumerate(links):
+            para = info_box.text_frame.paragraphs[0] if i == 0 else info_box.text_frame.add_paragraph()
+            if url:
+                para.clear()
+                r1, r2 = para.add_run(), para.add_run()
+                r1.text, r1.font.size = pre, Pt(24)
+                r2.text, r2.font.size = txt, Pt(24)
+                r2.hyperlink.address = url
+                para.alignment = PP_ALIGN.CENTER
+            else:
+                para.text, para.font.size, para.alignment = f"{pre}{txt}", Pt(24), PP_ALIGN.CENTER
+
     
     def save_presentation(self, ppt, task, use_comparison):
         """Save the presentation"""
