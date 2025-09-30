@@ -7,7 +7,8 @@
             ".jpeg",
             ".png",
             ".bmp",
-            ".tiff"
+            ".tiff",
+            ".webp"
         ],
         "validation": {
             "max_size_mb": 10,
@@ -57,7 +58,8 @@
             ".jpeg",
             ".png",
             ".bmp",
-            ".tiff"
+            ".tiff",
+            ".webp"
         ],
         "validation": {
             "max_size_mb": 10,
@@ -288,7 +290,8 @@
             ".jpeg",
             ".png",
             ".bmp",
-            ".tiff"
+            ".tiff",
+            ".webp"
         ],
         "validation": {
             "max_size_mb": 50,
@@ -343,7 +346,8 @@
             ".jpeg",
             ".png",
             ".bmp",
-            ".tiff"
+            ".tiff",
+            ".webp"
         ],
         "validation": {
             "max_size_mb": 20,
