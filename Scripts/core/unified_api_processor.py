@@ -71,7 +71,7 @@ class UnifiedAPIProcessor:
                 "endpoint": "http://192.168.4.3:8000/google_flash_image/",
                 "api_name": "/nano_banana",
                 "file_types": [".jpg", ".jpeg", ".png", ".bmp", ".tiff"],
-                "validation": {"max_size_mb": 10, "min_dimension": 100},
+                "validation": {"max_size_mb": 32, "min_dimension": 100},
                 "folders": {"input": "Source", "output": "Generated_Output", "metadata": "Metadata"},
                 "rate_limit": 5, "task_delay": 10, "max_retries": 3,
                 "special_handling": "base64_images",
@@ -221,20 +221,22 @@ class UnifiedAPIProcessor:
                 return True, f"{info['width']}x{info['height']}, {info['duration']:.1f}s, {info['size_mb']:.1f}MB"
 
             else:
+                min_dimensions = validation_rules.get('min_dimension', 300)
+                aspect_ratio_range = validation_rules.get('aspect_ratio', [0.4, 2.5])
                 # Enhanced image validation
                 if self.api_name == "kling":
                     # Kling specific validation (matching working processor)
                     file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
-                    if file_size_mb >= 10:  # 10MB limit
-                        return False, "Size > 10MB"
+                    if file_size_mb >= validation_rules.get('max_size_mb', 32):  # 32MB limit
+                        return False, "Size > 32MB"
 
                     with Image.open(file_path) as img:
                         w, h = img.size
-                        if w <= 300 or h <= 300:
+                        if w <= min_dimensions or h <= min_dimensions:
                             return False, f"Dims {w}x{h} too small"
 
                         ratio = w / h
-                        if not (0.4 <= ratio <= 2.5):
+                        if not (aspect_ratio_range[0] <= ratio <= aspect_ratio_range[1]):
                             return False, f"Ratio {ratio:.2f} invalid"
 
                         return True, f"{w}x{h}, {ratio:.2f}"
@@ -242,24 +244,24 @@ class UnifiedAPIProcessor:
                 elif self.api_name == "runway":
                     # Runway reference image validation
                     file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
-                    if file_size_mb >= 10:
-                        return False, "Reference image > 10MB"
+                    if file_size_mb >= validation_rules.get('max_size_mb', 32):
+                        return False, "Reference image > 32MB"
 
                     with Image.open(file_path) as img:
                         w, h = img.size
-                        if w < 320 or h < 320:
+                        if w < min_dimensions or h < min_dimensions:
                             return False, f"Reference image {w}x{h} too small"
                         return True, f"Reference: {w}x{h}"
 
                 elif self.api_name == "nano_banana":
                     # Nano banana specific validation (matching working processor)
                     file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
-                    if file_size_mb >= 10:
-                        return False, "Size > 10MB"
+                    if file_size_mb >= validation_rules.get('max_size_mb', 32):
+                        return False, "Size > 32MB"
 
                     with Image.open(file_path) as img:
                         w, h = img.size
-                        if w <= 100 or h <= 100:
+                        if w <= min_dimensions or h <= min_dimensions:
                             return False, f"Dims {w}x{h} too small"
                         return True, f"{w}x{h}"
 

@@ -1,10 +1,10 @@
 {
-    "base_folder": "../Pixverse/0922 4 Styles",
+    "base_folder": "../Pixverse/1001 2 Styles",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "template_path": "templates/I2V templates.pptx",
     "testbed": "http://192.168.4.3:8000/video_effect/",
     "design_link": "https://platform.pixverse.ai/effect-list",
-    "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/Eru_qv3eLWBLkrcmnqFVj8QB5e1FXIQXdjFYifU4nrEOfQ?e=pZvWj2",
+    "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EhUjeHhffclAndc4tYR0PS0BWtrGDe1Q5yjUCzH3SEG0KQ?e=faSc5k",
     "default_settings": {
         "model": "v4.5",
         "duration": "5s", 
@@ -14,27 +14,15 @@
     },
     "tasks": [
         {
-            "effect": "Skull Multiverse",
+            "effect": "Tim Burton Haunting Doll",
             "prompt": "",
-            "custom_effect_id": "356317200152960",
+            "custom_effect_id": "360749956342336",
             "negative_prompt": ""
         },
         {
-            "effect": "Vampire Royalty",
+            "effect": "Ghostface Terror",
             "prompt": "",
-            "custom_effect_id": "359516293494080",
-            "negative_prompt": ""
-        },
-        {
-            "effect": "Wizard Hat",
-            "prompt": "",
-            "custom_effect_id": "302325299661888",
-            "negative_prompt": ""
-        },
-        {
-            "effect": "Ninja Shadow Clone",
-            "prompt": "",
-            "custom_effect_id": "354371350649280",
+            "custom_effect_id": "362704938833536",
             "negative_prompt": ""
         }
     ]

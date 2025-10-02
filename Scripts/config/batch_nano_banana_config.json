@@ -11,20 +11,28 @@
     },
     "tasks": [
         {
-            "folder": "../Nano Banana/0917 Figure Box V3",
-            "prompt": "Use the nano-banana model to create a 1/7 scale commercialised figure of the subjects in the illustration, in a realistic style and environment. Place the figure on a computer desk, using a circular transparent acrylic base without any text. On the computer screen, display the Brush modelling process of the figure, Next to the computer screen, place a toy packaging box printed with the original artwork(or image) with the title suitable for this object and a CL icon in the bottom right .",
+            "folder": "../Nano Banana/1001 Vampire Elegance",
+            "prompt": "Edit the portrait into a gothic vampire style, with pale skin, glowing red eyes, dark flowing robes, a misty castle background, and bats circling above. realistic photo, close-up portrait.",
             "reference_folder": "",
             "use_comparison_template": false,
-            "design_link": "https://docs.google.com/presentation/d/14rZvaHyWNEmeGfRWAbLDqCE-de1Ckp1t4IfqPonOOhg/edit?slide=id.g3801b5cf5a1_2_0#slide=id.g3801b5cf5a1_2_0",
-            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EuvMvS7_eAlLn6xT9wwDEVABwQejHNI6_6BnwNlGfyb7cQ?e=OyGQE4"
+            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?usp=sharing",
+            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EiNsDK8j_DdIjmFaVltklK8B9YS9HJojhifi7V8_uEubCw?e=JbrJJP"
         },
         {
-            "folder": "../Nano Banana/0917 Figure Box V3-2",
-            "prompt": "Create a 1/7 scale commercialized figurine of the subjects in the picture, in a realistic style, placed on a computer desk in a real environment. The figurine has a round transparent acrylic base with no text. On the computer screen, show the ZBrush modeling process of this figurine. Next to the screen, place a packaging box with rounded corners and a transparent front window. The side of the box should also feature the character’s photo. The box design should be cute with a touch of luxury, and the figurine inside the box should be clearly visible.",
+            "folder": "../Nano Banana/1001 Witch & Wizard of the Night",
+            "prompt": "Transform the existing portrait into a photorealistic close-up picture, maintaining the original facial features and identity of the person. Feature this powerful magic-user with a naturalistic, human-like appearance but with a subtle cinematic, digitally enhanced quality. They wear a pointed hat and hold two luminous green orbs of magic in their hands, with glowing magical symbols floating around them. A smoky green aura envelops them, and a sleek black cat is perched nearby. The setting is a dark, mystical stone chamber, enhancing the overall magical atmosphere.",
             "reference_folder": "",
             "use_comparison_template": false,
-            "design_link": "https://docs.google.com/presentation/d/14rZvaHyWNEmeGfRWAbLDqCE-de1Ckp1t4IfqPonOOhg/edit?slide=id.g3801b5cf5a1_2_0#slide=id.g3801b5cf5a1_2_0",
-            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/Em0y66nDuoxHnJRbeVP2yIwBIY0XrMd1y0nBxi1fqb22pQ?e=dVkp4P"
+            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?usp=sharing",
+            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EgD-fV6TWaJHloqGRg15kH8BrBY6PVmLF9_7kcL7xOuEzg?e=Xj8Eq7"
+        },
+        {
+            "folder": "../Nano Banana/1001 AI Ghost 1",
+            "prompt": "Create a photo of me in a dreamy y2k style portrait of me sitting face to face with ghostface and he’s painting my nails. the room behind her is girly and daydreamy with 90s style posters. My makeup is simple yet glamorous. the photo should have a grainy 90s style to it with a light source like a lamp in a dimly lit room at night. a bowl of popcorn rests beside us near some 90s style magazines. background being dimly lit, while being slightly dark and ominous",
+            "reference_folder": "",
+            "use_comparison_template": false,
+            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?usp=sharing",
+            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/ElrdBW1MLc5AnQNTsYPDrRcBgs5uFq5PrGD5bV0iOEyCeg?e=mtFQrW"
         }
     ],
     "comments": {
