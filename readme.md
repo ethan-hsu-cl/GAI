@@ -1,6 +1,6 @@
-# Automated Processing \& Reporting Automation Suite
+# Automated Processing & Reporting Automation Suite
 
-A powerful Python automation framework for batch processing images and videos through multiple AI APIs (Kling 2.1, Google Flash/Nano Banana, Vidu Effects, Vidu Reference, and Runway) with automated PowerPoint report generation.
+A powerful Python automation framework for batch processing images and videos through multiple AI APIs with automated PowerPoint report generation. Supports 7 AI platforms: Kling 2.1, Pixverse, GenVideo, Google Flash/Nano Banana, Vidu Effects, Vidu Reference, and Runway.
 
 ## 🚀 Quick Start
 
@@ -14,8 +14,11 @@ cd Scripts
 
 # Process and generate reports for a single API
 python core/runall.py kling auto
+python core/runall.py pixverse auto
+python core/runall.py genvideo auto
 python core/runall.py nano auto  
 python core/runall.py vidu auto
+python core/runall.py viduref auto
 python core/runall.py runway auto
 
 # Process all APIs at once
@@ -23,10 +26,11 @@ python core/runall.py all auto
 
 # Generate reports only (after processing)
 python core/runall.py kling report
-python core/runall.py nano report
+python core/runall.py pixverse report
 
 # Process only (no reports)
 python core/runall.py kling process
+python core/runall.py genvideo process
 ```
 
 ### **Advanced Usage**
@@ -49,11 +53,13 @@ python core/runall.py all auto --parallel --verbose
 
 | Short Name | Full Name | Description |
 | :-- | :-- | :-- |
-| `kling` | Kling 2.1 | Image-to-video generation |
-| `nano` | Nano Banana/Google Flash | Multi-image generation |
-| `vidu` | Vidu Effects | Effect-based video generation |
-| `viduref` | Vidu Reference | Reference-guided video generation |
-| `runway` | Runway | Face swap and video processing |
+| `kling` | Kling 2.1 | Image-to-video generation with v2.1 model |
+| `pixverse` | Pixverse v4.5 | Effect-based video generation with custom effects |
+| `genvideo` | GenVideo | Image-to-image transformation (Gashapon style) |
+| `nano` | Nano Banana/Google Flash | Multi-image generation with AI models |
+| `vidu` | Vidu Effects | Effect-based video generation with categories |
+| `viduref` | Vidu Reference | Multi-reference guided video generation |
+| `runway` | Runway Gen4 | Video processing with face swap and effects |
 | `all` | All Platforms | Process all APIs sequentially or in parallel |
 
 ## Video Download Command Example
@@ -70,10 +76,12 @@ GAI/                                    # Project root
 └── Scripts/                           # Main scripts directory
     ├── config/                        # Configuration files
     │   ├── batch_config.json         # Kling configuration
-    │   ├── batch_nano_banana_config.json
-    │   ├── batch_runway_config.json
-    │   ├── batch_vidu_config.json
-    │   └── batch_vidu_reference_config.json
+    │   ├── batch_pixverse_config.json # Pixverse configuration
+    │   ├── batch_genvideo_config.json # GenVideo configuration
+    │   ├── batch_nano_banana_config.json # Nano Banana configuration
+    │   ├── batch_runway_config.json  # Runway configuration
+    │   ├── batch_vidu_config.json    # Vidu Effects configuration
+    │   └── batch_vidu_reference_config.json # Vidu Reference configuration
     ├── core/                          # Core automation framework
     │   ├── api_definitions.json      # API specifications
     │   ├── runall.py                 # Main execution script
@@ -87,21 +95,22 @@ GAI/                                    # Project root
     └── requirements.txt
 ```
 
-### **Task Data Folder Structure** (Kling, Nano Banana, Runway)
+### **Task Data Folder Structure** (Kling, GenVideo, Nano Banana, Runway)
 
 ```bash
 YourTaskFolder/
 ├── TaskName1/
 │   ├── Source/              # Input images/videos
 │   ├── Reference/           # Reference images (Runway only)
-│   ├── Generated_Video/     # Auto-created output folder
+│   ├── Generated_Video/     # Auto-created output folder (videos)
+│   ├── Generated_Image/     # Auto-created output folder (GenVideo)
 │   └── Metadata/            # Auto-created metadata folder
 ├── TaskName2/
 │   └── ...
 └── config.json
 ```
 
-### **Base Folder Structure** (Vidu Effects, Vidu Reference)
+### **Base Folder Structure** (Vidu Effects, Vidu Reference, Pixverse)
 
 ```bash
 BaseFolder/
@@ -143,17 +152,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
 
 ```json
 {
-  "tasks": [
-    {
-      "folder": "/path/to/TaskName1",
-      "prompt": "Generate variations of this image",
-      "design_link": "https://design-link.com",
-      "additional_images": {
-        "image1": "/path/to/additional1.jpg",
-        "image2": "/path/to/additional2.jpg"
-      }
-    }
-  ],
+  "tasks": [{"folder": "/path/to/TaskName1", "prompt": "Generate variations"}],
   "testbed": "http://192.168.4.3:8000/google_flash_image/"
 }
 ```
@@ -163,18 +162,26 @@ All configuration files are located in the `Scripts/config/` directory and follo
 ```json
 {
   "base_folder": "/path/to/BaseFolder",
-  "tasks": [
-    {
-      "category": "Cinematic",
-      "effect": "Zoom In",
-      "prompt": "Dramatic zoom effect"
-    },
-    {
-      "category": "Artistic", 
-      "effect": "Watercolor",
-      "prompt": "Watercolor painting style"
-    }
-  ]
+  "tasks": [{"category": "Cinematic", "effect": "Zoom In", "prompt": "Dramatic zoom effect"}]
+}
+```
+
+### **Pixverse Configuration** (`config/batch_pixverse_config.json`)
+
+```json
+{
+  "base_folder": "/path/to/BaseFolder",
+  "tasks": [{"style": "Anime", "effect": "Dynamic Motion", "prompt": "Add dynamic motion"}],
+  "testbed": "http://192.168.4.3:8000/pixverse_image/"
+}
+```
+
+### **GenVideo Configuration** (`config/batch_genvideo_config.json`)
+
+```json
+{
+  "tasks": [{"folder": "/path/to/TaskName1", "prompt": "Transform into Gashapon style"}],
+  "testbed": "http://192.168.4.3:8000/genvideo/"
 }
 ```
 
@@ -182,16 +189,8 @@ All configuration files are located in the `Scripts/config/` directory and follo
 
 ```json
 {
-  "tasks": [
-    {
-      "folder": "/path/to/TaskName1",
-      "prompt": "Face swap transformation",
-      "pairing_strategy": "one_to_one"
-    }
-  ],
-  "model": "gen4_aleph",
-  "ratio": "1280:720",
-  "public_figure_moderation": "low"
+  "tasks": [{"folder": "/path/to/TaskName1", "prompt": "Face swap", "pairing_strategy": "one_to_one"}],
+  "model": "gen4_aleph", "ratio": "1280:720"
 }
 ```
 
@@ -259,8 +258,16 @@ sudo apt install ffmpeg
 ### **Image Requirements**
 
 - **Formats**: JPG, JPEG, PNG, BMP, TIFF, WebP (varies by API)
-- **Size limits**: 10MB (Kling/Nano), 50MB (Vidu APIs)
-- **Minimum dimensions**: 300px (Kling), 100px (Nano), 128px (Vidu), 320px (Runway)
+- **Size limits**:
+  - 10MB (Kling/Nano)
+  - 20MB (Pixverse/GenVideo)
+  - 50MB (Vidu APIs)
+  - 100MB (Runway)
+- **Minimum dimensions**:
+  - 300px (Kling)
+  - 100px (Nano/Pixverse/GenVideo)
+  - 128px (Vidu)
+  - 320px (Runway)
 - **Aspect ratios**: Varies by API (automatically validated)
 
 ### **Video Requirements** (Runway)
@@ -272,75 +279,30 @@ sudo apt install ffmpeg
 
 ## 🎯 API-Specific Features
 
-### **Kling 2.1**
-
-- **Streaming downloads** for large video files
-- **Dual save logic** (URL + local file fallback)
-- **Model version selection** (v2.1 default)
-- **Negative prompt support**
-
-### **Nano Banana/Google Flash**
-
-- **Base64 image handling** for generated outputs
-- **Multiple image generation** per input
-- **Additional image inputs** support
-- **Testbed URL override** capability
-
-### **Vidu Effects**
-
-- **Effect-based processing** with categories
-- **Parallel validation** for faster setup
-- **Auto aspect ratio detection**
-- **Effect name normalization**
-
-### **Vidu Reference**
-
-- **Multi-image reference system** (up to 6 references)
-- **Smart reference finding** with naming conventions
-- **Automatic aspect ratio selection** (16:9, 9:16, 1:1)
-- **Reference image validation**
-
-### **Runway**
-
-- **Video + reference image pairing**
-- **Automatic aspect ratio optimization**
-- **Pairing strategies**: one-to-one, all-combinations
-- **Face swap with moderation settings**
+- **Kling 2.1**: Streaming downloads, dual save logic, v2.1 model, negative prompt support
+- **Pixverse v4.5**: Custom effects/styles, VideoID extraction, base folder structure
+- **GenVideo**: Gashapon transformation, image-to-image generation, design link tracking
+- **Nano Banana**: Base64 handling, multiple images per input, additional image support
+- **Vidu Effects**: Effect-based processing, parallel validation, auto aspect ratio
+- **Vidu Reference**: Multi-image references (up to 6), smart reference finding, aspect ratio selection
+- **Runway**: Video + image pairing, face swap, Gen4 Aleph model, one-to-one/all-combinations
 
 ## 🔍 Troubleshooting
 
-### **Common Issues**
-
 ```bash
-# Ensure you're in the Scripts directory
-cd Scripts
-
-# Check file validation
+# Validate files and configuration
 python core/runall.py [platform] process --verbose
 
-# Test single API connection
-python core/unified_api_processor.py kling
-
-# Validate configuration
-python -c "import json; print(json.load(open('config/batch_config.json')))"
-
-# Check folder structure
-ls -la YourTaskFolder/
+# Test API connection
+python core/unified_api_processor.py [platform]
 ```
 
-### **Error Messages**
+**Common Errors:**
 
-- **"Config error"**: Check JSON syntax in configuration files
-- **"Missing source"**: Ensure `Source/` folder exists with valid files
-- **"Invalid images found"**: Check file formats and sizes
-- **"Client init failed"**: Verify API endpoint accessibility
+- **"Config error"**: Check JSON syntax | **"Missing source"**: Add `Source/` folder with files
+- **"Invalid images"**: Verify formats/sizes | **"Client init failed"**: Check API endpoint
 
-### **Performance Optimization**
-
-- Use `--parallel` flag for multiple APIs
-- Enable `parallel_validation` in API definitions
-- Ensure sufficient disk space for outputs
-- Monitor network bandwidth for large file processing
+**Performance Tips:** Use `--parallel` flag, enable `parallel_validation`, ensure disk space
 
 ## 📝 Output Files
 
@@ -358,33 +320,14 @@ ls -la YourTaskFolder/
 
 ## 🚀 Command Reference
 
-### **Core Execution**
-
 ```bash
 # Always run from Scripts directory
 cd Scripts
 
-# Basic commands
+# Basic syntax
 python core/runall.py [platform] [action] [options]
+
+# Actions: process | report | auto (default)
+# Options: --config FILE | --parallel | --verbose
+# Platforms: See Platform Commands table above
 ```
-
-### **Supported Platforms**
-
-- `kling` - Kling 2.1 Image2Video
-- `nano` - Google Flash/Nano Banana
-- `vidu` - Vidu Effects
-- `viduref` - Vidu Reference
-- `runway` - Runway face swap
-- `all` - All platforms
-
-### **Available Actions**
-
-- `process` - Run API processing only
-- `report` - Generate PowerPoint reports only
-- `auto` - Process + generate reports (default)
-
-### **Options**
-
-- `--config FILE` - Custom configuration file
-- `--parallel` - Run platforms in parallel (for 'all')
-- `--verbose` - Enable detailed logging
