@@ -1222,13 +1222,19 @@ class UnifiedAPIProcessor:
                 api_name=self.api_definitions['api_name']
             )
 
-            # Validate and extract result (matching working processor logic)
+            # Validate and capture ALL result fields
             if not isinstance(result, tuple) or len(result) < 5:
                 raise ValueError(f"Invalid API response format")
 
+            # Extract known fields
             output_urls = result[0]
-
             task_id = result[2] if len(result) >= 3 else ''
+            
+            # Capture ALL result fields
+            all_result_fields = {}
+            for i, value in enumerate(result):
+                all_result_fields[f'api_result_{i}'] = value if not isinstance(value, (dict, list, tuple)) else str(type(value).__name__)
+            
             self.logger.info(f" Task ID: {task_id}")
 
             if not output_urls:
@@ -1246,7 +1252,7 @@ class UnifiedAPIProcessor:
             if not self.download_file(output_url, output_video_path):
                 raise IOError("Video download failed")
 
-            # Save success metadata (matching working processor structure)
+            # Save success metadata with ALL API response fields
             processing_time = time.time() - start_time
             metadata = {
                 "source_image": image_name,
@@ -1260,7 +1266,8 @@ class UnifiedAPIProcessor:
                 "task_id": task_id,
                 "attempts": attempt + 1,
                 "success": True,
-                "api_name": self.api_name
+                "api_name": self.api_name,
+                **all_result_fields  # Include ALL API response fields
             }
 
             self.save_metadata(Path(metadata_folder), base_name, image_name, metadata, task_config)
@@ -1326,11 +1333,25 @@ class UnifiedAPIProcessor:
                 api_name=self.api_definitions['api_name']
             )
 
-            # Validate result format
+            # Validate result format and capture ALL fields
             if not isinstance(result, tuple) or len(result) < 4:
                 raise ValueError("Invalid API response format")
 
-            video_url, thumbnail_url, task_id, error_msg = result
+            video_url = result[0] if len(result) > 0 else None
+            thumbnail_url = result[1] if len(result) > 1 else None
+            task_id = result[2] if len(result) > 2 else None
+            error_msg = result[3] if len(result) > 3 else None
+            
+            # Capture ALL result fields
+            all_result_fields = {
+                'api_result_0_video_url': video_url,
+                'api_result_1_thumbnail_url': thumbnail_url,
+                'api_result_2_task_id': task_id,
+                'api_result_3_error_msg': error_msg
+            }
+            # Add any additional fields from result tuple
+            for i in range(4, len(result)):
+                all_result_fields[f'api_result_{i}'] = result[i]
 
             if error_msg:
                 raise ValueError(f"API error: {error_msg}")
@@ -1346,7 +1367,7 @@ class UnifiedAPIProcessor:
             if not self.download_file(video_url, output_path):
                 raise IOError("Video download failed")
 
-            # Save success metadata
+            # Save success metadata with ALL API response fields
             processing_time = time.time() - start_time
             metadata = {
                 "source_image": image_name,
@@ -1368,7 +1389,8 @@ class UnifiedAPIProcessor:
                 "processing_timestamp": datetime.now().isoformat(),
                 "attempts": attempt + 1,
                 "success": True,
-                "api_name": self.api_name
+                "api_name": self.api_name,
+                **all_result_fields  # Include ALL API response fields
             }
 
             self.save_metadata(Path(metadata_folder), base_name, image_name, metadata, task_config)
@@ -1394,6 +1416,25 @@ class UnifiedAPIProcessor:
             self.save_metadata(Path(metadata_folder), base_name, image_name, metadata, task_config)
             raise e
 
+    def _make_json_serializable(self, obj):
+        """Convert non-JSON-serializable objects to strings recursively"""
+        if isinstance(obj, dict):
+            return {k: self._make_json_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, (list, tuple)):
+            return [self._make_json_serializable(item) for item in obj]
+        elif isinstance(obj, Path):
+            return str(obj)
+        elif isinstance(obj, datetime):
+            return obj.isoformat()
+        elif hasattr(obj, '__dict__'):
+            return str(obj)
+        else:
+            try:
+                json.dumps(obj)
+                return obj
+            except (TypeError, ValueError):
+                return str(obj)
+
     def save_failure_metadata(self, file_path, task_config, metadata_folder, error, attempts):
         """Enhanced failure metadata saving"""
         base_name = Path(file_path).stem
@@ -1412,54 +1453,90 @@ class UnifiedAPIProcessor:
         if 'effect' in task_config:
             metadata['effect'] = task_config['effect']
 
+        # Convert non-serializable objects to strings
+        metadata = self._make_json_serializable(metadata)
         metadata_file = Path(metadata_folder) / f"{base_name}_metadata.json"
         with open(metadata_file, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=2, ensure_ascii=False)
 
     def save_metadata(self, metadata_folder, base_name, source_name, result_data, task_config):
-        """Enhanced universal metadata saving"""
+        """Enhanced universal metadata saving. Always record all fields from result_data and task_config."""
+        metadata = {
+            "source_file": source_name,
+            "processing_timestamp": datetime.now().isoformat(),
+            "api_name": self.api_name
+        }
+        if result_data:
+            metadata.update(result_data)
+        for k, v in task_config.items():
+            if k not in metadata:
+                metadata[k] = v
+        # Convert non-serializable objects to strings
+        metadata = self._make_json_serializable(metadata)
         metadata_file = metadata_folder / f"{base_name}_metadata.json"
         with open(metadata_file, 'w', encoding='utf-8') as f:
-            json.dump(result_data, f, indent=2, ensure_ascii=False)
+            import json
+            json.dump(metadata, f, ensure_ascii=False, indent=2)
 
     def save_kling_metadata(self, metadata_folder, base_name, image_name, result_data, task_config):
-        """Kling-specific metadata saving (matching working processor)"""
+        """Kling-specific metadata saving (matching working processor). Always record all fields from result_data and task_config."""
         metadata = {
             "source_image": image_name,
-            "prompt": task_config['prompt'],
-            "negative_prompt": task_config.get('negative_prompt', ''),
-            "model_version": self.config.get('model_version', 'v2.1'),
             "processing_timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            **result_data
+            "api_name": self.api_name
         }
-
+        if result_data:
+            metadata.update(result_data)
+        for k, v in task_config.items():
+            if k not in metadata:
+                metadata[k] = v
+        # Convert non-serializable objects to strings
+        metadata = self._make_json_serializable(metadata)
         metadata_file = metadata_folder / f"{base_name}_metadata.json"
         with open(metadata_file, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=4, ensure_ascii=False)
-
+            import json
+            json.dump(metadata, f, ensure_ascii=False, indent=2)
         status = "✓" if result_data.get('success') else "❌"
         self.logger.info(f" {status} Metadata saved: {metadata_file.name}")
 
     def save_nano_metadata(self, metadata_folder, base_name, image_name, result_data, task_config):
-        """Nano Banana specific metadata saving (matching working processor)"""
+        """Nano Banana specific metadata saving (matching working processor). Always record all fields from result_data and task_config."""
         metadata = {
             "source_image": image_name,
-            "prompt": task_config['prompt'],
-            "additional_images": task_config.get('additional_images', {}),
             "processing_timestamp": datetime.now().isoformat(),
-            **result_data
+            "api_name": self.api_name
         }
-
+        if result_data:
+            metadata.update(result_data)
+        for k, v in task_config.items():
+            if k not in metadata:
+                metadata[k] = v
+        # Convert non-serializable objects to strings
+        metadata = self._make_json_serializable(metadata)
         metadata_file = metadata_folder / f"{base_name}_metadata.json"
         with open(metadata_file, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2, ensure_ascii=False)
+            import json
+            json.dump(metadata, f, ensure_ascii=False, indent=2)
 
     def save_runway_metadata(self, metadata_folder, base_name, ref_stem, video_name, ref_name, result_data, task_config):
-        """Runway-specific metadata saving (matching working processor)"""
+        """Runway-specific metadata saving (matching working processor). Always record all fields from result_data and task_config."""
+        metadata = {
+            "source_video": video_name,
+            "reference_image": ref_name,
+            "processing_timestamp": datetime.now().isoformat(),
+            "api_name": self.api_name
+        }
+        if result_data:
+            metadata.update(result_data)
+        for k, v in task_config.items():
+            if k not in metadata:
+                metadata[k] = v
+        # Convert non-serializable objects to strings
+        metadata = self._make_json_serializable(metadata)
         metadata_file = metadata_folder / f"{base_name}_ref_{ref_stem}_runway_metadata.json"
         with open(metadata_file, 'w', encoding='utf-8') as f:
-            json.dump(result_data, f, indent=4, ensure_ascii=False)
-
+            import json
+            json.dump(metadata, f, ensure_ascii=False, indent=2)
         status = "✓" if result_data.get('success') else "❌"
         self.logger.info(f" {status} Meta {metadata_file.name}")
 
@@ -1954,10 +2031,28 @@ class UnifiedAPIProcessor:
                 api_name=self.api_definitions["api_name"]
             )
             
-            if not isinstance(result, tuple) or len(result) != 5:
+            # Capture ALL fields from API response
+            if not isinstance(result, tuple):
                 raise ValueError(f"Invalid API response format: {result}")
             
-            output_url, output_video, error_message, completion_time, elapsed_time = result
+            # Extract known fields
+            output_url = result[0] if len(result) > 0 else None
+            output_video = result[1] if len(result) > 1 else None
+            error_message = result[2] if len(result) > 2 else None
+            completion_time = result[3] if len(result) > 3 else None
+            elapsed_time = result[4] if len(result) > 4 else None
+            
+            # Capture ALL result fields including potential video_id, task_id, etc.
+            all_result_fields = {
+                'api_result_0_output_url': output_url,
+                'api_result_1_output_video': str(type(output_video).__name__),
+                'api_result_2_error_message': error_message,
+                'api_result_3_completion_time': completion_time,
+                'api_result_4_elapsed_time': elapsed_time
+            }
+            # Add any additional fields from result tuple
+            for i in range(5, len(result)):
+                all_result_fields[f'api_result_{i}'] = result[i]
             
             effect = task_config.get("effect", "none") 
             processing_time = time.time() - start_time
@@ -1976,10 +2071,7 @@ class UnifiedAPIProcessor:
                 'processing_timestamp': datetime.now().isoformat(),
                 'attempts': attempt + 1,
                 'api_name': self.api_name,
-                'completion_time': completion_time,  # CAPTURE TASK INFO
-                'elapsed_time': elapsed_time,        # CAPTURE TASK INFO
-                'output_url': output_url,           # CAPTURE TASK INFO
-                'api_response_type': type(output_video).__name__  # DEBUG INFO
+                **all_result_fields  # Include ALL API response fields
             }
 
             is_actual_error = error_message and not ("Success" in error_message or "VideoID:" in error_message)
@@ -2016,8 +2108,6 @@ class UnifiedAPIProcessor:
                 success_metadata = {
                     **base_metadata,
                     'generated_video': output_video_name,
-                    'video_id': error_message if error_message and 'video_id' in error_message.lower() else None,  # CAPTURE VIDEO ID
-                    'task_id': error_message if error_message and 'task_id' in error_message.lower() else None,    # CAPTURE TASK ID
                     'success': True
                 }
                 self.save_metadata(Path(metadata_folder), basename, image_name, success_metadata, task_config)

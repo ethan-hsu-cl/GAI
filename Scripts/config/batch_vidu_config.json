@@ -1,5 +1,5 @@
 {
-    "base_folder": "../Vidu/0922 5 Styles",
+    "base_folder": "../Vidu/1002 Test 2",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "testbed": "http://192.168.4.3:8000/video_effect/",
     "template_path": "templates/I2V templates.pptx",
@@ -14,26 +14,6 @@
         {
             "category": "Transformation",
             "effect": "WednesdaysVibe AI",
-            "prompt": ""
-        },
-        {
-            "category": "Transformation",
-            "effect": "Random Pokémon-Style Metamorphosis",
-            "prompt": ""
-        },
-        {
-            "category": "Funny",
-            "effect": "Turn into zombie",
-            "prompt": ""
-        },
-        {
-            "category": "Transformation",
-            "effect": "Turn into a Werewolf",
-            "prompt": ""
-        },
-        {
-            "category": "Transformation",
-            "effect": "Transform into a BJD doll",
             "prompt": ""
         }
     ]

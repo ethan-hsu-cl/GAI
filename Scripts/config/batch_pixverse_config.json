@@ -1,5 +1,5 @@
 {
-    "base_folder": "../Pixverse/1001 2 Styles",
+    "base_folder": "../Pixverse/1002 1 Style",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "template_path": "templates/I2V templates.pptx",
     "testbed": "http://192.168.4.3:8000/video_effect/",
@@ -17,12 +17,6 @@
             "effect": "Tim Burton Haunting Doll",
             "prompt": "",
             "custom_effect_id": "360749956342336",
-            "negative_prompt": ""
-        },
-        {
-            "effect": "Ghostface Terror",
-            "prompt": "",
-            "custom_effect_id": "362704938833536",
             "negative_prompt": ""
         }
     ]

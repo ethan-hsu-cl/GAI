@@ -81,8 +81,14 @@ class UnifiedReportGenerator:
     
     def get_slide_config(self):
         """Get API-specific slide configuration"""
+        # All APIs use section dividers and group by effect_name by default
+        base_config = {
+            'use_section_dividers': True,
+            'group_by': 'effect_name',
+        }
         configs = {
             'runway': {
+                **base_config,
                 'media_types': ['source', 'source_video', 'generated'],
                 'positions': [(2.59, 3.26, 10, 10), (13, 3.26, 10, 10), (23.41, 3.26, 10, 10)],
                 'title_format': 'Generation {index}: {source_file}',
@@ -91,6 +97,7 @@ class UnifiedReportGenerator:
                 'error_handling': 'video_fallback'
             },
             'nano_banana': {
+                **base_config,
                 'media_types': ['source', 'generated', 'reference'],
                 'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5), (35, 3.26, 12.5, 12.5)],
                 'title_format': '❌ GENERATION FAILED',
@@ -101,26 +108,25 @@ class UnifiedReportGenerator:
                 'use_comparison': True
             },
             'vidu_effects': {
+                **base_config,
                 'media_types': ['source', 'generated'],
                 'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['effect_name', 'category', 'task_id', 'processing_time_seconds', 'duration', 'success'],
                 'metadata_position': (5.19, 15.99, 7.29, 3.06),
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
-                'use_section_dividers': True,
-                'group_by': 'effect_name'
             },
             'vidu_reference': {
+                **base_config,
                 'media_types': ['source', 'generated'],
                 'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['effect_name', 'category', 'task_id', 'processing_time_seconds', 'duration', 'success'],
                 'metadata_position': (5.19, 15.99, 7.29, 3.06),
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
-                'use_section_dividers': True,
-                'group_by': 'effect_name'
             },
             'genvideo': {
+                **base_config,
                 'media_types': ['source', 'generated', 'reference'],
                 'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
                 'title_format': 'GenVideo {index}: {source_file}',
@@ -129,16 +135,16 @@ class UnifiedReportGenerator:
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
             },
             'pixverse': {
+                **base_config,
                 'media_types': ['source', 'generated'],
                 'positions': [(2.59, 3.26, 12, 10), (15.5, 3.26, 12, 10)],
                 'title_format': 'pixverse_{index}_{source_file}',
                 'metadata_fields': ['effect_name', 'model', 'duration', 'quality', 'processing_time_seconds', 'success'],
                 'metadata_position': (5.19, 15.99, 7.29, 3.06),
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
-                'use_section_dividers': True,
-                'group_by': 'effect_name'
             },
             'kling': {
+                **base_config,
                 'media_types': ['source', 'generated', 'reference'],
                 'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
                 'title_format': 'Generation {index}: {source_file}',
@@ -527,15 +533,24 @@ class UnifiedReportGenerator:
                         md = json.load(f)
                 except:
                     pass
-            
+
             gen_paths = out.get(b, [])
             ref_paths = ref_files.get(b, []) if use_comparison else []
-            
+
             if not isinstance(gen_paths, list):
                 gen_paths = [gen_paths] if gen_paths else []
             if not isinstance(ref_paths, list):
                 ref_paths = [ref_paths] if ref_paths else []
-            
+
+            # Determine effect_name: try metadata, then config, then folder name
+            effect_name = md.get('effect_name') if md.get('effect_name') else None
+            if not effect_name:
+                effect_name = self.config.get('effect') or self.config.get('effect_name')
+            if not effect_name:
+                # Remove leading date (e.g., '1001 ') from folder name
+                m = re.match(r'^(\d{4})\s*(.+)', folder.name)
+                effect_name = m.group(2) if m else folder.name
+
             pair = MediaPair(
                 source_file=src[b].name,
                 source_path=src[b],
@@ -544,7 +559,8 @@ class UnifiedReportGenerator:
                 reference_paths=ref_paths,
                 metadata=md,
                 failed=not gen_paths or not md.get('success', False),
-                ref_failed=use_comparison and not ref_paths
+                ref_failed=use_comparison and not ref_paths,
+                effect_name=effect_name
             )
             pairs.append(pair)
         
@@ -960,48 +976,46 @@ class UnifiedReportGenerator:
             "use_comparison": self.api_name in ["kling", "nano_banana", "runway"]
         }
     
-    def get_cmp_filename(self, folder1: str, folder2: str, model: str = '') -> str:
-        """Generate comparison filename"""
-        # Fixed regex to capture date and rest of string separately
+    def get_cmp_filename(self, folder1: str, folder2: str, model: str = '', effect_names1=None, effect_names2=None) -> str:
+        """Generate comparison filename, including effect names if available"""
         m1 = re.match(r'(\d{4})\s*(.+)', Path(folder1).name)
         m2 = re.match(r'(\d{4})\s*(.+)', Path(folder2).name)
-        
         if m1 and len(m1.groups()) >= 2:
             d, s1 = m1.group(1), m1.group(2)
         elif m1:
             d, s1 = m1.group(1), Path(folder1).name.replace(m1.group(1), '').strip()
         else:
             d, s1 = datetime.now().strftime("%m%d"), Path(folder1).name
-        
         if m2 and len(m2.groups()) >= 2:
             s2 = m2.group(2)
         elif m2:
             s2 = Path(folder2).name.replace(m2.group(1), '').strip()
         else:
             s2 = Path(folder2).name
-        
+        # Compose effect names string if provided
+        effect_str1 = ', '.join(effect_names1) if effect_names1 else s1
+        effect_str2 = ', '.join(effect_names2) if effect_names2 else s2
         parts = [f"[{d}]"]
         if model and model.lower() not in s1.lower():
             parts.append(model)
-        parts.append(f"{s1} vs {s2}")
+        parts.append(f"{effect_str1} vs {effect_str2}")
         return ' '.join(parts)
 
-    def get_filename(self, folder, model=''):
-        """Generate filename"""
-        # Fixed regex to capture date and rest of string separately
+    def get_filename(self, folder, model='', effect_names=None):
+        """Generate filename, including effect names if available"""
         m = re.match(r'(\d{4})\s*(.+)', Path(folder).name)
-        
         if m and len(m.groups()) >= 2:
             d, s = m.group(1), m.group(2)
         elif m:
             d, s = m.group(1), Path(folder).name.replace(m.group(1), '').strip()
         else:
             d, s = datetime.now().strftime("%m%d"), Path(folder).name
-        
+        # Compose effect names string if provided
+        effect_str = ', '.join(effect_names) if effect_names else s
         parts = [f"[{d}]"]
         if model and model.lower() not in s.lower():
             parts.append(model)
-        parts.append(s)
+        parts.append(effect_str)
         return ' '.join(parts)
 
     
@@ -1168,14 +1182,23 @@ class UnifiedReportGenerator:
         if not pairs:
             logger.warning("No media pairs to process")
             return False
-        
+
         # Determine template and comparison mode
         use_comparison = task.get('use_comparison_template', False) or bool(task.get('reference_folder'))
         template_key = 'comparison_template_path' if use_comparison else 'template_path'
         template_path = (self.config.get(template_key) or
                         self.report_definitions.get(template_key,
                         'templates/I2V Comparison Template.pptx' if use_comparison else 'templates/I2V templates.pptx'))
-        
+
+        # Gather all effect names from pairs, in order of appearance, unique
+        effect_names = []
+        seen = set()
+        for p in pairs:
+            ename = p.effect_name.strip() if hasattr(p, 'effect_name') and p.effect_name else None
+            if ename and ename not in seen:
+                effect_names.append(ename)
+                seen.add(ename)
+
         # Load template
         try:
             ppt = Presentation(template_path) if Path(template_path).exists() else Presentation()
@@ -1189,16 +1212,16 @@ class UnifiedReportGenerator:
         # Set slide dimensions
         ppt.slide_width, ppt.slide_height = Cm(33.87), Cm(19.05)
 
-        # Create title slide
-        self.create_title_slide(ppt, task, use_comparison)
-        
+        # Create title slide, pass effect_names
+        self.create_title_slide(ppt, task, use_comparison, effect_names)
+
         # Create content slides using UNIFIED SYSTEM
         self.create_slides(ppt, pairs, template_loaded, use_comparison)
-        
-        # Save presentation
-        return self.save_presentation(ppt, task, use_comparison)
 
-    def create_title_slide(self, ppt: Presentation, task: Dict, use_comparison: bool):
+        # Save presentation, pass effect_names
+        return self.save_presentation(ppt, task, use_comparison, effect_names)
+
+    def create_title_slide(self, ppt: Presentation, task: Dict, use_comparison: bool, effect_names=None):
         """Create title slide"""
         if not ppt.slides:
             return
@@ -1227,9 +1250,9 @@ class UnifiedReportGenerator:
         # Generate title
         if use_comparison and task.get('reference_folder'):
             ref_name = Path(task['reference_folder']).name
-            title = self.get_cmp_filename(folder_name, ref_name, api_display)
+            title = self.get_cmp_filename(folder_name, ref_name, api_display, effect_names1=effect_names)
         else:
-            title = self.get_filename(folder_name, api_display)
+            title = self.get_filename(folder_name, api_display, effect_names=effect_names)
 
         # Update title slide
         if ppt.slides and ppt.slides[0].shapes:
@@ -1278,7 +1301,7 @@ class UnifiedReportGenerator:
                 para.text, para.font.size, para.alignment = f"{pre}{txt}", Pt(24), PP_ALIGN.CENTER
 
     
-    def save_presentation(self, ppt, task, use_comparison):
+    def save_presentation(self, ppt, task, use_comparison, effect_names=None):
         """Save the presentation"""
         try:
             # Generate filename
@@ -1288,7 +1311,6 @@ class UnifiedReportGenerator:
                 folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
                 if isinstance(folder_name, str):
                     folder_name = Path(folder_name).name
-            
             api_display_names = {
                 'kling': 'Kling 2.1',
                 'nano_banana': 'Nano Banana',
@@ -1299,28 +1321,22 @@ class UnifiedReportGenerator:
                 'pixverse': 'Pixverse'
             }
             api_display = api_display_names.get(self.api_name, self.api_name.title())
-            
             if use_comparison and task.get('reference_folder'):
                 ref_name = Path(task['reference_folder']).name
-                filename = self.get_cmp_filename(folder_name, ref_name, api_display)
+                filename = self.get_cmp_filename(folder_name, ref_name, api_display, effect_names1=effect_names)
             else:
-                filename = self.get_filename(folder_name, api_display)
-            
+                filename = self.get_filename(folder_name, api_display, effect_names=effect_names)
             # Get output directory
             output_dir = Path(self.config.get('output_directory',
                             self.config.get('output', {}).get('directory',
                             self.report_definitions.get('output_directory', './'))))
-            
             # Ensure output directory exists
             output_dir.mkdir(parents=True, exist_ok=True)
-            
             output_path = output_dir / f"{filename}.pptx"
-            
             # Save
             ppt.save(str(output_path))
             logger.info(f"✓ Saved: {output_path}")
             return True
-        
         except Exception as e:
             logger.error(f"✗ Save failed: {e}")
             return False
@@ -1330,51 +1346,37 @@ class UnifiedReportGenerator:
     def run(self) -> bool:
         """Main execution using unified system"""
         logger.info(f"🎬 Starting {self.api_name.title()} Report Generator")
-        
         try:
             # Process tasks
             if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
                 # Base folder structure - single task
                 pairs = self.process_batch({})
                 if pairs:
-                    success = self.create_presentation(pairs, {})
-                    logger.info(f"✓ Generated report with {len(pairs)} items")
-                    return success
+                    return self.create_presentation(pairs, {})
                 else:
-                    logger.warning("No media pairs found")
+                    logger.warning("No pairs found for report.")
                     return False
             else:
                 # Task folder structure - multiple tasks
                 tasks = self.config.get('tasks', [])
                 if not tasks:
-                    logger.warning("No tasks found in configuration")
+                    logger.warning("No tasks found in config.")
                     return False
-                
                 successful = 0
                 for i, task in enumerate(tasks, 1):
-                    logger.info(f"━━━ Task {i}/{len(tasks)}: {Path(task['folder']).name}")
                     pairs = self.process_batch(task)
-                    
                     if pairs:
                         if self.create_presentation(pairs, task):
                             successful += 1
-                        else:
-                            logger.error(f"✗ Task {i} presentation failed")
-                    else:
-                        logger.warning(f"⚠ Task {i} has no media pairs")
-                
                 logger.info(f"✓ Generated {successful}/{len(tasks)} presentations")
                 return successful > 0
-        
         except Exception as e:
             logger.error(f"✗ Report generation failed: {e}")
             return False
-        
         finally:
             # Cleanup all temporary files
             self.cleanup_temp_frames()
             self.cleanup_tempfiles()  # PATCH: Cleanup webp conversions
-
 
 def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""
