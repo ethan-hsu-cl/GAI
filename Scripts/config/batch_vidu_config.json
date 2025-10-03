@@ -1,5 +1,5 @@
 {
-    "base_folder": "../Vidu/1002 Test 2",
+    "base_folder": "../Media Files/Tests/1002 Vidu Effect Test",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "testbed": "http://192.168.4.3:8000/video_effect/",
     "template_path": "templates/I2V templates.pptx",

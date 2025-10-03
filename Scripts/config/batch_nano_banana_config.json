@@ -11,7 +11,7 @@
     },
     "tasks": [
         {
-            "folder": "../Nano Banana/1003 Test",
+            "folder": "../Media Files/Tests/1003 Nano Banana Test",
             "prompt": "Edit the portrait into a gothic vampire style, with pale skin, glowing red eyes, dark flowing robes, a misty castle background, and bats circling above. realistic photo, close-up portrait, maintaining the original facial features and identity of the person.",
             "reference_folder": "",
             "use_comparison_template": false,

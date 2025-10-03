@@ -139,7 +139,7 @@ class UnifiedReportGenerator:
                 'media_types': ['source', 'generated'],
                 'positions': [(2.59, 3.26, 12, 10), (15.5, 3.26, 12, 10)],
                 'title_format': 'pixverse_{index}_{source_file}',
-                'metadata_fields': ['effect_name', 'model', 'duration', 'quality', 'processing_time_seconds', 'success'],
+                'metadata_fields': ['effect_name', 'video_id', 'processing_time_seconds', 'success'],
                 'metadata_position': (5.19, 15.99, 7.29, 3.06),
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
             },
@@ -977,43 +977,40 @@ class UnifiedReportGenerator:
         }
     
     def get_cmp_filename(self, folder1: str, folder2: str, model: str = '', effect_names1=None, effect_names2=None) -> str:
-        """Generate comparison filename, including effect names if available"""
+        """Generate comparison filename using API name and effect names"""
+        # Extract date from folder1
         m1 = re.match(r'(\d{4})\s*(.+)', Path(folder1).name)
-        m2 = re.match(r'(\d{4})\s*(.+)', Path(folder2).name)
-        if m1 and len(m1.groups()) >= 2:
-            d, s1 = m1.group(1), m1.group(2)
-        elif m1:
-            d, s1 = m1.group(1), Path(folder1).name.replace(m1.group(1), '').strip()
+        if m1:
+            d = m1.group(1)
         else:
-            d, s1 = datetime.now().strftime("%m%d"), Path(folder1).name
-        if m2 and len(m2.groups()) >= 2:
-            s2 = m2.group(2)
-        elif m2:
-            s2 = Path(folder2).name.replace(m2.group(1), '').strip()
-        else:
-            s2 = Path(folder2).name
-        # Compose effect names string if provided
-        effect_str1 = ', '.join(effect_names1) if effect_names1 else s1
-        effect_str2 = ', '.join(effect_names2) if effect_names2 else s2
+            d = datetime.now().strftime("%m%d")
+        
+        # Use model (API name) as the primary identifier
+        # Effect names are the actual content description
+        effect_str1 = ', '.join(effect_names1) if effect_names1 else 'Test'
+        effect_str2 = ', '.join(effect_names2) if effect_names2 else 'Reference'
+        
         parts = [f"[{d}]"]
-        if model and model.lower() not in s1.lower():
+        if model:
             parts.append(model)
         parts.append(f"{effect_str1} vs {effect_str2}")
         return ' '.join(parts)
 
     def get_filename(self, folder, model='', effect_names=None):
-        """Generate filename, including effect names if available"""
+        """Generate filename using API name and effect names"""
+        # Extract date from folder name
         m = re.match(r'(\d{4})\s*(.+)', Path(folder).name)
-        if m and len(m.groups()) >= 2:
-            d, s = m.group(1), m.group(2)
-        elif m:
-            d, s = m.group(1), Path(folder).name.replace(m.group(1), '').strip()
+        if m:
+            d = m.group(1)
         else:
-            d, s = datetime.now().strftime("%m%d"), Path(folder).name
-        # Compose effect names string if provided
-        effect_str = ', '.join(effect_names) if effect_names else s
+            d = datetime.now().strftime("%m%d")
+        
+        # Use model (API name) as the primary identifier
+        # Effect names are the actual content description
+        effect_str = ', '.join(effect_names) if effect_names else 'Test'
+        
         parts = [f"[{d}]"]
-        if model and model.lower() not in s.lower():
+        if model:
             parts.append(model)
         parts.append(effect_str)
         return ' '.join(parts)
