@@ -193,6 +193,35 @@ class UnifiedAPIProcessor:
         except Exception:
             return None
 
+    def _get_files_by_type(self, folder, file_type='image'):
+        """
+        Helper method to extract files of a specific type from a folder.
+        
+        Args:
+            folder: Path object or string path to the folder
+            file_type: 'image', 'video', or 'all' (default: 'image')
+        
+        Returns:
+            List of Path objects matching the file type
+        """
+        folder = Path(folder)
+        if not folder.exists():
+            return []
+        
+        if file_type == 'video':
+            # For runway and similar APIs with video support
+            file_types = self.api_definitions.get('file_types', {}).get('video', [])
+        elif file_type == 'reference_image':
+            # For runway reference images
+            file_types = ['.jpg', '.jpeg', '.png', '.bmp']
+        else:
+            # Default to image file types
+            file_types = self.api_definitions.get('file_types', [])
+            if isinstance(file_types, dict):
+                file_types = file_types.get('image', [])
+        
+        return [f for f in folder.iterdir() if f.is_file() and f.suffix.lower() in file_types]
+
     def validate_file(self, file_path, file_type='image'):
         """Enhanced file validation with API-specific optimizations"""
         try:
@@ -296,6 +325,41 @@ class UnifiedAPIProcessor:
         except Exception as e:
             return False, f"Error: {str(e)}"
 
+    def _validate_task_folder_structure(self, task, invalid_list):
+        """Base validation template for task-folder structure (kling, nano, genvideo)."""
+        folder = Path(task['folder'])
+        source_folder = folder / "Source"
+        
+        if not source_folder.exists():
+            self.logger.warning(f"❌ Missing source: {source_folder}")
+            return None
+        
+        image_files = self._get_files_by_type(source_folder, 'image')
+        if not image_files:
+            self.logger.warning(f"❌ Empty source: {source_folder}")
+            return None
+        
+        # Validate files
+        valid_count = 0
+        for img_file in image_files:
+            is_valid, reason = self.validate_file(img_file)
+            if not is_valid:
+                invalid_list.append({'path': str(img_file), 'folder': str(folder), 'name': img_file.name, 'reason': reason})
+            else:
+                valid_count += 1
+        
+        if valid_count > 0:
+            # Create output directories based on API
+            if self.api_name == "genvideo":
+                (folder / "Generated_Image").mkdir(exist_ok=True)
+            else:
+                (folder / "Generated_Video").mkdir(exist_ok=True)
+            (folder / "Metadata").mkdir(exist_ok=True)
+            if self.api_name == "nano_banana":
+                (folder / "Generated_Output").mkdir(exist_ok=True)
+            return task, valid_count, len(image_files)
+        return None
+
     def validate_and_prepare(self):
         """Enhanced validation with parallel processing support"""
         if self.api_name == "kling":
@@ -316,49 +380,16 @@ class UnifiedAPIProcessor:
             raise ValueError(f"Validation failed for unknown API: {self.api_name}")
 
     def _validate_kling_structure(self):
-        """Enhanced Kling validation with task folder structure (from working processor)"""
-        valid_tasks = []
-        invalid_images = []
-
+        """Enhanced Kling validation using base template."""
+        valid_tasks, invalid_images = [], []
         for i, task in enumerate(self.config.get('tasks', [])):
-            folder = Path(task['folder'])
-            source_folder = folder / "Source"
-
-            if not source_folder.exists():
-                self.logger.warning(f"❌ Missing source: {source_folder}")
-                continue
-
-            # Get all image files
-            image_files = [f for f in source_folder.iterdir()
-                         if f.suffix.lower() in self.api_definitions['file_types']]
-
-            if not image_files:
-                self.logger.warning(f"❌ Empty source: {source_folder}")
-                continue
-
-            # Validate images and count valid ones
-            valid_count = 0
-            for img_file in image_files:
-                is_valid, reason = self.validate_file(img_file)
-                if not is_valid:
-                    invalid_images.append({
-                        'path': str(img_file), 'folder': str(folder),
-                        'name': img_file.name, 'reason': reason
-                    })
-                else:
-                    valid_count += 1
-
-            if valid_count > 0:
-                # Create output directories
-                (folder / "Generated_Video").mkdir(exist_ok=True)
-                (folder / "Metadata").mkdir(exist_ok=True)
-                valid_tasks.append(task)
-                self.logger.info(f"✓ Task {i+1}: {valid_count}/{len(image_files)} valid images")
-
+            result = self._validate_task_folder_structure(task, invalid_images)
+            if result:
+                valid_tasks.append(result[0])
+                self.logger.info(f"✓ Task {i+1}: {result[1]}/{result[2]} valid images")
         if invalid_images:
             self.write_invalid_report(invalid_images, "kling")
             raise Exception(f"{len(invalid_images)} invalid images found")
-
         return valid_tasks
     def _validate_nano_banana_structure(self):
         """Enhanced Nano Banana validation with parallel processing (from working processor)"""
@@ -373,8 +404,7 @@ class UnifiedAPIProcessor:
                 return None, []
 
             # Get and validate images
-            image_files = [f for f in source_folder.iterdir()
-                         if f.suffix.lower() in self.api_definitions['file_types']]
+            image_files = self._get_files_by_type(source_folder, 'image')
 
             if not image_files:
                 return None, []
@@ -451,16 +481,14 @@ class UnifiedAPIProcessor:
                     self.logger.warning(f"Missing reference folder {ref_folder}")
                     continue
                 
-                reference_images = [f for f in ref_folder.iterdir() 
-                                if f.suffix.lower() in ['.jpg', '.jpeg', '.png', '.bmp']]
+                reference_images = self._get_files_by_type(ref_folder, 'reference_image')
                 
                 if not reference_images:
                     self.logger.warning(f"Empty reference folder {ref_folder}")
                     continue
             
             # Get video files
-            video_files = [f for f in source_folder.iterdir() 
-                        if f.suffix.lower() in self.api_definitions['file_types']['video']]
+            video_files = self._get_files_by_type(source_folder, 'video')
             
             if not video_files:
                 self.logger.warning(f"Empty source folder {source_folder}")
@@ -521,8 +549,7 @@ class UnifiedAPIProcessor:
                 return None, []
 
             # Get and validate images
-            image_files = [f for f in source_dir.iterdir()
-                         if f.suffix.lower() in self.api_definitions['file_types']]
+            image_files = self._get_files_by_type(source_dir, 'image')
 
             if not image_files:
                 return None, []
@@ -630,8 +657,7 @@ class UnifiedAPIProcessor:
         if not (src_dir.exists() and ref_dir.exists()):
             return None, [f"{task['effect']}: Missing Source/Reference folders"]
 
-        src_imgs = [f for f in src_dir.iterdir()
-                   if f.suffix.lower() in self.api_definitions['file_types']]
+        src_imgs = self._get_files_by_type(src_dir, 'image')
 
         if not src_imgs:
             return None, [f"{task['effect']}: No source images"]
@@ -773,17 +799,7 @@ class UnifiedAPIProcessor:
             self.logger.error(f"❌ Client init failed: {e}")
             return False
 
-    def download_video_streaming(self, url, path):
-        """Kling-style streaming video download method (from working processor)"""
-        try:
-            with requests.get(url, stream=True) as r:
-                r.raise_for_status()
-                with open(path, 'wb') as f:
-                    shutil.copyfileobj(r.raw, f)
-            return True
-        except Exception as e:
-            self.logger.error(f"Download failed: {e}")
-            return False
+
 
     def save_nano_responses(self, response_data, output_folder, base_name):
         """Save nano banana response data with base64 image handling (from working processor)"""
@@ -906,9 +922,9 @@ class UnifiedAPIProcessor:
             output_path = Path(output_folder) / f"{base_name}_generated.mp4"
             video_saved = False
 
-            # Method 1: Download from URL (using streaming)
+            # Method 1: Download from URL
             if url:
-                video_saved = self.download_video_streaming(url, output_path)
+                video_saved = self.download_file(url, output_path)
                 if not video_saved:
                     self.logger.info(f" ⚠️ URL download failed, trying local file...")
 
@@ -1226,14 +1242,10 @@ class UnifiedAPIProcessor:
             if not isinstance(result, tuple) or len(result) < 5:
                 raise ValueError(f"Invalid API response format")
 
-            # Extract known fields
+            # Extract known fields and capture ALL result fields
+            all_result_fields = self._capture_all_api_fields(result, ['output_urls', 'field_1', 'task_id'])
             output_urls = result[0]
             task_id = result[2] if len(result) >= 3 else ''
-            
-            # Capture ALL result fields
-            all_result_fields = {}
-            for i, value in enumerate(result):
-                all_result_fields[f'api_result_{i}'] = value if not isinstance(value, (dict, list, tuple)) else str(type(value).__name__)
             
             self.logger.info(f" Task ID: {task_id}")
 
@@ -1337,21 +1349,12 @@ class UnifiedAPIProcessor:
             if not isinstance(result, tuple) or len(result) < 4:
                 raise ValueError("Invalid API response format")
 
-            video_url = result[0] if len(result) > 0 else None
-            thumbnail_url = result[1] if len(result) > 1 else None
-            task_id = result[2] if len(result) > 2 else None
-            error_msg = result[3] if len(result) > 3 else None
-            
-            # Capture ALL result fields
-            all_result_fields = {
-                'api_result_0_video_url': video_url,
-                'api_result_1_thumbnail_url': thumbnail_url,
-                'api_result_2_task_id': task_id,
-                'api_result_3_error_msg': error_msg
-            }
-            # Add any additional fields from result tuple
-            for i in range(4, len(result)):
-                all_result_fields[f'api_result_{i}'] = result[i]
+            # Capture ALL result fields with known names
+            all_result_fields = self._capture_all_api_fields(result, ['video_url', 'thumbnail_url', 'task_id', 'error_msg'])
+            video_url = all_result_fields.get('video_url')
+            thumbnail_url = all_result_fields.get('thumbnail_url')
+            task_id = all_result_fields.get('task_id')
+            error_msg = all_result_fields.get('error_msg')
 
             if error_msg:
                 raise ValueError(f"API error: {error_msg}")
@@ -1416,6 +1419,41 @@ class UnifiedAPIProcessor:
             self.save_metadata(Path(metadata_folder), base_name, image_name, metadata, task_config)
             raise e
 
+    def _capture_all_api_fields(self, result, known_field_names=None):
+        """
+        Helper to capture ALL fields from an API result tuple without duplicates.
+        
+        Args:
+            result: The tuple returned from client.predict()
+            known_field_names: Optional list of known field names to map to indices
+                             e.g., ['output_urls', 'field_1', 'task_id', 'error_msg']
+        
+        Returns:
+            Dict with all result fields captured with known names taking priority:
+            - Named fields if known_field_names provided (output_urls, task_id, etc.)
+            - api_result_N only for fields without known names
+        """
+        if not isinstance(result, tuple):
+            return {'api_result_0': result}
+        
+        captured = {}
+        
+        # Map known field names to result indices (these take priority)
+        if known_field_names:
+            for i, field_name in enumerate(known_field_names):
+                if i < len(result):
+                    captured[field_name] = result[i]
+        
+        # Capture remaining fields by index (skip indices with known names)
+        named_indices = set(range(len(known_field_names))) if known_field_names else set()
+        for i in range(len(result)):
+            if i not in named_indices:
+                value = result[i]
+                # Store complex types as type name, simple types as-is
+                captured[f'api_result_{i}'] = value if not isinstance(value, (dict, list, tuple)) else str(type(value).__name__)
+        
+        return captured
+
     def _make_json_serializable(self, obj):
         """Convert non-JSON-serializable objects to strings recursively"""
         if isinstance(obj, dict):
@@ -1459,86 +1497,93 @@ class UnifiedAPIProcessor:
         with open(metadata_file, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=2, ensure_ascii=False)
 
-    def save_metadata(self, metadata_folder, base_name, source_name, result_data, task_config):
-        """Enhanced universal metadata saving. Always record all fields from result_data and task_config."""
+    def save_metadata(self, metadata_folder, base_name, source_name, result_data, task_config, 
+                     api_specific_filename=None, log_status=False):
+        """
+        Universal metadata saving method. Always records all fields from result_data and task_config.
+        
+        Args:
+            metadata_folder: Path to metadata directory
+            base_name: Base name for the metadata file
+            source_name: Name of the source file
+            result_data: Dict containing API result data
+            task_config: Dict containing task configuration
+            api_specific_filename: Optional custom filename (e.g., for runway with ref_stem)
+            log_status: If True, logs success/failure status after saving
+        """
+        # Determine source field name based on API
+        if self.api_name == "runway":
+            source_field = "source_video"
+        elif self.api_name in ["kling", "nano_banana", "vidu_effects", "vidu_reference", "genvideo", "pixverse"]:
+            source_field = "source_image"
+        else:
+            source_field = "source_file"
+        
+        # Build base metadata
         metadata = {
-            "source_file": source_name,
-            "processing_timestamp": datetime.now().isoformat(),
+            source_field: source_name,
+            "processing_timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S') if self.api_name == "kling" else datetime.now().isoformat(),
             "api_name": self.api_name
         }
+        
+        # Merge result data
         if result_data:
             metadata.update(result_data)
+        
+        # Merge task config (don't overwrite existing keys)
         for k, v in task_config.items():
             if k not in metadata:
                 metadata[k] = v
+        
         # Convert non-serializable objects to strings
         metadata = self._make_json_serializable(metadata)
-        metadata_file = metadata_folder / f"{base_name}_metadata.json"
+        
+        # Determine filename
+        if api_specific_filename:
+            metadata_file = metadata_folder / api_specific_filename
+        else:
+            metadata_file = metadata_folder / f"{base_name}_metadata.json"
+        
+        # Write metadata
         with open(metadata_file, 'w', encoding='utf-8') as f:
-            import json
             json.dump(metadata, f, ensure_ascii=False, indent=2)
+        
+        # Optional status logging
+        if log_status:
+            status = "✓" if result_data.get('success') else "❌"
+            self.logger.info(f" {status} Metadata saved: {metadata_file.name}")
 
+    # Backwards-compatible wrapper methods (delegate to universal save_metadata)
     def save_kling_metadata(self, metadata_folder, base_name, image_name, result_data, task_config):
-        """Kling-specific metadata saving (matching working processor). Always record all fields from result_data and task_config."""
-        metadata = {
-            "source_image": image_name,
-            "processing_timestamp": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            "api_name": self.api_name
-        }
-        if result_data:
-            metadata.update(result_data)
-        for k, v in task_config.items():
-            if k not in metadata:
-                metadata[k] = v
-        # Convert non-serializable objects to strings
-        metadata = self._make_json_serializable(metadata)
-        metadata_file = metadata_folder / f"{base_name}_metadata.json"
-        with open(metadata_file, 'w', encoding='utf-8') as f:
-            import json
-            json.dump(metadata, f, ensure_ascii=False, indent=2)
-        status = "✓" if result_data.get('success') else "❌"
-        self.logger.info(f" {status} Metadata saved: {metadata_file.name}")
+        """Kling-specific metadata saving (delegates to universal save_metadata)."""
+        self.save_metadata(metadata_folder, base_name, image_name, result_data, task_config, log_status=True)
 
     def save_nano_metadata(self, metadata_folder, base_name, image_name, result_data, task_config):
-        """Nano Banana specific metadata saving (matching working processor). Always record all fields from result_data and task_config."""
-        metadata = {
-            "source_image": image_name,
-            "processing_timestamp": datetime.now().isoformat(),
-            "api_name": self.api_name
-        }
-        if result_data:
-            metadata.update(result_data)
-        for k, v in task_config.items():
-            if k not in metadata:
-                metadata[k] = v
-        # Convert non-serializable objects to strings
-        metadata = self._make_json_serializable(metadata)
-        metadata_file = metadata_folder / f"{base_name}_metadata.json"
-        with open(metadata_file, 'w', encoding='utf-8') as f:
-            import json
-            json.dump(metadata, f, ensure_ascii=False, indent=2)
+        """Nano Banana specific metadata saving (delegates to universal save_metadata)."""
+        self.save_metadata(metadata_folder, base_name, image_name, result_data, task_config)
 
     def save_runway_metadata(self, metadata_folder, base_name, ref_stem, video_name, ref_name, result_data, task_config):
-        """Runway-specific metadata saving (matching working processor). Always record all fields from result_data and task_config."""
-        metadata = {
-            "source_video": video_name,
-            "reference_image": ref_name,
-            "processing_timestamp": datetime.now().isoformat(),
-            "api_name": self.api_name
-        }
-        if result_data:
-            metadata.update(result_data)
-        for k, v in task_config.items():
-            if k not in metadata:
-                metadata[k] = v
-        # Convert non-serializable objects to strings
-        metadata = self._make_json_serializable(metadata)
-        metadata_file = metadata_folder / f"{base_name}_ref_{ref_stem}_runway_metadata.json"
-        with open(metadata_file, 'w', encoding='utf-8') as f:
-            import json
-            json.dump(metadata, f, ensure_ascii=False, indent=2)
-        status = "✓" if result_data.get('success') else "❌"
-        self.logger.info(f" {status} Meta {metadata_file.name}")
+        """Runway-specific metadata saving (delegates to universal save_metadata)."""
+        # Add runway-specific field to result_data
+        if result_data and ref_name:
+            result_data['reference_image'] = ref_name
+        filename = f"{base_name}_ref_{ref_stem}_runway_metadata.json"
+        self.save_metadata(metadata_folder, base_name, video_name, result_data, task_config, 
+                          api_specific_filename=filename, log_status=True)
+
+    def _process_files_in_folder(self, task, task_num, total_tasks, source_folder, output_folder, metadata_folder, task_name=None):
+        """Universal file processing loop template."""
+        self.logger.info(f"📁 Task {task_num}/{total_tasks}: {task_name or source_folder.parent.name}")
+        image_files = self._get_files_by_type(source_folder, 'image')
+        successful = 0
+        for i, img_file in enumerate(image_files, 1):
+            self.logger.info(f" 🖼️ {i}/{len(image_files)}: {img_file.name}")
+            if self.process_file(img_file, task, output_folder, metadata_folder):
+                successful += 1
+            if i < len(image_files):
+                time.sleep(self.api_definitions.get('rate_limit', 3))
+        self.logger.info(f"✓ Task {task_num}: {successful}/{len(image_files)} successful")
+        return successful
 
     def process_task(self, task, task_num, total_tasks):
         """Enhanced universal task processing with API-specific optimizations"""
@@ -1585,30 +1630,10 @@ class UnifiedAPIProcessor:
         self.logger.info(f"✓ Task {task_num}: {successful}/{len(image_files)} successful")
 
     def process_nano_banana_task(self, task, task_num, total_tasks):
-        """Process Nano Banana task with base64 image handling"""
+        """Process Nano Banana task using unified template."""
         folder = Path(task['folder'])
-        source_folder = folder / "Source"
-        output_folder = folder / "Generated_Output"
-        metadata_folder = folder / "Metadata"
-
-        self.logger.info(f"📁 Task {task_num}/{total_tasks}: {folder.name}")
-
-        # Get all valid images
-        image_files = [f for f in source_folder.iterdir()
-                      if f.suffix.lower() in self.api_definitions['file_types']]
-
-        successful = 0
-        for i, img_file in enumerate(image_files, 1):
-            self.logger.info(f" 🖼️ {i}/{len(image_files)}: {img_file.name}")
-
-            if self.process_file(img_file, task, output_folder, metadata_folder):
-                successful += 1
-
-            if i < len(image_files):
-                rate_limit = self.api_definitions.get('rate_limit', 5)
-                time.sleep(rate_limit)
-
-        self.logger.info(f"✓ Task {task_num}: {successful}/{len(image_files)} successful")
+        self._process_files_in_folder(task, task_num, total_tasks, folder / "Source", 
+                                      folder / "Generated_Output", folder / "Metadata")
 
     def process_runway_task(self, task, task_num, total_tasks):
         """Process Runway task with optional video-reference pairing strategies"""
@@ -1620,8 +1645,7 @@ class UnifiedAPIProcessor:
         metadata_folder = folder / "Metadata"
         
         # Get video files
-        video_files = [f for f in source_folder.iterdir() 
-                    if f.suffix.lower() in self.api_definitions['file_types']['video']]
+        video_files = self._get_files_by_type(source_folder, 'video')
         
         requires_reference = task.get('requires_reference', False)
         
@@ -1690,30 +1714,9 @@ class UnifiedAPIProcessor:
 
 
     def process_vidu_effects_task(self, task, task_num, total_tasks):
-        """Process Vidu Effects task"""
-        effect_name = task.get('effect', '')
-        source_dir = Path(task.get('source_dir', ''))
-        generated_dir = task.get('generated_dir', '')
-        metadata_dir = task.get('metadata_dir', '')
-
-        self.logger.info(f"🎬 Task {task_num}/{total_tasks}: {effect_name}")
-
-        # Get all valid images
-        image_files = [f for f in source_dir.iterdir()
-                      if f.suffix.lower() in self.api_definitions['file_types']]
-
-        successful = 0
-        for i, image_file in enumerate(image_files, 1):
-            self.logger.info(f" 🖼️ {i}/{len(image_files)}: {image_file.name}")
-
-            if self.process_file(str(image_file), task, generated_dir, metadata_dir):
-                successful += 1
-
-            if i < len(image_files):
-                rate_limit = self.api_definitions.get('rate_limit', 3)
-                time.sleep(rate_limit)
-
-        self.logger.info(f"✓ Task {task_num}: {successful}/{len(image_files)} successful")
+        """Process Vidu Effects task using unified template."""
+        self._process_files_in_folder(task, task_num, total_tasks, Path(task['source_dir']), 
+                                      Path(task['generated_dir']), Path(task['metadata_dir']), task.get('effect', ''))
 
     def process_vidu_reference_task(self, task, task_num, total_tasks):
         """Process Vidu Reference task"""
@@ -1744,49 +1747,16 @@ class UnifiedAPIProcessor:
         self.logger.info(f"✓ Task {task_num}: {successful}/{total_sets} successful")
 
     def validate_genvideo_structure(self):
-        """Validate genvideo folder structure and images"""
-        valid_tasks = []
-        invalid_images = []
-
+        """Validate genvideo folder structure using base template."""
+        valid_tasks, invalid_images = [], []
         for i, task in enumerate(self.config.get('tasks', []), 1):
-            folder = Path(task['folder'])
-            source_folder = folder / "Source"
-
-            if not source_folder.exists():
-                self.logger.warning(f"❌ Missing source: {source_folder}")
-                continue
-
-            # Get all image files
-            image_files = [f for f in source_folder.iterdir()
-                          if f.suffix.lower() in self.api_definitions['file_types']]
-
-            if not image_files:
-                self.logger.warning(f"❌ Empty source: {source_folder}")
-                continue
-
-            # Validate images
-            valid_count = 0
-            for img_file in image_files:
-                is_valid, reason = self.validate_file(img_file)
-                if not is_valid:
-                    invalid_images.append({
-                        'path': str(img_file), 'folder': str(folder),
-                        'name': img_file.name, 'reason': reason
-                    })
-                else:
-                    valid_count += 1
-
-            if valid_count > 0:
-                # Create output directories
-                (folder / "Generated_Image").mkdir(exist_ok=True)
-                (folder / "Metadata").mkdir(exist_ok=True)
-                valid_tasks.append(task)
-                self.logger.info(f"✓ Task {i}: {valid_count}/{len(image_files)} valid images")
-
+            result = self._validate_task_folder_structure(task, invalid_images)
+            if result:
+                valid_tasks.append(result[0])
+                self.logger.info(f"✓ Task {i}: {result[1]}/{result[2]} valid images")
         if invalid_images:
             self.write_invalid_report(invalid_images, "genvideo")
             raise Exception(f"{len(invalid_images)} invalid images found")
-
         return valid_tasks
 
     def process_genvideo(self, image_path, task_config, output_folder, metadata_folder, attempt, max_retries):
@@ -1896,30 +1866,10 @@ class UnifiedAPIProcessor:
 
 
     def process_genvideo_task(self, task, task_num, total_tasks):
-        """Process GenVideo task with folder structure"""
+        """Process GenVideo task using unified template."""
         folder = Path(task['folder'])
-        source_folder = folder / "Source"
-        output_folder = folder / "Generated_Image"
-        metadata_folder = folder / "Metadata"
-
-        self.logger.info(f"📁 Task {task_num}/{total_tasks}: {folder.name}")
-
-        # Get valid images (pre-validated)
-        image_files = [f for f in source_folder.iterdir()
-                      if f.suffix.lower() in self.api_definitions['file_types']]
-
-        # Process images sequentially
-        successful = 0
-        for i, img_file in enumerate(image_files, 1):
-            self.logger.info(f"   🖼️ {i}/{len(image_files)}: {img_file.name}")
-            if self.process_file(img_file, task, output_folder, metadata_folder):
-                successful += 1
-
-            if i < len(image_files):
-                rate_limit = self.api_definitions.get('rate_limit', 3)
-                time.sleep(rate_limit)
-
-        self.logger.info(f"✓ Task {task_num}: {successful}/{len(image_files)} successful")
+        self._process_files_in_folder(task, task_num, total_tasks, folder / "Source", 
+                                      folder / "Generated_Image", folder / "Metadata")
 
     def validate_pixverse_structure(self):
         """Enhanced Pixverse validation with base folder structure"""
@@ -1938,8 +1888,7 @@ class UnifiedAPIProcessor:
             if not source_dir.exists():
                 return None, []
             
-            image_files = [f for f in source_dir.iterdir() 
-                        if f.suffix.lower() in self.api_definitions["file_types"]]
+            image_files = self._get_files_by_type(source_dir, 'image')
             
             if not image_files:
                 return None, []
@@ -2035,24 +1984,21 @@ class UnifiedAPIProcessor:
             if not isinstance(result, tuple):
                 raise ValueError(f"Invalid API response format: {result}")
             
-            # Extract known fields
-            output_url = result[0] if len(result) > 0 else None
+            # Extract known fields and capture ALL result fields
+            all_result_fields = self._capture_all_api_fields(result, ['output_url', 'output_video', 'error_message', 'completion_time', 'elapsed_time'])
+            output_url = all_result_fields.get('output_url')
             output_video = result[1] if len(result) > 1 else None
-            error_message = result[2] if len(result) > 2 else None
-            completion_time = result[3] if len(result) > 3 else None
-            elapsed_time = result[4] if len(result) > 4 else None
+            error_message = all_result_fields.get('error_message')
+            completion_time = all_result_fields.get('completion_time')
+            elapsed_time = all_result_fields.get('elapsed_time')
             
-            # Capture ALL result fields including potential video_id, task_id, etc.
-            all_result_fields = {
-                'api_result_0_output_url': output_url,
-                'api_result_1_output_video': str(type(output_video).__name__),
-                'api_result_2_error_message': error_message,
-                'api_result_3_completion_time': completion_time,
-                'api_result_4_elapsed_time': elapsed_time
-            }
-            # Add any additional fields from result tuple
-            for i in range(5, len(result)):
-                all_result_fields[f'api_result_{i}'] = result[i]
+            # Extract VideoID from error_message (format: "VideoID: 363180725449851 | Success")
+            video_id = None
+            if error_message and "VideoID:" in error_message:
+                import re
+                match = re.search(r'VideoID:\s*(\d+)', error_message)
+                if match:
+                    video_id = match.group(1)
             
             effect = task_config.get("effect", "none") 
             processing_time = time.time() - start_time
@@ -2067,6 +2013,7 @@ class UnifiedAPIProcessor:
                 'prompt': prompt,
                 'negative_prompt': negative_prompt,
                 'custom_effect_id': custom_effect_id,
+                'video_id': video_id,  # Add extracted VideoID
                 'processing_time_seconds': round(processing_time, 1),
                 'processing_timestamp': datetime.now().isoformat(),
                 'attempts': attempt + 1,
@@ -2135,29 +2082,9 @@ class UnifiedAPIProcessor:
 
 
     def process_pixverse_task(self, task, task_num, total_tasks):
-        """Process Pixverse task"""
-        effect_name = task.get("effect", "")
-        source_dir = Path(task.get("source_dir", ""))
-        generated_dir = task.get("generated_dir", "")
-        metadata_dir = task.get("metadata_dir", "")
-        
-        self.logger.info(f"Task {task_num}/{total_tasks}: {effect_name}")
-        
-        image_files = [f for f in source_dir.iterdir() 
-                    if f.suffix.lower() in self.api_definitions["file_types"]]
-        
-        successful = 0
-        for i, image_file in enumerate(image_files, 1):
-            self.logger.info(f"{i}/{len(image_files)}: {image_file.name}")
-            
-            if self.process_file(str(image_file), task, generated_dir, metadata_dir):
-                successful += 1
-            
-            if i < len(image_files):
-                rate_limit = self.api_definitions.get("rate_limit", 3)
-                time.sleep(rate_limit)
-        
-        self.logger.info(f"Task {task_num}: {successful}/{len(image_files)} successful")
+        """Process Pixverse task using unified template."""
+        self._process_files_in_folder(task, task_num, total_tasks, Path(task['source_dir']), 
+                                      Path(task['generated_dir']), Path(task['metadata_dir']), task.get('effect', ''))
 
 
     def download_file(self, url, path):

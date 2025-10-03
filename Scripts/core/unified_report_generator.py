@@ -864,7 +864,7 @@ class UnifiedReportGenerator:
         """Process GenVideo batch"""
         folder = Path(task['folder'])
         source_folder = folder / 'Source'
-        generated_folder = folder / 'GeneratedImage'
+        generated_folder = folder / 'Generated_Image'
         metadata_folder = folder / 'Metadata'
         pairs = []
         

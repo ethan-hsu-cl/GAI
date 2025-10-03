@@ -60,7 +60,7 @@ python core/runall.py all auto --parallel --verbose
 
 ```bash
 # File download command example:
-yt-dlp -f "bv*[vcodec~='^(h264|avc)']+ba[acodec~='^(mp?4a|aac)']" "https://youtube.com/playlist?list=PLSgBrV2b0XA_ofBZ4c3e85sTNBh3BKN2y&si=_5VpzvdI7hsF-a4o"
+yt-dlp -f "bv*[vcodec~='^(h264|avc)']+ba[acodec~='^(mp?4a|aac)']" "link" --cookies-from-browser chrome -o "%(title)s.%(ext)s"
 ```
 
 ## 📁 Project Structure

@@ -5,7 +5,7 @@
     "template_path": "templates/I2V templates.pptx",
     "prompt": "",
     "schedule": {
-        "start_time": "00:00",
+        "start_time": "",
         "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
     },
     "design_link": "https://platform.vidu.com/docs/templates",
