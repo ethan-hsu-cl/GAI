@@ -301,6 +301,7 @@ class UnifiedAPIProcessor:
             self.write_invalid_report(invalid_images, "kling")
             raise Exception(f"{len(invalid_images)} invalid images found")
         return valid_tasks
+
     def _validate_nano_banana_structure(self):
         """Enhanced Nano Banana validation with parallel processing (from working processor)"""
         valid_tasks = []
@@ -709,8 +710,6 @@ class UnifiedAPIProcessor:
             self.logger.error(f"❌ Client init failed: {e}")
             return False
 
-
-
     def save_nano_responses(self, response_data, output_folder, base_name):
         """Save nano banana response data with base64 image handling (from working processor)"""
         if not response_data or not isinstance(response_data, list):
@@ -751,6 +750,7 @@ class UnifiedAPIProcessor:
                     self.logger.warning(f"Error saving image {i+1}: {e}")
 
         return saved_files, text_responses
+
     def process_file(self, file_path, task_config, output_folder, metadata_folder):
         """Process file using registered handler."""
         max_retries = self.api_definitions.get('max_retries', 3)

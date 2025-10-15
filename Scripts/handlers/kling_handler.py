@@ -14,7 +14,7 @@ class KlingHandler(BaseAPIHandler):
         return self.client.predict(
             image=handle_file(str(file_path)),
             prompt=task_config['prompt'],
-            mode="std",
+            mode=task_config.get('mode', 'std'),
             duration=5,
             cfg=0.5,
             model=self.config.get('model_version', 'v2.1'),

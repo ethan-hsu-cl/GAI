@@ -11,17 +11,53 @@
     },
     "tasks": [
         {
-            "folder": "../Media Files/Tests/1003 Nano Banana Test",
-            "prompt": "Edit the portrait into a gothic vampire style, with pale skin, glowing red eyes, dark flowing robes, a misty castle background, and bats circling above. realistic photo, close-up portrait, maintaining the original facial features and identity of the person.",
+            "folder": "../Media Files/Nano Banana/1014 Duo Polaroid",
+            "prompt": "Take a Polaroid-style photo with a casual, candid feel. The image should have slight motion blur and even lighting, like a flash in a dark room, softly spread across the scene. Keep the faces unchanged. Replace the background behind the two subjects with a white curtain. The people should be naturally close, with gentle physical contact, such as leaning together or resting a shoulder against each other.",
             "reference_folder": "",
-            "use_comparison_template": false,
+            "use_comparison_template": true,
             "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?usp=sharing",
-            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EiNsDK8j_DdIjmFaVltklK8B9YS9HJojhifi7V8_uEubCw?e=JbrJJP"
+            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EiNsDK8j_DdIjmFaVltklK8B9YS9HJojhifi7V8_uEubCw?e=JbrJJP",
+            "use_multi_image": true,
+            "multi_image_config": {
+                "enabled": true,
+                "mode": "sequential",
+                "folders": [
+                    "../Media Files/Nano Banana/1014 Duo Polaroid/Additional"
+                ],
+                "allow_duplicates": true
+            }
+        },
+        {
+            "folder": "../Media Files/Nano Banana/1014 Retro Polaroid",
+            "prompt": "請以以上兩張圖片生成一張具有經典拍立得照片質感的圖片，兩人身處於一個柔和的自然光，營造出一種輕鬆愉悅的下午時光氛圍的室內，整張圖片應呈現出拍立得特有的方形構圖，並帶有明顯的白色邊框。照片本身的色彩應偏向柔和、略帶復古的暖色調，像是老式拍立得沖洗出來的感覺，可以有輕微的顆粒感和色彩飽和度稍低的質感。畫面上應略帶有一點溫暖的漏光效果，讓整體感覺更加懷舊和真實。臉部特徵要維持與原始照片一致，逼真度要高。",
+            "reference_folder": "",
+            "use_comparison_template": true,
+            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?usp=sharing",
+            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EiNsDK8j_DdIjmFaVltklK8B9YS9HJojhifi7V8_uEubCw?e=JbrJJP",
+            "use_multi_image": true,
+            "multi_image_config": {
+                "enabled": true,
+                "mode": "sequential",
+                "folders": [
+                    "../Media Files/Nano Banana/1014 Retro Polaroid/Additional"
+                ],
+                "allow_duplicates": true
+            }
         }
     ],
     "comments": {
-        "folder_structure": "Each task folder should contain 'Source' and 'Generated_Output' subfolders",
+        "folder_structure": "Each task folder should contain 'Source' and 'Generated_Output' subfolders. For multi-image tasks, also include 'Additional' subfolder.",
         "reference_folder": "Optional: Path to folder containing third set of images for 3-way comparison",
-        "template_usage": "use_comparison_template: true uses comparison_template_path (3 placeholders), false uses template_path (2 placeholders)"
+        "template_usage": "use_comparison_template: true uses comparison_template_path (3 placeholders), false uses template_path (2 placeholders)",
+        "use_multi_image": "Set to true to enable dual-image mode from Additional folder, false for single-image mode",
+        "multi_image_config": {
+            "description": "Configuration for multi-image generation",
+            "enabled": "Must be true to use multi-image features",
+            "mode": "sequential: consistent reproducible pairing | random_pairing: randomly select from Additional folder",
+            "folders": "Array of folder paths to select additional images from (typically ['../path/to/folder/Additional'])",
+            "allow_duplicates": "true for sequential mode (recommended) | false: try to avoid repeating combinations in random mode"
+        },
+        "multi_image_example_single": "Set 'use_multi_image': false to process only images from Source folder without additional images",
+        "multi_image_example_dual": "Set 'use_multi_image': true with multi_image_config to pair Source images with Additional folder images sequentially"
     }
 }

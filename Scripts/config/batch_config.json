@@ -4,7 +4,7 @@
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "comment_output_directory": "Optional: Global output directory for all generated PPTX files. Can be overridden per task. Default is current directory.",
     "testbed": "http://192.168.4.3:8000/kling/",
-    "model_version": "v2.1",
+    "model_version": "v2.5-turbo",
     "comment_model_version": "Model version to use for video generation. Options: 'v1.6', 'v2.1'. Default is 'v2.1' if not specified.",
     "schedule": {
         "start_time": "",
@@ -12,11 +12,12 @@
     },
     "tasks": [
         {
-            "folder": "../Media Files/Tests/0916 Dark Angel Kling Test",
-            "prompt": "The main character fluttering huge black wings appear , adding a dark, stylish angelic vibe to the look. The fabric has a soft, rich texture and reflects subtle highlights under warm indoor lighting. The outfit hugs the body naturally and flows slightly as the character shifts pose, with the wings gently moving in sync with her motion. She completes the transformation by striking a confident pose with one hand resting on her hip.",
-            "negative_prompt": "back view, asymmetrical wing, outfit changed, multi people, blurry, pixelated, wrong outfit design, wrong fabric texture, missing black wings, wings with wrong color, wings too small, wings floating awkwardly, deformed wings, stiff or broken wings, deformed body, duplicated limbs, low resolution, awkward pose, background too cluttered, bad lighting,  back view",
-            "design_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/Eu-3FlE-dFdBrbOFzqB5ZAsBeqUSASAxWJFrU2dsaGOAUA?e=buvyPx",
-            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/Eu-3FlE-dFdBrbOFzqB5ZAsBeqUSASAxWJFrU2dsaGOAUA?e=buvyPx",
+            "mode": "pro",
+            "folder": "../Media Files/Kling 2.5/1014 Kabedon V7",
+            "prompt": "The male protagonist stands up first. Suddenly, he is gently pressed back against a solid, clearly visible indoor wall. The camera begins to circle around them from the side. The second person, already present, steps in with emotional intensity. He raises one arm and places an open palm firmly on the wall beside the main character’s head, his posture confident and dominant. As he moves closer, his body presses more firmly against the main character, creating a textbook kabedon moment. Their bodies lean slightly forward, faces inches apart, eyes locked with rising tension. The camera captures both of their side profiles, emphasizing the intensity of their emotional connection. After a brief moment of charged stillness, he suddenly leans in and they share a deep, passionate kiss — fully immersed in the emotion of the moment.​​",
+            "negative_prompt": "fade in, fade out, deformed face, broken limbs, unnatural posture, glitch, awkward interaction, mismatched body position, wrong camera angle, unnatural kiss, emotionless, stiff pose, anime style, cartoon style, unrealistic lighting, incorrect hand placement, floating characters, extra arms, ghost hands, face change, hairstyle change, sudden fade, dissolve, crossfade, slow transformation, identity mismatch, cropped face, headless, missing arms, missing fingers, distorted kiss​​",
+            "design_link": "https://docs.google.com/presentation/d/1tfh6ui_fEDvE13xCoHnTeO-9YzfMJrXx8h5ulCRNMXI/edit?slide=id.g37737973c9c_0_0&pli=1#slide=id.g37737973c9c_0_0",
+            "source_video_link": "",
             "reference_folder": "",
             "use_comparison_template": false
         }

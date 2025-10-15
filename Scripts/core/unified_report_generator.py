@@ -63,6 +63,9 @@ class MediaPair:
     # Video-specific (for Runway)
     source_video_path: Optional[Path] = None
     
+    # Multi-image support (for Nano Banana dual-image mode)
+    additional_source_paths: List[Path] = field(default_factory=list)
+    
     # Metadata
     metadata: Dict = field(default_factory=dict)
     ref_metadata: Dict = field(default_factory=dict)
@@ -97,7 +100,7 @@ class UnifiedReportGenerator:
         # Caches for performance
         self._ar_cache = {}
         self._frame_cache = {}
-        self._tempfiles_to_cleanup = []  # PATCH: Track temp webp conversions
+        self._tempfiles_to_cleanup = []  # Track temporary files from format conversions
         self._normalize_cache = {}  # Cache for normalize_key operations
         self._extract_key_cache = {}  # Cache for video key extraction
         
@@ -131,14 +134,15 @@ class UnifiedReportGenerator:
             },
             'nano_banana': {
                 **base_config,
-                'media_types': ['source', 'generated', 'reference'],
-                'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5), (35, 3.26, 12.5, 12.5)],
+                'media_types': ['source', 'additional_source', 'generated'],
+                'positions': [(2.59, 3.26, 10, 10), (13, 3.26, 10, 10), (23.41, 3.26, 10, 10)],
                 'title_format': '❌ GENERATION FAILED',
                 'title_show_only_if_failed': True,
-                'metadata_fields': ['response_id', 'processing_time_seconds'],
-                'metadata_position': (5.19, 15.99, 7.29, 3.06),
+                'metadata_fields': ['response_id', 'additional_images_used', 'success', 'attempts', 'processing_time_seconds'],
+                'metadata_position': (2.32, 15.24, 7.29, 3.06),
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
-                'use_comparison': True
+                'use_comparison': False,
+                'supports_multi_image': True
             },
             'vidu_effects': {
                 **base_config,
@@ -290,6 +294,10 @@ class UnifiedReportGenerator:
         elif media_type == 'source_video':
             path = pair.source_video_path
             is_video = True
+        elif media_type == 'additional_source':
+            # For multi-image support (Nano Banana dual-image mode)
+            path = pair.additional_source_paths[0] if pair.additional_source_paths else None
+            is_video = path.suffix.lower() in {'.mp4', '.mov', '.avi'} if path else False
         elif media_type == 'generated':
             path = pair.primary_generated
             is_video = path.suffix.lower() in {'.mp4', '.mov', '.avi'} if path else False
@@ -317,21 +325,57 @@ class UnifiedReportGenerator:
     # ================== UNIFIED MEDIA SYSTEM ==================
     
     def ensure_supported_img_format(self, img_path):
-        """PATCH: Convert webp to png as needed"""
+        """Convert any unsupported image format to PNG for PowerPoint compatibility"""
         p = Path(img_path)
-        if p.suffix.lower() == '.webp':
+        
+        # PowerPoint natively supports: jpg, jpeg, png, bmp, gif, tiff, tif
+        # We'll convert everything else (webp, svg, mpo, etc.) to PNG
+        supported_formats = {'.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.tif'}
+        
+        # Always try to open and check the actual format, not just extension
+        # Some files like .jpg might actually be MPO format
+        needs_conversion = p.suffix.lower() not in supported_formats
+        
+        try:
             with Image.open(p) as im:
-                rgb_im = im.convert('RGB')
-                tmp = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
-                rgb_im.save(tmp.name)
-                tmp.close()
-                self._tempfiles_to_cleanup.append(tmp.name)
-            return tmp.name
+                # Check actual image format - MPO and other exotic formats need conversion
+                actual_format = im.format
+                if actual_format in ('MPO', 'WEBP', 'SVG', 'HEIC', 'HEIF', 'AVIF'):
+                    needs_conversion = True
+                    logger.info(f"Detected {actual_format} format in {p.name}, will convert")
+                
+                if needs_conversion:
+                    # Convert to RGB mode (removes alpha for formats that don't support it well)
+                    # Use RGBA for formats that might have transparency
+                    if im.mode in ('RGBA', 'LA', 'P'):
+                        rgb_im = im.convert('RGBA')
+                        tmp = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
+                        rgb_im.save(tmp.name, 'PNG')
+                    else:
+                        rgb_im = im.convert('RGB')
+                        tmp = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
+                        rgb_im.save(tmp.name, 'PNG')
+                    
+                    tmp.close()
+                    self._tempfiles_to_cleanup.append(tmp.name)
+                    logger.info(f"Converted {actual_format or p.suffix} to PNG: {p.name}")
+                    return tmp.name
+                else:
+                    # Format is supported, return as-is
+                    return str(img_path)
+                    
+        except Exception as e:
+            logger.error(f"Failed to process image {p.name}: {e}")
+            # If we can't even open it, try converting anyway as a fallback
+            if needs_conversion:
+                logger.error(f"Unable to convert {p.name}, returning original path")
+            return str(img_path)
+        
         return str(img_path)
     
-    def _convert_webp_batch(self, webp_paths):
-        """Convert multiple WebP files in parallel for major performance gain"""
-        if not webp_paths:
+    def _convert_unsupported_formats_batch(self, image_paths):
+        """Convert multiple unsupported image formats in parallel for major performance gain"""
+        if not image_paths:
             return {}
         
         def convert_one(path):
@@ -343,7 +387,7 @@ class UnifiedReportGenerator:
                 return (path, str(path))
         
         with ThreadPoolExecutor(max_workers=4) as executor:
-            results = executor.map(convert_one, webp_paths)
+            results = executor.map(convert_one, image_paths)
         
         return dict(results)
     
@@ -451,6 +495,17 @@ class UnifiedReportGenerator:
             elif field == 'response_id':
                 value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
                 meta_lines.append(f"Response ID: {value}")
+            elif field == 'attempts':
+                value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
+                meta_lines.append(f"Attempts: {value}")
+            elif field == 'additional_images_used':
+                # Display additional images used in generation
+                add_imgs = pair.metadata.get(field, []) if pair.metadata else []
+                if add_imgs:
+                    if len(add_imgs) == 1:
+                        meta_lines.append(f"Additional: {add_imgs[0]}")
+                    else:
+                        meta_lines.append(f"Additional: {', '.join(add_imgs)}")
             elif field == 'task_id':
                 value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
                 meta_lines.append(f"Task ID: {value}")
@@ -635,12 +690,22 @@ class UnifiedReportGenerator:
                 m = re.match(r'^(\d{4})\s*(.+)', folder.name)
                 effect_name = m.group(2) if m else folder.name
 
+            # For Nano Banana multi-image mode: resolve additional source images from metadata
+            additional_source_paths = []
+            if self.api_name == 'nano_banana' and md.get('additional_images_used'):
+                additional_folder = folder / 'Additional'
+                for img_name in md.get('additional_images_used', []):
+                    img_path = additional_folder / img_name
+                    if img_path.exists():
+                        additional_source_paths.append(img_path)
+
             pair = MediaPair(
                 source_file=src[b].name,
                 source_path=src[b],
                 api_type=self.api_name,
                 generated_paths=gen_paths,
                 reference_paths=ref_paths,
+                additional_source_paths=additional_source_paths,
                 metadata=md,
                 failed=not gen_paths or not md.get('success', False),
                 ref_failed=use_comparison and not ref_paths,
@@ -1114,15 +1179,12 @@ class UnifiedReportGenerator:
         return None
     
     def get_aspect_ratio(self, path, is_video=False):
-        """Calculate aspect ratio with caching"""
-        fn = path.name.lower()
-        if '9_16' in fn or 'portrait' in fn: return 9/16
-        if '1_1' in fn or 'square' in fn: return 1
-        if '16_9' in fn or 'landscape' in fn: return 16/9
-        
+        """Calculate aspect ratio with caching - always use actual dimensions"""
         key = str(path)
-        if key in self._ar_cache: return self._ar_cache[key]
+        if key in self._ar_cache: 
+            return self._ar_cache[key]
         
+        # Try to get actual dimensions from the file first
         try:
             if is_video and cv2:
                 cap = cv2.VideoCapture(str(path))
@@ -1130,15 +1192,28 @@ class UnifiedReportGenerator:
                     w, h = cap.get(3), cap.get(4)
                     cap.release()
                     if w > 0 and h > 0:
-                        self._ar_cache[key] = w/h
-                        return w/h
+                        ar = w / h
+                        self._ar_cache[key] = ar
+                        return ar
             else:
                 with Image.open(path) as img:
                     ar = img.width / img.height
                     self._ar_cache[key] = ar
                     return ar
-        except: pass
+        except:
+            pass
         
+        # Fallback: Use filename patterns only if we can't read the file
+        import re
+        fn = path.name.lower()
+        if re.search(r'(?:^|_|-|\s)9[_-]16(?:$|_|-|\s)', fn) or 'portrait' in fn: 
+            return 9/16
+        if re.search(r'(?:^|_|-|\s)1[_-]1(?:$|_|-|\s)', fn) or 'square' in fn: 
+            return 1
+        if re.search(r'(?:^|_|-|\s)16[_-]9(?:$|_|-|\s)', fn) or 'landscape' in fn: 
+            return 16/9
+        
+        # Final fallback
         return 16/9
     
     def extract_first_frame(self, video_path):
@@ -1335,7 +1410,7 @@ class UnifiedReportGenerator:
         self._frame_cache.clear()
     
     def cleanup_tempfiles(self):
-        """PATCH: Clean up webp conversion temporary files"""
+        """Clean up temporary files from image format conversions"""
         for f in self._tempfiles_to_cleanup:
             try:
                 if Path(f).exists():
@@ -1563,7 +1638,7 @@ class UnifiedReportGenerator:
         finally:
             # Cleanup all temporary files
             self.cleanup_temp_frames()
-            self.cleanup_tempfiles()  # PATCH: Cleanup webp conversions
+            self.cleanup_tempfiles()  # Cleanup temporary format conversions
 
 def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""
