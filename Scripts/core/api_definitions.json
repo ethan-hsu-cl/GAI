@@ -72,7 +72,7 @@
         },
         "rate_limit": 5,
         "task_delay": 10,
-        "max_retries": 3,
+        "max_retries": 1,
         "special_handling": "base64_images",
         "config_structure": "task_folders",
         "report": {

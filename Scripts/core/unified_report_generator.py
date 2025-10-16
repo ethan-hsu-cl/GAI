@@ -139,7 +139,7 @@ class UnifiedReportGenerator:
                 'title_format': '❌ GENERATION FAILED',
                 'title_show_only_if_failed': True,
                 'metadata_fields': ['response_id', 'additional_images_used', 'success', 'attempts', 'processing_time_seconds'],
-                'metadata_position': (2.32, 15.24, 7.29, 3.06),
+                'metadata_position': (5.19, 15.99, 7.29, 3.06),
                 'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
                 'use_comparison': False,
                 'supports_multi_image': True
@@ -214,6 +214,19 @@ class UnifiedReportGenerator:
     def create_universal_slide(self, ppt, pair, index, template_loaded,
                               use_comparison, slide_config):
         """Create a single slide for any API using configuration"""
+        # Adjust media types for nano_banana based on whether multi-image mode is active
+        if self.api_name == 'nano_banana':
+            if pair.additional_source_paths:
+                # Multi-image mode: show source, additional, generated
+                slide_config = slide_config.copy()
+                slide_config['media_types'] = ['source', 'additional_source', 'generated']
+                slide_config['positions'] = [(2.59, 3.26, 10, 10), (13, 3.26, 10, 10), (23.41, 3.26, 10, 10)]
+            else:
+                # Single-image mode: show only source and generated
+                slide_config = slide_config.copy()
+                slide_config['media_types'] = ['source', 'generated']
+                slide_config['positions'] = [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)]
+        
         # Create slide
         if template_loaded and len(ppt.slides) >= 4:
             slide = ppt.slides.add_slide(ppt.slides[3].slide_layout)
@@ -450,10 +463,8 @@ class UnifiedReportGenerator:
                     else:
                         slide.shapes.add_movie(str(media_path), fl, ft, sw, sh)
                 else:
-                    # PATCH: Convert webp if needed
+                    # Convert any unsupported image format to PNG if needed
                     converted_path = self.ensure_supported_img_format(media_path)
-                    if converted_path != str(media_path):
-                        self._tempfiles_to_cleanup.append(converted_path)
                     slide.shapes.add_picture(str(converted_path), fl, ft, sw, sh)
             except Exception as e:
                 self.add_error_box(slide, l, t, w, h, f"Failed to load media: {e}")
@@ -635,7 +646,8 @@ class UnifiedReportGenerator:
                 gen_imgs, _, _ = self._scan_directory_once(folders['generated'])
                 for key, f in gen_imgs.items():
                     if file_pattern in f.name:
-                        basename = f.name.split(file_pattern)[0]
+                        # Split on 'image' and remove trailing underscore
+                        basename = f.name.split(file_pattern)[0].rstrip('_')
                         out.setdefault(self.normalize_key(basename), []).append(f)
             else:  # kling
                 _, gen_vids, _ = self._scan_directory_once(folders['generated'])
@@ -656,7 +668,8 @@ class UnifiedReportGenerator:
                 for f in ref_generated_folder.iterdir():
                     if self.api_name == 'nano_banana':
                         if f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.webp'} and 'image' in f.name:
-                            basename = f.name.split('image')[0]
+                            # Split on 'image' and remove trailing underscore
+                            basename = f.name.split('image')[0].rstrip('_')
                             ref_files.setdefault(self.normalize_key(basename), []).append(f)
                     else:  # kling
                         if f.suffix.lower() in {'.mp4', '.mov', '.avi'} and 'generated' in f.name:
