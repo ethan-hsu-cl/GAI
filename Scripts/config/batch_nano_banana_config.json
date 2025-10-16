@@ -11,22 +11,38 @@
     },
     "tasks": [
         {
-            "folder": "../Media Files/Nano Banana/1014 My OOTD",
-            "prompt": "Generate a 9:16 aspect ratio vertical image of a creative and cute fashion mood board collage. The central feature is a charming portrait of a model. This portrait is surrounded by unique, cleanly background-removed (cutout) images of each individual clothing item, accessory, and shoe the model is wearing. Crucially, ensure there are no duplicate cutouts of the same item. Integrate playful, marker-style sketches, speech bubbles with fashion-related phrases, and cute decorative doodles (like hearts, stars, arrows, ribbons, flowers) around the portrait and item cutouts. The overall aesthetic should be vibrant, artistic, and undeniably cute, resembling a stylish and curated personal fashion journal page.",
+            "folder": "../Media Files/Nano Banana/1014 Duo Polaroid",
+            "prompt": "Take a Polaroid-style photo with a casual, candid feel. The image should have slight motion blur and even lighting, like a flash in a dark room, softly spread across the scene. Keep the faces unchanged. Replace the background behind the two subjects with a white curtain. The people should be naturally close, with gentle physical contact, such as leaning together or resting a shoulder against each other.",
             "reference_folder": "",
-            "use_comparison_template": false,
-            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?slide=id.g394880b66f6_0_0#slide=id.g394880b66f6_0_0",
-            "source_video_link": "",
-            "use_multi_image": false
+            "use_comparison_template": true,
+            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?usp=sharing",
+            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EiNsDK8j_DdIjmFaVltklK8B9YS9HJojhifi7V8_uEubCw?e=JbrJJP",
+            "use_multi_image": true,
+            "multi_image_config": {
+                "enabled": true,
+                "mode": "sequential",
+                "folders": [
+                    "../Media Files/Nano Banana/1014 Duo Polaroid/Additional"
+                ],
+                "allow_duplicates": false
+            }
         },
         {
-            "folder" : "../Media Files/Nano Banana/1014 Retro Portrait",
-            "prompt": "轉換為4K高清寫實風格，基於上傳照片創作驚豔半身肖像。身著90年代街頭風時裝，目光微向右側，神情自信且復古。背景為暖調素牆，右側暖光源投射出輪廓分明的柔邊陰影，整體氛圍復古而藝術。",
+            "folder": "../Media Files/Nano Banana/1014 Retro Polaroid",
+            "prompt": "請以以上兩張圖片生成一張具有經典拍立得照片質感的圖片，兩人身處於一個柔和的自然光，營造出一種輕鬆愉悅的下午時光氛圍的室內，整張圖片應呈現出拍立得特有的方形構圖，並帶有明顯的白色邊框。照片本身的色彩應偏向柔和、略帶復古的暖色調，像是老式拍立得沖洗出來的感覺，可以有輕微的顆粒感和色彩飽和度稍低的質感。畫面上應略帶有一點溫暖的漏光效果，讓整體感覺更加懷舊和真實。臉部特徵要維持與原始照片一致，逼真度要高。",
             "reference_folder": "",
-            "use_comparison_template": false,
-            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?slide=id.g394880b66f6_0_0#slide=id.g394880b66f6_0_0",
-            "source_video_link": "",
-            "use_multi_image": false
+            "use_comparison_template": true,
+            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?usp=sharing",
+            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EiNsDK8j_DdIjmFaVltklK8B9YS9HJojhifi7V8_uEubCw?e=JbrJJP",
+            "use_multi_image": true,
+            "multi_image_config": {
+                "enabled": true,
+                "mode": "sequential",
+                "folders": [
+                    "../Media Files/Nano Banana/1014 Retro Polaroid/Additional"
+                ],
+                "allow_duplicates": false
+            }
         }
     ],
     "comments": {

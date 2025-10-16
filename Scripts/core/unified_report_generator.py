@@ -264,7 +264,7 @@ class UnifiedReportGenerator:
         
         for i, (ph, media_type) in enumerate(zip(phs, media_types)):
             media_path, is_video = self.get_media_path_and_type(pair, media_type)
-            self.add_media_universal(slide, ph, media_path, is_video, slide_config)
+            self.add_media_universal(slide, ph, media_path, is_video, slide_config, pair)
         
         # Add metadata
         self.add_metadata_universal(slide, pair, slide_config, use_comparison)
@@ -294,7 +294,7 @@ class UnifiedReportGenerator:
         
         for pos, media_type in zip(positions, media_types):
             media_path, is_video = self.get_media_path_and_type(pair, media_type)
-            self.add_media_universal(slide, pos, media_path, is_video, slide_config)
+            self.add_media_universal(slide, pos, media_path, is_video, slide_config, pair)
         
         # Add metadata
         self.add_metadata_universal(slide, pair, slide_config, use_comparison)
@@ -432,7 +432,7 @@ class UnifiedReportGenerator:
         
         return dict(results)
     
-    def add_media_universal(self, slide, placeholder_or_pos, media_path, is_video, slide_config, error_msg=None):
+    def add_media_universal(self, slide, placeholder_or_pos, media_path, is_video, slide_config, pair=None):
         """Universal media addition for all APIs with webp conversion"""
         # Handle both placeholder objects and manual positions
         if hasattr(placeholder_or_pos, 'left'):
@@ -467,17 +467,37 @@ class UnifiedReportGenerator:
                     converted_path = self.ensure_supported_img_format(media_path)
                     slide.shapes.add_picture(str(converted_path), fl, ft, sw, sh)
             except Exception as e:
-                self.add_error_box(slide, l, t, w, h, f"Failed to load media: {e}")
+                self.add_error_box(slide, l, t, w, h, f"Failed to load media: {e}", pair)
         else:
-            self.add_error_box(slide, l, t, w, h, error_msg or "Media not found")
+            # Extract failure message from metadata if available
+            error_msg = self.get_failure_message(pair) if pair else None
+            self.add_error_box(slide, l, t, w, h, error_msg or "Media not found", pair)
     
-    def add_error_box(self, slide, left, top, width, height, message: str):
+    def get_failure_message(self, pair):
+        """Extract failure message from metadata"""
+        if not pair or not pair.metadata:
+            return None
+        
+        # Try to get text_responses for detailed error message
+        text_responses = pair.metadata.get('text_responses', [])
+        if text_responses and isinstance(text_responses, list):
+            for response in text_responses:
+                if isinstance(response, dict) and 'content' in response:
+                    content = response['content']
+                    if content and content.strip():
+                        return f"Media not found\n\nAPI Response:\n{content}"
+        
+        # Fallback to generic message
+        return "Media not found"
+    
+    def add_error_box(self, slide, left, top, width, height, message: str, pair=None):
         """Add error box with proper styling"""
         box = slide.shapes.add_textbox(left, top, width, height)
         box.text_frame.text = f"❌ GENERATION FAILED\n\n{message}"
+        box.text_frame.word_wrap = True
         
         for para in box.text_frame.paragraphs:
-            para.font.size = Pt(16)
+            para.font.size = Pt(12)  # Slightly smaller to fit more text
             para.alignment = PP_ALIGN.CENTER
             para.font.color.rgb = RGBColor(255, 0, 0)
         
