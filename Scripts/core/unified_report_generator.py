@@ -91,6 +91,22 @@ class UnifiedReportGenerator:
     No old methods included - completely unified approach
     """
     
+    # ================== LAYOUT CONSTANTS ==================
+    # Common layout configurations for easier maintenance
+    
+    # 2-Media Layout: Two large squares side-by-side (edge-to-edge)
+    LAYOUT_2_MEDIA = {
+        'positions': [(0.42, 2.15, 16, 16), (17.44, 2.15, 16, 16)],
+        'metadata_position': (35, 0, 7.29, 3.06),
+        'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
+    }
+    
+    # 3-Media Layout: Three medium squares (for comparison/multi-image)
+    LAYOUT_3_MEDIA = {
+        'positions': [(2.59, 3.26, 10, 10), (13, 3.26, 10, 10), (23.41, 3.26, 10, 10)],
+        'metadata_position': (2.32, 15.24, 7.29, 3.06),
+    }
+    
     def __init__(self, api_name: str, config_file: str = None):
         self.api_name = api_name
         self.config_file = config_file or f"config/batch_{api_name}_config.json"
@@ -109,6 +125,17 @@ class UnifiedReportGenerator:
         self._max_workers = 4  # Default thread pool size
         self._show_progress = HAS_TQDM  # Use tqdm if available
         
+        # API display names mapping (used across multiple methods)
+        self._api_display_names = {
+            'kling': 'Kling 2.1',
+            'nano_banana': 'Nano Banana',
+            'runway': 'Runway',
+            'vidu_effects': 'Vidu Effects',
+            'vidu_reference': 'Vidu Reference',
+            'genvideo': 'GenVideo',
+            'pixverse': 'Pixverse'
+        }
+        
         # Load configurations
         self.load_config()
         self.load_report_definitions()
@@ -126,68 +153,58 @@ class UnifiedReportGenerator:
             'runway': {
                 **base_config,
                 'media_types': ['source', 'source_video', 'generated'],
-                'positions': [(2.59, 3.26, 10, 10), (13, 3.26, 10, 10), (23.41, 3.26, 10, 10)],
+                **self.LAYOUT_3_MEDIA,
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['prompt', 'reference_image', 'source_video', 'model', 'processing_time_seconds', 'success'],
-                'metadata_position': (2.32, 15.24, 7.29, 3.06),
                 'error_handling': 'video_fallback'
             },
             'nano_banana': {
                 **base_config,
-                'media_types': ['source', 'additional_source', 'generated'],
-                'positions': [(2.59, 3.26, 10, 10), (13, 3.26, 10, 10), (23.41, 3.26, 10, 10)],
+                'media_types': ['source', 'generated'],  # Default 2-media layout
+                **self.LAYOUT_2_MEDIA,
                 'title_format': '❌ GENERATION FAILED',
                 'title_show_only_if_failed': True,
                 'metadata_fields': ['response_id', 'additional_images_used', 'success', 'attempts', 'processing_time_seconds'],
-                'metadata_position': (5.19, 15.99, 7.29, 3.06),
-                'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
                 'use_comparison': False,
-                'supports_multi_image': True
+                'supports_multi_image': True,
+                # Alternative 3-media layout (used when additional_images are present)
+                'media_types_3': ['source', 'additional_source', 'generated'],
+                'positions_3': self.LAYOUT_3_MEDIA['positions']
             },
             'vidu_effects': {
                 **base_config,
                 'media_types': ['source', 'generated'],
-                'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
+                **self.LAYOUT_2_MEDIA,
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['effect_name', 'category', 'task_id', 'processing_time_seconds', 'duration', 'success'],
-                'metadata_position': (5.19, 15.99, 7.29, 3.06),
-                'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
             },
             'vidu_reference': {
                 **base_config,
                 'media_types': ['source', 'generated'],
-                'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
+                **self.LAYOUT_2_MEDIA,
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['effect_name', 'category', 'task_id', 'processing_time_seconds', 'duration', 'success'],
-                'metadata_position': (5.19, 15.99, 7.29, 3.06),
-                'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
             },
             'genvideo': {
                 **base_config,
                 'media_types': ['source', 'generated', 'reference'],
-                'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
+                **self.LAYOUT_2_MEDIA,
                 'title_format': 'GenVideo {index}: {source_file}',
                 'metadata_fields': ['model', 'quality', 'processing_time_seconds', 'success', 'img_prompt'],
-                'metadata_position': (5.19, 15.99, 7.29, 3.06),
-                'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
             },
             'pixverse': {
                 **base_config,
                 'media_types': ['source', 'generated'],
-                'positions': [(2.59, 3.26, 12, 10), (15.5, 3.26, 12, 10)],
+                **self.LAYOUT_2_MEDIA,
                 'title_format': 'pixverse_{index}_{source_file}',
                 'metadata_fields': ['effect_name', 'video_id', 'processing_time_seconds', 'success'],
-                'metadata_position': (5.19, 15.99, 7.29, 3.06),
-                'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
             },
             'kling': {
                 **base_config,
                 'media_types': ['source', 'generated', 'reference'],
-                'positions': [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)],
+                **self.LAYOUT_2_MEDIA,
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['task_id', 'model', 'prompt', 'processing_time_seconds', 'success'],
-                'metadata_position': (5.19, 15.99, 7.29, 3.06),
-                'metadata_reference_position': (2.32, 15.26, 7.29, 3.06),
             }
         }
         return configs.get(self.api_name, configs['kling'])
@@ -215,17 +232,11 @@ class UnifiedReportGenerator:
                               use_comparison, slide_config):
         """Create a single slide for any API using configuration"""
         # Adjust media types for nano_banana based on whether multi-image mode is active
-        if self.api_name == 'nano_banana':
-            if pair.additional_source_paths:
-                # Multi-image mode: show source, additional, generated
-                slide_config = slide_config.copy()
-                slide_config['media_types'] = ['source', 'additional_source', 'generated']
-                slide_config['positions'] = [(2.59, 3.26, 10, 10), (13, 3.26, 10, 10), (23.41, 3.26, 10, 10)]
-            else:
-                # Single-image mode: show only source and generated
-                slide_config = slide_config.copy()
-                slide_config['media_types'] = ['source', 'generated']
-                slide_config['positions'] = [(2.59, 3.26, 12.5, 12.5), (18.78, 3.26, 12.5, 12.5)]
+        if self.api_name == 'nano_banana' and pair.additional_source_paths:
+            # Multi-image mode: use the 3-media layout from config
+            slide_config = slide_config.copy()
+            slide_config['media_types'] = slide_config.get('media_types_3', ['source', 'additional_source', 'generated'])
+            slide_config['positions'] = slide_config.get('positions_3', self.LAYOUT_3_MEDIA['positions'])
         
         # Create slide
         if template_loaded and len(ppt.slides) >= 4:
@@ -433,13 +444,20 @@ class UnifiedReportGenerator:
         return dict(results)
     
     def add_media_universal(self, slide, placeholder_or_pos, media_path, is_video, slide_config, pair=None):
-        """Universal media addition for all APIs with webp conversion"""
+        """Universal media addition for all APIs with webp conversion
+        
+        Note: Always removes placeholders and adds media as new shapes for consistency.
+        This ensures proper behavior when mixing images and videos on the same slide.
+        """
         # Handle both placeholder objects and manual positions
         if hasattr(placeholder_or_pos, 'left'):
-            # It's a placeholder
+            # It's a placeholder or shape - extract position and remove it
             l, t, w, h = (placeholder_or_pos.left, placeholder_or_pos.top,
                          placeholder_or_pos.width, placeholder_or_pos.height)
-            placeholder_or_pos._element.getparent().remove(placeholder_or_pos._element)
+            try:
+                placeholder_or_pos._element.getparent().remove(placeholder_or_pos._element)
+            except:
+                pass  # Placeholder might already be removed
         else:
             # It's a position tuple
             if len(placeholder_or_pos) == 4:
@@ -449,7 +467,7 @@ class UnifiedReportGenerator:
         
         if media_path and Path(media_path).exists():
             try:
-                # Calculate aspect ratio and positioning
+                # Calculate aspect ratio and positioning for all media types
                 ar = self.get_aspect_ratio(Path(media_path), is_video)
                 sw, sh = (w, w/ar) if ar > w/h else (h*ar, h)
                 fl, ft = l + (w - sw)/2, t + (h - sh)/2
@@ -567,6 +585,8 @@ class UnifiedReportGenerator:
                                        Cm(metadata_pos[2]), Cm(metadata_pos[3]))
         box.text_frame.text = "\n".join(meta_lines)
         box.text_frame.word_wrap = True
+        box.fill.solid()
+        box.fill.fore_color.rgb = RGBColor(255, 255, 255)
         
         for para in box.text_frame.paragraphs:
             para.font.size = Pt(10)
@@ -1154,6 +1174,10 @@ class UnifiedReportGenerator:
 
     def get_filename(self, folder, model='', effect_names=None):
         """Generate filename using API name and effect names"""
+        # Handle grouped tasks
+        if isinstance(folder, dict) and folder.get('_is_grouped'):
+            return self._get_grouped_filename(folder, model, effect_names)
+        
         # Extract date from folder name
         m = re.match(r'(\d{4})\s*(.+)', Path(folder).name)
         if m:
@@ -1169,6 +1193,32 @@ class UnifiedReportGenerator:
         if model:
             parts.append(model)
         parts.append(effect_str)
+        return ' '.join(parts)
+    
+    def _get_grouped_filename(self, grouped_task: Dict, model: str = '', effect_names=None) -> str:
+        """Generate filename for grouped tasks"""
+        folder_names = grouped_task.get('_folder_names', [])
+        group_num = grouped_task.get('_group_number', 1)
+        total_groups = grouped_task.get('_total_groups', 1)
+        
+        # Extract date from first folder
+        if folder_names:
+            m = re.match(r'(\d{4})\s*(.+)', folder_names[0])
+            if m:
+                d = m.group(1)
+            else:
+                d = datetime.now().strftime("%m%d")
+        else:
+            d = datetime.now().strftime("%m%d")
+        
+        # Build effect string - combine all unique effects
+        effect_str = ', '.join(effect_names) if effect_names else 'Combined'
+        
+        parts = [f"[{d}]"]
+        if model:
+            parts.append(model)
+        parts.append(f"{effect_str} (Group {group_num})")
+        
         return ' '.join(parts)
 
     
@@ -1472,20 +1522,8 @@ class UnifiedReportGenerator:
     
     # ================== PRESENTATION CREATION ==================
     
-    def create_presentation(self, pairs: List[MediaPair], task: Dict) -> bool:
-        """Create presentation using unified system"""
-        if not pairs:
-            logger.warning("No media pairs to process")
-            return False
-
-        # Determine template and comparison mode
-        use_comparison = task.get('use_comparison_template', False) or bool(task.get('reference_folder'))
-        template_key = 'comparison_template_path' if use_comparison else 'template_path'
-        template_path = (self.config.get(template_key) or
-                        self.report_definitions.get(template_key,
-                        'templates/I2V Comparison Template.pptx' if use_comparison else 'templates/I2V templates.pptx'))
-
-        # Gather all effect names from pairs, in order of appearance, unique
+    def _gather_effect_names(self, pairs: List[MediaPair]) -> List[str]:
+        """Extract unique effect names from pairs in order of appearance"""
         effect_names = []
         seen = set()
         for p in pairs:
@@ -1493,8 +1531,16 @@ class UnifiedReportGenerator:
             if ename and ename not in seen:
                 effect_names.append(ename)
                 seen.add(ename)
-
-        # Load template
+        return effect_names
+    
+    def _load_presentation_template(self, task: Dict) -> tuple:
+        """Load presentation template and return (ppt, template_loaded, use_comparison)"""
+        use_comparison = task.get('use_comparison_template', False) or bool(task.get('reference_folder'))
+        template_key = 'comparison_template_path' if use_comparison else 'template_path'
+        template_path = (self.config.get(template_key) or
+                        self.report_definitions.get(template_key,
+                        'templates/I2V Comparison Template.pptx' if use_comparison else 'templates/I2V templates.pptx'))
+        
         try:
             ppt = Presentation(template_path) if Path(template_path).exists() else Presentation()
             template_loaded = Path(template_path).exists()
@@ -1503,18 +1549,69 @@ class UnifiedReportGenerator:
             logger.warning(f"⚠ Template load failed: {e}, using blank presentation")
             ppt = Presentation()
             template_loaded = False
-
+        
         # Set slide dimensions
         ppt.slide_width, ppt.slide_height = Cm(33.87), Cm(19.05)
+        
+        return ppt, template_loaded, use_comparison
+    
+    def create_presentation(self, pairs: List[MediaPair], task: Dict) -> bool:
+        """Create presentation using unified system"""
+        if not pairs:
+            logger.warning("No media pairs to process")
+            return False
 
-        # Create title slide, pass effect_names
+        # Gather effect names from pairs
+        effect_names = self._gather_effect_names(pairs)
+        
+        # Load template and get configuration
+        ppt, template_loaded, use_comparison = self._load_presentation_template(task)
+
+        # Create title slide
         self.create_title_slide(ppt, task, use_comparison, effect_names)
 
         # Create content slides using UNIFIED SYSTEM
         self.create_slides(ppt, pairs, template_loaded, use_comparison)
 
-        # Save presentation, pass effect_names
+        # Save presentation
         return self.save_presentation(ppt, task, use_comparison, effect_names)
+    
+    def create_grouped_presentation(self, task_pairs_list: List[Dict], combined_task: Dict) -> bool:
+        """Create a grouped presentation with individual title slides for each task"""
+        if not task_pairs_list:
+            logger.warning("No task pairs to process")
+            return False
+        
+        # Gather all effect names from all tasks for the overall filename
+        all_pairs = [p for item in task_pairs_list for p in item['pairs']]
+        all_effect_names = self._gather_effect_names(all_pairs)
+        
+        # Load template using first task's settings
+        first_task = task_pairs_list[0]['task']
+        ppt, template_loaded, use_comparison = self._load_presentation_template(first_task)
+        
+        # Create overall title slide with all effect names
+        self.create_title_slide(ppt, combined_task, use_comparison, all_effect_names)
+        
+        # Process each task individually with its own title slide
+        for idx, item in enumerate(task_pairs_list, 1):
+            task = item['task']
+            pairs = item['pairs']
+            
+            # Get effect names for this specific task
+            task_effect_names = self._gather_effect_names(pairs)
+            
+            # Create individual title slide for this task
+            task_use_comparison = task.get('use_comparison_template', False) or bool(task.get('reference_folder'))
+            self.create_title_slide(ppt, task, task_use_comparison, task_effect_names)
+            
+            # Create content slides for this task
+            self.create_slides(ppt, pairs, template_loaded, task_use_comparison)
+            
+            logger.info(f"  ✓ Added task {idx}/{len(task_pairs_list)}: {len(pairs)} slides")
+        
+        # Save with combined filename
+        return self.save_presentation(ppt, combined_task, use_comparison, all_effect_names)
 
     def create_title_slide(self, ppt: Presentation, task: Dict, use_comparison: bool, effect_names=None):
         """Create title slide"""
@@ -1522,25 +1619,17 @@ class UnifiedReportGenerator:
             return
 
         # Get folder names for title generation
-        if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
+        if task.get('_is_grouped'):
+            # For grouped tasks, pass the entire task dict as folder_name
+            folder_name = task
+        elif self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
             folder_name = Path(self.config.get('base_folder', '')).name
         else:
             folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
+            if isinstance(folder_name, str):
+                folder_name = Path(folder_name).name
 
-        if isinstance(folder_name, str):
-            folder_name = Path(folder_name).name
-
-        api_display_names = {
-            'kling': 'Kling 2.1',
-            'nano_banana': 'Nano Banana', 
-            'runway': 'Runway',
-            'vidu_effects': 'Vidu Effects',
-            'vidu_reference': 'Vidu Reference',
-            'genvideo': 'GenVideo',
-            'pixverse': 'Pixverse'
-        }
-
-        api_display = api_display_names.get(self.api_name, self.api_name.title())
+        api_display = self._api_display_names.get(self.api_name, self.api_name.title())
 
         # Generate title
         if use_comparison and task.get('reference_folder'):
@@ -1603,19 +1692,16 @@ class UnifiedReportGenerator:
             if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
                 folder_name = Path(self.config.get('base_folder', '')).name
             else:
-                folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
-                if isinstance(folder_name, str):
-                    folder_name = Path(folder_name).name
-            api_display_names = {
-                'kling': 'Kling 2.1',
-                'nano_banana': 'Nano Banana',
-                'runway': 'Runway',
-                'vidu_effects': 'Vidu Effects',
-                'vidu_reference': 'Vidu Reference',
-                'genvideo': 'GenVideo',
-                'pixverse': 'Pixverse'
-            }
-            api_display = api_display_names.get(self.api_name, self.api_name.title())
+                # Handle grouped tasks
+                if task.get('_is_grouped'):
+                    folder_name = task
+                else:
+                    folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
+                    if isinstance(folder_name, str):
+                        folder_name = Path(folder_name).name
+            
+            api_display = self._api_display_names.get(self.api_name, self.api_name.title())
+            
             if use_comparison and task.get('reference_folder'):
                 ref_name = Path(task['reference_folder']).name
                 filename = self.get_cmp_filename(folder_name, ref_name, api_display, effect_names1=effect_names)
@@ -1657,14 +1743,23 @@ class UnifiedReportGenerator:
                 if not tasks:
                     logger.warning("No tasks found in config.")
                     return False
-                successful = 0
-                for i, task in enumerate(tasks, 1):
-                    pairs = self.process_batch(task)
-                    if pairs:
-                        if self.create_presentation(pairs, task):
-                            successful += 1
-                logger.info(f"✓ Generated {successful}/{len(tasks)} presentations")
-                return successful > 0
+                
+                # Check for task grouping configuration (check both locations for backward compatibility)
+                group_tasks_by = self.config.get('output', {}).get('group_tasks_by', 0) or self.config.get('group_tasks_by', 0)
+                
+                if group_tasks_by and group_tasks_by > 1:
+                    # Grouped presentation mode
+                    return self._run_grouped(tasks, group_tasks_by)
+                else:
+                    # Original individual presentation mode
+                    successful = 0
+                    for i, task in enumerate(tasks, 1):
+                        pairs = self.process_batch(task)
+                        if pairs:
+                            if self.create_presentation(pairs, task):
+                                successful += 1
+                    logger.info(f"✓ Generated {successful}/{len(tasks)} presentations")
+                    return successful > 0
         except Exception as e:
             logger.error(f"✗ Report generation failed: {e}")
             return False
@@ -1672,6 +1767,65 @@ class UnifiedReportGenerator:
             # Cleanup all temporary files
             self.cleanup_temp_frames()
             self.cleanup_tempfiles()  # Cleanup temporary format conversions
+    
+    def _run_grouped(self, tasks: List[Dict], group_size: int) -> bool:
+        """Process tasks in groups, creating combined presentations"""
+        logger.info(f"📦 Grouping tasks by {group_size}")
+        
+        successful_groups = 0
+        total_groups = (len(tasks) + group_size - 1) // group_size
+        
+        for group_idx in range(0, len(tasks), group_size):
+            group_tasks = tasks[group_idx:group_idx + group_size]
+            group_num = (group_idx // group_size) + 1
+            
+            logger.info(f"\n📊 Processing group {group_num}/{total_groups} ({len(group_tasks)} tasks)")
+            
+            # Collect pairs with task information for individual title slides
+            task_pairs_list = []
+            group_task_info = []
+            
+            for task in group_tasks:
+                pairs = self.process_batch(task)
+                if pairs:
+                    task_pairs_list.append({'task': task, 'pairs': pairs})
+                    group_task_info.append(task)
+            
+            if task_pairs_list:
+                # Create a combined task representation for filename generation
+                combined_task = self._create_combined_task(group_task_info, group_num, total_groups)
+                if self.create_grouped_presentation(task_pairs_list, combined_task):
+                    successful_groups += 1
+            else:
+                logger.warning(f"⚠ Group {group_num} has no valid pairs")
+        
+        logger.info(f"\n✓ Generated {successful_groups}/{total_groups} grouped presentations")
+        return successful_groups > 0
+    
+    def _create_combined_task(self, tasks: List[Dict], group_num: int, total_groups: int) -> Dict:
+        """Create a combined task dict for grouped presentation"""
+        if not tasks:
+            return {}
+        
+        # Extract folder names for the combined title
+        folder_names = []
+        for task in tasks:
+            folder = task.get('folder', '')
+            if isinstance(folder, str):
+                folder_name = Path(folder).name
+            else:
+                folder_name = folder.name if hasattr(folder, 'name') else str(folder)
+            folder_names.append(folder_name)
+        
+        # Use the first task as base and add grouped information
+        combined = tasks[0].copy()
+        combined['_is_grouped'] = True
+        combined['_group_number'] = group_num
+        combined['_total_groups'] = total_groups
+        combined['_folder_names'] = folder_names
+        combined['_all_tasks'] = tasks
+        
+        return combined
 
 def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""

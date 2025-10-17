@@ -3,7 +3,8 @@
     "comparison_template_path": "templates/I2V Comparison Template.pptx",
     "testbed": "http://192.168.4.3:8000/google_flash_image/",
     "output": {
-        "directory": "/Users/ethanhsu/Desktop/GAI/Report"
+        "directory": "/Users/ethanhsu/Desktop/GAI/Report",
+        "group_tasks_by": 2
     },
     "schedule": {
         "start_time": "",
@@ -11,7 +12,7 @@
     },
     "tasks": [
         {
-            "folder": "../Media Files/Nano Banana/1014 Duo Polaroid",
+            "folder": "../Media Files/Nano Banana/1017 Duo Polaroid",
             "prompt": "Take a Polaroid-style photo with a casual, candid feel. The image should have slight motion blur and even lighting, like a flash in a dark room, softly spread across the scene. Keep the faces unchanged. Replace the background behind the two subjects with a white curtain. The people should be naturally close, with gentle physical contact, such as leaning together or resting a shoulder against each other.",
             "reference_folder": "",
             "use_comparison_template": true,
@@ -22,13 +23,13 @@
                 "enabled": true,
                 "mode": "sequential",
                 "folders": [
-                    "../Media Files/Nano Banana/1014 Duo Polaroid/Additional"
+                    "../Media Files/Nano Banana/1017 Duo Polaroid/Additional"
                 ],
                 "allow_duplicates": false
             }
         },
         {
-            "folder": "../Media Files/Nano Banana/1014 Retro Polaroid",
+            "folder": "../Media Files/Nano Banana/1017 Retro Polaroid",
             "prompt": "請以以上兩張圖片生成一張具有經典拍立得照片質感的圖片，兩人身處於一個柔和的自然光，營造出一種輕鬆愉悅的下午時光氛圍的室內，整張圖片應呈現出拍立得特有的方形構圖，並帶有明顯的白色邊框。照片本身的色彩應偏向柔和、略帶復古的暖色調，像是老式拍立得沖洗出來的感覺，可以有輕微的顆粒感和色彩飽和度稍低的質感。畫面上應略帶有一點溫暖的漏光效果，讓整體感覺更加懷舊和真實。臉部特徵要維持與原始照片一致，逼真度要高。",
             "reference_folder": "",
             "use_comparison_template": true,
@@ -39,10 +40,28 @@
                 "enabled": true,
                 "mode": "sequential",
                 "folders": [
-                    "../Media Files/Nano Banana/1014 Retro Polaroid/Additional"
+                    "../Media Files/Nano Banana/1017 Retro Polaroid/Additional"
                 ],
                 "allow_duplicates": false
             }
+        },
+        {
+            "folder": "../Media Files/Nano Banana/1017 My OOTD",
+            "prompt": "Generate a 9:16 aspect ratio vertical image of a creative and cute fashion mood board collage. The central feature is a charming portrait of a model. This portrait is surrounded by unique, cleanly background-removed (cutout) images of each individual clothing item, accessory, and shoe the model is wearing. Crucially, ensure there are no duplicate cutouts of the same item. Integrate playful, marker-style sketches, speech bubbles with fashion-related phrases, and cute decorative doodles (like hearts, stars, arrows, ribbons, flowers) around the portrait and item cutouts. The overall aesthetic should be vibrant, artistic, and undeniably cute, resembling a stylish and curated personal fashion journal page.",
+            "reference_folder": "",
+            "use_comparison_template": false,
+            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?slide=id.g394880b66f6_0_0#slide=id.g394880b66f6_0_0",
+            "source_video_link": "",
+            "use_multi_image": false
+        },
+        {
+            "folder" : "../Media Files/Nano Banana/1017 Retro Portrait",
+            "prompt": "轉換為4K高清寫實風格，基於上傳照片創作驚豔半身肖像。身著90年代街頭風時裝，目光微向右側，神情自信且復古。背景為暖調素牆，右側暖光源投射出輪廓分明的柔邊陰影，整體氛圍復古而藝術。",
+            "reference_folder": "",
+            "use_comparison_template": false,
+            "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?slide=id.g394880b66f6_0_0#slide=id.g394880b66f6_0_0",
+            "source_video_link": "",
+            "use_multi_image": false
         }
     ],
     "comments": {
@@ -50,6 +69,7 @@
         "reference_folder": "Optional: Path to folder containing third set of images for 3-way comparison",
         "template_usage": "use_comparison_template: true uses comparison_template_path (3 placeholders), false uses template_path (2 placeholders)",
         "use_multi_image": "Set to true to enable dual-image mode from Additional folder, false for single-image mode",
+        "output_group_tasks_by": "Set to 0 (or omit) to create individual reports per task. Set to N (e.g., 4) to group N tasks into one combined report. Example: with 4 tasks and group_tasks_by=4, creates 1 report; with 8 tasks, creates 2 reports.",
         "multi_image_config": {
             "description": "Configuration for multi-image generation",
             "enabled": "Must be true to use multi-image features",

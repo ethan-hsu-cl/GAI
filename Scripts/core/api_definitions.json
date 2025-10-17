@@ -7,8 +7,7 @@
             ".jpeg",
             ".png",
             ".bmp",
-            ".tiff",
-            ".webp"
+            ".tiff"
         ],
         "validation": {
             "max_size_mb": 10,
