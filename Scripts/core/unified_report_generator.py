@@ -126,8 +126,9 @@ class UnifiedReportGenerator:
         self._show_progress = HAS_TQDM  # Use tqdm if available
         
         # API display names mapping (used across multiple methods)
+        # Note: For kling, the actual display name is set dynamically based on config model
         self._api_display_names = {
-            'kling': 'Kling 2.1',
+            'kling': 'Kling',  # Will be updated based on model in config
             'nano_banana': 'Nano Banana',
             'runway': 'Runway',
             'vidu_effects': 'Vidu Effects',
@@ -139,6 +140,10 @@ class UnifiedReportGenerator:
         # Load configurations
         self.load_config()
         self.load_report_definitions()
+        
+        # Update Kling display name based on model in config
+        if self.api_name == 'kling':
+            self._update_kling_display_name()
     
     # ================== UNIFIED CONFIGURATION SYSTEM ==================
     
@@ -1120,6 +1125,46 @@ class UnifiedReportGenerator:
         except Exception as e:
             logger.error(f"✗ Config error: {e}")
             sys.exit(1)
+    
+    def _update_kling_display_name(self):
+        """Update Kling display name based on model in config"""
+        # Check both 'model' and 'model_version' fields
+        model = (self.config.get('model') or self.config.get('model_version', '')).lower()
+        
+        # Map official Kling model names to display names
+        # Official model names: v1.5, v1.6, v2.0-master, v2.1, v2.1-master, v2.5-turbo
+        model_mapping = {
+            'v1.5': 'Kling 1.5',
+            'v1.6': 'Kling 1.6',
+            'v2.0-master': 'Kling 2.0 Master',
+            'v2.1': 'Kling 2.1',
+            'v2.1-master': 'Kling 2.1 Master',
+            'v2.5-turbo': 'Kling 2.5 Turbo',
+        }
+        
+        # Try to find a match
+        display_name = model_mapping.get(model)
+        
+        # If no exact match, try to extract version numbers
+        if not display_name and model:
+            # Try to extract version like "v2.1" or "2.1" from the model string
+            import re
+            match = re.search(r'(?:v)?(\d+[._-]\d+)(?:[._-]?turbo)?', model)
+            if match:
+                version = match.group(1).replace('_', '.').replace('-', '.')
+                is_turbo = 'turbo' in model
+                display_name = f"Kling {version}{' Turbo' if is_turbo else ''}"
+        
+        # Update the display name if we found a match, otherwise default to Kling 2.1
+        if display_name:
+            self._api_display_names['kling'] = display_name
+            logger.info(f"✓ Kling display name set to: {display_name}")
+        else:
+            self._api_display_names['kling'] = 'Kling 2.1'  # Default
+            if model:
+                logger.warning(f"⚠ Could not determine Kling version from model '{model}', defaulting to 'Kling 2.1'")
+            else:
+                logger.info(f"ℹ No model version specified in config, defaulting to 'Kling 2.1'")
     
     def load_report_definitions(self):
         """Load report definitions from api_definitions.json"""
