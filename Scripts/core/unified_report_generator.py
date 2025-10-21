@@ -237,11 +237,13 @@ class UnifiedReportGenerator:
                               use_comparison, slide_config):
         """Create a single slide for any API using configuration"""
         # Adjust media types for nano_banana based on whether multi-image mode is active
-        if self.api_name == 'nano_banana' and pair.additional_source_paths:
-            # Multi-image mode: use the 3-media layout from config
-            slide_config = slide_config.copy()
-            slide_config['media_types'] = slide_config.get('media_types_3', ['source', 'additional_source', 'generated'])
-            slide_config['positions'] = slide_config.get('positions_3', self.LAYOUT_3_MEDIA['positions'])
+        if self.api_name == 'nano_banana':
+            if pair.additional_source_paths:
+                # Multi-image mode: use the 3-media layout from config
+                slide_config = slide_config.copy()
+                slide_config['media_types'] = slide_config.get('media_types_3', ['source', 'additional_source', 'generated'])
+                slide_config['positions'] = slide_config.get('positions_3', self.LAYOUT_3_MEDIA['positions'])
+            # else: use default 2-media layout from config (already set)
         
         # Create slide
         if template_loaded and len(ppt.slides) >= 4:
@@ -867,7 +869,12 @@ class UnifiedReportGenerator:
         return pairs
     
     def process_base_folder_structure(self, task: Dict) -> List[MediaPair]:
-        """Process base folder structure for vidu/pixverse APIs"""
+        """Process base folder structure for vidu/pixverse APIs
+        
+        Args:
+            task: If provided with 'effect' key, process only that single effect.
+                  Otherwise, process all tasks from config.
+        """
         base_folder = Path(self.config.get('base_folder', ''))
         if not base_folder.exists():
             logger.warning(f"Base folder not found: {base_folder}")
@@ -878,7 +885,10 @@ class UnifiedReportGenerator:
         
         if self.api_name == "vidu_effects":
             # Process each effect folder
-            for task_config in self.config.get('tasks', []):
+            # Support single-task filtering for grouped processing
+            tasks_to_process = [task] if task.get('effect') else self.config.get('tasks', [])
+            
+            for task_config in tasks_to_process:
                 effect = task_config.get('effect', '')
                 category = task_config.get('category', 'Unknown')
                 if not effect:
@@ -934,13 +944,20 @@ class UnifiedReportGenerator:
         
         elif self.api_name == "vidu_reference":
             # Process vidu reference effects
-            try:
-                effect_names = sorted([f.name for f in base_folder.iterdir()
-                                     if f.is_dir() and not f.name.startswith('.') and (f / 'Source').exists()])
-                logger.info(f"Discovered {len(effect_names)} effect folders")
-            except:
-                effect_names = [t.get('effect', '') for t in self.config.get('tasks', [])]
-                logger.info(f"Using {len(effect_names)} configured tasks")
+            # Support single-task filtering for grouped processing
+            if task.get('effect'):
+                # Single effect mode (for grouping)
+                effect_names = [task.get('effect')]
+                logger.info(f"Processing single effect: {task.get('effect')}")
+            else:
+                # All effects mode (default)
+                try:
+                    effect_names = sorted([f.name for f in base_folder.iterdir()
+                                         if f.is_dir() and not f.name.startswith('.') and (f / 'Source').exists()])
+                    logger.info(f"Discovered {len(effect_names)} effect folders")
+                except:
+                    effect_names = [t.get('effect', '') for t in self.config.get('tasks', [])]
+                    logger.info(f"Using {len(effect_names)} configured tasks")
             
             for effect in effect_names:
                 if not effect:
@@ -993,7 +1010,10 @@ class UnifiedReportGenerator:
         
         elif self.api_name == "pixverse":
             # Process pixverse effects
-            for task_config in self.config.get('tasks', []):
+            # Support single-task filtering for grouped processing
+            tasks_to_process = [task] if task.get('effect') else self.config.get('tasks', [])
+            
+            for task_config in tasks_to_process:
                 effect = task_config.get('effect', '')
                 category = task_config.get('category', 'Unknown')
                 if not effect:
@@ -1241,23 +1261,45 @@ class UnifiedReportGenerator:
         return ' '.join(parts)
     
     def _get_grouped_filename(self, grouped_task: Dict, model: str = '', effect_names=None) -> str:
-        """Generate filename for grouped tasks"""
-        folder_names = grouped_task.get('_folder_names', [])
-        group_num = grouped_task.get('_group_number', 1)
-        total_groups = grouped_task.get('_total_groups', 1)
+        """Generate filename for grouped tasks
         
-        # Extract date from first folder
-        if folder_names:
-            m = re.match(r'(\d{4})\s*(.+)', folder_names[0])
-            if m:
-                d = m.group(1)
+        Handles both folder-based and base-folder APIs
+        """
+        is_base_folder_api = grouped_task.get('_is_base_folder_api', False)
+        group_num = grouped_task.get('_group_number', 1)
+        
+        if is_base_folder_api:
+            # Base folder API (vidu_effects, etc.) - use base folder for date and effect names
+            base_folder = grouped_task.get('base_folder', '')
+            if base_folder:
+                folder_name = Path(base_folder).name
+                m = re.match(r'(\d{4})\s*(.+)', folder_name)
+                if m:
+                    d = m.group(1)
+                else:
+                    d = datetime.now().strftime("%m%d")
             else:
                 d = datetime.now().strftime("%m%d")
+            
+            # Use effect names from the grouped task
+            effect_list = grouped_task.get('_effect_names', [])
+            effect_str = ', '.join(effect_list) if effect_list else 'Combined Effects'
         else:
-            d = datetime.now().strftime("%m%d")
-        
-        # Build effect string - combine all unique effects
-        effect_str = ', '.join(effect_names) if effect_names else 'Combined'
+            # Folder-based API (nano_banana, kling, etc.) - use folder names
+            folder_names = grouped_task.get('_folder_names', [])
+            
+            # Extract date from first folder
+            if folder_names:
+                m = re.match(r'(\d{4})\s*(.+)', folder_names[0])
+                if m:
+                    d = m.group(1)
+                else:
+                    d = datetime.now().strftime("%m%d")
+            else:
+                d = datetime.now().strftime("%m%d")
+            
+            # Build effect string - combine all unique effects
+            effect_str = ', '.join(effect_names) if effect_names else 'Combined'
         
         parts = [f"[{d}]"]
         if model:
@@ -1635,10 +1677,11 @@ class UnifiedReportGenerator:
         first_task = task_pairs_list[0]['task']
         ppt, template_loaded, use_comparison = self._load_presentation_template(first_task)
         
-        # Create overall title slide with all effect names
+        # Create overall title slide with all effect names (only once for the whole presentation)
         self.create_title_slide(ppt, combined_task, use_comparison, all_effect_names)
         
-        # Process each task individually with its own title slide
+        # Process each task individually WITHOUT creating individual title slides
+        # (We only want ONE title slide at the top with all effect names)
         for idx, item in enumerate(task_pairs_list, 1):
             task = item['task']
             pairs = item['pairs']
@@ -1646,11 +1689,11 @@ class UnifiedReportGenerator:
             # Get effect names for this specific task
             task_effect_names = self._gather_effect_names(pairs)
             
-            # Create individual title slide for this task
-            task_use_comparison = task.get('use_comparison_template', False) or bool(task.get('reference_folder'))
-            self.create_title_slide(ppt, task, task_use_comparison, task_effect_names)
+            # NOTE: Do NOT create individual title slides for each task in grouped mode
+            # The overall title slide at the top already shows all effects
             
             # Create content slides for this task
+            task_use_comparison = task.get('use_comparison_template', False) or bool(task.get('reference_folder'))
             self.create_slides(ppt, pairs, template_loaded, task_use_comparison)
             
             logger.info(f"  ✓ Added task {idx}/{len(task_pairs_list)}: {len(pairs)} slides")
@@ -1709,13 +1752,53 @@ class UnifiedReportGenerator:
         # Get API-specific links
         testbed_url = self.config.get('testbed', f'http://192.168.4.3:8000/{self.api_name}/')
         design_link = self.config.get('design_link', '') if self.config.get('design_link', '') else task.get('design_link', '')
-        source_link = self.config.get('source_video_link', '') if self.config.get('source_video_link', '') else task.get('source_video_link', '')
-
-        links = [
-            ("Design: ", "Link", design_link),
-            ("Testbed: ", testbed_url, testbed_url),
-            ("Source + Video: ", "Link", source_link)
-        ]
+        
+        # Check if this is a grouped presentation
+        is_grouped = task.get('_is_grouped', False)
+        is_base_folder_api = task.get('_is_base_folder_api', False)
+        
+        links = []
+        
+        # Add design link (same for all)
+        links.append(("Design: ", "Link", design_link))
+        
+        # Add testbed link
+        links.append(("Testbed: ", testbed_url, testbed_url))
+        
+        # Handle source video links
+        if is_grouped and not is_base_folder_api:
+            # Folder-based APIs (nano_banana, kling, runway, genvideo) with grouping
+            # Collect all folder names and create a single comma-separated link
+            all_tasks = task.get('_all_tasks', [])
+            folder_names = []
+            source_link = None
+            
+            for individual_task in all_tasks:
+                task_source_link = individual_task.get('source_video_link', '')
+                if task_source_link:
+                    # Use the first valid source link found
+                    if source_link is None:
+                        source_link = task_source_link
+                    
+                    # Extract folder name
+                    folder = individual_task.get('folder', '')
+                    if isinstance(folder, str):
+                        folder_name = Path(folder).name
+                    else:
+                        folder_name = folder.name if hasattr(folder, 'name') else str(folder)
+                    
+                    # Remove date prefix (e.g., "1017 ") from folder name
+                    folder_name = re.sub(r'^\d{4}\s+', '', folder_name)
+                    folder_names.append(folder_name)
+            
+            if folder_names and source_link:
+                # Combine all folder names with commas
+                combined_names = ", ".join(folder_names)
+                links.append(("Source + Video: ", combined_names, source_link))
+        else:
+            # Single task or base-folder API - use single source video link
+            source_link = self.config.get('source_video_link', '') if self.config.get('source_video_link', '') else task.get('source_video_link', '')
+            links.append(("Source + Video: ", "Link", source_link))
 
         for i, (pre, txt, url) in enumerate(links):
             para = info_box.text_frame.paragraphs[0] if i == 0 else info_box.text_frame.add_paragraph()
@@ -1773,24 +1856,33 @@ class UnifiedReportGenerator:
         """Main execution using unified system"""
         logger.info(f"🎬 Starting {self.api_name.title()} Report Generator")
         try:
-            # Process tasks
+            # Check for task grouping configuration (check both locations for backward compatibility)
+            group_tasks_by = self.config.get('output', {}).get('group_tasks_by', 0) or self.config.get('group_tasks_by', 0)
+            
+            # Get tasks
+            tasks = self.config.get('tasks', [])
+            
+            # Determine processing mode
             if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
-                # Base folder structure - single task
-                pairs = self.process_batch({})
-                if pairs:
-                    return self.create_presentation(pairs, {})
+                # Base folder structure APIs
+                if group_tasks_by and group_tasks_by > 1 and tasks:
+                    # Base-folder APIs with grouping - process tasks individually
+                    logger.info(f"📦 Enabling grouped mode for {self.api_name}")
+                    return self._run_grouped(tasks, group_tasks_by)
                 else:
-                    logger.warning("No pairs found for report.")
-                    return False
+                    # Original behavior: single report for all effects
+                    pairs = self.process_batch({})
+                    if pairs:
+                        return self.create_presentation(pairs, {})
+                    else:
+                        logger.warning("No pairs found for report.")
+                        return False
+                        return False
             else:
                 # Task folder structure - multiple tasks
-                tasks = self.config.get('tasks', [])
                 if not tasks:
                     logger.warning("No tasks found in config.")
                     return False
-                
-                # Check for task grouping configuration (check both locations for backward compatibility)
-                group_tasks_by = self.config.get('output', {}).get('group_tasks_by', 0) or self.config.get('group_tasks_by', 0)
                 
                 if group_tasks_by and group_tasks_by > 1:
                     # Grouped presentation mode
@@ -1814,7 +1906,11 @@ class UnifiedReportGenerator:
             self.cleanup_tempfiles()  # Cleanup temporary format conversions
     
     def _run_grouped(self, tasks: List[Dict], group_size: int) -> bool:
-        """Process tasks in groups, creating combined presentations"""
+        """Process tasks in groups, creating combined presentations
+        
+        Works for both folder-based APIs (nano_banana, kling, etc.) 
+        and base-folder APIs (vidu_effects, etc.)
+        """
         logger.info(f"📦 Grouping tasks by {group_size}")
         
         successful_groups = 0
@@ -1848,27 +1944,55 @@ class UnifiedReportGenerator:
         return successful_groups > 0
     
     def _create_combined_task(self, tasks: List[Dict], group_num: int, total_groups: int) -> Dict:
-        """Create a combined task dict for grouped presentation"""
+        """Create a combined task dict for grouped presentation
+        
+        Handles both folder-based APIs (folder key) and base-folder APIs (effect key)
+        """
         if not tasks:
             return {}
         
-        # Extract folder names for the combined title
-        folder_names = []
-        for task in tasks:
-            folder = task.get('folder', '')
-            if isinstance(folder, str):
-                folder_name = Path(folder).name
-            else:
-                folder_name = folder.name if hasattr(folder, 'name') else str(folder)
-            folder_names.append(folder_name)
+        # Detect API type from task structure
+        is_base_folder_api = 'effect' in tasks[0] and 'folder' not in tasks[0]
         
-        # Use the first task as base and add grouped information
-        combined = tasks[0].copy()
-        combined['_is_grouped'] = True
-        combined['_group_number'] = group_num
-        combined['_total_groups'] = total_groups
-        combined['_folder_names'] = folder_names
-        combined['_all_tasks'] = tasks
+        if is_base_folder_api:
+            # Base folder API (vidu_effects, vidu_reference, pixverse)
+            # Extract effect/category names for the combined title
+            effect_names = []
+            for task in tasks:
+                effect_names.append(task.get('effect', task.get('category', 'Unknown')))
+            
+            # Use config base folder and add grouped information
+            combined = {
+                'base_folder': self.config.get('base_folder', ''),
+                'design_link': self.config.get('design_link', ''),
+                'source_video_link': self.config.get('source_video_link', ''),
+                '_is_grouped': True,
+                '_is_base_folder_api': True,
+                '_group_number': group_num,
+                '_total_groups': total_groups,
+                '_effect_names': effect_names,
+                '_all_tasks': tasks
+            }
+        else:
+            # Folder-based API (nano_banana, kling, runway, genvideo)
+            # Extract folder names for the combined title
+            folder_names = []
+            for task in tasks:
+                folder = task.get('folder', '')
+                if isinstance(folder, str):
+                    folder_name = Path(folder).name
+                else:
+                    folder_name = folder.name if hasattr(folder, 'name') else str(folder)
+                folder_names.append(folder_name)
+            
+            # Use the first task as base and add grouped information
+            combined = tasks[0].copy()
+            combined['_is_grouped'] = True
+            combined['_is_base_folder_api'] = False
+            combined['_group_number'] = group_num
+            combined['_total_groups'] = total_groups
+            combined['_folder_names'] = folder_names
+            combined['_all_tasks'] = tasks
         
         return combined
 

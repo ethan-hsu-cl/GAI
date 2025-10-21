@@ -101,14 +101,23 @@ GAI/                                    # Project root
 YourTaskFolder/
 ├── TaskName1/
 │   ├── Source/              # Input images/videos
+│   ├── Additional/          # Additional images for multi-image mode (Nano Banana only)
 │   ├── Reference/           # Reference images (Runway only)
 │   ├── Generated_Video/     # Auto-created output folder (videos)
+│   ├── Generated_Output/    # Auto-created output folder (Nano Banana)
 │   ├── Generated_Image/     # Auto-created output folder (GenVideo)
 │   └── Metadata/            # Auto-created metadata folder
 ├── TaskName2/
 │   └── ...
 └── config.json
 ```
+
+**Notes:**
+
+- **Source/**: Primary input files (required for all APIs)
+- **Additional/**: Optional folder for Nano Banana multi-image mode (contains 2nd and 3rd images)
+- **Reference/**: Optional folder for Runway tasks requiring reference images
+- Output folders are automatically created based on API type
 
 ### **Base Folder Structure** (Vidu Effects, Vidu Reference, Pixverse)
 
@@ -150,49 +159,189 @@ All configuration files are located in the `Scripts/config/` directory and follo
 
 ### **Nano Banana Configuration** (`config/batch_nano_banana_config.json`)
 
+#### **Single-Image Mode** (Basic)
+
 ```json
 {
-  "tasks": [{"folder": "/path/to/TaskName1", "prompt": "Generate variations"}],
+  "tasks": [
+    {
+      "folder": "/path/to/TaskName1",
+      "prompt": "Generate variations",
+      "use_multi_image": false,
+      "design_link": "https://your-design-link.com",
+      "source_video_link": "https://source-video-link.com",
+      "reference_folder": "/path/to/reference/folder",
+      "use_comparison_template": true
+    }
+  ],
   "testbed": "http://192.168.4.3:8000/google_flash_image/"
 }
 ```
+
+#### **Multi-Image Mode** (Advanced)
+
+```json
+{
+  "tasks": [
+    {
+      "folder": "/path/to/TaskName1",
+      "prompt": "Generate variations with multiple images",
+      "use_multi_image": true,
+      "multi_image_config": {
+        "enabled": true,
+        "mode": "sequential",
+        "folders": ["/path/to/Additional/images/folder1"],
+        "allow_duplicates": false
+      },
+      "design_link": "https://your-design-link.com",
+      "use_comparison_template": true
+    }
+  ],
+  "testbed": "http://192.168.4.3:8000/google_flash_image/",
+  "output": {
+    "directory": "/Users/ethanhsu/Desktop/GAI/Report",
+    "group_tasks_by": 2
+  }
+}
+```
+
+**Multi-Image Configuration Options:**
+
+- **`mode`**:
+  - `"sequential"`: Deterministic pairing - same source always paired with same additional images (recommended)
+  - `"random_pairing"`: Random selection from additional image pools
+- **`folders`**: Array of folder paths containing additional images (up to 2 additional images supported)
+- **`allow_duplicates`**: `false` to avoid repeating combinations in random mode, `true` to allow
+- **`group_tasks_by`**: Combine N tasks into one report (0 = individual reports per task)
 
 ### **Vidu Effects Configuration** (`config/batch_vidu_config.json`)
 
 ```json
 {
   "base_folder": "/path/to/BaseFolder",
-  "tasks": [{"category": "Cinematic", "effect": "Zoom In", "prompt": "Dramatic zoom effect"}]
+  "tasks": [
+    {
+      "category": "Cinematic",
+      "effect": "Zoom In",
+      "prompt": "Dramatic zoom effect with cinematic lighting",
+      "design_link": "https://your-design-link.com",
+      "source_video_link": "https://source-video-link.com"
+    }
+  ],
+  "testbed": "http://192.168.4.3:8000/video_effect/"
 }
 ```
+
+### **Vidu Reference Configuration** (`config/batch_vidu_reference_config.json`)
+
+```json
+{
+  "base_folder": "/path/to/BaseFolder",
+  "tasks": [
+    {
+      "effect": "Style Transfer",
+      "prompt": "Apply artistic style from reference images",
+      "model": "viduq1",
+      "duration": 5,
+      "resolution": "1080p",
+      "design_link": "https://your-design-link.com",
+      "source_video_link": "https://source-video-link.com"
+    }
+  ],
+  "testbed": "http://192.168.4.3:8000/video_effect/"
+}
+```
+
+**Model Options:** `"viduq1"` (default)
+
+**Duration Options:** `4`, `5`, `8` seconds
+
+**Resolution Options:** `"720p"`, `"1080p"`
+
+**Aspect Ratios:** Auto-detected or manual selection (`"9:16"`, `"16:9"`, `"1:1"`)
 
 ### **Pixverse Configuration** (`config/batch_pixverse_config.json`)
 
 ```json
 {
   "base_folder": "/path/to/BaseFolder",
-  "tasks": [{"style": "Anime", "effect": "Dynamic Motion", "prompt": "Add dynamic motion"}],
+  "tasks": [
+    {
+      "effect": "Dynamic Motion",
+      "prompt": "Add dynamic motion with anime style",
+      "custom_effect_id": "",
+      "negative_prompt": "static, blurry, low quality",
+      "design_link": "https://your-design-link.com",
+      "source_video_link": "https://source-video-link.com"
+    }
+  ],
   "testbed": "http://192.168.4.3:8000/pixverse_image/"
 }
 ```
+
+**API Parameters:**
+
+- **Model**: v4.5
+- **Duration**: 5s
+- **Quality**: 720p
+- **Motion Mode**: normal
+- **Custom Effect ID**: Optional custom effect identifier for specialized effects
 
 ### **GenVideo Configuration** (`config/batch_genvideo_config.json`)
 
 ```json
 {
-  "tasks": [{"folder": "/path/to/TaskName1", "prompt": "Transform into Gashapon style"}],
+  "tasks": [
+    {
+      "folder": "/path/to/TaskName1",
+      "img_prompt": "Generate a portrait-oriented image of a realistic, clear plastic gashapon capsule",
+      "model": "gpt-image-1",
+      "quality": "low",
+      "design_link": "https://your-design-link.com",
+      "source_video_link": "https://source-video-link.com",
+      "reference_folder": "/path/to/reference/folder",
+      "use_comparison_template": true
+    }
+  ],
   "testbed": "http://192.168.4.3:8000/genvideo/"
 }
 ```
+
+**Model Options:**
+
+- `"gpt-image-1"`: GPT-based image generation
+- `"gemini-2.5-flash-image-preview"`: Gemini-based image generation
+
+**Quality Options:** `"low"`, `"medium"`, `"high"`
 
 ### **Runway Configuration** (`config/batch_runway_config.json`)
 
 ```json
 {
-  "tasks": [{"folder": "/path/to/TaskName1", "prompt": "Face swap", "pairing_strategy": "one_to_one"}],
-  "model": "gen4_aleph", "ratio": "1280:720"
+  "tasks": [
+    {
+      "folder": "/path/to/TaskName1",
+      "prompt": "Face swap effect",
+      "pairing_strategy": "one_to_one",
+      "requires_reference": true,
+      "reference_folder": "/path/to/reference/images",
+      "design_link": "https://your-design-link.com",
+      "source_video_link": "https://source-video-link.com",
+      "use_comparison_template": true
+    }
+  ],
+  "model": "gen4_aleph",
+  "ratio": "1280:720",
+  "testbed": "http://192.168.4.3:8000/runway/"
 }
 ```
+
+**Pairing Strategies:**
+
+- **`one_to_one`**: Pairs each video with one reference image (1:1 mapping)
+- **`all_combinations`**: Generates all possible video-reference combinations (N×M outputs)
+
+**Available Ratios:** `1280:720`, `720:1280`, `1104:832`, `960:960`, `832:1104`, `1584:672`, `848:480`, `640:480`
 
 ## 📊 Report Generation
 
@@ -259,16 +408,21 @@ sudo apt install ffmpeg
 
 - **Formats**: JPG, JPEG, PNG, BMP, TIFF, WebP (varies by API)
 - **Size limits**:
-  - 10MB (Kling/Nano)
-  - 20MB (Pixverse/GenVideo)
-  - 50MB (Vidu APIs)
-  - 100MB (Runway)
+  - 10MB (Kling)
+  - 20MB (Pixverse)
+  - 32MB (Nano Banana)
+  - 50MB (GenVideo, Vidu Effects, Vidu Reference)
+  - 500MB (Runway)
 - **Minimum dimensions**:
   - 300px (Kling)
-  - 100px (Nano/Pixverse/GenVideo)
-  - 128px (Vidu)
+  - 100px (Nano Banana)
+  - 128px (Pixverse, GenVideo, Vidu Effects, Vidu Reference)
   - 320px (Runway)
 - **Aspect ratios**: Varies by API (automatically validated)
+  - Kling: 0.4 - 2.5
+  - Vidu Effects/Reference: 0.25 - 4.0
+  - Pixverse: 0.25 - 4.0
+  - Nano/GenVideo/Runway: No strict limits
 
 ### **Video Requirements** (Runway)
 
@@ -279,13 +433,29 @@ sudo apt install ffmpeg
 
 ## 🎯 API-Specific Features
 
-- **Kling 2.1**: Streaming downloads, dual save logic, v2.1 model, negative prompt support
-- **Pixverse v4.5**: Custom effects/styles, VideoID extraction, base folder structure
-- **GenVideo**: Gashapon transformation, image-to-image generation, design link tracking
-- **Nano Banana**: Base64 handling, multiple images per input, additional image support
-- **Vidu Effects**: Effect-based processing, parallel validation, auto aspect ratio
-- **Vidu Reference**: Multi-image references (up to 6), smart reference finding, aspect ratio selection
-- **Runway**: Video + image pairing, face swap, Gen4 Aleph model, one-to-one/all-combinations
+- **Kling 2.1**: Streaming downloads, dual save logic, v2.1 model support, negative prompt support, custom duration/CFG settings
+- **Pixverse v4.5**: Custom effects/styles, VideoID extraction, base folder structure, parallel validation, v4.5 model
+- **GenVideo**: Gashapon transformation, image-to-image generation, design link tracking, multiple AI model support (GPT/Gemini)
+- **Nano Banana**: Multi-image support (up to 3 images), sequential/random pairing modes, base64 image handling, deterministic reproducible outputs, grouped report generation
+- **Vidu Effects**: Effect-based processing, parallel validation, auto aspect ratio detection, category organization
+- **Vidu Reference**: Multi-image references (up to 6), smart reference finding, aspect ratio selection, multilingual prompt support
+- **Runway Gen4**: Video + image pairing strategies (one-to-one/all-combinations), face swap, multiple aspect ratios, Gen4 Aleph model
+
+### **Deterministic Processing**
+
+All APIs use **deterministic file sorting** to ensure:
+
+- ✅ **Reproducible results** - Same inputs always produce same outputs
+- ✅ **Consistent pairing** - Multi-image modes use consistent image combinations across runs
+- ✅ **Cross-platform stability** - Same behavior on different machines/file systems
+- ✅ **Sequential ordering** - Files processed in alphabetical order by filename (case-insensitive)
+
+This is particularly important for:
+
+- **Nano Banana sequential mode**: Same source file always paired with same additional images
+- **Vidu Reference**: Consistent reference image selection
+- **Runway pairing**: Predictable video-reference combinations
+- **Report generation**: Consistent slide ordering across regenerations
 
 ## 🔍 Troubleshooting
 
@@ -308,15 +478,36 @@ python core/unified_api_processor.py [platform]
 
 ### **Generated Content**
 
-- **Videos**: `{filename}_generated.mp4` (Kling), `{filename}_{effect}_effect.mp4` (Vidu)
-- **Images**: `{filename}_image_{index}.{ext}` (Nano Banana)
+- **Videos**:
+  - Kling: `{filename}_generated.mp4`
+  - Vidu Effects: `{filename}_{effect}_effect.mp4`
+  - Vidu Reference: `{filename}_{effect}_reference.mp4`
+  - Pixverse: `{filename}_{effect}.mp4`
+  - Runway: `{filename}_runway.mp4` or `{filename}__{reference_name}_runway.mp4`
+- **Images**:
+  - Nano Banana: `{filename}_image_{index}.{ext}` (multiple images per source)
+  - GenVideo: `{filename}_generated.{ext}`
 - **Metadata**: `{filename}_metadata.json` (all APIs)
+
+### **Metadata Content**
+
+Each metadata JSON file includes:
+
+- **Success status** and error messages (if any)
+- **Processing time** and timestamp
+- **API parameters** used (prompt, model, settings)
+- **Additional images used** (Nano Banana multi-image mode)
+- **Generated file names** and counts
+- **Attempt count** and retry information
+- **Source file information** and links
 
 ### **Reports**
 
 - **Location**: Configured in `core/api_definitions.json` or config files
 - **Default**: `/Users/ethanhsu/Desktop/GAI/Report/`
 - **Format**: PowerPoint (.pptx) with embedded media
+- **Naming**: `[MMDD] API Name Task Name.pptx`
+- **Grouped reports**: When `group_tasks_by` > 0, multiple tasks combined into one report
 
 ## 🚀 Command Reference
 

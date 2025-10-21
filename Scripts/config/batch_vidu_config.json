@@ -1,20 +1,49 @@
 {
-    "base_folder": "../Media Files/Tests/1002 Vidu Effect Test",
+    "base_folder": "../Media Files/Vidu/1020 5 Styles",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "testbed": "http://192.168.4.3:8000/video_effect/",
     "template_path": "templates/I2V templates.pptx",
     "prompt": "",
+    "output": {
+        "directory": "/Users/ethanhsu/Desktop/GAI/Report",
+        "group_tasks_by": 3
+    },
     "schedule": {
         "start_time": "",
         "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
     },
     "design_link": "https://platform.vidu.com/docs/templates",
-    "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/Er97SInSrEFNpWK8B3rFnr0BWOGWxlJOKq8L7faowSrwFw?e=r5j0b4",
+    "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EtKhv-DImVdHiNO2GjymtrsB44e5dcJgHc235wbBZzjgJA?e=vBCbb0",
     "tasks": [
         {
             "category": "Transformation",
-            "effect": "WednesdaysVibe AI",
+            "effect": "Tim Burton",
+            "prompt": ""
+        },
+        {
+            "category": "Transformation",
+            "effect": "Crow Arrival",
+            "prompt": ""
+        },
+        {
+            "category": "Transformation",
+            "effect": "Dance with Ghost",
+            "prompt": ""
+        },
+        {
+            "category": "Transformation",
+            "effect": "Broomstick Fly",
+            "prompt": ""
+        },
+        {
+            "category": "Transformation",
+            "effect": "Clown Makeup",
             "prompt": ""
         }
-    ]
+    ],
+    "comments": {
+        "base_folder": "Root folder containing effect subfolders. Each effect folder should have 'Source', 'Generated_Video', and 'Metadata' subfolders.",
+        "output_group_tasks_by": "Set to 0 (or omit) to create individual reports per task. Set to N (e.g., 5) to group N tasks (effects) into one combined report. Example: with 5 effects and group_tasks_by=5, creates 1 report; with 10 effects, creates 2 reports.",
+        "tasks": "Each task represents a Vidu effect with category and effect name. The effect name must match the subfolder name in base_folder."
+    }
 }

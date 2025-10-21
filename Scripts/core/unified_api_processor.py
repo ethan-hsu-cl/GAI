@@ -130,7 +130,9 @@ class UnifiedAPIProcessor:
             if isinstance(file_types, dict):
                 file_types = file_types.get('image', [])
         
-        return [f for f in folder.iterdir() if f.is_file() and f.suffix.lower() in file_types]
+        # Sort files by name for deterministic ordering across runs
+        files = [f for f in folder.iterdir() if f.is_file() and f.suffix.lower() in file_types]
+        return sorted(files, key=lambda x: x.name.lower())
 
     def validate_file(self, file_path, file_type='image'):
         """Enhanced file validation with API-specific optimizations"""

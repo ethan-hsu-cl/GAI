@@ -15,6 +15,7 @@ class NanoBananaHandler(BaseAPIHandler):
         super().__init__(processor)
         self._additional_image_pools = {}
         self._used_combinations = set()
+        self._source_file_indices = {}  # Track source file index for sequential matching
     
     def _load_image_pools(self, task_config):
         """Load and cache image pools from additional folders."""
@@ -38,10 +39,22 @@ class NanoBananaHandler(BaseAPIHandler):
                 if folder.exists():
                     images = self.processor._get_files_by_type(folder, 'image')
                     if images:
+                        # Sort images by filename for deterministic ordering across runs
+                        images = sorted(images, key=lambda x: x.name.lower())
                         pools.append(images)
                         self.logger.info(f" 📂 Loaded {len(images)} images from {folder.name}")
                 else:
                     self.logger.warning(f" ⚠️ Folder not found: {folder}")
+            
+            # Build source file index for this task (for sequential one-to-one matching)
+            source_folder = Path(task_config.get('folder', '')) / "Source"
+            if source_folder.exists():
+                source_files = self.processor._get_files_by_type(source_folder, 'image')
+                source_files = sorted(source_files, key=lambda x: x.name.lower())
+                self._source_file_indices[task_key] = {
+                    str(f): idx for idx, f in enumerate(source_files)
+                }
+                self.logger.info(f" 📝 Indexed {len(source_files)} source files for sequential matching")
             
             self._additional_image_pools[task_key] = {
                 'pools': pools,
@@ -114,15 +127,43 @@ class NanoBananaHandler(BaseAPIHandler):
         return selected[:2]  # Return only first 2
     
     def _sequential_selection(self, pools, file_path):
-        """Select images sequentially from each pool based on file index."""
-        # Use hash of file path to get consistent index
-        file_index = hash(str(file_path)) % 10000
+        """Select images sequentially from each pool based on source file index.
+        
+        Ensures one-to-one matching when enough images are available:
+        - Uses sorted source file index for consistent pairing
+        - First source file → first additional image(s)
+        - Second source file → second additional image(s)
+        - When pool is smaller than source files, cycles back using modulo
+        """
+        # Get the source file's index from our pre-built index
+        task_key = None
+        for key, index_map in self._source_file_indices.items():
+            if str(file_path) in index_map:
+                task_key = key
+                file_index = index_map[str(file_path)]
+                break
+        else:
+            # Fallback if file not found in index (shouldn't happen)
+            self.logger.warning(f" ⚠️ File not found in source index: {file_path.name}")
+            file_index = hash(str(file_path)) % 10000
+        
         selected = []
         
         for pool in pools:
             if pool:
+                # Use the source file index for one-to-one matching
+                # When there are enough images, each source gets a unique additional image
+                # When pool is smaller, it cycles back using modulo
                 index = file_index % len(pool)
                 selected.append(str(pool[index]))
+                
+                # Log info about the pairing for first few files
+                if file_index < 3 or (file_index % 10 == 0):
+                    pool_size = len(pool)
+                    if pool_size >= file_index + 1:
+                        self.logger.debug(f" 🔗 One-to-one match: source#{file_index} → additional#{index}")
+                    else:
+                        self.logger.debug(f" 🔄 Cycling match: source#{file_index} → additional#{index} (pool size: {pool_size})")
             else:
                 selected.append('')
         
