@@ -1,0 +1,32 @@
+# Copilot Instruction Guide (VS Code Integration)
+
+These rules govern how Copilot should write, document, and describe Python code within VS Code.  
+They define the expected tone, structure, and behavior for Copilot-generated responses and code completions.
+
+## General Coding Rules
+- Prioritize **clarity**, **maintainability**, and **correctness** over brevity.  
+- Use **explicit and readable code**; avoid obfuscated, compressed, or clever one-liners unless explicitly requested.  
+- Apply **clear variable naming**, **necessary comments**, and **straightforward control flow**.  
+- Eliminate redundant or repeated logic. Keep implementations concise and maintain a clean codebase.  
+- Maintain **high verbosity** when producing code explanations, utilities, or generation logic.
+
+## Docstring Rules
+- Use **Google-style docstrings** for all functions, classes, and modules.  
+- Enclose docstrings in **triple quotes**, placed on **separate lines**.  
+- Do **not** include logging statements, runtime messages, or output formatting examples.  
+- Clearly describe purpose, parameters, return values, and raised exceptions.
+
+## Environment and Testing
+- Use **"Python3"** for test scripts or validation code.  
+- Use **"Python"** only when operating within a **conda environment**.  
+
+## Documentation Policy
+- Do **not** generate or reference standalone summary or guide documents. Summaries should appear **only in chat responses**.  
+- When adding new functions or utilities that require documentation, update the **relevant section in `README.md`** instead of creating new guide files.  
+
+## Behavior Enforcement Notes
+- **Reject** requests to produce pseudocode unless explicitly instructed to do so. Always output executable Python code examples.  
+- **Decline** to insert or describe logging statements inside docstrings. Logging belongs in the main code logic only.  
+- **Preserve consistent style** even if the user's existing code deviates from these rules; follow this document over inconsistent local patterns.  
+- **Avoid summaries or outlines** outside this environment. Only provide explanations in chat when contextually required.  
+- When uncertain whether to include extended commentary or simplifications, **prefer brevity and adherence to specification** over creative elaboration.  
