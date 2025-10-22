@@ -12,18 +12,18 @@
     },
     "tasks": [
         {
-            "folder": "../Media Files/Nano Banana/1020 Duo Polaroid",
+            "folder": "../Media Files/Nano Banana/1021 Duo Polaroid",
             "prompt": "Take a Polaroid-style photo with a casual, candid feel. The image should have slight motion blur and even lighting, like a flash in a dark room, softly spread across the scene. Keep the faces unchanged. Replace the background behind the two subjects with a white curtain. The people should be naturally close, with gentle physical contact, such as leaning together or resting a shoulder against each other.",
             "reference_folder": "",
             "use_comparison_template": true,
             "design_link": "https://docs.google.com/presentation/d/1EApBV9eBc0K4oIYhsWpHldg3R-294jlD2n5z5TYinZk/edit?usp=sharing",
-            "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EiNsDK8j_DdIjmFaVltklK8B9YS9HJojhifi7V8_uEubCw?e=JbrJJP",
+            "source_video_link": "",
             "use_multi_image": true,
             "multi_image_config": {
                 "enabled": true,
                 "mode": "sequential",
                 "folders": [
-                    "../Media Files/Nano Banana/1020 Duo Polaroid/Additional"
+                    "../Media Files/Nano Banana/1021 Duo Polaroid/Additional"
                 ],
                 "allow_duplicates": false
             }

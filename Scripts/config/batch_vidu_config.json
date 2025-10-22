@@ -1,5 +1,5 @@
 {
-    "base_folder": "../Media Files/Vidu/1020 5 Styles",
+    "base_folder": "../Media Files/Vidu/1021 2 Styles",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "testbed": "http://192.168.4.3:8000/video_effect/",
     "template_path": "templates/I2V templates.pptx",
@@ -13,31 +13,16 @@
         "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
     },
     "design_link": "https://platform.vidu.com/docs/templates",
-    "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/EtKhv-DImVdHiNO2GjymtrsB44e5dcJgHc235wbBZzjgJA?e=vBCbb0",
+    "source_video_link": "",
     "tasks": [
         {
-            "category": "Transformation",
-            "effect": "Tim Burton",
+            "category": "Halloween",
+            "effect": "Halloween Background",
             "prompt": ""
         },
         {
-            "category": "Transformation",
-            "effect": "Crow Arrival",
-            "prompt": ""
-        },
-        {
-            "category": "Transformation",
-            "effect": "Dance with Ghost",
-            "prompt": ""
-        },
-        {
-            "category": "Transformation",
-            "effect": "Broomstick Fly",
-            "prompt": ""
-        },
-        {
-            "category": "Transformation",
-            "effect": "Clown Makeup",
+            "category": "Halloween",
+            "effect": "Not Look Back",
             "prompt": ""
         }
     ],
