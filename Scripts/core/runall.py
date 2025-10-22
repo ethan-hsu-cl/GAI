@@ -22,7 +22,7 @@ API_MAPPING = {
 
 # Config file mapping
 CONFIG_MAPPING = {
-    'kling': 'config/batch_config.json',
+    'kling': 'config/batch_kling_config.json',
     'vidu_effects': 'config/batch_vidu_config.json',
     'vidu_reference': 'config/batch_vidu_reference_config.json', 
     'nano_banana': 'config/batch_nano_banana_config.json',
