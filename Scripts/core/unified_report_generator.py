@@ -1750,7 +1750,7 @@ class UnifiedReportGenerator:
         info_box.text_frame.clear()
 
         # Get API-specific links
-        testbed_url = self.config.get('testbed', f'http://192.168.4.3:8000/{self.api_name}/')
+        testbed_url = self.config.get('testbed', f'http://192.168.4.8:8000/{self.api_name}/')
         design_link = self.config.get('design_link', '') if self.config.get('design_link', '') else task.get('design_link', '')
         
         # Check if this is a grouped presentation
