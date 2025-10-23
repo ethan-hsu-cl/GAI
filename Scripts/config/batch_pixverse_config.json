@@ -11,7 +11,7 @@
     },
     "default_settings": {
         "model": "v4.5",
-        "duration": "5s", 
+        "duration": "5s",
         "motion_mode": "normal",
         "quality": "720p",
         "style": "none"
