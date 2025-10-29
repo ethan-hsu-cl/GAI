@@ -1,0 +1,137 @@
+{
+    "template_path": "templates/I2V templates.pptx",
+    "comparison_template_path": "templates/I2V Comparison Template.pptx",
+    "output": {
+        "directory": "/Users/ethanhsu/Desktop/GAI/Report",
+        "group_tasks_by": 5
+    },
+    "comment_output": "Set group_tasks_by to 0 (or omit) to create individual reports per task. Set to N (e.g., 4) to group N tasks into one combined report.",
+    "testbed": "http://192.168.4.8:8000/kling/",
+    "model_version": "v2.1",
+    "comment_model_version": "Model version to use for video generation. Options: 'v1.6', 'v2.1'. Default is 'v2.1'.",
+    "generation_count": 2,
+    "comment_generation_count": "Global default: Number of videos to generate per pair. Can be overridden per task. Default is 1.",
+    "schedule": {
+        "start_time": "",
+        "comment": "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+    },
+    "tasks": [
+        {
+            "mode": "pro",
+            "folder": "../Media Files/Kling Endframe/1028 5 Styles/Anime Awakening",
+            "prompt": "鏡頭快速瞬間移動到主體的正面，寫實光線冷冽。\n瞬間黃綠能量在他周圍爆閃，畫面強烈震動與光流湧動，線條輪廓重新塑形。\n畫面瞬間重構為高對比2D動漫風格，筆觸銳利，色彩飽和，藍光粒子與能量波環繞主體閃爍，角色神情覺醒。",
+            "negative_prompt": "黯淡、平面的光線，對比度弱、模糊、閃爍、缺乏能量、臉部不一致、變形、故障、籃球，變身前右手抬起，變身未完成時右手抬起，手比2",
+            "duration": 5,
+            "cfg": 0.5,
+            "design_link": "https://docs.google.com/presentation/d/1sJOsk664-60qEBeoTvpJ46g4l2eRc0P54AaVnqUIMgY/edit?slide=id.p#slide=id.p",
+            "source_video_link": "",
+            "reference_folder": "",
+            "use_comparison_template": false,
+            "comment": "Processes image pairs (A and B) in the Source folder to generate videos transitioning from start frame to end frame"
+        },
+        {
+            "mode": "pro",
+            "folder": "../Media Files/Kling Endframe/1028 5 Styles/Barbie Dream",
+            "prompt": "鏡頭圍繞單一女子運鏡，鏡頭帶到女子身後，在女人回眸的那一刻，她以自信的姿態撥動自己的頭髮，動作自然優雅，展現柔順的髮絲流動感。隨著她的動作與回眸，原本身上的服裝瞬間變化，布料如流光般轉換成華麗服飾，同時耳邊出現閃耀的精緻耳環。整個過渡過程流暢無縫，光影變化柔和富有層次。女子的表情自信而迷人，姿態穩定優雅。畫面中始終只有這位女子，無任何其他角色或人物出現。",
+            "negative_prompt": "出現兩個人、角色替換、分身、換人",
+            "duration": 5,
+            "cfg": 0.5,
+            "design_link": "",
+            "source_video_link": "",
+            "reference_folder": "",
+            "use_comparison_template": false
+        },
+        {
+            "mode": "pro",
+            "folder": "../Media Files/Kling Endframe/1028 5 Styles/King of Beasts",
+            "prompt": "超現實電影感的神聖重生；一隻家貓緩慢行走；穩定鎖定的中景鏡位，鏡頭以緩慢的電影級微推朝貓移動；氛圍寂靜而神聖；微弱的金色與深紅粒子開始升起，密度迅速增加；每一道火花像活的光在閃爍；色調在耀眼金與深紅之間轉換；光輝增強並演化為純粹金紅的神聖火焰，帶著激烈的躍動與縱深向上爆發；神聖火焰如活生生的風暴跳躍旋卷，以熔金與發光紅能量的層次閃耀；以爆裂的神性力量向四面八方擴張；沒有布料燃燒或融化的質感、沒有表面扭曲，只有體積感火焰與耀眼粒子運動；金紅光的衝擊波撕裂空間，萬物震顫；家貓瞬間被金紅聖火吞沒，剪影在神聖上升中化為虛無——無痛，唯有超越；隨後，一頭威嚴雄獅自炽燃渦旋中爆出，以神一般的權威怒吼；鬃毛如液態日光混合深紅能量般流動；雙眼閃耀神聖之力；具備超寫實的電影縱深與打光；火焰運動與粒子湍流強烈；金紅粒子高光與餘燼充滿空氣；無故障、無形變融合、無混融，僅以純粹、乾脆、神聖的爆裂完成變身。",
+            "negative_prompt": "卡通風、動畫式泛光、弱小的火花、亮粉審美、可愛奇幻系光效、柔和形變、貓獅混合體、幽靈般透明、邊緣模糊、粉彩色調、粉紅光暈、喜劇基調、塑膠感金色、廉價視覺特效風格；變身必須神聖、爆發、有神力且強而有力。",
+            "duration": 5,
+            "cfg": 0.5,
+            "design_link": "",
+            "source_video_link": "",
+            "reference_folder": "",
+            "use_comparison_template": false
+        },
+        {
+            "mode": "pro",
+            "folder": "../Media Files/Kling Endframe/1028 5 Styles/Sailing in Scent",
+            "prompt": "畫面穩定地從中景開始，緩慢拉遠鏡頭，可見一艘小船原本就靜靜漂浮在透明玻璃瓶內，運鏡會由整個大瓶子的畫面慢慢縮小，瓶子懸浮於柔和光線的空間中，宛如漂浮在另一個維度。瓶中水面微微波動，映出夢幻的倒影。整體氛圍唯美、靜謐、超現實。鏡頭平滑無晃動，焦點全程穩定鎖定在瓶與小船上，背景逐漸虛化形成自然景深。光線柔和、色調偏藍白、帶有微微粒子漂浮效果。整個畫面呈現出平靜又夢幻的氣氛，沒有突兀運動或構圖偏移。",
+            "negative_prompt": "船轉動、船從側邊進入瓶中、瓶子從左邊進入畫面、瓶子從右邊進入畫面、瓶子從下面進入畫面、瓶子轉動、瓶子旋轉、瓶子變大、瓶子由小變大、淡入淡出、側面角度、傾斜鏡頭、旋轉鏡頭、劇烈搖晃、構圖偏移、兩艘不同的船、船消失或變形、瓶子變形、變成另一艘船、畫面模糊、變焦錯位。",
+            "duration": 5,
+            "cfg": 0.5,
+            "design_link": "",
+            "source_video_link": "",
+            "reference_folder": "",
+            "use_comparison_template": false
+        },
+        {
+            "mode": "pro",
+            "folder": "../Media Files/Kling Endframe/1028 5 Styles/Shift House",
+            "prompt": "鏡頭置中，0s~2s瞬間快速直線推進，路徑鎖定大門。 穿越大門，焦點由室外連續轉至室內，整個鏡頭推進運動在2s完成，最後定點停留2s。對焦過程平滑。所有角色保持活動，房裡的兩個角色頭面對鏡頭不斷打招呼。",
+            "negative_prompt": "橫移、搖鏡、俯仰、旋轉、手持抖動、跳切；拉伸、魚眼畸變、過度運動模糊、對焦呼吸、閃爍、曝光脈動、水波式扭曲、靜止的角色，靜止的畫面，禁止不動，大門模糊、壞掉的大門、壞掉的階梯、變化的階梯、不自然抖動、黑框、暗角、畫格異常，不同時間轉頭， 過慢的完成鏡頭運動，鏡頭運動超過2s",
+            "duration": 5,
+            "cfg": 0.5,
+            "design_link": "",
+            "source_video_link": "",
+            "reference_folder": "",
+            "use_comparison_template": false
+        }
+    ],
+    "comments": {
+        "endframe_usage": "This endpoint generates videos from pairs of images (start frame A and end frame B). Place image pairs in the Source folder with naming pattern: 'Name_A resolution.ext' and 'Name_B resolution.ext'",
+        "output_grouping": "Set output.group_tasks_by to 0 (or omit) to create individual reports per task. Set to N (e.g., 5) to group N tasks into one combined report. Example: with 5 tasks and group_tasks_by=5, creates 1 report containing all tasks.",
+        "pairing_modes": {
+            "ab_naming": "Default mode. Pairs images based on A/B naming convention (e.g., 'Style_A 1024x1024.jpg' with 'Style_B 1024x1024.jpg')",
+            "sequential": "Alternative mode. Pairs images by sorted filename order. First half of images become start frames, second half become end frames. Example: with 6 sorted images, pairs are (1,4), (2,5), (3,6)"
+        },
+        "generation_count": "Can be set globally at the project level OR per-task. Task-level setting overrides global setting. Set to a number (e.g., 6) to generate [filename]_generated_1.mp4 through [filename]_generated_6.mp4. Default is 1.",
+        "parameters": {
+            "mode": "Generation mode - 'pro' for higher quality (default)",
+            "duration": "Video duration in seconds - '5' or '10'",
+            "cfg": "CFG scale value (0.0-1.0) - controls how closely the generation follows the prompt. Default: 0.5",
+            "model_version": "Model version to use - 'v1.6' or 'v2.1'. Set globally or per task",
+            "pairing_mode": "Image pairing strategy - 'ab_naming' (default) or 'sequential'",
+            "generation_count": "Number of videos to generate per pair. Can be set globally (applies to all tasks) or per-task (overrides global). Default: 1"
+        },
+        "example_task_configurations": {
+            "global_generation_count": {
+                "comment": "When generation_count is set globally, all tasks use that count unless overridden",
+                "note": "Set 'generation_count': 3 at the top level to generate 3 videos per pair for ALL tasks"
+            },
+            "default_single_generation": {
+                "comment": "Standard A/B pairing with single generation per pair",
+                "mode": "pro",
+                "folder": "../Media Files/Kling Endframe/1028 5 Styles/Anime Awakening",
+                "prompt": "Your prompt here",
+                "negative_prompt": "Your negative prompt here"
+            },
+            "multiple_generations": {
+                "comment": "Generate 6 videos per pair with A/B naming (overrides global setting if present)",
+                "mode": "pro",
+                "folder": "../Media Files/Kling Endframe/1028 5 Styles/Barbie Dream",
+                "prompt": "Your prompt here",
+                "generation_count": 6
+            },
+            "sequential_pairing": {
+                "comment": "Use sequential pairing for images without A/B naming",
+                "mode": "pro",
+                "folder": "../Media Files/Kling Endframe/Custom Folder",
+                "prompt": "Your prompt here",
+                "pairing_mode": "sequential"
+            },
+            "sequential_with_multiple_generations": {
+                "comment": "Combine sequential pairing with multiple generations",
+                "mode": "pro",
+                "folder": "../Media Files/Kling Endframe/Custom Folder",
+                "prompt": "Your prompt here",
+                "pairing_mode": "sequential",
+                "generation_count": 3
+            },
+            "grouped_report": {
+                "comment": "Group all 5 tasks into one combined report by setting output.group_tasks_by to 5. This creates a single presentation with all tasks instead of 5 individual presentations.",
+                "note": "Set 'group_tasks_by': 5 in the 'output' section at the top level to enable this feature."
+            }
+        }
+    }
+}

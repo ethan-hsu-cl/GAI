@@ -49,6 +49,67 @@
             "model_version": "v2.1"
         }
     },
+    "kling_endframe": {
+        "endpoint": "http://192.168.4.8:8000/kling/",
+        "api_name": "/EndFrame",
+        "file_types": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".bmp",
+            ".tiff"
+        ],
+        "validation": {
+            "max_size_mb": 10,
+            "min_dimension": 300,
+            "aspect_ratio": [
+                0.4,
+                2.5
+            ]
+        },
+        "folders": {
+            "input": "Source",
+            "output": "Generated_Video",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 3,
+        "task_delay": 10,
+        "max_retries": 3,
+        "special_handling": "image_pairs",
+        "config_structure": "task_folders",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "comparison_template_path": "templates/I2V Comparison Template.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": true
+        },
+        "task_fields": [
+            "folder",
+            "prompt",
+            "negative_prompt",
+            "duration",
+            "cfg",
+            "design_link",
+            "source_video_link",
+            "reference_folder",
+            "use_comparison_template"
+        ],
+        "api_params": {
+            "mode": "pro",
+            "duration": "5",
+            "cfg": 0.5,
+            "model_version": "v1.6"
+        },
+        "duration_options": [
+            "5",
+            "10"
+        ],
+        "model_options": [
+            "v1.6",
+            "v2.1"
+        ]
+    },
     "nano_banana": {
         "endpoint": "http://192.168.4.8:8000/google_flash_image/",
         "api_name": "/nano_banana",
@@ -123,8 +184,13 @@
             "aspect_ratio": "as input image",
             "area": "auto",
             "beast": "auto",
-            "bgm": false
+            "bgm": false,
+            "model": "viduq2-pro"
         },
+        "model_options": [
+            "viduq1",
+            "viduq2-pro"
+        ],
         "structure_type": "base_folder",
         "config_structure": "base_folder",
         "report": {
@@ -136,7 +202,8 @@
         "task_fields": [
             "category",
             "effect",
-            "prompt"
+            "prompt",
+            "model"
         ],
         "additional_features": {
             "design_link": true,

@@ -107,6 +107,12 @@ class UnifiedReportGenerator:
         'metadata_position': (2.32, 15.24, 7.29, 3.06),
     }
     
+    # File extension constants
+    IMAGE_EXTS = {'.jpg', '.jpeg', '.png', '.webp'}
+    VIDEO_EXTS = {'.mp4', '.mov', '.avi'}
+    SUPPORTED_IMG_FORMATS = {'.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.tif'}
+    METADATA_EXTS = {'.json'}
+    
     def __init__(self, api_name: str, config_file: str = None):
         self.api_name = api_name
         self.config_file = config_file or f"config/batch_{api_name}_config.json"
@@ -129,6 +135,7 @@ class UnifiedReportGenerator:
         # Note: For kling, the actual display name is set dynamically based on config model
         self._api_display_names = {
             'kling': 'Kling',  # Will be updated based on model in config
+            'kling_endframe': 'Kling Endframe',  # Will be updated based on model in config
             'nano_banana': 'Nano Banana',
             'runway': 'Runway',
             'vidu_effects': 'Vidu Effects',
@@ -142,7 +149,7 @@ class UnifiedReportGenerator:
         self.load_report_definitions()
         
         # Update Kling display name based on model in config
-        if self.api_name == 'kling':
+        if self.api_name in ['kling', 'kling_endframe']:
             self._update_kling_display_name()
     
     # ================== UNIFIED CONFIGURATION SYSTEM ==================
@@ -210,6 +217,13 @@ class UnifiedReportGenerator:
                 **self.LAYOUT_2_MEDIA,
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['task_id', 'model', 'prompt', 'processing_time_seconds', 'success'],
+            },
+            'kling_endframe': {
+                **base_config,
+                'media_types': ['source', 'generated', 'reference'],
+                **self.LAYOUT_2_MEDIA,
+                'title_format': 'Generation {index}: {source_file}',
+                'metadata_fields': ['start_image', 'end_image', 'generation_number', 'task_id', 'model', 'prompt', 'processing_time_seconds', 'success'],
             }
         }
         return configs.get(self.api_name, configs['kling'])
@@ -253,19 +267,27 @@ class UnifiedReportGenerator:
             slide = ppt.slides.add_slide(ppt.slide_layouts[6])
             self.handle_manual_slide(slide, pair, index, use_comparison, slide_config)
     
+    def _format_title(self, pair, index, title_format, show_only_if_failed):
+        """Format title for slide based on configuration"""
+        if show_only_if_failed and not pair.failed:
+            return None
+        
+        return title_format.format(
+            index=index,
+            source_file=pair.source_file,
+            failure_status="❌ GENERATION FAILED" if pair.failed else ""
+        )
+    
     def handle_template_slide(self, slide, pair, index, use_comparison, slide_config):
         """Handle slide creation with template placeholders (optimized)"""
         # Update title placeholder
-        title_format = slide_config.get('title_format', 'Generation {index}: {source_file}')
-        show_title = not slide_config.get('title_show_only_if_failed') or pair.failed
+        title = self._format_title(
+            pair, index, 
+            slide_config.get('title_format', 'Generation {index}: {source_file}'),
+            slide_config.get('title_show_only_if_failed', False)
+        )
         
-        if show_title:
-            title = title_format.format(
-                index=index,
-                source_file=pair.source_file,
-                failure_status="❌ GENERATION FAILED" if pair.failed else ""
-            )
-            
+        if title:
             # Optimized: Find title placeholder directly
             title_ph = next((p for p in slide.placeholders if p.placeholder_format.type == 1), None)
             if title_ph:
@@ -290,16 +312,13 @@ class UnifiedReportGenerator:
     def handle_manual_slide(self, slide, pair, index, use_comparison, slide_config):
         """Handle slide creation without template"""
         # Add title if needed
-        title_format = slide_config.get('title_format', 'Generation {index}: {source_file}')
-        show_title = not slide_config.get('title_show_only_if_failed') or pair.failed
+        title = self._format_title(
+            pair, index,
+            slide_config.get('title_format', 'Generation {index}: {source_file}'),
+            slide_config.get('title_show_only_if_failed', False)
+        )
         
-        if show_title:
-            title = title_format.format(
-                index=index,
-                source_file=pair.source_file,
-                failure_status="❌ GENERATION FAILED" if pair.failed else ""
-            )
-            
+        if title:
             tb = slide.shapes.add_textbox(Cm(2), Cm(1), Cm(20), Cm(2))
             tb.text_frame.text = title
             tb.text_frame.paragraphs[0].font.size = Pt(20)
@@ -319,25 +338,16 @@ class UnifiedReportGenerator:
     
     def get_media_path_and_type(self, pair, media_type):
         """Get media path and determine if it's video"""
-        if media_type == 'source':
-            path = pair.source_path
-            is_video = path.suffix.lower() in {'.mp4', '.mov', '.avi'} if path else False
-        elif media_type == 'source_video':
-            path = pair.source_video_path
-            is_video = True
-        elif media_type == 'additional_source':
-            # For multi-image support (Nano Banana dual-image mode)
-            path = pair.additional_source_paths[0] if pair.additional_source_paths else None
-            is_video = path.suffix.lower() in {'.mp4', '.mov', '.avi'} if path else False
-        elif media_type == 'generated':
-            path = pair.primary_generated
-            is_video = path.suffix.lower() in {'.mp4', '.mov', '.avi'} if path else False
-        elif media_type == 'reference':
-            path = pair.primary_reference
-            is_video = path.suffix.lower() in {'.mp4', '.mov', '.avi'} if path else False
-        else:
-            path = None
-            is_video = False
+        path_map = {
+            'source': pair.source_path,
+            'source_video': pair.source_video_path,
+            'additional_source': pair.additional_source_paths[0] if pair.additional_source_paths else None,
+            'generated': pair.primary_generated,
+            'reference': pair.primary_reference
+        }
+        
+        path = path_map.get(media_type)
+        is_video = (media_type == 'source_video') or (path and path.suffix.lower() in self.VIDEO_EXTS)
         
         return path, is_video
     
@@ -361,12 +371,10 @@ class UnifiedReportGenerator:
         
         # PowerPoint natively supports: jpg, jpeg, png, bmp, gif, tiff, tif
         # We'll convert everything else (webp, svg, mpo, etc.) to PNG
-        supported_formats = {'.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.tif'}
+        needs_conversion = p.suffix.lower() not in self.SUPPORTED_IMG_FORMATS
         
         # Always try to open and check the actual format, not just extension
         # Some files like .jpg might actually be MPO format
-        needs_conversion = p.suffix.lower() not in supported_formats
-        
         try:
             with Image.open(p) as im:
                 # Check actual image format - MPO and other exotic formats need conversion
@@ -378,15 +386,10 @@ class UnifiedReportGenerator:
                 if needs_conversion:
                     # Convert to RGB mode (removes alpha for formats that don't support it well)
                     # Use RGBA for formats that might have transparency
-                    if im.mode in ('RGBA', 'LA', 'P'):
-                        rgb_im = im.convert('RGBA')
-                        tmp = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
-                        rgb_im.save(tmp.name, 'PNG')
-                    else:
-                        rgb_im = im.convert('RGB')
-                        tmp = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
-                        rgb_im.save(tmp.name, 'PNG')
-                    
+                    mode = 'RGBA' if im.mode in ('RGBA', 'LA', 'P') else 'RGB'
+                    rgb_im = im.convert(mode)
+                    tmp = tempfile.NamedTemporaryFile(suffix='.png', delete=False)
+                    rgb_im.save(tmp.name, 'PNG')
                     tmp.close()
                     self._tempfiles_to_cleanup.append(tmp.name)
                     logger.info(f"Converted {actual_format or p.suffix} to PNG: {p.name}")
@@ -533,6 +536,45 @@ class UnifiedReportGenerator:
     
     # ================== UNIFIED METADATA SYSTEM ==================
     
+    def _add_metadata_field(self, field, pair, meta_lines):
+        """Add a single metadata field to meta_lines"""
+        md = pair.metadata or {}
+        
+        field_handlers = {
+            'success': lambda: f"Status: {'✓' if md.get('success', False) else '❌'}",
+            'processing_time_seconds': lambda: f"Time: {md.get(field, 'N/A')}s",
+            'response_id': lambda: f"Response ID: {md.get(field, 'N/A')}",
+            'attempts': lambda: f"Attempts: {md.get(field, 'N/A')}",
+            'task_id': lambda: f"Task ID: {md.get(field, 'N/A')}",
+            'effect_name': lambda: f"Effect: {pair.effect_name}",
+            'category': lambda: f"Category: {pair.category}",
+            'start_image': lambda: f"Start: {md.get(field, 'N/A')}",
+            'end_image': lambda: f"End: {md.get(field, 'N/A')}",
+        }
+        
+        # Special handlers
+        if field == 'additional_images_used':
+            add_imgs = md.get(field, [])
+            if add_imgs:
+                text = add_imgs[0] if len(add_imgs) == 1 else ', '.join(add_imgs)
+                meta_lines.append(f"Additional: {text}")
+        elif field == 'generation_number':
+            gen_num = md.get('generation_number')
+            total_gens = md.get('total_generations', 1)
+            if gen_num and total_gens > 1:
+                meta_lines.append(f"Generation: {gen_num}/{total_gens}")
+        elif field in ['prompt', 'img_prompt']:
+            value = md.get(field, 'N/A')
+            text = f"{str(value)[:60]}..." if len(str(value)) > 60 else str(value)
+            meta_lines.append(f"Prompt: {text}")
+        elif field in field_handlers:
+            meta_lines.append(field_handlers[field]())
+        else:
+            # Generic field
+            value = md.get(field, 'N/A')
+            display_name = field.replace('_', ' ').title()
+            meta_lines.append(f"{display_name}: {value}")
+    
     def add_metadata_universal(self, slide, pair, slide_config, use_comparison=False):
         """Universal metadata addition for all APIs"""
         metadata_fields = slide_config.get('metadata_fields', [])
@@ -542,46 +584,10 @@ class UnifiedReportGenerator:
         
         # Build metadata lines based on configuration
         for field in metadata_fields:
-            if field == 'success':
-                value = '✓' if pair.metadata.get('success', False) else '❌'
-                meta_lines.append(f"Status: {value}")
-            elif field == 'processing_time_seconds':
-                value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
-                meta_lines.append(f"Time: {value}s")
-            elif field == 'response_id':
-                value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
-                meta_lines.append(f"Response ID: {value}")
-            elif field == 'attempts':
-                value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
-                meta_lines.append(f"Attempts: {value}")
-            elif field == 'additional_images_used':
-                # Display additional images used in generation
-                add_imgs = pair.metadata.get(field, []) if pair.metadata else []
-                if add_imgs:
-                    if len(add_imgs) == 1:
-                        meta_lines.append(f"Additional: {add_imgs[0]}")
-                    else:
-                        meta_lines.append(f"Additional: {', '.join(add_imgs)}")
-            elif field == 'task_id':
-                value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
-                meta_lines.append(f"Task ID: {value}")
-            elif field in ['prompt', 'img_prompt']:
-                value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
-                if len(str(value)) > 60:
-                    meta_lines.append(f"Prompt: {str(value)[:60]}...")
-                else:
-                    meta_lines.append(f"Prompt: {value}")
-            elif field == 'effect_name':
-                meta_lines.append(f"Effect: {pair.effect_name}")
-            elif field == 'category':
-                meta_lines.append(f"Category: {pair.category}")
-            else:
-                value = pair.metadata.get(field, 'N/A') if pair.metadata else 'N/A'
-                display_name = field.replace('_', ' ').title()
-                meta_lines.append(f"{display_name}: {value}")
+            self._add_metadata_field(field, pair, meta_lines)
         
         # Add source file name for some APIs
-        if self.api_name in ['nano_banana', 'genvideo', 'pixverse']:
+        if self.api_name in ['nano_banana', 'genvideo', 'pixverse', 'kling_endframe']:
             meta_lines.insert(0, f"File: {pair.source_file}")
         
         if not meta_lines:
@@ -671,7 +677,7 @@ class UnifiedReportGenerator:
                 'metadata': folder / 'Metadata'
             }
             file_pattern = 'image'
-        else:  # kling
+        else:  # kling or kling_endframe
             folders = {
                 'source': folder / 'Source',
                 'generated': folder / 'Generated_Video',
@@ -684,7 +690,13 @@ class UnifiedReportGenerator:
         
         # OPTIMIZED: Single-pass directory scanning
         src_imgs, _, _ = self._scan_directory_once(folders['source'])
-        src = src_imgs
+        
+        # For kling_endframe, filter to only A images (start frames)
+        # B images are end frames and are referenced in metadata, not source for pairs
+        if self.api_name == 'kling_endframe':
+            src = {k: v for k, v in src_imgs.items() if '_a_' in k or k.endswith('_a')}
+        else:
+            src = src_imgs
         
         # Get generated files with single scan
         out = {}
@@ -696,11 +708,13 @@ class UnifiedReportGenerator:
                         # Split on 'image' and remove trailing underscore
                         basename = f.name.split(file_pattern)[0].rstrip('_')
                         out.setdefault(self.normalize_key(basename), []).append(f)
-            else:  # kling
+            else:  # kling or kling_endframe
                 _, gen_vids, _ = self._scan_directory_once(folders['generated'])
                 for key, f in gen_vids.items():
                     if file_pattern in f.name:
-                        basename = f.stem.replace(file_pattern, '')
+                        # Extract basename by splitting on '_generated' pattern
+                        # E.g., "Name_A_generated_1.mp4" -> "Name_A"
+                        basename = f.stem.split('_' + file_pattern)[0]
                         out.setdefault(self.normalize_key(basename), []).append(f)
         
         # Get metadata with single scan and batch load
@@ -718,21 +732,20 @@ class UnifiedReportGenerator:
                             # Split on 'image' and remove trailing underscore
                             basename = f.name.split('image')[0].rstrip('_')
                             ref_files.setdefault(self.normalize_key(basename), []).append(f)
-                    else:  # kling
+                    else:  # kling or kling_endframe
                         if f.suffix.lower() in {'.mp4', '.mov', '.avi'} and 'generated' in f.name:
-                            basename = f.stem.replace('generated', '')
+                            # Extract basename by splitting on '_generated' pattern
+                            basename = f.stem.split('_generated')[0]
                             ref_files[self.normalize_key(basename)] = f
         
         # Pre-compute aspect ratios for all source images
         all_media = list(src.values()) + [p for paths in out.values() for p in paths if isinstance(paths, list)]
         if all_media:
-            self._compute_aspect_ratios_batch(all_media, are_videos={p: p.suffix.lower() in {'.mp4', '.mov', '.avi'} for p in all_media})
+            are_videos = {p: p.suffix.lower() in self.VIDEO_EXTS for p in all_media}
+            self._compute_aspect_ratios_batch(all_media, are_videos=are_videos)
         
         # Create pairs
         for b in sorted(src.keys()):
-            # Use cached metadata
-            md = metadata_cache.get(b, {})
-
             gen_paths = out.get(b, [])
             ref_paths = ref_files.get(b, []) if use_comparison else []
 
@@ -742,7 +755,17 @@ class UnifiedReportGenerator:
                 ref_paths = [ref_paths] if ref_paths else []
 
             # Determine effect_name: try metadata, then config, then folder name
-            effect_name = md.get('effect_name') if md.get('effect_name') else None
+            # Try to get from any available metadata first
+            effect_name = None
+            if gen_paths:
+                # Try to get metadata from any generated file
+                for gen_path in gen_paths:
+                    gen_key = self.normalize_key(gen_path.stem)
+                    temp_md = metadata_cache.get(gen_key, {})
+                    if temp_md.get('effect_name'):
+                        effect_name = temp_md['effect_name']
+                        break
+            
             if not effect_name:
                 effect_name = self.config.get('effect') or self.config.get('effect_name')
             if not effect_name:
@@ -752,26 +775,55 @@ class UnifiedReportGenerator:
 
             # For Nano Banana multi-image mode: resolve additional source images from metadata
             additional_source_paths = []
-            if self.api_name == 'nano_banana' and md.get('additional_images_used'):
-                additional_folder = folder / 'Additional'
-                for img_name in md.get('additional_images_used', []):
-                    img_path = additional_folder / img_name
-                    if img_path.exists():
-                        additional_source_paths.append(img_path)
+            
+            # Check if we have multiple generations (kling_endframe)
+            # Multiple generations have files like: basename_generated_1.mp4, basename_generated_2.mp4
+            if self.api_name == 'kling_endframe' and len(gen_paths) > 1:
+                # Sort generated files by generation number
+                sorted_gen_paths = sorted(gen_paths, key=lambda p: p.name)
+                
+                # Create separate MediaPair for each generation
+                for gen_path in sorted_gen_paths:
+                    # Get metadata for this specific generation
+                    gen_key = self.normalize_key(gen_path.stem)
+                    md = metadata_cache.get(gen_key, {})
+                    
+                    pair = MediaPair(
+                        source_file=src[b].name,
+                        source_path=src[b],
+                        api_type=self.api_name,
+                        generated_paths=[gen_path],  # Single generated file per pair
+                        reference_paths=ref_paths,
+                        metadata=md,
+                        failed=not md.get('success', False),
+                        ref_failed=use_comparison and not ref_paths,
+                        effect_name=effect_name
+                    )
+                    pairs.append(pair)
+            else:
+                # Standard single generation or nano_banana
+                md = metadata_cache.get(b, {})
+                
+                if self.api_name == 'nano_banana' and md.get('additional_images_used'):
+                    additional_folder = folder / 'Additional'
+                    for img_name in md.get('additional_images_used', []):
+                        img_path = additional_folder / img_name
+                        if img_path.exists():
+                            additional_source_paths.append(img_path)
 
-            pair = MediaPair(
-                source_file=src[b].name,
-                source_path=src[b],
-                api_type=self.api_name,
-                generated_paths=gen_paths,
-                reference_paths=ref_paths,
-                additional_source_paths=additional_source_paths,
-                metadata=md,
-                failed=not gen_paths or not md.get('success', False),
-                ref_failed=use_comparison and not ref_paths,
-                effect_name=effect_name
-            )
-            pairs.append(pair)
+                pair = MediaPair(
+                    source_file=src[b].name,
+                    source_path=src[b],
+                    api_type=self.api_name,
+                    generated_paths=gen_paths,
+                    reference_paths=ref_paths,
+                    additional_source_paths=additional_source_paths,
+                    metadata=md,
+                    failed=not gen_paths or not md.get('success', False),
+                    ref_failed=use_comparison and not ref_paths,
+                    effect_name=effect_name
+                )
+                pairs.append(pair)
         
         return pairs
     
@@ -1082,7 +1134,7 @@ class UnifiedReportGenerator:
         
         # Process each source image
         source_images = [f for f in source_folder.iterdir()
-                        if f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.webp'}]
+                        if f.suffix.lower() in self.IMAGE_EXTS]
         
         # Pre-load all possible metadata files
         potential_metadata = {}
@@ -1175,16 +1227,23 @@ class UnifiedReportGenerator:
                 is_turbo = 'turbo' in model
                 display_name = f"Kling {version}{' Turbo' if is_turbo else ''}"
         
-        # Update the display name if we found a match, otherwise default to Kling 2.1
+        # Update the display name for both kling and kling_endframe
         if display_name:
-            self._api_display_names['kling'] = display_name
-            logger.info(f"✓ Kling display name set to: {display_name}")
-        else:
-            self._api_display_names['kling'] = 'Kling 2.1'  # Default
-            if model:
-                logger.warning(f"⚠ Could not determine Kling version from model '{model}', defaulting to 'Kling 2.1'")
+            if self.api_name == 'kling_endframe':
+                self._api_display_names['kling_endframe'] = f"{display_name} Endframe"
             else:
-                logger.info(f"ℹ No model version specified in config, defaulting to 'Kling 2.1'")
+                self._api_display_names['kling'] = display_name
+            logger.info(f"✓ Kling display name set to: {self._api_display_names[self.api_name]}")
+        else:
+            # Default values
+            if self.api_name == 'kling_endframe':
+                self._api_display_names['kling_endframe'] = 'Kling 1.6 Endframe'  # Default for endframe
+            else:
+                self._api_display_names['kling'] = 'Kling 2.1'  # Default for regular kling
+            if model:
+                logger.warning(f"⚠ Could not determine Kling version from model '{model}', defaulting to '{self._api_display_names[self.api_name]}'")
+            else:
+                logger.info(f"ℹ No model version specified in config, defaulting to '{self._api_display_names[self.api_name]}'")
     
     def load_report_definitions(self):
         """Load report definitions from api_definitions.json"""
@@ -1217,14 +1276,15 @@ class UnifiedReportGenerator:
             "use_comparison": self.api_name in ["kling", "nano_banana", "runway"]
         }
     
+    def _extract_date_from_folder(self, folder):
+        """Extract date from folder name or use current date"""
+        folder_name = Path(folder).name if isinstance(folder, (str, Path)) else str(folder)
+        m = re.match(r'(\d{4})\s*(.+)', folder_name)
+        return m.group(1) if m else datetime.now().strftime("%m%d")
+    
     def get_cmp_filename(self, folder1: str, folder2: str, model: str = '', effect_names1=None, effect_names2=None) -> str:
         """Generate comparison filename using API name and effect names"""
-        # Extract date from folder1
-        m1 = re.match(r'(\d{4})\s*(.+)', Path(folder1).name)
-        if m1:
-            d = m1.group(1)
-        else:
-            d = datetime.now().strftime("%m%d")
+        d = self._extract_date_from_folder(folder1)
         
         # Use model (API name) as the primary identifier
         # Effect names are the actual content description
@@ -1243,12 +1303,7 @@ class UnifiedReportGenerator:
         if isinstance(folder, dict) and folder.get('_is_grouped'):
             return self._get_grouped_filename(folder, model, effect_names)
         
-        # Extract date from folder name
-        m = re.match(r'(\d{4})\s*(.+)', Path(folder).name)
-        if m:
-            d = m.group(1)
-        else:
-            d = datetime.now().strftime("%m%d")
+        d = self._extract_date_from_folder(folder)
         
         # Use model (API name) as the primary identifier
         # Effect names are the actual content description
@@ -1271,15 +1326,7 @@ class UnifiedReportGenerator:
         if is_base_folder_api:
             # Base folder API (vidu_effects, etc.) - use base folder for date and effect names
             base_folder = grouped_task.get('base_folder', '')
-            if base_folder:
-                folder_name = Path(base_folder).name
-                m = re.match(r'(\d{4})\s*(.+)', folder_name)
-                if m:
-                    d = m.group(1)
-                else:
-                    d = datetime.now().strftime("%m%d")
-            else:
-                d = datetime.now().strftime("%m%d")
+            d = self._extract_date_from_folder(base_folder) if base_folder else datetime.now().strftime("%m%d")
             
             # Use effect names from the grouped task
             effect_list = grouped_task.get('_effect_names', [])
@@ -1288,15 +1335,8 @@ class UnifiedReportGenerator:
             # Folder-based API (nano_banana, kling, etc.) - use folder names
             folder_names = grouped_task.get('_folder_names', [])
             
-            # Extract date from first folder
-            if folder_names:
-                m = re.match(r'(\d{4})\s*(.+)', folder_names[0])
-                if m:
-                    d = m.group(1)
-                else:
-                    d = datetime.now().strftime("%m%d")
-            else:
-                d = datetime.now().strftime("%m%d")
+            # Extract date from first folder (prioritize folder date over current date)
+            d = self._extract_date_from_folder(folder_names[0]) if folder_names else datetime.now().strftime("%m%d")
             
             # Build effect string - combine all unique effects
             effect_str = ', '.join(effect_names) if effect_names else 'Combined'
@@ -1304,19 +1344,16 @@ class UnifiedReportGenerator:
         parts = [f"[{d}]"]
         if model:
             parts.append(model)
-        parts.append(f"{effect_str} (Group {group_num})")
+        parts.append(f"{effect_str}")
         
         return ' '.join(parts)
 
     
     def _scan_directory_once(self, folder: Path, image_exts=None, video_exts=None, metadata_exts=None):
         """Scan directory once and categorize files by type - major performance optimization"""
-        if image_exts is None:
-            image_exts = {'.jpg', '.jpeg', '.png', '.webp'}
-        if video_exts is None:
-            video_exts = {'.mp4', '.mov', '.avi'}
-        if metadata_exts is None:
-            metadata_exts = {'.json'}
+        image_exts = image_exts or self.IMAGE_EXTS
+        video_exts = video_exts or self.VIDEO_EXTS
+        metadata_exts = metadata_exts or self.METADATA_EXTS
         
         images, videos, metadata = {}, {}, {}
         
@@ -1774,27 +1811,26 @@ class UnifiedReportGenerator:
             source_link = None
             
             for individual_task in all_tasks:
+                # Extract folder name
+                folder = individual_task.get('folder', '')
+                if isinstance(folder, str):
+                    folder_name = Path(folder).name
+                else:
+                    folder_name = folder.name if hasattr(folder, 'name') else str(folder)
+                
+                # Remove date prefix (e.g., "1017 ") from folder name
+                folder_name = re.sub(r'^\d{4}\s+', '', folder_name)
+                folder_names.append(folder_name)
+                
+                # Get source link (use first non-empty one found)
                 task_source_link = individual_task.get('source_video_link', '')
-                if task_source_link:
-                    # Use the first valid source link found
-                    if source_link is None:
-                        source_link = task_source_link
-                    
-                    # Extract folder name
-                    folder = individual_task.get('folder', '')
-                    if isinstance(folder, str):
-                        folder_name = Path(folder).name
-                    else:
-                        folder_name = folder.name if hasattr(folder, 'name') else str(folder)
-                    
-                    # Remove date prefix (e.g., "1017 ") from folder name
-                    folder_name = re.sub(r'^\d{4}\s+', '', folder_name)
-                    folder_names.append(folder_name)
+                if task_source_link and source_link is None:
+                    source_link = task_source_link
             
-            if folder_names and source_link:
-                # Combine all folder names with commas
+            # Always add the link, even if source_link is empty
+            if folder_names:
                 combined_names = ", ".join(folder_names)
-                links.append(("Source + Video: ", combined_names, source_link))
+                links.append(("Source + Video: ", combined_names, source_link or ""))
         else:
             # Single task or base-folder API - use single source video link
             source_link = self.config.get('source_video_link', '') if self.config.get('source_video_link', '') else task.get('source_video_link', '')
@@ -1998,7 +2034,7 @@ class UnifiedReportGenerator:
 
 def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""
-    supported_apis = ['kling', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse']
+    supported_apis = ['kling', 'kling_endframe', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse']
     if api_name not in supported_apis:
         raise ValueError(f"Unsupported API: {api_name}. Supported: {supported_apis}")
     return UnifiedReportGenerator(api_name, config_file)
@@ -2007,7 +2043,7 @@ def create_report_generator(api_name, config_file=None):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Generate PowerPoint reports from API processing results')
-    parser.add_argument('api_name', choices=['kling', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse'],
+    parser.add_argument('api_name', choices=['kling', 'kling_endframe', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse'],
                        help='API type to generate report for')
     parser.add_argument('--config', '-c', help='Config file path (optional)')
     

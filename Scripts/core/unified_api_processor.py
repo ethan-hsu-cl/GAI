@@ -276,6 +276,8 @@ class UnifiedAPIProcessor:
         """Enhanced validation with parallel processing support"""
         if self.api_name == "kling":
             return self._validate_kling_structure()
+        elif self.api_name == "kling_endframe":
+            return self._validate_kling_endframe_structure()
         elif self.api_name == "nano_banana":
             return self._validate_nano_banana_structure()
         elif self.api_name == "runway":
@@ -303,6 +305,98 @@ class UnifiedAPIProcessor:
             self.write_invalid_report(invalid_images, "kling")
             raise Exception(f"{len(invalid_images)} invalid images found")
         return valid_tasks
+
+    def _validate_kling_endframe_structure(self):
+        """Validate Kling Endframe structure with image pairs."""
+        valid_tasks = []
+        invalid_images = []
+        
+        for i, task in enumerate(self.config.get('tasks', []), 1):
+            folder = Path(task['folder'])
+            source_folder = folder / "Source"
+            
+            if not source_folder.exists():
+                self.logger.warning(f"⚠️ Task {i}: Source folder not found: {source_folder}")
+                continue
+            
+            # Get all image files
+            image_files = self._get_files_by_type(source_folder, 'image')
+            if not image_files:
+                self.logger.warning(f"⚠️ Task {i}: No images found in {source_folder}")
+                continue
+            
+            # Group into pairs and validate
+            pairs = self._group_endframe_pairs(image_files)
+            if not pairs:
+                self.logger.warning(f"⚠️ Task {i}: No valid image pairs found")
+                continue
+            
+            # Validate each image in pairs
+            valid_pairs = 0
+            for start_img, end_img in pairs:
+                start_valid, start_msg = self.validate_file(start_img, 'image')
+                end_valid, end_msg = self.validate_file(end_img, 'image')
+                
+                if not start_valid:
+                    invalid_images.append(f"{start_img}: {start_msg}")
+                if not end_valid:
+                    invalid_images.append(f"{end_img}: {end_msg}")
+                    
+                if start_valid and end_valid:
+                    valid_pairs += 1
+            
+            if valid_pairs > 0:
+                # Create output directories
+                (folder / "Generated_Video").mkdir(parents=True, exist_ok=True)
+                (folder / "Metadata").mkdir(parents=True, exist_ok=True)
+                
+                valid_tasks.append(task)
+                self.logger.info(f"✓ Task {i}: {valid_pairs}/{len(pairs)} valid image pairs")
+        
+        if invalid_images:
+            self.write_invalid_report(invalid_images, "kling_endframe")
+            raise Exception(f"{len(invalid_images)} invalid images found")
+        
+        return valid_tasks
+    
+    def _group_endframe_pairs(self, all_images):
+        """
+        Group images into start/end pairs for Kling Endframe.
+        Expects naming: "name_A resolution.ext" and "name_B resolution.ext"
+        """
+        image_dict = {}
+        
+        for img_path in all_images:
+            name = img_path.stem
+            parts = name.rsplit('_', 1)
+            if len(parts) != 2:
+                continue
+            
+            # Extract resolution from the end
+            name_parts = name.split()
+            if len(name_parts) >= 2:
+                resolution = name_parts[-1]
+                base_name = ' '.join(name_parts[:-1])
+            else:
+                continue
+            
+            # Create key: base_name + resolution (without A/B marker)
+            base_key = base_name.rsplit('_', 1)[0] + '_' + resolution
+            frame_marker = parts[1].split()[0] if parts[1] else None
+            
+            if base_key not in image_dict:
+                image_dict[base_key] = {}
+            
+            if frame_marker in ['A', 'B']:
+                image_dict[base_key][frame_marker] = img_path
+        
+        # Create pairs
+        pairs = []
+        for base_key, frames in image_dict.items():
+            if 'A' in frames and 'B' in frames:
+                pairs.append((frames['A'], frames['B']))
+        
+        return sorted(pairs, key=lambda x: x[0].name)
 
     def _validate_nano_banana_structure(self):
         """Enhanced Nano Banana validation with parallel processing (from working processor)"""

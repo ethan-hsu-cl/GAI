@@ -13,10 +13,14 @@ class ViduEffectsHandler(BaseAPIHandler):
         """Make Vidu Effects API call."""
         prompt = task_config.get('prompt', '') or self.config.get('prompt', '')
         effect = task_config.get('effect', '')
+        model = task_config.get('model', self.config.get('model_version', 'viduq2-pro'))
+        
+        self.logger.info(f"   Model: {model}, Effect: {effect}")
         
         return self.client.predict(
             effect=effect,
             prompt=prompt,
+            # model=model,
             aspect_ratio="as input image",
             area="auto",
             beast="auto",
@@ -55,6 +59,7 @@ class ViduEffectsHandler(BaseAPIHandler):
         metadata = {
             "effect_category": task_config.get('category', ''),
             "effect_name": task_config.get('effect', ''),
+            "model": task_config.get('model', self.config.get('model_version', 'viduq2-pro')),
             "prompt": task_config.get('prompt', ''),
             "video_url": output_url,
             "thumbnail_url": thumbnail_url,
