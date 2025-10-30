@@ -103,9 +103,48 @@ class UnifiedAPIProcessor:
         except Exception:
             return None
 
+    def _convert_image_to_jpg(self, image_path):
+        """
+        Convert unsupported image formats (AVIF, WEBP, etc.) to JPG.
+        
+        Args:
+            image_path: Path object to the image file
+            
+        Returns:
+            Path object to the converted file (or original if no conversion needed)
+        """
+        try:
+            with Image.open(image_path) as img:
+                # Check if format needs conversion
+                unsupported_formats = {'AVIF', 'WEBP', 'HEIC', 'HEIF', 'BMP', 'TIFF'}
+                
+                if img.format in unsupported_formats or image_path.suffix.lower() in {'.avif', '.webp', '.heic', '.heif', '.bmp', '.tiff', '.tif'}:
+                    # Create new filename with .jpg extension
+                    new_path = image_path.with_suffix('.jpg')
+                    
+                    # Convert to RGB mode (required for JPG)
+                    rgb_img = img.convert('RGB')
+                    
+                    # Save as JPG with high quality
+                    rgb_img.save(new_path, 'JPEG', quality=95, optimize=True)
+                    
+                    self.logger.info(f" 🔄 Converted {img.format or image_path.suffix} → JPG: {image_path.name}")
+                    
+                    # Remove original file
+                    image_path.unlink()
+                    
+                    return new_path
+                
+                return image_path
+                
+        except Exception as e:
+            self.logger.warning(f" ⚠️ Could not convert {image_path.name}: {e}")
+            return image_path
+
     def _get_files_by_type(self, folder, file_type='image'):
         """
         Helper method to extract files of a specific type from a folder.
+        Automatically converts unsupported image formats to JPG.
         
         Args:
             folder: Path object or string path to the folder
@@ -130,8 +169,25 @@ class UnifiedAPIProcessor:
             if isinstance(file_types, dict):
                 file_types = file_types.get('image', [])
         
+        # Collect all image files (including unsupported formats)
+        all_image_exts = file_types + ['.avif', '.webp', '.heic', '.heif', '.bmp', '.tiff', '.tif']
+        
+        if file_type in ['image', 'reference_image']:
+            # Get all image files
+            files = [f for f in folder.iterdir() if f.is_file() and f.suffix.lower() in all_image_exts]
+            
+            # Convert unsupported formats to JPG
+            converted_files = []
+            for file_path in files:
+                converted_path = self._convert_image_to_jpg(file_path)
+                converted_files.append(converted_path)
+            
+            files = converted_files
+        else:
+            # Video files - no conversion needed
+            files = [f for f in folder.iterdir() if f.is_file() and f.suffix.lower() in file_types]
+        
         # Sort files by name for deterministic ordering across runs
-        files = [f for f in folder.iterdir() if f.is_file() and f.suffix.lower() in file_types]
         return sorted(files, key=lambda x: x.name.lower())
 
     def validate_file(self, file_path, file_type='image'):
