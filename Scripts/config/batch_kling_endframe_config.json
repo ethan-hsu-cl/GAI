@@ -3,13 +3,13 @@
     "comparison_template_path": "templates/I2V Comparison Template.pptx",
     "output": {
         "directory": "/Users/ethanhsu/Desktop/GAI/Report",
-        "group_tasks_by": 5
+        "group_tasks_by": 3
     },
     "comment_output": "Set group_tasks_by to 0 (or omit) to create individual reports per task. Set to N (e.g., 4) to group N tasks into one combined report.",
     "testbed": "http://192.168.4.8:8000/kling/",
     "model_version": "v2.1",
     "comment_model_version": "Model version to use for video generation. Options: 'v1.6', 'v2.1'. Default is 'v2.1'.",
-    "generation_count": 2,
+    "generation_count": 6,
     "comment_generation_count": "Global default: Number of videos to generate per pair. Can be overridden per task. Default is 1.",
     "schedule": {
         "start_time": "",
@@ -18,9 +18,9 @@
     "tasks": [
         {
             "mode": "pro",
-            "folder": "../Media Files/Kling Endframe/1028 5 Styles/Anime Awakening",
-            "prompt": "鏡頭快速瞬間移動到主體的正面，寫實光線冷冽。\n瞬間黃綠能量在他周圍爆閃，畫面強烈震動與光流湧動，線條輪廓重新塑形。\n畫面瞬間重構為高對比2D動漫風格，筆觸銳利，色彩飽和，藍光粒子與能量波環繞主體閃爍，角色神情覺醒。",
-            "negative_prompt": "黯淡、平面的光線，對比度弱、模糊、閃爍、缺乏能量、臉部不一致、變形、故障、籃球，變身前右手抬起，變身未完成時右手抬起，手比2",
+            "folder": "../Media Files/Kling Endframe/1030 3 Styles/Barbie Dream",
+            "prompt": "鏡頭圍繞單一女子運鏡，鏡頭帶到女子身後，在女人回眸的那一刻，動作自然優雅。隨著她的動作與回眸，原本身上的服裝瞬間變化，布料如流光般轉換成華麗服飾，同時耳邊出現閃耀的精緻耳環。整個過渡過程流暢無縫，光影變化柔和富有層次。女子的表情自信而迷人，姿態穩定優雅。畫面中始終只有這位女子，無任何其他角色或人物出現。",
+            "negative_prompt": "出現兩個人、角色替換、分身、換人",
             "duration": 5,
             "cfg": 0.5,
             "design_link": "https://docs.google.com/presentation/d/1sJOsk664-60qEBeoTvpJ46g4l2eRc0P54AaVnqUIMgY/edit?slide=id.p#slide=id.p",
@@ -31,9 +31,9 @@
         },
         {
             "mode": "pro",
-            "folder": "../Media Files/Kling Endframe/1028 5 Styles/Barbie Dream",
-            "prompt": "鏡頭圍繞單一女子運鏡，鏡頭帶到女子身後，在女人回眸的那一刻，她以自信的姿態撥動自己的頭髮，動作自然優雅，展現柔順的髮絲流動感。隨著她的動作與回眸，原本身上的服裝瞬間變化，布料如流光般轉換成華麗服飾，同時耳邊出現閃耀的精緻耳環。整個過渡過程流暢無縫，光影變化柔和富有層次。女子的表情自信而迷人，姿態穩定優雅。畫面中始終只有這位女子，無任何其他角色或人物出現。",
-            "negative_prompt": "出現兩個人、角色替換、分身、換人",
+            "folder": "../Media Files/Kling Endframe/1030 3 Styles/Cherry Blossoms",
+            "prompt": "大量櫻花花瓣從畫面中央緩辦地綻放，並從花瓣中綻放出少女，少女從花瓣中出現，她看向鏡頭，風吹動她的頭髮，圍繞主體運鏡",
+            "negative_prompt": "",
             "duration": 5,
             "cfg": 0.5,
             "design_link": "",
@@ -43,33 +43,9 @@
         },
         {
             "mode": "pro",
-            "folder": "../Media Files/Kling Endframe/1028 5 Styles/King of Beasts",
-            "prompt": "超現實電影感的神聖重生；一隻家貓緩慢行走；穩定鎖定的中景鏡位，鏡頭以緩慢的電影級微推朝貓移動；氛圍寂靜而神聖；微弱的金色與深紅粒子開始升起，密度迅速增加；每一道火花像活的光在閃爍；色調在耀眼金與深紅之間轉換；光輝增強並演化為純粹金紅的神聖火焰，帶著激烈的躍動與縱深向上爆發；神聖火焰如活生生的風暴跳躍旋卷，以熔金與發光紅能量的層次閃耀；以爆裂的神性力量向四面八方擴張；沒有布料燃燒或融化的質感、沒有表面扭曲，只有體積感火焰與耀眼粒子運動；金紅光的衝擊波撕裂空間，萬物震顫；家貓瞬間被金紅聖火吞沒，剪影在神聖上升中化為虛無——無痛，唯有超越；隨後，一頭威嚴雄獅自炽燃渦旋中爆出，以神一般的權威怒吼；鬃毛如液態日光混合深紅能量般流動；雙眼閃耀神聖之力；具備超寫實的電影縱深與打光；火焰運動與粒子湍流強烈；金紅粒子高光與餘燼充滿空氣；無故障、無形變融合、無混融，僅以純粹、乾脆、神聖的爆裂完成變身。",
-            "negative_prompt": "卡通風、動畫式泛光、弱小的火花、亮粉審美、可愛奇幻系光效、柔和形變、貓獅混合體、幽靈般透明、邊緣模糊、粉彩色調、粉紅光暈、喜劇基調、塑膠感金色、廉價視覺特效風格；變身必須神聖、爆發、有神力且強而有力。",
-            "duration": 5,
-            "cfg": 0.5,
-            "design_link": "",
-            "source_video_link": "",
-            "reference_folder": "",
-            "use_comparison_template": false
-        },
-        {
-            "mode": "pro",
-            "folder": "../Media Files/Kling Endframe/1028 5 Styles/Sailing in Scent",
-            "prompt": "畫面穩定地從中景開始，緩慢拉遠鏡頭，可見一艘小船原本就靜靜漂浮在透明玻璃瓶內，運鏡會由整個大瓶子的畫面慢慢縮小，瓶子懸浮於柔和光線的空間中，宛如漂浮在另一個維度。瓶中水面微微波動，映出夢幻的倒影。整體氛圍唯美、靜謐、超現實。鏡頭平滑無晃動，焦點全程穩定鎖定在瓶與小船上，背景逐漸虛化形成自然景深。光線柔和、色調偏藍白、帶有微微粒子漂浮效果。整個畫面呈現出平靜又夢幻的氣氛，沒有突兀運動或構圖偏移。",
-            "negative_prompt": "船轉動、船從側邊進入瓶中、瓶子從左邊進入畫面、瓶子從右邊進入畫面、瓶子從下面進入畫面、瓶子轉動、瓶子旋轉、瓶子變大、瓶子由小變大、淡入淡出、側面角度、傾斜鏡頭、旋轉鏡頭、劇烈搖晃、構圖偏移、兩艘不同的船、船消失或變形、瓶子變形、變成另一艘船、畫面模糊、變焦錯位。",
-            "duration": 5,
-            "cfg": 0.5,
-            "design_link": "",
-            "source_video_link": "",
-            "reference_folder": "",
-            "use_comparison_template": false
-        },
-        {
-            "mode": "pro",
-            "folder": "../Media Files/Kling Endframe/1028 5 Styles/Shift House",
-            "prompt": "鏡頭置中，0s~2s瞬間快速直線推進，路徑鎖定大門。 穿越大門，焦點由室外連續轉至室內，整個鏡頭推進運動在2s完成，最後定點停留2s。對焦過程平滑。所有角色保持活動，房裡的兩個角色頭面對鏡頭不斷打招呼。",
-            "negative_prompt": "橫移、搖鏡、俯仰、旋轉、手持抖動、跳切；拉伸、魚眼畸變、過度運動模糊、對焦呼吸、閃爍、曝光脈動、水波式扭曲、靜止的角色，靜止的畫面，禁止不動，大門模糊、壞掉的大門、壞掉的階梯、變化的階梯、不自然抖動、黑框、暗角、畫格異常，不同時間轉頭， 過慢的完成鏡頭運動，鏡頭運動超過2s",
+            "folder": "../Media Files/Kling Endframe/1030 3 Styles/Iron Raptor",
+            "prompt": "猛烈的火焰從猛禽的身體開始燃燒，毛髮被火焰吞噬並逐漸轉化成金屬質感。牠靜止於烈焰之中，像在感受體內湧動的力量。隨著熱浪翻湧，牠緩緩抬起頭，眼中燃起炙烈光芒。火焰順著牠的頸部與胸口蔓延，牠的頭部微微擺動、雙翼緩緩張開，動作自然而有節奏，如同在呼吸般與火焰共鳴。當火焰達到最盛時，牠深吸一口氣般張開嘴，發出低沉而震撼的吼聲——但嘴部完全為封閉式金屬結構，沒有任何牙齒或生物特徵，只有純粹的火焰與光在其中閃耀。火焰從金屬喙的縫隙間流出，光隨呼吸閃動。隨著每一次振翅與呼吸，火焰在牠的身上流動、冷卻、凝結成金屬裝甲，羽毛逐層轉化為鋼鐵與機械結構。光線在金屬與火焰之間閃爍流動，牠的身軀漸漸穩定、挺立於餘燼之中。最終，烈焰化為光，留下閃耀冷冽的鋼鐵身軀——一隻自火焰中重生的機械猛禽。整體氛圍充滿力量、平衡與重生之美，具電影級光影效果。",
+            "negative_prompt": "",
             "duration": 5,
             "cfg": 0.5,
             "design_link": "",
@@ -102,14 +78,14 @@
             "default_single_generation": {
                 "comment": "Standard A/B pairing with single generation per pair",
                 "mode": "pro",
-                "folder": "../Media Files/Kling Endframe/1028 5 Styles/Anime Awakening",
+                "folder": "../Media Files/Kling Endframe/1030 3 Styles/Anime Awakening",
                 "prompt": "Your prompt here",
                 "negative_prompt": "Your negative prompt here"
             },
             "multiple_generations": {
                 "comment": "Generate 6 videos per pair with A/B naming (overrides global setting if present)",
                 "mode": "pro",
-                "folder": "../Media Files/Kling Endframe/1028 5 Styles/Barbie Dream",
+                "folder": "../Media Files/Kling Endframe/1030 3 Styles/Barbie Dream",
                 "prompt": "Your prompt here",
                 "generation_count": 6
             },
