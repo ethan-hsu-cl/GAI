@@ -1014,11 +1014,16 @@ class UnifiedAPIProcessor:
             "api_name": self.api_name
         }
 
-        # Add API-specific fields
-        if 'prompt' in task_config:
-            metadata['prompt'] = task_config['prompt']
-        if 'effect' in task_config:
-            metadata['effect'] = task_config['effect']
+        # Add API-specific fields (excluding bulk data like image_sets)
+        exclude_keys = {'image_sets', 'folder_path', 'source_dir', 'generated_dir', 'metadata_dir', 'all_images'}
+        for key in ['prompt', 'effect', 'model', 'duration', 'resolution', 'aspect_ratio', 'movement', 'category']:
+            if key in task_config and key not in exclude_keys:
+                metadata[key] = task_config[key]
+        
+        # Add only the relevant reference images for THIS file (vidu_reference specific)
+        if 'reference_images' in task_config:
+            metadata['reference_images'] = [Path(ref).name for ref in task_config['reference_images']]
+            metadata['reference_count'] = len(task_config['reference_images'])
 
         # Convert non-serializable objects to strings
         metadata = self._make_json_serializable(metadata)
@@ -1059,9 +1064,10 @@ class UnifiedAPIProcessor:
         if result_data:
             metadata.update(result_data)
         
-        # Merge task config (don't overwrite existing keys)
+        # Merge task config selectively (exclude bulk data that shouldn't be in individual metadata)
+        exclude_keys = {'image_sets', 'folder_path', 'source_dir', 'generated_dir', 'metadata_dir', 'all_images'}
         for k, v in task_config.items():
-            if k not in metadata:
+            if k not in metadata and k not in exclude_keys:
                 metadata[k] = v
         
         # Convert non-serializable objects to strings
