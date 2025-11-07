@@ -9,7 +9,7 @@
     "testbed": "http://192.168.4.8:8000/kling/",
     "model_version": "v2.1",
     "comment_model_version": "Model version to use for video generation. Options: 'v1.6', 'v2.1'. Default is 'v2.1'.",
-    "generation_count": 6,
+    "generation_count": 10,
     "comment_generation_count": "Global default: Number of videos to generate per pair. Can be overridden per task. Default is 1.",
     "schedule": {
         "start_time": "",
@@ -18,33 +18,8 @@
     "tasks": [
         {
             "mode": "pro",
-            "folder": "../Media Files/Kling Endframe/1030 3 Styles/Barbie Dream",
-            "prompt": "鏡頭圍繞單一女子運鏡，鏡頭帶到女子身後，在女人回眸的那一刻，動作自然優雅。隨著她的動作與回眸，原本身上的服裝瞬間變化，布料如流光般轉換成華麗服飾，同時耳邊出現閃耀的精緻耳環。整個過渡過程流暢無縫，光影變化柔和富有層次。女子的表情自信而迷人，姿態穩定優雅。畫面中始終只有這位女子，無任何其他角色或人物出現。",
-            "negative_prompt": "出現兩個人、角色替換、分身、換人",
-            "duration": 5,
-            "cfg": 0.5,
-            "design_link": "https://docs.google.com/presentation/d/1sJOsk664-60qEBeoTvpJ46g4l2eRc0P54AaVnqUIMgY/edit?slide=id.p#slide=id.p",
-            "source_video_link": "",
-            "reference_folder": "",
-            "use_comparison_template": false,
-            "comment": "Processes image pairs (A and B) in the Source folder to generate videos transitioning from start frame to end frame"
-        },
-        {
-            "mode": "pro",
-            "folder": "../Media Files/Kling Endframe/1030 3 Styles/Cherry Blossoms",
-            "prompt": "大量櫻花花瓣從畫面中央緩辦地綻放，並從花瓣中綻放出少女，少女從花瓣中出現，她看向鏡頭，風吹動她的頭髮，圍繞主體運鏡",
-            "negative_prompt": "",
-            "duration": 5,
-            "cfg": 0.5,
-            "design_link": "",
-            "source_video_link": "",
-            "reference_folder": "",
-            "use_comparison_template": false
-        },
-        {
-            "mode": "pro",
-            "folder": "../Media Files/Kling Endframe/1030 3 Styles/Iron Raptor",
-            "prompt": "猛烈的火焰從猛禽的身體開始燃燒，毛髮被火焰吞噬並逐漸轉化成金屬質感。牠靜止於烈焰之中，像在感受體內湧動的力量。隨著熱浪翻湧，牠緩緩抬起頭，眼中燃起炙烈光芒。火焰順著牠的頸部與胸口蔓延，牠的頭部微微擺動、雙翼緩緩張開，動作自然而有節奏，如同在呼吸般與火焰共鳴。當火焰達到最盛時，牠深吸一口氣般張開嘴，發出低沉而震撼的吼聲——但嘴部完全為封閉式金屬結構，沒有任何牙齒或生物特徵，只有純粹的火焰與光在其中閃耀。火焰從金屬喙的縫隙間流出，光隨呼吸閃動。隨著每一次振翅與呼吸，火焰在牠的身上流動、冷卻、凝結成金屬裝甲，羽毛逐層轉化為鋼鐵與機械結構。光線在金屬與火焰之間閃爍流動，牠的身軀漸漸穩定、挺立於餘燼之中。最終，烈焰化為光，留下閃耀冷冽的鋼鐵身軀——一隻自火焰中重生的機械猛禽。整體氛圍充滿力量、平衡與重生之美，具電影級光影效果。",
+            "folder": "../Media Files/Kling Endframe/1107 1 Style/Iron Raptor",
+            "prompt": "猛烈的火焰從鳥的身體開始燃燒，毛髮被火焰吞噬並逐漸轉化成金屬質感。牠靜止於烈焰之中，像在感受體內湧動的力量。隨著熱浪翻湧，牠緩緩抬起頭，眼中燃起炙烈光芒。火焰順著牠的頸部與胸口蔓延，牠的頭部微微擺動、雙翼緩緩張開，動作自然而有節奏，如同在呼吸般與火焰共鳴。當火焰達到最盛時，牠深吸一口氣般張開嘴，發出低沉而震撼的吼聲——但嘴部完全為封閉式金屬結構，沒有任何生物特徵，只有純粹的火焰與光在其中閃耀。火焰從金屬喙的縫隙間流出，光隨呼吸閃動。隨著每一次振翅與呼吸，火焰在牠的身上流動、冷卻、凝結成金屬裝甲，羽毛逐層轉化為鋼鐵與機械結構。光線在金屬與火焰之間閃爍流動，牠的身軀漸漸穩定、挺立於餘燼之中。最終，烈焰化為光，留下閃耀冷冽的鋼鐵身軀——一隻自火焰中重生的機械鳥。整體氛圍充滿力量、平衡與重生之美，具電影級光影效果。",
             "negative_prompt": "",
             "duration": 5,
             "cfg": 0.5,
