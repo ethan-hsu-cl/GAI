@@ -346,6 +346,8 @@ class UnifiedAPIProcessor:
             return self.validate_genvideo_structure()
         elif self.api_name == "pixverse":
             return self.validate_pixverse_structure()
+        elif self.api_name == "wan":
+            return self._validate_wan_structure()
         else:
             raise ValueError(f"Validation failed for unknown API: {self.api_name}")
 
@@ -593,6 +595,99 @@ class UnifiedAPIProcessor:
         
         return valid_tasks
 
+    def _validate_wan_structure(self):
+        """
+        Validate Wan 2.2 structure with separate image and video folders.
+        
+        Wan requires:
+        - Source Image/ folder with images
+        - Source Video/ folder with videos
+        - All images will be cross-matched with all videos
+        """
+        valid_tasks = []
+        invalid_images = []
+        invalid_videos = []
+        
+        for i, task in enumerate(self.config.get('tasks', []), 1):
+            folder = Path(task['folder'])
+            source_image_folder = folder / "Source Image"
+            source_video_folder = folder / "Source Video"
+            
+            # Check both folders exist
+            if not source_image_folder.exists():
+                self.logger.warning(f"❌ Task {i}: Missing Source Image folder: {source_image_folder}")
+                continue
+            
+            if not source_video_folder.exists():
+                self.logger.warning(f"❌ Task {i}: Missing Source Video folder: {source_video_folder}")
+                continue
+            
+            # Get image files
+            image_files = self._get_files_by_type(source_image_folder, 'image')
+            if not image_files:
+                self.logger.warning(f"❌ Task {i}: Empty Source Image folder: {source_image_folder}")
+                continue
+            
+            # Get video files
+            video_files = self._get_files_by_type(source_video_folder, 'video')
+            if not video_files:
+                self.logger.warning(f"❌ Task {i}: Empty Source Video folder: {source_video_folder}")
+                continue
+            
+            # Validate images
+            valid_image_count = 0
+            for image_file in image_files:
+                is_valid, reason = self.validate_file(image_file, 'image')
+                if not is_valid:
+                    invalid_images.append({
+                        'path': str(image_file),
+                        'folder': str(folder),
+                        'name': image_file.name,
+                        'reason': reason
+                    })
+                else:
+                    valid_image_count += 1
+            
+            # Validate videos
+            valid_video_count = 0
+            for video_file in video_files:
+                is_valid, reason = self.validate_file(video_file, 'video')
+                if not is_valid:
+                    invalid_videos.append({
+                        'path': str(video_file),
+                        'folder': str(folder),
+                        'name': video_file.name,
+                        'reason': reason
+                    })
+                else:
+                    valid_video_count += 1
+            
+            # Skip task if no valid files
+            if valid_image_count == 0 or valid_video_count == 0:
+                self.logger.warning(f"❌ Task {i}: Insufficient valid files")
+                continue
+            
+            # Create output directories
+            (folder / "Generated_Video").mkdir(exist_ok=True)
+            (folder / "Metadata").mkdir(exist_ok=True)
+            
+            valid_tasks.append(task)
+            total_combinations = valid_image_count * valid_video_count
+            self.logger.info(
+                f"✓ Task {i}: {valid_image_count} images × {valid_video_count} videos = "
+                f"{total_combinations} total generations"
+            )
+        
+        # Report validation errors
+        if invalid_images:
+            self.write_invalid_report(invalid_images, 'wan_images')
+            raise Exception(f"{len(invalid_images)} invalid images found")
+        
+        if invalid_videos:
+            self.write_invalid_report(invalid_videos, 'wan_videos')
+            raise Exception(f"{len(invalid_videos)} invalid videos found")
+        
+        return valid_tasks
 
     def _validate_vidu_effects_structure(self):
         """Enhanced Vidu Effects validation with parallel processing"""

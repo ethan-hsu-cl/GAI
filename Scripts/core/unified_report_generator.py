@@ -141,7 +141,8 @@ class UnifiedReportGenerator:
             'vidu_effects': 'Vidu Effects',
             'vidu_reference': 'Vidu Reference',
             'genvideo': 'GenVideo',
-            'pixverse': 'Pixverse'
+            'pixverse': 'Pixverse',
+            'wan': 'Wan 2.2'
         }
         
         # Load configurations
@@ -224,6 +225,14 @@ class UnifiedReportGenerator:
                 **self.LAYOUT_2_MEDIA,
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['start_image', 'end_image', 'generation_number', 'task_id', 'model', 'prompt', 'processing_time_seconds', 'success'],
+            },
+            'wan': {
+                **base_config,
+                'media_types': ['source', 'source_video', 'generated'],
+                **self.LAYOUT_3_MEDIA,
+                'title_format': 'Generation {index}: {source_file}',
+                'metadata_fields': ['source_image', 'source_video', 'animation_mode', 'prompt', 'processing_time_seconds', 'success'],
+                'error_handling': 'video_fallback'
             }
         }
         return configs.get(self.api_name, configs['kling'])
@@ -550,6 +559,9 @@ class UnifiedReportGenerator:
             'category': lambda: f"Category: {pair.category}",
             'start_image': lambda: f"Start: {md.get(field, 'N/A')}",
             'end_image': lambda: f"End: {md.get(field, 'N/A')}",
+            'source_image': lambda: f"Image: {md.get(field, 'N/A')}",
+            'source_video': lambda: f"Video: {md.get(field, 'N/A')}",
+            'animation_mode': lambda: f"Mode: {md.get(field, 'N/A')}",
         }
         
         # Special handlers
@@ -646,6 +658,8 @@ class UnifiedReportGenerator:
         
         if self.api_name == 'runway':
             return self.create_runway_media_pairs(folder, ref_folder, task, use_comparison)
+        elif self.api_name == 'wan':
+            return self.create_wan_media_pairs(folder, ref_folder, task, use_comparison)
         else:
             return self.create_standard_media_pairs(folder, ref_folder, task, use_comparison)
     
@@ -918,6 +932,86 @@ class UnifiedReportGenerator:
             pairs.append(pair)
         
         logger.info(f"Created {len(pairs)} Runway media pairs")
+        return pairs
+    
+    def create_wan_media_pairs(self, folder: Path, ref_folder: Optional[Path],
+                              task: Dict, use_comparison: bool) -> List[MediaPair]:
+        """
+        Create Wan 2.2 media pairs.
+        
+        Structure:
+        - Source Image/: Reference images
+        - Source Video/: Source videos
+        - Generated_Video/: Generated videos (named as image_video_mode.mp4)
+        - Metadata/: JSON metadata files (named as image_video_metadata.json)
+        """
+        folders = {
+            'source_image': folder / 'Source Image',
+            'source_video': folder / 'Source Video',
+            'generated': folder / 'Generated_Video',
+            'metadata': folder / 'Metadata'
+        }
+        
+        if not folders['metadata'].exists():
+            logger.warning(f"Metadata folder not found: {folders['metadata']}")
+            return []
+        
+        # OPTIMIZED: Use single-pass scanning for all folders
+        source_images, _, _ = self._scan_directory_once(folders['source_image'])
+        _, source_videos, _ = self._scan_directory_once(folders['source_video'])
+        _, generated_videos, _ = self._scan_directory_once(folders['generated'])
+        _, _, metadata_files = self._scan_directory_once(folders['metadata'])
+        
+        # Batch load all metadata
+        metadata_cache = self._load_json_batch(metadata_files) if metadata_files else {}
+        
+        logger.info(f"Wan files found: {len(source_images)} images, {len(source_videos)} videos, "
+                   f"{len(generated_videos)} generated, {len(metadata_files)} metadata")
+        
+        # Pre-extract frames for all videos in parallel
+        all_videos = list(source_videos.values()) + list(generated_videos.values())
+        if all_videos:
+            self._extract_frames_parallel(all_videos)
+        
+        pairs = []
+        for stem, meta_path in metadata_files.items():
+            md = metadata_cache.get(stem, {})
+            if not md:
+                continue
+            
+            # Find matching files using metadata references
+            src_img_path = next((p for p in source_images.values()
+                               if p.name == md.get('source_image', '')), None)
+            src_vid_path = next((p for p in source_videos.values()
+                               if p.name == md.get('source_video', '')), None)
+            gen_vid_path = next((p for p in generated_videos.values()
+                               if p.name == md.get('generated_video', '')), None)
+            
+            if not src_img_path:
+                logger.warning(f"No source image found for meta {stem}")
+                continue
+            
+            # Determine effect_name from folder or config
+            effect_name = self.config.get('effect') or self.config.get('effect_name')
+            if not effect_name:
+                # Remove leading date (e.g., '1111 ') from folder name
+                m = re.match(r'^(\d{4})\s*(.+)', folder.name)
+                effect_name = m.group(2) if m else folder.name
+            
+            pair = MediaPair(
+                source_file=src_img_path.name,
+                source_path=src_img_path,
+                api_type=self.api_name,
+                generated_paths=[gen_vid_path] if gen_vid_path else [],
+                reference_paths=[],
+                source_video_path=src_vid_path,
+                effect_name=effect_name,
+                metadata=md,
+                failed=not gen_vid_path or not md.get('success', False)
+            )
+            pairs.append(pair)
+        
+        logger.info(f"Created {len(pairs)} Wan media pairs")
         return pairs
     
     def process_base_folder_structure(self, task: Dict) -> List[MediaPair]:
@@ -1273,7 +1367,7 @@ class UnifiedReportGenerator:
             "template_path": "templates/I2V templates.pptx",
             "comparison_template_path": "templates/I2V Comparison Template.pptx",
             "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
-            "use_comparison": self.api_name in ["kling", "nano_banana", "runway"]
+            "use_comparison": self.api_name in ["kling", "nano_banana", "runway", "wan"]
         }
     
     def _extract_date_from_folder(self, folder):
@@ -2034,7 +2128,7 @@ class UnifiedReportGenerator:
 
 def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""
-    supported_apis = ['kling', 'kling_endframe', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse']
+    supported_apis = ['kling', 'kling_endframe', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan']
     if api_name not in supported_apis:
         raise ValueError(f"Unsupported API: {api_name}. Supported: {supported_apis}")
     return UnifiedReportGenerator(api_name, config_file)
@@ -2043,7 +2137,7 @@ def create_report_generator(api_name, config_file=None):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Generate PowerPoint reports from API processing results')
-    parser.add_argument('api_name', choices=['kling', 'kling_endframe', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse'],
+    parser.add_argument('api_name', choices=['kling', 'kling_endframe', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan'],
                        help='API type to generate report for')
     parser.add_argument('--config', '-c', help='Config file path (optional)')
     

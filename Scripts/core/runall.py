@@ -19,6 +19,7 @@ API_MAPPING = {
     'runway': 'runway',
     'genvideo': 'genvideo',
     'pixverse': 'pixverse',
+    'wan': 'wan',
 }
 
 # Config file mapping
@@ -30,7 +31,8 @@ CONFIG_MAPPING = {
     'nano_banana': 'config/batch_nano_banana_config.json',
     'runway': 'config/batch_runway_config.json',
     'genvideo': 'config/batch_genvideo_config.json',
-    'pixverse': 'config/batch_pixverse_config.json'
+    'pixverse': 'config/batch_pixverse_config.json',
+    'wan': 'config/batch_wan_config.json'
 }
 
 def show_usage():
@@ -46,6 +48,7 @@ def show_usage():
     print("  runway - Runway face swap processing")
     print("  genvideo - GenVideo image generation processing")
     print("  pixverse - Pixverse Effects processing")
+    print("  wan - Wan 2.2 image-video animation processing")
     print("  all - Run all platforms")
     print()
     print("ACTIONS:")
@@ -65,6 +68,7 @@ def show_usage():
     print("  python runall.py vidu auto")
     print("  python runall.py viduref auto --verbose")
     print("  python runall.py pixverse process")
+    print("  python runall.py wan auto")
     print("  python runall.py all auto --parallel")
     print("  python runall.py runway process --config custom_runway_config.json")
     print("  python runall.py genvideo process")

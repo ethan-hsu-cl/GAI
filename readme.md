@@ -1,6 +1,6 @@
 # Automated Processing & Reporting Automation Suite
 
-A powerful Python automation framework for batch processing images and videos through multiple AI APIs with automated PowerPoint report generation. Supports 7 AI platforms: Kling 2.1, Pixverse, GenVideo, Google Flash/Nano Banana, Vidu Effects, Vidu Reference, and Runway.
+A powerful Python automation framework for batch processing images and videos through multiple AI APIs with automated PowerPoint report generation. Supports 8 AI platforms: Kling 2.1, Pixverse, GenVideo, Google Flash/Nano Banana, Vidu Effects, Vidu Reference, Runway, and Wan 2.2.
 
 ## 🚀 Quick Start
 
@@ -20,6 +20,7 @@ python core/runall.py nano auto
 python core/runall.py vidu auto
 python core/runall.py viduref auto
 python core/runall.py runway auto
+python core/runall.py wan auto
 
 # Process all APIs at once
 python core/runall.py all auto
@@ -60,6 +61,7 @@ python core/runall.py all auto --parallel --verbose
 | `vidu` | Vidu Effects | Effect-based video generation with categories |
 | `viduref` | Vidu Reference | Multi-reference guided video generation |
 | `runway` | Runway Gen4 | Video processing with face swap and effects |
+| `wan` | Wan 2.2 | Image + video cross-matching with motion animation |
 | `all` | All Platforms | Process all APIs sequentially or in parallel |
 
 ## Video Download Command Example
@@ -81,7 +83,8 @@ GAI/                                    # Project root
     │   ├── batch_nano_banana_config.json # Nano Banana configuration
     │   ├── batch_runway_config.json  # Runway configuration
     │   ├── batch_vidu_config.json    # Vidu Effects configuration
-    │   └── batch_vidu_reference_config.json # Vidu Reference configuration
+    │   ├── batch_vidu_reference_config.json # Vidu Reference configuration
+    │   └── batch_wan_config.json     # Wan 2.2 configuration
     ├── core/                          # Core automation framework
     │   ├── api_definitions.json      # API specifications
     │   ├── runall.py                 # Main execution script
@@ -95,12 +98,14 @@ GAI/                                    # Project root
     └── requirements.txt
 ```
 
-### **Task Data Folder Structure** (Kling, GenVideo, Nano Banana, Runway)
+### **Task Data Folder Structure** (Kling, GenVideo, Nano Banana, Runway, Wan 2.2)
 
 ```bash
 YourTaskFolder/
 ├── TaskName1/
 │   ├── Source/              # Input images/videos
+│   ├── Source Image/        # Source images (Wan 2.2 only)
+│   ├── Source Video/        # Source videos (Wan 2.2 only)
 │   ├── Additional/          # Additional images for multi-image mode (Nano Banana only)
 │   ├── Reference/           # Reference images (Runway only)
 │   ├── Generated_Video/     # Auto-created output folder (videos)
@@ -114,7 +119,8 @@ YourTaskFolder/
 
 **Notes:**
 
-- **Source/**: Primary input files (required for all APIs)
+- **Source/**: Primary input files (required for most APIs)
+- **Source Image/** and **Source Video/**: Separate folders for Wan 2.2 (images and videos are cross-matched)
 - **Additional/**: Optional folder for Nano Banana multi-image mode (contains 2nd and 3rd images)
 - **Reference/**: Optional folder for Runway tasks requiring reference images
 - Output folders are automatically created based on API type
@@ -343,6 +349,55 @@ All configuration files are located in the `Scripts/config/` directory and follo
 
 **Available Ratios:** `1280:720`, `720:1280`, `1104:832`, `960:960`, `832:1104`, `1584:672`, `848:480`, `640:480`
 
+### **Wan 2.2 Configuration** (`config/batch_wan_config.json`)
+
+```json
+{
+  "tasks": [
+    {
+      "folder": "../Media Files/Wan 2.2/1111 Test",
+      "prompt": "The person is dancing, realistic video.",
+      "embed": "Hello!!",
+      "num_outputs": 2,
+      "seed": "-1",
+      "animation_mode": "move",
+      "design_link": "https://your-design-link.com",
+      "source_video_link": "https://source-video-link.com",
+      "reference_folder": "",
+      "use_comparison_template": false
+    }
+  ],
+  "testbed": "http://210.244.31.18:7014/"
+}
+```
+
+**Animation Modes:**
+
+- **`move`**: Motion-based animation mode
+- **`mix`**: Mixed animation effects
+
+**Folder Structure:**
+
+Each task folder must contain:
+
+- `Source Image/`: Source images for processing
+- `Source Video/`: Source videos for motion reference
+
+**Cross-Matching Behavior:**
+
+Wan 2.2 automatically cross-matches all images with all videos:
+
+- 4 images × 5 videos = 20 total generations
+- Each combination creates a unique animated output
+
+**Parameters:**
+
+- **`prompt`**: Text description of the desired animation
+- **`embed`**: Embedding parameter (typically `"Hello!!"`)
+- **`num_outputs`**: Number of output variations (default: 2)
+- **`seed`**: Random seed for generation (`"-1"` for random)
+- **`animation_mode`**: `"move"` or `"mix"`
+
 ## 📊 Report Generation
 
 Reports are automatically generated in PowerPoint format with:
@@ -440,6 +495,7 @@ sudo apt install ffmpeg
 - **Vidu Effects**: Effect-based processing, parallel validation, auto aspect ratio detection, category organization
 - **Vidu Reference**: Multi-image references (up to 6), smart reference finding, aspect ratio selection, multilingual prompt support
 - **Runway Gen4**: Video + image pairing strategies (one-to-one/all-combinations), face swap, multiple aspect ratios, Gen4 Aleph model
+- **Wan 2.2**: Automatic image cropping to video aspect ratio, image-video cross-matching, dual animation modes (move/mix), two-step API workflow
 
 ### **Deterministic Processing**
 
@@ -455,6 +511,7 @@ This is particularly important for:
 - **Nano Banana sequential mode**: Same source file always paired with same additional images
 - **Vidu Reference**: Consistent reference image selection
 - **Runway pairing**: Predictable video-reference combinations
+- **Wan 2.2 cross-matching**: Consistent image-video pairing order
 - **Report generation**: Consistent slide ordering across regenerations
 
 ## 🔍 Troubleshooting
