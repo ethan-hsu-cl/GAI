@@ -105,7 +105,7 @@
             "folder": "../Media Files/Nano Banana/1112 12 Styles/1112 Christmas Couple",
             "prompt": "Convert the existing portrait to a realistic style, preserving the subject's original facial features and identifying features. Hair color must remain unchanged.\n\nA rebellious couple is the main focus, walking side by side through a snowy, gritty alley after a heist. They are framed perfectly in the center of the image, front-facing with a symmetrical, waist-up composition like a movie poster. Do not change the camera angle — the couple must remain exactly in the middle of the frame.\n\nThe woman must look exactly like Image1 in all aspects. Do not alter her hairstyle or facial structure. She is not wearing sunglasses. She wears a crimson red velvet jumpsuit with a form-hugging design, tailored to highlight her curves with clear body contour and visible bust shape — subtly defined through the tight fabric without excessive exposure. The neckline should be low-cut but tasteful, showing the upper chest and collarbones, suggesting sensuality without being overly revealing. The fabric is soft, slightly glossy, and drapes cleanly across her silhouette. A gold metallic belt cinches her waist as a bold fashion accent. She carries a large light brown cloth sack filled with money. The sack must not have handles or straps — do not make it look like a shopping bag. She either holds it in both arms, supports it against her hip, or rests it across one shoulder. The sack appears rugged, made of canvas or burlap, with realistic folds and texture.\n\nThe man must look exactly like Image2 in all aspects. Do not describe or reinterpret his face, hair, or expression — strictly follow the original appearance in Image2 without any modifications. He wears a red velvet Santa hat and a matching long red velvet coat with thick white fur trim. The red is vivid and saturated. Beneath the coat, he wears a tight white sleeveless undershirt with a scoop neckline that reveals part of his chest and upper abs. A wide black leather belt with a silver buckle wraps around his waist. He wears deep red velvet pants and worn black boots. He wears black aviator sunglasses.\n\nThe alley is gritty and cinematic: dirty snow, muddy footprints, scattered bills, brick buildings with rusty fire escapes, dented metal bins, and crates. Lighting combines warm orange tones from streetlamps with cool blue ambient shadows. The environment stays neutral and grounded. The couple's bold red outfits stand out as the visual focus. The scene should feel like a stylish holiday crime film — bold, alluring, and sharply composed.",
             "reference_folder": "",
-            "use_comparison_template": false,
+            "use_comparison_template": true,
             "design_link": "https://docs.google.com/presentation/d/1A1m0cLnWV4NmDmYiYK-RGclkoa8Ytwfln8QK7UQfA6A/edit?hl=zh-tw&slide=id.g3a2480fdaea_13_64#slide=id.g3a2480fdaea_13_64",
             "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgAvgpyku1iTS56A28omggP-AWb2j1P9GzMArVOf5iwQgto?e=vDpWmD",
             "use_multi_image": true,
@@ -113,16 +113,16 @@
                 "enabled": true,
                 "mode": "sequential",
                 "folders": [
-                    "../Media Files/Nano Banana/1112 12 Styles/Christmas Couple/Additional"
+                    "../Media Files/Nano Banana/1112 12 Styles/1112 Christmas Couple/Additional"
                 ],
-                "allow_duplicates": true
+                "allow_duplicates": false
             }
         },
         {
             "folder": "../Media Files/Nano Banana/1112 12 Styles/1112 Christmas Bestie",
             "prompt": "System / Instruction\nUse the uploaded full-body photo as the primary subject.\nAbsolutely prohibited alter the person’s identity, facial features, hairstyle, or hair color.\n\nUser Prompt\nTransform the uploaded subjects into a two-person Christmas portrait while keeping their faces, hairstyles, and hair colors exactly the same—realistic and fully recognizable. Change only pose, wardrobe, and background.\n\nComposition & Camera (fix angle/scale)\nFrame as a tight medium two-shot (3:4 or 4:5). Camera height at the front subject’s eye line—no high/low angle, no Dutch tilt.\nLens 50–70 mm (full-frame equiv.), aperture f/2.8–f/3.2 for sharp faces and creamy bokeh.\nFront subject (seated) is center-right in the lower two-thirds; headroom 10–12% of frame height; head-to-body occupies 55–60% of frame height; looks into camera, gentle smile.\nRear subject (standing) leans in from the upper-left third, face turned 20–30° toward camera; right hand lightly touches the front subject’s hat/head edge.\nGift boxes and tabletop ornaments anchor the foreground left, the Christmas tree stays on frame-left with gold lights and red ornaments; right background keeps soft warm bokeh without overpowering the subjects.\n\nLighting & Color \nNeutral daylight WB 5200–5600 K. Key light: large softbox at 45° front-left; fill from front-right at –1.5 stops; subtle rim light behind for outline.\nSkin tones are clean and neutral, highlights crisp, shadows soft—no yellow tint. Reds/greens/golds are vivid but not overexposed. Balanced contrast and clean blacks.\n\nWardrobe & Textures\nFront subject: fine red-and-white gingham camisole dress (from bust to mid-waist) with a small embroidered red berry motif on the chest and a Christmas hat–shaped hair clip accent; layered with a dark green chunky knit open cardigan that drapes naturally.\nRear subject: white turtleneck knit top with a red chunky-gauge open shawl (soft and fluffy); hair tied with a red velvet ribbon bow featuring tiny white pom-poms at the ends, Overall proportions cute and festive.\nMakeup: Christmas red palette with glossy red lips, subtle blush high on cheeks, soft eye makeup; semi-matte luminous skin.\n\nOutput Requirements\nImage must be bright, clear, and color-balanced, with neutral skin tone (no yellow cast).\nThe two-person placement and angles must match the described layout.\nNo text, logos, or extra people. Deliver a cinematic, high-resolution portrait with clean bokeh and refined layering.",
             "reference_folder": "",
-            "use_comparison_template": false,
+            "use_comparison_template": true,
             "design_link": "https://docs.google.com/presentation/d/1A1m0cLnWV4NmDmYiYK-RGclkoa8Ytwfln8QK7UQfA6A/edit?hl=zh-tw&slide=id.g3a2480fdaea_13_64#slide=id.g3a2480fdaea_13_64",
             "source_video_link": "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDymuT_Q18DR5WLjqADcBrvAeINgB1O8Z4GLnYIuFar7O4?e=RkFcDQ",
             "use_multi_image": true,
@@ -130,7 +130,7 @@
                 "enabled": true,
                 "mode": "sequential",
                 "folders": [
-                    "../Media Files/Nano Banana/1112 12 Styles/Christmas Bestie/Additional"
+                    "../Media Files/Nano Banana/1112 12 Styles/1112 Christmas Bestie/Additional"
                 ],
                 "allow_duplicates": false
             }
