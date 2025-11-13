@@ -471,17 +471,18 @@ Reports are automatically generated in PowerPoint format with:
 - **Hyperlinks** to design files and source materials
 - **Error reporting** for failed generations
 
-### **Report Templates**
+### **Templates & Output**
 
 PowerPoint templates are located in `Scripts/templates/`:
 
 - `I2V templates.pptx` - Standard template
 - `I2V Comparison Template.pptx` - Comparison template
 
-### **Report Output**
+**Output Details:**
 
-- **Default location**: `/Users/ethanhsu/Desktop/GAI/Report/` (configurable)
-- **Naming format**: `[MMDD] API Name Style Name.pptx`
+- **Default location**: `/Users/ethanhsu/Desktop/GAI/Report/` (configurable in `core/api_definitions.json` or config files)
+- **Naming format**: `[MMDD] API Name Task Name.pptx`
+- **Grouped reports**: When `group_tasks_by` > 0, multiple tasks combined into one report
 
 ## 🔧 Installation \& Setup
 
@@ -580,14 +581,6 @@ This is particularly important for:
 
 ## 🔍 Troubleshooting
 
-```bash
-# Validate files and configuration
-python core/runall.py [platform] process --verbose
-
-# Test API connection
-python core/unified_api_processor.py [platform]
-```
-
 **Common Errors:**
 
 - **"Config error"**: Check JSON syntax | **"Missing source"**: Add `Source/` folder with files
@@ -622,24 +615,12 @@ Each metadata JSON file includes:
 - **Attempt count** and retry information
 - **Source file information** and links
 
-### **Reports**
-
-- **Location**: Configured in `core/api_definitions.json` or config files
-- **Default**: `/Users/ethanhsu/Desktop/GAI/Report/`
-- **Format**: PowerPoint (.pptx) with embedded media
-- **Naming**: `[MMDD] API Name Task Name.pptx`
-- **Grouped reports**: When `group_tasks_by` > 0, multiple tasks combined into one report
-
 ## 🚀 Command Reference
 
-```bash
-# Always run from Scripts directory
-cd Scripts
+**Syntax:** `python core/runall.py [platform] [action] [options]`
 
-# Basic syntax
-python core/runall.py [platform] [action] [options]
+- **Actions**: `process` | `report` | `auto` (default)
+- **Options**: `--config FILE` | `--parallel` | `--verbose`
+- **Platforms**: See Platform Commands table above
 
-# Actions: process | report | auto (default)
-# Options: --config FILE | --parallel | --verbose
-# Platforms: See Platform Commands table above
-```
+**Note**: All commands must be run from the `Scripts/` directory.
