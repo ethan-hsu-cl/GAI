@@ -1899,32 +1899,35 @@ class UnifiedReportGenerator:
         # Handle source video links
         if is_grouped and not is_base_folder_api:
             # Folder-based APIs (nano_banana, kling, runway, genvideo) with grouping
-            # Collect all folder names and create a single comma-separated link
-            all_tasks = task.get('_all_tasks', [])
-            folder_names = []
-            source_link = None
+            # Check if there's a root source+video link in config
+            root_source_link = self.config.get('root_source_video_link', '')
             
-            for individual_task in all_tasks:
-                # Extract folder name
-                folder = individual_task.get('folder', '')
-                if isinstance(folder, str):
-                    folder_name = Path(folder).name
-                else:
-                    folder_name = folder.name if hasattr(folder, 'name') else str(folder)
+            if root_source_link:
+                # If root link exists, add it as "Link" with hyperlink and ignore task-specific links
+                links.append(("Source + Video: ", "Link", root_source_link))
+            else:
+                # No root link - add "Source + Video: " without hyperlink, then individual task links
+                links.append(("Source + Video: ", "", ""))
                 
-                # Remove date prefix (e.g., "1017 ") from folder name
-                folder_name = re.sub(r'^\d{4}\s+', '', folder_name)
-                folder_names.append(folder_name)
+                # Create separate links for each folder so each gets its own hyperlink
+                all_tasks = task.get('_all_tasks', [])
                 
-                # Get source link (use first non-empty one found)
-                task_source_link = individual_task.get('source_video_link', '')
-                if task_source_link and source_link is None:
-                    source_link = task_source_link
-            
-            # Always add the link, even if source_link is empty
-            if folder_names:
-                combined_names = ", ".join(folder_names)
-                links.append(("Source + Video: ", combined_names, source_link or ""))
+                for individual_task in all_tasks:
+                    # Extract folder name
+                    folder = individual_task.get('folder', '')
+                    if isinstance(folder, str):
+                        folder_name = Path(folder).name
+                    else:
+                        folder_name = folder.name if hasattr(folder, 'name') else str(folder)
+                    
+                    # Remove date prefix (e.g., "1017 ") from folder name
+                    folder_name = re.sub(r'^\d{4}\s+', '', folder_name)
+                    
+                    # Get source link for this specific task
+                    task_source_link = individual_task.get('source_video_link', '')
+                    
+                    # Add individual link (no prefix, just the folder name)
+                    links.append(("", folder_name, task_source_link or ""))
         else:
             # Single task or base-folder API - use single source video link
             source_link = self.config.get('source_video_link', '') if self.config.get('source_video_link', '') else task.get('source_video_link', '')
@@ -2040,35 +2043,81 @@ class UnifiedReportGenerator:
         
         Works for both folder-based APIs (nano_banana, kling, etc.) 
         and base-folder APIs (vidu_effects, etc.)
+        
+        Tasks are separated by use_comparison_template before grouping,
+        since different templates require different presentations.
         """
         logger.info(f"📦 Grouping tasks by {group_size}")
         
-        successful_groups = 0
-        total_groups = (len(tasks) + group_size - 1) // group_size
+        # Separate tasks by template type
+        comparison_tasks = []
+        regular_tasks = []
         
-        for group_idx in range(0, len(tasks), group_size):
-            group_tasks = tasks[group_idx:group_idx + group_size]
-            group_num = (group_idx // group_size) + 1
-            
-            logger.info(f"\n📊 Processing group {group_num}/{total_groups} ({len(group_tasks)} tasks)")
-            
-            # Collect pairs with task information for individual title slides
-            task_pairs_list = []
-            group_task_info = []
-            
-            for task in group_tasks:
-                pairs = self.process_batch(task)
-                if pairs:
-                    task_pairs_list.append({'task': task, 'pairs': pairs})
-                    group_task_info.append(task)
-            
-            if task_pairs_list:
-                # Create a combined task representation for filename generation
-                combined_task = self._create_combined_task(group_task_info, group_num, total_groups)
-                if self.create_grouped_presentation(task_pairs_list, combined_task):
-                    successful_groups += 1
+        for task in tasks:
+            use_comparison = task.get('use_comparison_template', False) or bool(task.get('reference_folder'))
+            if use_comparison:
+                comparison_tasks.append(task)
             else:
-                logger.warning(f"⚠ Group {group_num} has no valid pairs")
+                regular_tasks.append(task)
+        
+        successful_groups = 0
+        total_groups = 0
+        
+        # Process regular tasks (non-comparison template)
+        if regular_tasks:
+            logger.info(f"📄 Processing {len(regular_tasks)} regular template tasks")
+            regular_group_count = (len(regular_tasks) + group_size - 1) // group_size
+            total_groups += regular_group_count
+            
+            for group_idx in range(0, len(regular_tasks), group_size):
+                group_tasks = regular_tasks[group_idx:group_idx + group_size]
+                group_num = (group_idx // group_size) + 1
+                
+                logger.info(f"\n📊 Processing regular group {group_num}/{regular_group_count} ({len(group_tasks)} tasks)")
+                
+                task_pairs_list = []
+                group_task_info = []
+                
+                for task in group_tasks:
+                    pairs = self.process_batch(task)
+                    if pairs:
+                        task_pairs_list.append({'task': task, 'pairs': pairs})
+                        group_task_info.append(task)
+                
+                if task_pairs_list:
+                    combined_task = self._create_combined_task(group_task_info, group_num, regular_group_count)
+                    if self.create_grouped_presentation(task_pairs_list, combined_task):
+                        successful_groups += 1
+                else:
+                    logger.warning(f"⚠ Regular group {group_num} has no valid pairs")
+        
+        # Process comparison tasks (comparison template)
+        if comparison_tasks:
+            logger.info(f"📄 Processing {len(comparison_tasks)} comparison template tasks")
+            comparison_group_count = (len(comparison_tasks) + group_size - 1) // group_size
+            total_groups += comparison_group_count
+            
+            for group_idx in range(0, len(comparison_tasks), group_size):
+                group_tasks = comparison_tasks[group_idx:group_idx + group_size]
+                group_num = (group_idx // group_size) + 1
+                
+                logger.info(f"\n📊 Processing comparison group {group_num}/{comparison_group_count} ({len(group_tasks)} tasks)")
+                
+                task_pairs_list = []
+                group_task_info = []
+                
+                for task in group_tasks:
+                    pairs = self.process_batch(task)
+                    if pairs:
+                        task_pairs_list.append({'task': task, 'pairs': pairs})
+                        group_task_info.append(task)
+                
+                if task_pairs_list:
+                    combined_task = self._create_combined_task(group_task_info, group_num, comparison_group_count)
+                    if self.create_grouped_presentation(task_pairs_list, combined_task):
+                        successful_groups += 1
+                else:
+                    logger.warning(f"⚠ Comparison group {group_num} has no valid pairs")
         
         logger.info(f"\n✓ Generated {successful_groups}/{total_groups} grouped presentations")
         return successful_groups > 0
