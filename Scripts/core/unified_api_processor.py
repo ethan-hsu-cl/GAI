@@ -348,6 +348,8 @@ class UnifiedAPIProcessor:
             return self.validate_pixverse_structure()
         elif self.api_name == "wan":
             return self._validate_wan_structure()
+        elif self.api_name == "veo":
+            return self._validate_veo_structure()
         else:
             raise ValueError(f"Validation failed for unknown API: {self.api_name}")
 
@@ -686,6 +688,45 @@ class UnifiedAPIProcessor:
         if invalid_videos:
             self.write_invalid_report(invalid_videos, 'wan_videos')
             raise Exception(f"{len(invalid_videos)} invalid videos found")
+        
+        return valid_tasks
+
+    def _validate_veo_structure(self):
+        """
+        Validate Veo text-to-video structure.
+        
+        Veo is text-to-video only, so we just validate that:
+        1. Each task has a prompt
+        2. Each task has an output folder specified
+        3. Create necessary directories
+        """
+        valid_tasks = []
+        
+        for i, task in enumerate(self.config.get('tasks', []), 1):
+            # Validate required fields
+            if not task.get('prompt'):
+                self.logger.warning(f"⚠️ Task {i}: Missing prompt")
+                continue
+            
+            # Get or create output folder
+            output_folder = Path(task.get('output_folder', ''))
+            if not output_folder or str(output_folder) == '':
+                self.logger.warning(f"⚠️ Task {i}: Missing output_folder")
+                continue
+            
+            # Create output directories
+            output_folder.mkdir(parents=True, exist_ok=True)
+            metadata_folder = output_folder.parent / "Metadata"
+            metadata_folder.mkdir(parents=True, exist_ok=True)
+            
+            # Add task number to config for handler use
+            task['task_num'] = i
+            
+            valid_tasks.append(task)
+            self.logger.info(f"✓ Task {i}: Text-to-video prompt configured")
+        
+        if not valid_tasks:
+            raise Exception("No valid Veo tasks found")
         
         return valid_tasks
 

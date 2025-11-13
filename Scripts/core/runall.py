@@ -20,6 +20,7 @@ API_MAPPING = {
     'genvideo': 'genvideo',
     'pixverse': 'pixverse',
     'wan': 'wan',
+    'veo': 'veo',
 }
 
 # Config file mapping
@@ -32,7 +33,8 @@ CONFIG_MAPPING = {
     'runway': 'config/batch_runway_config.json',
     'genvideo': 'config/batch_genvideo_config.json',
     'pixverse': 'config/batch_pixverse_config.json',
-    'wan': 'config/batch_wan_config.json'
+    'wan': 'config/batch_wan_config.json',
+    'veo': 'config/batch_veo_config.json'
 }
 
 def show_usage():
@@ -49,6 +51,7 @@ def show_usage():
     print("  genvideo - GenVideo image generation processing")
     print("  pixverse - Pixverse Effects processing")
     print("  wan - Wan 2.2 image-video animation processing")
+    print("  veo - Google Veo text-to-video processing")
     print("  all - Run all platforms")
     print()
     print("ACTIONS:")
@@ -69,6 +72,7 @@ def show_usage():
     print("  python runall.py viduref auto --verbose")
     print("  python runall.py pixverse process")
     print("  python runall.py wan auto")
+    print("  python runall.py veo auto")
     print("  python runall.py all auto --parallel")
     print("  python runall.py runway process --config custom_runway_config.json")
     print("  python runall.py genvideo process")
@@ -154,7 +158,14 @@ def run_report_generator(api_name, config_file=None):
     try:
         logger.info(f"📊 Generating report: {api_name.replace('_', ' ').title()}")
 
-        generator = create_report_generator(api_name, config_file)
+        # Veo uses dedicated report generator due to unique structure (text-to-video)
+        if api_name == 'veo':
+            sys.path.insert(0, str(Path(__file__).parent.parent / 'reports'))
+            from generate_veo_report import VeoReportGenerator
+            generator = VeoReportGenerator(config_file)
+        else:
+            generator = create_report_generator(api_name, config_file)
+        
         success = generator.run()
 
         if success:

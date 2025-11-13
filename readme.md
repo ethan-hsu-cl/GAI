@@ -1,6 +1,6 @@
 # Automated Processing & Reporting Automation Suite
 
-A powerful Python automation framework for batch processing images and videos through multiple AI APIs with automated PowerPoint report generation. Supports 8 AI platforms: Kling 2.1, Pixverse, GenVideo, Google Flash/Nano Banana, Vidu Effects, Vidu Reference, Runway, and Wan 2.2.
+A powerful Python automation framework for batch processing images and videos through multiple AI APIs with automated PowerPoint report generation. Supports 9 AI platforms: Kling 2.1, Pixverse, GenVideo, Google Flash/Nano Banana, Vidu Effects, Vidu Reference, Runway, Wan 2.2, and Google Veo.
 
 ## 🚀 Quick Start
 
@@ -21,6 +21,7 @@ python core/runall.py vidu auto
 python core/runall.py viduref auto
 python core/runall.py runway auto
 python core/runall.py wan auto
+python core/runall.py veo auto
 
 # Process all APIs at once
 python core/runall.py all auto
@@ -62,6 +63,7 @@ python core/runall.py all auto --parallel --verbose
 | `viduref` | Vidu Reference | Multi-reference guided video generation |
 | `runway` | Runway Gen4 | Video processing with face swap and effects |
 | `wan` | Wan 2.2 | Image + video cross-matching with motion animation |
+| `veo` | Google Veo | Text-to-video generation with AI models |
 | `all` | All Platforms | Process all APIs sequentially or in parallel |
 
 ## Video Download Command Example
@@ -84,7 +86,8 @@ GAI/                                    # Project root
     │   ├── batch_runway_config.json  # Runway configuration
     │   ├── batch_vidu_config.json    # Vidu Effects configuration
     │   ├── batch_vidu_reference_config.json # Vidu Reference configuration
-    │   └── batch_wan_config.json     # Wan 2.2 configuration
+    │   ├── batch_wan_config.json     # Wan 2.2 configuration
+    │   └── batch_veo_config.json     # Google Veo configuration
     ├── core/                          # Core automation framework
     │   ├── api_definitions.json      # API specifications
     │   ├── runall.py                 # Main execution script
@@ -398,6 +401,66 @@ Wan 2.2 automatically cross-matches all images with all videos:
 - **`seed`**: Random seed for generation (`"-1"` for random)
 - **`animation_mode`**: `"move"` or `"mix"`
 
+### **Veo Configuration** (`config/batch_veo_config.json`)
+
+```json
+{
+  "tasks": [
+    {
+      "prompt": "A serene landscape with mountains and a lake at sunset",
+      "negative_prompt": "",
+      "model_id": "veo-3.1-generate-001",
+      "duration_seconds": 8,
+      "aspect_ratio": "16:9",
+      "resolution": "1080p",
+      "compression_quality": "optimized",
+      "seed": 0,
+      "enhance_prompt": true,
+      "generate_audio": false,
+      "person_generation": "allow_all",
+      "output_folder": "../Media Files/Veo/Test1/Generated_Video"
+    }
+  ],
+  "testbed": "http://192.168.4.8:8000/google_veo/"
+}
+```
+
+**Model Options:**
+
+- `"veo-2.0-generate-001"`: Veo 2.0 base model
+- `"veo-3.0-generate-001"`: Veo 3.0 base model
+- `"veo-3.0-fast-generate-001"`: Veo 3.0 fast generation
+- `"veo-3.0-generate-preview"`: Veo 3.0 preview model
+- `"veo-3.0-fast-generate-preview"`: Veo 3.0 fast preview
+- `"veo-3.1-generate-preview"`: Veo 3.1 preview model (latest)
+- `"veo-3.1-fast-generate-preview"`: Veo 3.1 fast preview
+
+**Aspect Ratio Options:** `"16:9"`, `"9:16"`
+
+**Resolution Options:** `"720p"`, `"1080p"`
+
+**Compression Quality:** `"optimized"`, `"lossless"` (Veo 3+ only)
+
+**Person Generation Options:** `"default"`, `"allow_adult"`, `"dont_allow"`, `"allow_all"`
+
+**Parameters:**
+
+- **`prompt`**: Text description of the video to generate (required)
+- **`negative_prompt`**: Elements to avoid in generation (optional)
+- **`model_id`**: AI model to use for generation
+- **`duration_seconds`**: Video duration in seconds (numeric value)
+- **`aspect_ratio`**: Video aspect ratio
+- **`resolution`**: Output video resolution
+- **`compression_quality`**: Video compression level (Veo 3+ only)
+- **`seed`**: Random seed for reproducibility (0 for random)
+- **`output_storage_uri`**: Cloud storage URI for output (optional)
+- **`enhance_prompt`**: Auto-enhance prompt with AI (true/false)
+- **`generate_audio`**: Generate audio for the video (true/false)
+- **`person_generation`**: Control person generation in videos
+- **`output_folder`**: Path where generated videos will be saved
+
+**Note:** Veo is a **text-to-video** API, so no input images/videos are required. Each task generates one video from a text prompt.
+
 ## 📊 Report Generation
 
 Reports are automatically generated in PowerPoint format with:
@@ -496,6 +559,7 @@ sudo apt install ffmpeg
 - **Vidu Reference**: Multi-image references (up to 6), smart reference finding, aspect ratio selection, multilingual prompt support
 - **Runway Gen4**: Video + image pairing strategies (one-to-one/all-combinations), face swap, multiple aspect ratios, Gen4 Aleph model
 - **Wan 2.2**: Automatic image cropping to video aspect ratio, image-video cross-matching, dual animation modes (move/mix), two-step API workflow
+- **Google Veo**: Text-to-video generation (no input files required), multiple model versions (2.0 to 3.1), prompt enhancement, optional audio generation, person generation controls, lossless compression (Veo 3+)
 
 ### **Deterministic Processing**
 
