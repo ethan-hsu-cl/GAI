@@ -25,16 +25,16 @@ API_MAPPING = {
 
 # Config file mapping
 CONFIG_MAPPING = {
-    'kling': 'config/batch_kling_config.json',
-    'kling_endframe': 'config/batch_kling_endframe_config.json',
-    'vidu_effects': 'config/batch_vidu_config.json',
-    'vidu_reference': 'config/batch_vidu_reference_config.json', 
-    'nano_banana': 'config/batch_nano_banana_config.json',
-    'runway': 'config/batch_runway_config.json',
-    'genvideo': 'config/batch_genvideo_config.json',
-    'pixverse': 'config/batch_pixverse_config.json',
-    'wan': 'config/batch_wan_config.json',
-    'veo': 'config/batch_veo_config.json'
+    'kling': 'config/batch_kling_config.yaml',
+    'kling_endframe': 'config/batch_kling_endframe_config.yaml',
+    'vidu_effects': 'config/batch_vidu_effects_config.yaml',
+    'vidu_reference': 'config/batch_vidu_reference_config.yaml', 
+    'nano_banana': 'config/batch_nano_banana_config.yaml',
+    'runway': 'config/batch_runway_config.yaml',
+    'genvideo': 'config/batch_genvideo_config.yaml',
+    'pixverse': 'config/batch_pixverse_config.yaml',
+    'wan': 'config/batch_wan_config.yaml',
+    'veo': 'config/batch_veo_config.yaml'
 }
 
 def show_usage():
@@ -160,9 +160,14 @@ def run_report_generator(api_name, config_file=None):
 
         # Veo uses dedicated report generator due to unique structure (text-to-video)
         if api_name == 'veo':
-            sys.path.insert(0, str(Path(__file__).parent.parent / 'reports'))
-            from generate_veo_report import VeoReportGenerator
-            generator = VeoReportGenerator(config_file)
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                "generate_veo_report",
+                Path(__file__).parent.parent / 'reports' / 'generate_veo_report.py'
+            )
+            veo_module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(veo_module)
+            generator = veo_module.VeoReportGenerator(config_file)
         else:
             generator = create_report_generator(api_name, config_file)
         

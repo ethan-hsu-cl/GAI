@@ -2,6 +2,7 @@ import os
 import time
 import shutil
 import json
+import yaml
 import requests
 import base64
 import subprocess
@@ -34,7 +35,23 @@ class UnifiedAPIProcessor:
 
     def __init__(self, api_name, config_file=None):
         self.api_name = api_name
-        self.config_file = config_file or f"batch_{api_name}_config.json"
+        # Support both .yaml and .json extensions
+        if config_file:
+            self.config_file = config_file
+        else:
+            # Try YAML first, then JSON (check in config directory)
+            script_dir = Path(__file__).parent
+            config_dir = script_dir.parent / "config"
+            yaml_file = config_dir / f"batch_{api_name}_config.yaml"
+            json_file = config_dir / f"batch_{api_name}_config.json"
+            
+            if yaml_file.exists():
+                self.config_file = str(yaml_file)
+            elif json_file.exists():
+                self.config_file = str(json_file)
+            else:
+                # Fallback to relative path for backward compatibility
+                self.config_file = f"batch_{api_name}_config.json"
         self.client = None
         self.config = {}
         self.api_definitions = {}
@@ -68,14 +85,24 @@ class UnifiedAPIProcessor:
             raise
 
     def load_config(self):
-        """Load and validate configuration"""
+        """Load and validate configuration from YAML or JSON"""
+        config_path = Path(self.config_file)
+        
         try:
-            with open(self.config_file, 'r', encoding='utf-8') as f:
-                self.config = json.load(f)
-                self.logger.info(f"✓ Configuration loaded from {self.config_file}")
+            with open(config_path, 'r', encoding='utf-8') as f:
+                # Detect format by extension
+                if config_path.suffix.lower() in ['.yaml', '.yml']:
+                    self.config = yaml.safe_load(f)
+                    self.logger.info(f"✓ Configuration loaded from {self.config_file} (YAML)")
+                else:
+                    self.config = json.load(f)
+                    self.logger.info(f"✓ Configuration loaded from {self.config_file} (JSON)")
                 return True
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            self.logger.error(f"❌ Config error: {e}")
+        except FileNotFoundError:
+            self.logger.error(f"❌ Config file not found: {self.config_file}")
+            return False
+        except (json.JSONDecodeError, yaml.YAMLError) as e:
+            self.logger.error(f"❌ Config parse error: {e}")
             return False
 
     def _get_video_info(self, video_path):

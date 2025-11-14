@@ -7,6 +7,7 @@ Differences from other reports:
 - Only generated video and metadata shown
 """
 import json
+import yaml
 import logging
 import sys
 from datetime import datetime
@@ -74,17 +75,34 @@ class VeoReportGenerator:
         Args:
             config_file: Path to Veo configuration file
         """
-        self.config_file = config_file or "config/batch_veo_config.json"
+        # Auto-detect YAML or JSON config files
+        if not config_file:
+            yaml_path = Path("config/batch_veo_config.yaml")
+            json_path = Path("config/batch_veo_config.json")
+            if yaml_path.exists():
+                self.config_file = str(yaml_path)
+            elif json_path.exists():
+                self.config_file = str(json_path)
+            else:
+                self.config_file = "config/batch_veo_config.yaml"  # Default to YAML
+        else:
+            self.config_file = config_file
         self.config = {}
         
         self.load_config()
     
     def load_config(self):
-        """Load Veo configuration."""
+        """Load Veo configuration from YAML or JSON."""
+        config_path = Path(self.config_file)
         try:
-            with open(self.config_file, 'r', encoding='utf-8') as f:
-                self.config = json.load(f)
-            logger.info(f"✓ Config loaded: {self.config_file}")
+            with open(config_path, 'r', encoding='utf-8') as f:
+                # Detect format by extension
+                if config_path.suffix.lower() in ['.yaml', '.yml']:
+                    self.config = yaml.safe_load(f)
+                    logger.info(f"✓ Config loaded: {self.config_file} (YAML)")
+                else:
+                    self.config = json.load(f)
+                    logger.info(f"✓ Config loaded: {self.config_file} (JSON)")
         except Exception as e:
             logger.error(f"❌ Config error: {e}")
             sys.exit(1)
@@ -272,7 +290,7 @@ class VeoReportGenerator:
         info_box.text_frame.clear()
         
         # Add testbed link
-        testbed_url = "http://192.168.4.8:8000/google_veo/"
+        testbed_url = "http://192.168.31.40:8000/google_veo/"
         para = info_box.text_frame.paragraphs[0]
         para.clear()
         r1, r2 = para.add_run(), para.add_run()

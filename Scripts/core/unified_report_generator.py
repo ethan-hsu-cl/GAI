@@ -1,4 +1,4 @@
-import json, logging, sys, re, tempfile, os
+import json, yaml, logging, sys, re, tempfile, os
 from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -115,7 +115,18 @@ class UnifiedReportGenerator:
     
     def __init__(self, api_name: str, config_file: str = None):
         self.api_name = api_name
-        self.config_file = config_file or f"config/batch_{api_name}_config.json"
+        # Auto-detect YAML or JSON config files
+        if not config_file:
+            yaml_path = Path(f"config/batch_{api_name}_config.yaml")
+            json_path = Path(f"config/batch_{api_name}_config.json")
+            if yaml_path.exists():
+                self.config_file = str(yaml_path)
+            elif json_path.exists():
+                self.config_file = str(json_path)
+            else:
+                self.config_file = f"config/batch_{api_name}_config.yaml"  # Default to YAML
+        else:
+            self.config_file = config_file
         self.config = {}
         self.report_definitions = {}
         
@@ -1317,11 +1328,17 @@ class UnifiedReportGenerator:
     # ================== UTILITY METHODS ==================
     
     def load_config(self):
-        """Load API-specific configuration"""
+        """Load API-specific configuration from YAML or JSON"""
+        config_path = Path(self.config_file)
         try:
-            with open(self.config_file, 'r', encoding='utf-8') as f:
-                self.config = json.load(f)
-            logger.info(f"✓ Config loaded: {self.config_file}")
+            with open(config_path, 'r', encoding='utf-8') as f:
+                # Detect format by extension
+                if config_path.suffix.lower() in ['.yaml', '.yml']:
+                    self.config = yaml.safe_load(f)
+                    logger.info(f"✓ Config loaded: {self.config_file} (YAML)")
+                else:
+                    self.config = json.load(f)
+                    logger.info(f"✓ Config loaded: {self.config_file} (JSON)")
         except Exception as e:
             logger.error(f"✗ Config error: {e}")
             sys.exit(1)
@@ -1915,7 +1932,7 @@ class UnifiedReportGenerator:
         info_box.text_frame.clear()
 
         # Get API-specific links
-        testbed_url = self.config.get('testbed', f'http://192.168.4.8:8000/{self.api_name}/')
+        testbed_url = self.config.get('testbed', f'http://192.168.31.40:8000/{self.api_name}/')
         design_link = self.config.get('design_link', '') if self.config.get('design_link', '') else task.get('design_link', '')
         
         # Check if this is a grouped presentation

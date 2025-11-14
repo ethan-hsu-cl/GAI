@@ -162,7 +162,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
     }
   ],
   "model_version": "v2.1",
-  "testbed": "http://192.168.4.8:8000/kling/"
+  "testbed": "http://192.168.31.40:8000/kling/"
 }
 ```
 
@@ -183,7 +183,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "use_comparison_template": true
     }
   ],
-  "testbed": "http://192.168.4.8:8000/google_flash_image/"
+  "testbed": "http://192.168.31.40:8000/google_flash_image/"
 }
 ```
 
@@ -206,7 +206,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "use_comparison_template": true
     }
   ],
-  "testbed": "http://192.168.4.8:8000/google_flash_image/",
+  "testbed": "http://192.168.31.40:8000/google_flash_image/",
   "output": {
     "directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "group_tasks_by": 2
@@ -237,7 +237,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "source_video_link": "https://source-video-link.com"
     }
   ],
-  "testbed": "http://192.168.4.8:8000/video_effect/"
+  "testbed": "http://192.168.31.40:8000/video_effect/"
 }
 ```
 
@@ -257,7 +257,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "source_video_link": "https://source-video-link.com"
     }
   ],
-  "testbed": "http://192.168.4.8:8000/video_effect/"
+  "testbed": "http://192.168.31.40:8000/video_effect/"
 }
 ```
 
@@ -284,7 +284,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "source_video_link": "https://source-video-link.com"
     }
   ],
-  "testbed": "http://192.168.4.8:8000/pixverse_image/"
+  "testbed": "http://192.168.31.40:8000/pixverse_image/"
 }
 ```
 
@@ -312,7 +312,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "use_comparison_template": true
     }
   ],
-  "testbed": "http://192.168.4.8:8000/genvideo/"
+  "testbed": "http://192.168.31.40:8000/genvideo/"
 }
 ```
 
@@ -341,7 +341,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
   ],
   "model": "gen4_aleph",
   "ratio": "1280:720",
-  "testbed": "http://192.168.4.8:8000/runway/"
+  "testbed": "http://192.168.31.40:8000/runway/"
 }
 ```
 
@@ -421,7 +421,7 @@ Wan 2.2 automatically cross-matches all images with all videos:
       "output_folder": "../Media Files/Veo/Test1/Generated_Video"
     }
   ],
-  "testbed": "http://192.168.4.8:8000/google_veo/"
+  "testbed": "http://192.168.31.40:8000/google_veo/"
 }
 ```
 
@@ -510,7 +510,7 @@ sudo apt install ffmpeg
 - **Python 3.8+**
 - **FFmpeg** (for video processing)
 - **8GB+ RAM** (for parallel processing)
-- **Network access** to API endpoints (default: <http://192.168.4.8:8000/>)
+- **Network access** to API endpoints (default: <http://192.168.31.40:8000/>)
 
 ### **Initial Setup**
 
