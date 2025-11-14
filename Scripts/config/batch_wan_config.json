@@ -5,7 +5,7 @@
     "comparison_template_path": "templates/I2V Comparison Template.pptx",
     "default_params": {
         "prompt": "The person is dancing, realistic video.",
-        "embed": "Hello!!",
+        "embed": "",
         "num_outputs": 2,
         "seed": "-1",
         "animation_mode": "move"
@@ -22,12 +22,12 @@
     "source_video_link": "",
     "tasks": [
         {
-            "folder": "../Media Files/Wan 2.2/1111 Test",
-            "prompt": "Replace the cheerleading team member performing the 'Piki Piki Dance' on the side of a baseball field with the person in the provided reference photo. The new person should wear the original clothing and replicate all dance movements, maintaining pose, lighting, and integration with the existing field and background elements.",
-            "embed": "Hello!!",
+            "folder": "../Media Files/Wan 2.2/1114 三振舞",
+            "prompt": "",
+            "embed": "",
             "num_outputs": 1,
             "seed": "-1",
-            "animation_mode": "mix",
+            "animation_mode": "move",
             "design_link": "",
             "source_video_link": "",
             "reference_folder": "",

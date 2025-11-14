@@ -122,7 +122,7 @@ class WanHandler(BaseAPIHandler):
         embed = task_config.get('embed', 'Hello!!')
         num_outputs = task_config.get('num_outputs', 1)
         seed = task_config.get('seed', '-1')
-        animation_mode = task_config.get('animation_mode', 'mix')
+        animation_mode = task_config.get('animation_mode', 'move')
         
         result = self.client.predict(
             video={"video": handle_file(str(video_path)), "subtitles": None},

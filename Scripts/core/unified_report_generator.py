@@ -361,16 +361,50 @@ class UnifiedReportGenerator:
         return path, is_video
     
     def group_pairs_if_needed(self, pairs, slide_config):
-        """Group pairs if needed for section dividers"""
+        """Group pairs if needed for section dividers and apply sorting"""
         group_by = slide_config.get('group_by')
         if group_by:
             grouped = {}
             for pair in pairs:
                 key = getattr(pair, group_by, 'default')
                 grouped.setdefault(key, []).append(pair)
+            
+            # Sort each group
+            for key in grouped:
+                grouped[key] = self._sort_pairs(grouped[key])
             return grouped
         else:
-            return {'default': pairs}
+            # Sort the entire list if not grouped
+            return {'default': self._sort_pairs(pairs)}
+    
+    def _sort_pairs(self, pairs: List[MediaPair]) -> List[MediaPair]:
+        """Sort pairs based on API type
+        
+        For combination APIs (Wan, Runway): Group by video/reference, then sort by source filename
+        For other APIs: Sort by source filename only
+        """
+        if not pairs:
+            return pairs
+        
+        if self.api_name in ['wan', 'runway']:
+            # Combination APIs: Group by source video, then sort within groups by source file
+            # This groups all variations of the same video together
+            def get_sort_key(pair):
+                # Primary key: source video name (or source file if no video)
+                if pair.source_video_path:
+                    video_name = pair.source_video_path.name
+                else:
+                    video_name = ""
+                
+                # Secondary key: source file name
+                source_name = pair.source_file or ""
+                
+                return (video_name, source_name)
+            
+            return sorted(pairs, key=get_sort_key)
+        else:
+            # Other APIs: Simple sort by source filename
+            return sorted(pairs, key=lambda p: p.source_file or "")
     
     # ================== UNIFIED MEDIA SYSTEM ==================
     
