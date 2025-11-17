@@ -54,11 +54,22 @@ class BaseAPIHandler:
     
     def _save_failure(self, file_path, task_config, metadata_folder, error, attempt, start_time):
         """Save failure metadata - common for all APIs."""
-        base_name = Path(file_path).stem
+        # Handle text-to-video cases where file_path might be None
+        if file_path is not None:
+            base_name = Path(file_path).stem
+            file_name = Path(file_path).name
+        else:
+            # For text-to-video, use style name or fallback
+            style_name = task_config.get('style_name', 'unknown')
+            gen_num = task_config.get('generation_number', 1)
+            safe_style = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in style_name)
+            safe_style = safe_style.strip().replace(' ', '_')
+            base_name = f"{safe_style}-{gen_num}"
+            file_name = None
+        
         processing_time = time.time() - start_time
         
         metadata = {
-            self._get_source_field(): Path(file_path).name,
             "error": error,
             "attempts": attempt + 1,
             "success": False,
@@ -67,12 +78,16 @@ class BaseAPIHandler:
             "api_name": self.api_name
         }
         
+        # Add source file name if available
+        if file_name is not None:
+            metadata[self._get_source_field()] = file_name
+        
         # Add task-specific fields
         for key in ['prompt', 'effect', 'model']:
             if key in task_config:
                 metadata[key] = task_config[key]
         
-        self.processor.save_metadata(Path(metadata_folder), base_name, Path(file_path).name, 
+        self.processor.save_metadata(Path(metadata_folder), base_name, file_name, 
                                     metadata, task_config)
     
     def _get_source_field(self):

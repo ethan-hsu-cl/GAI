@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 API_MAPPING = {
     'kling': 'kling',
     'kling_endframe': 'kling_endframe',
+    'kling_ttv': 'kling_ttv',
     'vidu': 'vidu_effects', 
     'viduref': 'vidu_reference',
     'nano': 'nano_banana',
@@ -27,6 +28,7 @@ API_MAPPING = {
 CONFIG_MAPPING = {
     'kling': 'config/batch_kling_config.yaml',
     'kling_endframe': 'config/batch_kling_endframe_config.yaml',
+    'kling_ttv': 'config/batch_kling_ttv_config.yaml',
     'vidu_effects': 'config/batch_vidu_effects_config.yaml',
     'vidu_reference': 'config/batch_vidu_reference_config.yaml', 
     'nano_banana': 'config/batch_nano_banana_config.yaml',
@@ -44,6 +46,7 @@ def show_usage():
     print("PLATFORMS:")
     print("  kling - Kling Image2Video processing")
     print("  kling_endframe - Kling Endframe (start/end image pairs)")
+    print("  kling_ttv - Kling Text-to-Video processing")
     print("  vidu - Vidu Effects processing")
     print("  viduref - Vidu Reference processing")
     print("  nano - Google Flash/Nano Banana processing")
@@ -68,6 +71,7 @@ def show_usage():
     print("  python runall.py nano report")
     print("  python runall.py kling process")
     print("  python runall.py kling_endframe auto")
+    print("  python runall.py kling_ttv auto")
     print("  python runall.py vidu auto")
     print("  python runall.py viduref auto --verbose")
     print("  python runall.py pixverse process")
@@ -158,7 +162,7 @@ def run_report_generator(api_name, config_file=None):
     try:
         logger.info(f"📊 Generating report: {api_name.replace('_', ' ').title()}")
 
-        # Veo uses dedicated report generator due to unique structure (text-to-video)
+        # Text-to-video APIs use unified report generator
         if api_name == 'veo':
             import importlib.util
             spec = importlib.util.spec_from_file_location(

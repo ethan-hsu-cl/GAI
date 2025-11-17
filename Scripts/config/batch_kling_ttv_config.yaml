@@ -1,0 +1,160 @@
+# Kling Text-to-Video Configuration
+# Generates videos from text prompts (no input images required)
+template_path: templates/I2V templates.pptx
+comparison_template_path: templates/I2V Comparison Template.pptx
+# Report Output Directory 
+output_directory: /Users/ethanhsu/Desktop/GAI/Report
+# Root folder where generated videos will be saved. Metadata folder will be created automatically.
+output_folder: ../Media Files/Kling TTV/1117 Test 2
+generation_count: 1
+model: "v2.5-turbo"
+design_link: ""
+source_video_link: "https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDnfve9nYTgQ4hgiOEiYpI5AcH66Jp95xpj9U6QBZ2eL6E?e=dCUbVY"
+
+schedule:
+  # Time format: HH:MM (24-hour format). Leave empty to start immediately
+  start_time: ""
+
+tasks:
+  - style_name: "Dog Running"
+    prompt: "A dog is happily running toward its owner with excitement"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+    
+  - style_name: "Capybara Hot Spring"
+    prompt: "A close up capybara bathe in a white smoky hot spring, looking around, smoke on the water surface, foggy, blurred mountain background in Japan, bright environment"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Cherry Soda"
+    prompt: "A chilled glass bottle of cherry soda with condsation, surrounded by fresh, juicy cherries. The background is a blend of soft pink and red gradients, Splashes of soda fizz and bubbles are dynamically captured around the bottle"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Coral Reef Ecosystem"
+    prompt: "A thriving coral reef ecosystem in pristine condition, colorful corals in rich detail, tropical fish swimming in harmony, sunlight streaming through clear blue ocean water, Camera Movement"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Fresh Salad"
+    prompt: "Fresh salad in a bowl, with vibrant greens and vegetables, camera movement"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Polar Bear Cheers"
+    prompt: "A close-up of a polar bear holding a bottle of beer and shaking it, cheering with the viewer"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Diamond Ring on Velvet"
+    prompt: "Diamond ring placed on a velvet cloth, creating dazzling reflections, with the camera slowly rotating around it under a spotlight"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+  
+
+  - style_name: "Japanese Pancakes"
+    prompt: "A stack of fluffy Japanese pancakes topped with whipped cream and strawberries is being drizzled with golden syrup from a pitcher, set on a wooden plate"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Skincare Products Display"
+    prompt: "Skincare products displayed on a floating circular stone platform. The background features soft lighting, fluffy white clouds, large circular abstract shapes, and tropical leaves as accents. The entire scene reflects on a calm water surface with subtle ripples"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Tropical Beach Waves"
+    prompt: "Crystal clear turquoise sea waves gently washing over soft white sand on a sunny tropical beach, fine texture of sand, calm and serene atmosphere, Camera Movement"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Serene Forest with Crystal-Clear River"
+    prompt: "A photo of serene forest with crystal-clear river flowing through, surrounded by lush green trees and wildflowers, under a bright blue sky, an eco-friendly atmosphere, vibrant colors, clean and fresh environment, Camera Movement"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Steaming Cup"
+    prompt: "The steam gently rising from cup like fluffy white clouds , natural motion, continuously flowing without interruption. The camera smoothly moves in a slow cinematic pan"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Glowing Door in Desert"
+    prompt: "A glowing door stands alone in the middle of a desert under a star-filled night sky. When the door opens from one side, it reveals a lush green oasis with palm trees, shimmering water, and bright sunlight, contrasting with the surrounding dark desert, Camera Movement"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Grilled Steak"
+    prompt: "A juicy perfectly grilled steak on a wire grid, causing a smoky"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+  - style_name: "Whiskey Bottle Condensation"
+    prompt: "A bottle of premium whiskey stands with tiny water droplets covering its surface, showcasing a condensation effect, emanating from blazing fires. The backlight accentuates the bottle's silhouette and transparent texture.camera movement"
+    neg_prompt: ""
+    mode: "std"
+    duration: 5
+    ratio: "16:9"
+    cfg: 0.5
+    generation_count: 1
+
+# API Parameters Reference:
+# model: "v1.6", "v2.0-master", "v2.1-master", "v2.5-turbo"
+# mode: "std" (standard), "pro" (professional)
+# duration: 5 (5 seconds), "10" (10 seconds)
+# ratio: "1:1" (square), "9:16" (portrait), "16:9" (landscape)
+# cfg: 0.0 - 1.0 (creativity/guidance scale)

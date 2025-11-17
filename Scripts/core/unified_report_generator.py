@@ -147,13 +147,15 @@ class UnifiedReportGenerator:
         self._api_display_names = {
             'kling': 'Kling',  # Will be updated based on model in config
             'kling_endframe': 'Kling Endframe',  # Will be updated based on model in config
+            'kling_ttv': 'Kling TTV',  # Will be updated based on model in config
             'nano_banana': 'Nano Banana',
             'runway': 'Runway',
             'vidu_effects': 'Vidu Effects',
             'vidu_reference': 'Vidu Reference',
             'genvideo': 'GenVideo',
             'pixverse': 'Pixverse',
-            'wan': 'Wan 2.2'
+            'wan': 'Wan 2.2',
+            'veo': 'Veo'
         }
         
         # Load configurations
@@ -161,7 +163,7 @@ class UnifiedReportGenerator:
         self.load_report_definitions()
         
         # Update Kling display name based on model in config
-        if self.api_name in ['kling', 'kling_endframe']:
+        if self.api_name in ['kling', 'kling_endframe', 'kling_ttv']:
             self._update_kling_display_name()
     
     # ================== UNIFIED CONFIGURATION SYSTEM ==================
@@ -244,6 +246,26 @@ class UnifiedReportGenerator:
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['source_image', 'source_video', 'animation_mode', 'prompt', 'processing_time_seconds', 'success'],
                 'error_handling': 'video_fallback'
+            },
+            'veo': {
+                **base_config,
+                'media_types': ['generated'],
+                'positions': [(17.44, 2.15, 16, 16)],  # Single centered video
+                **self.LAYOUT_2_MEDIA,  # Use standard 2-media metadata position (top-right)
+                'title_format': 'Generation {index}: {style_name}',
+                'metadata_fields': ['style_name', 'generation_number', 'model_id', 'duration_seconds', 'aspect_ratio', 'resolution', 'processing_time_seconds', 'success'],
+                'use_section_dividers': False,
+                'group_by': None
+            },
+            'kling_ttv': {
+                **base_config,
+                'media_types': ['prompt', 'generated'],  # Prompt text box + video
+                'positions': [(0.42, 2.15, 16, 16), (17.44, 2.15, 16, 16)],  # Prompt left, video right
+                **self.LAYOUT_2_MEDIA,  # Use standard 2-media metadata position (top-right)
+                'title_format': 'Generation {index}: {style_name}',
+                'metadata_fields': ['style_name', 'generation_number', 'model', 'mode', 'duration', 'ratio', 'cfg', 'processing_time_seconds', 'success'],
+                'use_section_dividers': False,
+                'group_by': None
             }
         }
         return configs.get(self.api_name, configs['kling'])
@@ -292,11 +314,15 @@ class UnifiedReportGenerator:
         if show_only_if_failed and not pair.failed:
             return None
         
-        return title_format.format(
-            index=index,
-            source_file=pair.source_file,
-            failure_status="❌ GENERATION FAILED" if pair.failed else ""
-        )
+        # Build format kwargs with all possible placeholders
+        format_kwargs = {
+            'index': index,
+            'source_file': pair.source_file or '',
+            'failure_status': "❌ GENERATION FAILED" if pair.failed else "",
+            'style_name': pair.effect_name or '',  # effect_name is used for style_name
+        }
+        
+        return title_format.format(**format_kwargs)
     
     def handle_template_slide(self, slide, pair, index, use_comparison, slide_config):
         """Handle slide creation with template placeholders (optimized)"""
@@ -324,7 +350,7 @@ class UnifiedReportGenerator:
         
         for i, (ph, media_type) in enumerate(zip(phs, media_types)):
             media_path, is_video = self.get_media_path_and_type(pair, media_type)
-            self.add_media_universal(slide, ph, media_path, is_video, slide_config, pair)
+            self.add_media_universal(slide, ph, media_path, is_video, slide_config, pair, media_type)
         
         # Add metadata
         self.add_metadata_universal(slide, pair, slide_config, use_comparison)
@@ -351,7 +377,7 @@ class UnifiedReportGenerator:
         
         for pos, media_type in zip(positions, media_types):
             media_path, is_video = self.get_media_path_and_type(pair, media_type)
-            self.add_media_universal(slide, pos, media_path, is_video, slide_config, pair)
+            self.add_media_universal(slide, pos, media_path, is_video, slide_config, pair, media_type)
         
         # Add metadata
         self.add_metadata_universal(slide, pair, slide_config, use_comparison)
@@ -363,11 +389,15 @@ class UnifiedReportGenerator:
             'source_video': pair.source_video_path,
             'additional_source': pair.additional_source_paths[0] if pair.additional_source_paths else None,
             'generated': pair.primary_generated,
-            'reference': pair.primary_reference
+            'reference': pair.primary_reference,
+            'prompt': None  # Special type for text-to-video prompt display
         }
         
         path = path_map.get(media_type)
-        is_video = (media_type == 'source_video') or (path and path.suffix.lower() in self.VIDEO_EXTS)
+        # For text-to-video APIs (veo, kling_ttv), generated content is always video
+        is_video = (media_type in ['source_video', 'generated'] and self.api_name in ['veo', 'kling_ttv']) or \
+                   (media_type == 'source_video') or \
+                   (path and path.suffix.lower() in self.VIDEO_EXTS)
         
         return path, is_video
     
@@ -507,7 +537,7 @@ class UnifiedReportGenerator:
         
         return dict(results)
     
-    def add_media_universal(self, slide, placeholder_or_pos, media_path, is_video, slide_config, pair=None):
+    def add_media_universal(self, slide, placeholder_or_pos, media_path, is_video, slide_config, pair=None, media_type=None):
         """Universal media addition for all APIs with webp conversion
         
         Note: Always removes placeholders and adds media as new shapes for consistency.
@@ -528,6 +558,21 @@ class UnifiedReportGenerator:
                 l, t, w, h = [Cm(x) for x in placeholder_or_pos]
             else:
                 l, t, w, h = Cm(placeholder_or_pos[0]), Cm(placeholder_or_pos[1]), Cm(10), Cm(10)
+        
+        # Special handling for 'prompt' media type - display as text box
+        if media_type == 'prompt' and pair and pair.metadata:
+            prompt_text = pair.metadata.get('prompt', 'No prompt available')
+            box = slide.shapes.add_textbox(l, t, w, h)
+            box.text_frame.text = prompt_text
+            box.text_frame.word_wrap = True
+            box.fill.solid()
+            box.fill.fore_color.rgb = RGBColor(245, 245, 245)
+            box.line.color.rgb = RGBColor(200, 200, 200)
+            box.line.width = Pt(1)
+            for para in box.text_frame.paragraphs:
+                para.font.size = Pt(11)
+                para.alignment = PP_ALIGN.LEFT
+            return
         
         if media_path and Path(media_path).exists():
             try:
@@ -607,6 +652,16 @@ class UnifiedReportGenerator:
             'source_image': lambda: f"Image: {md.get(field, 'N/A')}",
             'source_video': lambda: f"Video: {md.get(field, 'N/A')}",
             'animation_mode': lambda: f"Mode: {md.get(field, 'N/A')}",
+            'style_name': lambda: f"Style: {md.get(field, 'N/A')}",
+            'model_id': lambda: f"Model: {md.get(field, 'N/A')}",
+            'duration_seconds': lambda: f"Duration: {md.get(field, 'N/A')}s",
+            'aspect_ratio': lambda: f"Aspect: {md.get(field, 'N/A')}",
+            'resolution': lambda: f"Resolution: {md.get(field, 'N/A')}",
+            'model': lambda: f"Model: {md.get(field, 'N/A')}",
+            'mode': lambda: f"Mode: {md.get(field, 'N/A')}",
+            'duration': lambda: f"Duration: {md.get(field, 'N/A')}s",
+            'ratio': lambda: f"Ratio: {md.get(field, 'N/A')}",
+            'cfg': lambda: f"CFG: {md.get(field, 'N/A')}",
         }
         
         # Special handlers
@@ -692,6 +747,8 @@ class UnifiedReportGenerator:
             return self.process_base_folder_structure(task)
         elif self.api_name == "genvideo":
             return self.process_genvideo_batch(task)
+        elif self.api_name in ["veo", "kling_ttv"]:
+            return self.process_text_to_video_batch(task)
         else:
             return self.process_task_folder_structure(task)
     
@@ -1325,6 +1382,67 @@ class UnifiedReportGenerator:
         logger.info(f"Created {len(pairs)} GenVideo media pairs")
         return pairs
     
+    def process_text_to_video_batch(self, task: Dict) -> List[MediaPair]:
+        """Process text-to-video APIs (Veo, Kling TTV)"""
+        # Get root folder from config for kling_ttv, or task-level for veo
+        if self.api_name == 'kling_ttv':
+            root_folder = Path(self.config.get('output_folder', task.get('output_folder', '')))
+            output_folder = root_folder / 'Generated_Video'
+            metadata_folder = root_folder / 'Metadata'
+        else:  # veo
+            root_folder = Path(task.get('output_folder', ''))
+            output_folder = root_folder / 'Generated_Video'
+            metadata_folder = root_folder / 'Metadata'
+        
+        pairs = []
+        
+        if not output_folder.exists():
+            logger.warning(f"Output folder not found: {output_folder}")
+            return pairs
+        
+        # Get generated videos and metadata
+        _, generated_videos, _ = self._scan_directory_once(output_folder)
+        _, _, metadata_files = self._scan_directory_once(metadata_folder)
+        
+        # Batch load metadata
+        metadata_cache = self._load_json_batch(metadata_files) if metadata_files else {}
+        
+        logger.info(f"Text-to-video files found: {len(generated_videos)} generated, {len(metadata_files)} metadata")
+        
+        # Pre-extract frames for all videos
+        if generated_videos:
+            self._extract_frames_parallel(list(generated_videos.values()))
+        
+        # Create pairs from metadata (metadata drives the pairing for text-to-video)
+        for stem, meta_path in metadata_files.items():
+            md = metadata_cache.get(stem, {})
+            if not md:
+                continue
+            
+            # Find matching generated video
+            gen_vid_path = next((p for p in generated_videos.values()
+                               if p.name == md.get('generated_video', '')), None)
+            
+            # Get style name for display
+            style_name = md.get('style_name', 'Unknown')
+            gen_num = md.get('generation_number', 1)
+            
+            # For text-to-video, source is the prompt (no source file)
+            pair = MediaPair(
+                source_file=f"{style_name}-{gen_num}",
+                source_path=None,  # No source file for text-to-video
+                api_type=self.api_name,
+                generated_paths=[gen_vid_path] if gen_vid_path else [],
+                reference_paths=[],
+                effect_name=style_name,
+                metadata=md,
+                failed=not gen_vid_path or not md.get('success', False)
+            )
+            pairs.append(pair)
+        
+        logger.info(f"Created {len(pairs)} {self.api_name} media pairs")
+        return pairs
+    
     # ================== UTILITY METHODS ==================
     
     def load_config(self):
@@ -1345,8 +1463,14 @@ class UnifiedReportGenerator:
     
     def _update_kling_display_name(self):
         """Update Kling display name based on model in config"""
-        # Check both 'model' and 'model_version' fields
+        # Check both 'model' and 'model_version' fields at root level
         model = (self.config.get('model') or self.config.get('model_version', '')).lower()
+        
+        # For kling_ttv, check the first task's model if not at root level
+        if not model and self.api_name == 'kling_ttv':
+            tasks = self.config.get('tasks', [])
+            if tasks and 'model' in tasks[0]:
+                model = tasks[0]['model'].lower()
         
         # Map official Kling model names to display names
         # Official model names: v1.5, v1.6, v2.0-master, v2.1, v2.1-master, v2.5-turbo
@@ -1372,10 +1496,12 @@ class UnifiedReportGenerator:
                 is_turbo = 'turbo' in model
                 display_name = f"Kling {version}{' Turbo' if is_turbo else ''}"
         
-        # Update the display name for both kling and kling_endframe
+        # Update the display name for kling, kling_endframe, and kling_ttv
         if display_name:
             if self.api_name == 'kling_endframe':
                 self._api_display_names['kling_endframe'] = f"{display_name} Endframe"
+            elif self.api_name == 'kling_ttv':
+                self._api_display_names['kling_ttv'] = f"{display_name} TTV"
             else:
                 self._api_display_names['kling'] = display_name
             logger.info(f"✓ Kling display name set to: {self._api_display_names[self.api_name]}")
@@ -1383,6 +1509,8 @@ class UnifiedReportGenerator:
             # Default values
             if self.api_name == 'kling_endframe':
                 self._api_display_names['kling_endframe'] = 'Kling 1.6 Endframe'  # Default for endframe
+            elif self.api_name == 'kling_ttv':
+                self._api_display_names['kling_ttv'] = 'Kling 1.6 TTV'  # Default for TTV
             else:
                 self._api_display_names['kling'] = 'Kling 2.1'  # Default for regular kling
             if model:
@@ -1451,8 +1579,12 @@ class UnifiedReportGenerator:
         d = self._extract_date_from_folder(folder)
         
         # Use model (API name) as the primary identifier
-        # Effect names are the actual content description
-        effect_str = ', '.join(effect_names) if effect_names else 'Test'
+        # For text-to-video APIs, show count instead of listing all names
+        if self.api_name in ['veo', 'kling_ttv'] and effect_names:
+            effect_str = f"{len(effect_names)} {'Style' if len(effect_names) == 1 else 'Styles'}"
+        else:
+            # Effect names are the actual content description
+            effect_str = ', '.join(effect_names) if effect_names else 'Test'
         
         parts = [f"[{d}]"]
         if model:
@@ -2061,7 +2193,20 @@ class UnifiedReportGenerator:
                     else:
                         logger.warning("No pairs found for report.")
                         return False
-                        return False
+            elif self.api_name in ["veo", "kling_ttv"]:
+                # Text-to-video APIs - process once since all tasks share same root folder
+                if not tasks:
+                    logger.warning("No tasks found in config.")
+                    return False
+                
+                # Process all tasks together (they all use the same root output_folder)
+                # Pass the first task to get the root folder, but all videos are already there
+                pairs = self.process_batch(tasks[0] if tasks else {})
+                if pairs:
+                    return self.create_presentation(pairs, tasks[0] if tasks else {})
+                else:
+                    logger.warning("No pairs found for report.")
+                    return False
             else:
                 # Task folder structure - multiple tasks
                 if not tasks:
@@ -2228,7 +2373,7 @@ class UnifiedReportGenerator:
 
 def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""
-    supported_apis = ['kling', 'kling_endframe', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan']
+    supported_apis = ['kling', 'kling_endframe', 'kling_ttv', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan', 'veo']
     if api_name not in supported_apis:
         raise ValueError(f"Unsupported API: {api_name}. Supported: {supported_apis}")
     return UnifiedReportGenerator(api_name, config_file)
@@ -2237,7 +2382,7 @@ def create_report_generator(api_name, config_file=None):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Generate PowerPoint reports from API processing results')
-    parser.add_argument('api_name', choices=['kling', 'kling_endframe', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan'],
+    parser.add_argument('api_name', choices=['kling', 'kling_endframe', 'kling_ttv', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan', 'veo'],
                        help='API type to generate report for')
     parser.add_argument('--config', '-c', help='Config file path (optional)')
     

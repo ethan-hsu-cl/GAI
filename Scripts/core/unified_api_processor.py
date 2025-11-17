@@ -361,6 +361,8 @@ class UnifiedAPIProcessor:
             return self._validate_kling_structure()
         elif self.api_name == "kling_endframe":
             return self._validate_kling_endframe_structure()
+        elif self.api_name == "kling_ttv":
+            return self._validate_kling_ttv_structure()
         elif self.api_name == "nano_banana":
             return self._validate_nano_banana_structure()
         elif self.api_name == "runway":
@@ -754,6 +756,46 @@ class UnifiedAPIProcessor:
         
         if not valid_tasks:
             raise Exception("No valid Veo tasks found")
+        
+        return valid_tasks
+
+    def _validate_kling_ttv_structure(self):
+        """
+        Validate Kling TTV (text-to-video) structure.
+        
+        Similar to Veo, Kling TTV generates videos from text prompts only.
+        Validates:
+        1. Each task has a prompt
+        2. Each task has an output folder specified
+        3. Creates necessary directories
+        """
+        valid_tasks = []
+        
+        for i, task in enumerate(self.config.get('tasks', []), 1):
+            # Validate required fields
+            if not task.get('prompt'):
+                self.logger.warning(f"⚠️ Task {i}: Missing prompt")
+                continue
+            
+            # Get or create output folder
+            output_folder = Path(task.get('output_folder', ''))
+            if not output_folder or str(output_folder) == '':
+                self.logger.warning(f"⚠️ Task {i}: Missing output_folder")
+                continue
+            
+            # Create output directories
+            output_folder.mkdir(parents=True, exist_ok=True)
+            metadata_folder = output_folder.parent / "Metadata"
+            metadata_folder.mkdir(parents=True, exist_ok=True)
+            
+            # Add task number to config for handler use
+            task['task_num'] = i
+            
+            valid_tasks.append(task)
+            self.logger.info(f"✓ Task {i}: Kling TTV prompt configured")
+        
+        if not valid_tasks:
+            raise Exception("No valid Kling TTV tasks found")
         
         return valid_tasks
 

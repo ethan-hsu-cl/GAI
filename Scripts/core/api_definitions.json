@@ -608,5 +608,63 @@
             "dont_allow",
             "allow_all"
         ]
+    },
+    "kling_ttv": {
+        "endpoint": "http://192.168.31.40:8000/kling/",
+        "api_name": "/TextToVideo",
+        "file_types": [],
+        "validation": {},
+        "folders": {
+            "output": "Generated_Video",
+            "metadata": "Metadata"
+        },
+        "rate_limit": 3,
+        "task_delay": 10,
+        "max_retries": 3,
+        "special_handling": "text_to_video",
+        "config_structure": "task_list",
+        "report": {
+            "enabled": true,
+            "template_path": "templates/I2V templates.pptx",
+            "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
+            "use_comparison": false
+        },
+        "task_fields": [
+            "prompt",
+            "neg_prompt",
+            "model",
+            "mode",
+            "duration",
+            "ratio",
+            "cfg",
+            "output_folder"
+        ],
+        "api_params": {
+            "model": "v1.6",
+            "mode": "std",
+            "duration": "5",
+            "ratio": "9:16",
+            "cfg": 0.5,
+            "neg_prompt": ""
+        },
+        "model_options": [
+            "v1.6",
+            "v2.0-master",
+            "v2.1-master",
+            "v2.5-turbo"
+        ],
+        "mode_options": [
+            "std",
+            "pro"
+        ],
+        "duration_options": [
+            "5",
+            "10"
+        ],
+        "ratio_options": [
+            "1:1",
+            "9:16",
+            "16:9"
+        ]
     }
 }

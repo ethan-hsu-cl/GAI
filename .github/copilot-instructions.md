@@ -17,8 +17,7 @@ They define the expected tone, structure, and behavior for Copilot-generated res
 - Clearly describe purpose, parameters, return values, and raised exceptions.
 
 ## Environment and Testing
-- Use **"Python3"** for test scripts or validation code.  
-- Use **"Python"** only when operating within a **conda environment**.  
+- When testing, use **"Python"** within a **conda environment** called `myenv`.  
 
 ## Documentation Policy
 - Do **not** generate or reference standalone summary or guide documents. Summaries should appear **only in chat responses**.  
@@ -30,3 +29,11 @@ They define the expected tone, structure, and behavior for Copilot-generated res
 - **Preserve consistent style** even if the user's existing code deviates from these rules; follow this document over inconsistent local patterns.  
 - **Avoid summaries or outlines** outside this environment. Only provide explanations in chat when contextually required.  
 - When uncertain whether to include extended commentary or simplifications, **prefer brevity and adherence to specification** over creative elaboration.  
+
+## Testing Policy
+- **Do not** create test files when verifying the function of newly created scripts.
+- If a testing file is created for verification purposes, it **must be removed** after testing is complete.
+
+## Function Documentation Policy
+- When a new function is added, documentation **must be included** in the `README.md` located in the root project directory.
+- **Do not** create separate documentation files for individual functions or utilities.
