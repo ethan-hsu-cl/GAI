@@ -605,6 +605,11 @@ class UnifiedReportGenerator:
         if not pair or not pair.metadata:
             return None
         
+        # Check error field first (from handler)
+        error_msg = pair.metadata.get('error', '')
+        if error_msg:
+            return f"Error: {error_msg}"
+        
         # Try to get text_responses for detailed error message
         text_responses = pair.metadata.get('text_responses', [])
         if text_responses and isinstance(text_responses, list):

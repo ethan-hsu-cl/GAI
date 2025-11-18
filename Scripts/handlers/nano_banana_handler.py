@@ -205,10 +205,41 @@ class NanoBananaHandler(BaseAPIHandler):
             if img_path:
                 additional_imgs_info.append(Path(img_path).name)
         
-        if error_msg:
-            self.logger.info(f" ❌ API Error: {error_msg}")
+        # Check for various failure patterns in response_data
+        # Scan ALL items to determine if we have images and/or failures
+        is_failed = False
+        failure_reason = error_msg
+        has_images_in_response = False
+        text_failure_msg = None
+        
+        if response_data and isinstance(response_data, list):
+            for item in response_data:
+                if isinstance(item, dict):
+                    item_type = item.get('type')
+                    item_data = item.get('data')
+                    
+                    # Check for moderation block
+                    if item_data == 'BLOCKED_MODERATION':
+                        is_failed = True
+                        failure_reason = 'BLOCKED_MODERATION'
+                    
+                    # Check for Text response (may indicate failure)
+                    elif item_type == 'Text':
+                        text_failure_msg = f"Generation failed: {item_data}"
+                    
+                    # Check for Image response
+                    elif item_type == 'Image':
+                        has_images_in_response = True
+            
+            # Only treat Text responses as failure if NO images were generated
+            if text_failure_msg and not has_images_in_response:
+                is_failed = True
+                failure_reason = text_failure_msg
+        
+        if error_msg or is_failed:
+            self.logger.info(f" ❌ API Error: {failure_reason}")
             metadata = {
-                'response_id': response_id, 'error': error_msg, 'success': False,
+                'response_id': response_id, 'error': failure_reason, 'success': False,
                 'attempts': attempt + 1, 'processing_time_seconds': round(processing_time, 1)
             }
             if additional_imgs_info:
