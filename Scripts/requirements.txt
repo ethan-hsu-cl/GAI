@@ -37,6 +37,7 @@ tifffile==2025.8.28
 tqdm==4.67.1
 typing_extensions==4.14.1
 urllib3==2.5.0
+wakepy==0.10.0
 websockets==15.0.1
 wheel==0.45.1
 xlsxwriter==3.2.5

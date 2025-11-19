@@ -14,6 +14,12 @@ from concurrent.futures import ThreadPoolExecutor
 import logging
 import sys
 
+try:
+    from wakepy import keep
+    WAKEPY_AVAILABLE = True
+except ImportError:
+    WAKEPY_AVAILABLE = False
+
 # Add parent directory to path for handler imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from handlers import HandlerRegistry
@@ -1427,9 +1433,34 @@ class UnifiedAPIProcessor:
             return False
 
     def run(self):
-        """🚀 MAIN EXECUTION FLOW - The missing method that runall.py needs!"""
+        """
+        Main execution flow for API processing.
+        
+        Prevents system sleep during processing using wakepy if available.
+        Falls back to normal operation if wakepy is not installed.
+        
+        Returns:
+            bool: True if processing completed successfully, False otherwise
+        """
         self.logger.info(f"🚀 Starting {self.api_name.replace('_', ' ').title()} Processor")
-
+        
+        # Use wakepy context manager to prevent sleep during processing
+        if WAKEPY_AVAILABLE:
+            self.logger.info("☕ System sleep prevention activated (wakepy)")
+            with keep.running(on_fail='warn'):
+                return self._execute_processing()
+        else:
+            self.logger.warning("⚠️ wakepy not installed - system may sleep during processing")
+            self.logger.warning("   Install with: pip install wakepy")
+            return self._execute_processing()
+    
+    def _execute_processing(self):
+        """
+        Core processing logic without sleep prevention wrapper.
+        
+        Returns:
+            bool: True if processing completed successfully, False otherwise
+        """
         if not self.load_config():
             return False
 
@@ -1457,6 +1488,10 @@ class UnifiedAPIProcessor:
 
         elapsed = time.time() - start_time
         self.logger.info(f"🎉 Completed {len(valid_tasks)} tasks in {elapsed/60:.1f} minutes")
+        
+        if WAKEPY_AVAILABLE:
+            self.logger.info("💤 System sleep prevention deactivated")
+        
         return True
 
 

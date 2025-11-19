@@ -200,13 +200,9 @@ class NanoBananaHandler(BaseAPIHandler):
         
         # Get additional images info for metadata
         additional_imgs = getattr(self, '_current_additional_images', {}).get(str(file_path), ['', ''])
-        additional_imgs_info = []
-        for img_path in additional_imgs:
-            if img_path:
-                additional_imgs_info.append(Path(img_path).name)
+        additional_imgs_info = [Path(img).name for img in additional_imgs if img]
         
-        # Check for various failure patterns in response_data
-        # Scan ALL items to determine if we have images and/or failures
+        # Check for failure patterns in response_data
         is_failed = False
         failure_reason = error_msg
         has_images_in_response = False
@@ -215,23 +211,17 @@ class NanoBananaHandler(BaseAPIHandler):
         if response_data and isinstance(response_data, list):
             for item in response_data:
                 if isinstance(item, dict):
-                    item_type = item.get('type')
                     item_data = item.get('data')
                     
-                    # Check for moderation block
                     if item_data == 'BLOCKED_MODERATION':
                         is_failed = True
                         failure_reason = 'BLOCKED_MODERATION'
-                    
-                    # Check for Text response (may indicate failure)
-                    elif item_type == 'Text':
+                    elif item.get('type') == 'Text':
                         text_failure_msg = f"Generation failed: {item_data}"
-                    
-                    # Check for Image response
-                    elif item_type == 'Image':
+                    elif item.get('type') == 'Image':
                         has_images_in_response = True
             
-            # Only treat Text responses as failure if NO images were generated
+            # Only treat text responses as failure if no images were generated
             if text_failure_msg and not has_images_in_response:
                 is_failed = True
                 failure_reason = text_failure_msg

@@ -1482,10 +1482,10 @@ class UnifiedReportGenerator:
         model_mapping = {
             'v1.5': 'Kling 1.5',
             'v1.6': 'Kling 1.6',
-            'v2.0-master': 'Kling 2.0 Master',
+            'v2.0-master': 'Kling 2.0',
             'v2.1': 'Kling 2.1',
-            'v2.1-master': 'Kling 2.1 Master',
-            'v2.5-turbo': 'Kling 2.5 Turbo',
+            'v2.1-master': 'Kling 2.1',
+            'v2.5-turbo': 'Kling 2.5',
         }
         
         # Try to find a match
@@ -2070,7 +2070,18 @@ class UnifiedReportGenerator:
 
         # Get API-specific links
         testbed_url = self.config.get('testbed', f'http://192.168.31.40:8000/{self.api_name}/')
-        design_link = self.config.get('design_link', '') if self.config.get('design_link', '') else task.get('design_link', '')
+        
+        # Get design link - combine root + task-level if both exist
+        root_design_link = self.config.get('root_design_link', '')
+        task_design_link = task.get('design_link', '')
+        
+        if root_design_link and task_design_link:
+            # Combine root link with task-level anchor/suffix
+            design_link = root_design_link + task_design_link
+        elif root_design_link:
+            design_link = root_design_link
+        else:
+            design_link = task_design_link
         
         # Check if this is a grouped presentation
         is_grouped = task.get('_is_grouped', False)
@@ -2079,7 +2090,8 @@ class UnifiedReportGenerator:
         links = []
         
         # Add design link (same for all)
-        links.append(("Design: ", "Link", design_link))
+        if design_link:
+            links.append(("Design: ", "Link", design_link))
         
         # Add testbed link
         links.append(("Testbed: ", testbed_url, testbed_url))
