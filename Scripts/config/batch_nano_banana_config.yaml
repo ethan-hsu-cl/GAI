@@ -1,6 +1,8 @@
 template_path: templates/I2V templates.pptx
 comparison_template_path: templates/I2V Comparison Template.pptx
-testbed: http://192.168.31.40:8000/google_flash_image/
+testbed: http://192.168.31.40:8000/google_gemini_image/
+
+model: gemini-2.5-flash-image
 
 output:
   directory: /Users/ethanhsu/Desktop/GAI/Report
@@ -10,62 +12,272 @@ schedule:
   start_time: ""
   comment: "Time format: HH:MM (24-hour format). Leave empty to start immediately"
 
-root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgAhRHVV8_RnQJE5UWL-2idVAWRoGGcZWV6-i6x8-pdvTXk?e=acQGrT
-root_design_link: https://docs.google.com/presentation/d/1A1m0cLnWV4NmDmYiYK-RGclkoa8Ytwfln8QK7UQfA6A/edit?hl=zh-tw&slide=id.g3a46d2af2a0_0_1#slide=id.g3a46d2af2a0_0_1
+root_source_video_link: 
+root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g3a5bac37c49_0_0#slide=id.g3a5bac37c49_0_0
 
 tasks:
-  - folder: ../Media Files/Nano Banana/1118 4 Styles/1118 Reindeer Female
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 聖誕晚會三格
     prompt: |
-      Please generate a hyper-realistic, cinematic portrait. The subject's face shape, look,expression, features, and hairstyle must be completely identical to the reference photo; no alterations are permitted. The bangs, all hair layers, hair outline,  must be faithful to the reference.(If the user uploads a male photo, please faithfully reproduce the original photo if the photo may contain stubble or a beard.)
-
-      The subject cannot be covered, obscured, altered, pushed aside, pushed upwards, or have their position affected by a headband or antlers. The headband should only lightly rest on the side and back of the head, and must not overlap with any hair or affect the natural direction of any strand. Accessories must not affect the appearance of any hair. The head should be slightly turned to two-thirds of its side. The subject wears a deep emerald green, glossy satin robe with white pearl trim and a beige silk belt. The makeup is natural and soft, with a subtle rosy glow, and small festive glitter or stickers are distributed around the eyes.
-
-
-      The figure wears a matte black headband and realistic reindeer antlers, the antlers gracefully curving outwards and angled forward, approximately 0.5 times the height of the head. Each antler has five slender branches, tapering naturally at the tips, and covered with a soft, matte gold powder finish, the color grading from deep warm brown to light brownish-red.
-
-      Cartoonization, simplification, and toy-like effects are prohibited. The expression is gentle, with slightly parted lips, and the upper body fills the frame. The background is a deep emerald green studio backdrop, permanently integrated with the Trajan Pro font's gold "MERRY CHRISTMAS" all-caps arced text (It must be Text effects: Arcing text) as an inseparable, single background image. The text is always horizontally centered behind the figure's head and cannot be moved, separated, obscured, or replaced.
-
-      The figure and antlers are always in the foreground, clearly layered with the background, and layer blending or overlapping is not allowed. The overall effect is a cinematic festive atmosphere, with soft, controllable studio lighting and hyper-realistic rendering. Cartooning, toy-like designs, simplification, layer misalignment, font errors, and distortion of details are all strictly forbidden. 
+      Use the uploaded person as the subject. The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
+      Create a high-end cinematic Christmas portrait set inside an ornate vintage European interior, maintaining a visual style that replicates the aesthetic of early 2000s CCD digital cameras with stronger, more defined CCD light behavior. This includes strong shadows, strong halation around candlelight, the absence of background bokeh circles or scattered light dots, and no soft glow or flare artifacts except for candle halation, while preserving crisp CCD micro-contrast falloff with subtle film-like grain.
+      The scene and lighting depict the subject seated at a dining table in a classical mint-green room with carved baroque moldings and a white stone fireplace. Lighting must emphasize distinct CCD characteristics: the main illumination comes from multiple candles on the table at 2500–3000K; candle flames must create clear cross-shaped star flares rather than round bokeh; highlights should bloom softly yet remain directional and controlled; shadows follow CCD-style behavior where the shadows on the figures and objects are strong; there should be no bright light dots or scattered glow in the background. The Christmas tree, red ribbons, hanging evergreens, and mirror in the back should appear clean, without bokeh or reflective sparkles.
+      Pose and composition follow a relaxed three-quarter portrait with a languid, cinematic mood. The subject sits in a naturally slouched, unposed posture. The right hand gently lifts a grape toward the lips with fingers soft and effortless, while the left arm rests loosely on the table with the elbow touching the surface lightly. The head is tilted slightly back with the chin subtly lifted. The gaze must meet the camera with a calm, dreamy, lightly seductive look. The shoulders remain relaxed with a natural curve.
+      For outfit and accessories, the subject wears a deep red off-shoulder gown with matching semi-sheer red gloves softly gathered at the wrists. Accessories include crystal drop earrings and a delicate gemstone necklace, reflecting only gentle candle highlights without any harsh sparkle.
     reference_folder: ""
     use_comparison_template: false
     use_multi_image: false
-
-  - folder: ../Media Files/Nano Banana/1118 4 Styles/1118 Reindeer Male
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 韓式雜誌風四格
     prompt: |
-      Please generate a hyper-realistic, cinematic portrait. The subject's face shape, look,expression, features, and hairstyle must be completely identical to the reference photo; no alterations are permitted. The bangs, all hair layers, hair outline,  must be faithful to the reference.(If the user uploads a male photo, please faithfully reproduce the original photo if the photo may contain stubble or a beard.)
+      Create a cohesive four-panel Christmas editorial collage of the same young woman, based on the uploaded photo.
+      Her face, expression, skin tone, makeup, hairstyle, and identifiable features must remain exactly the same as in the input image.
 
-      The subject cannot be covered, obscured, altered, pushed aside, pushed upwards, or have their position affected by a headband or antlers. The headband should only lightly rest on the side and back of the head, and must not overlap with any hair or affect the natural direction of any strand. Accessories must not affect the appearance of any hair. The head should be slightly turned to two-thirds of its side. The subject wears a deep emerald green, glossy satin robe with white pearl trim and a beige silk belt. The makeup is natural and soft, with a subtle rosy glow, and small festive glitter or stickers are distributed around the eyes.
+      The overall visual style must follow a cinematic holiday film look:
+      • neutral tones (no yellow color cast)
+      • Close-up or ultra-close-up photos should present the natural state of the object, and soft focus effects should not be used. Background objects should not have astigmatism.
+      • Reds and greens
 
+      She wears an oversized red chunky-knit off-shoulder sweater (approx. 400 gsm), rich in texture but rendered in a  cinematic red. The sweater drapes loosely to mid-thigh. She pairs it with nude stockings and fluffy white fur boots. A red Santa hat with matte white faux-fur trim sits slightly tilted on her head.
 
-      The figure wears a matte black headband and realistic reindeer antlers, the antlers gracefully curving outwards and angled forward, approximately 0.5 times the height of the head. Each antler has five slender branches, tapering naturally at the tips, and covered with a soft, matte gold powder finish, the color grading from deep warm brown to light brownish-red.
+      Generate four panels:
 
-      Cartoonization, simplification, and toy-like effects are prohibited. The expression is gentle, with slightly parted lips, and the upper body fills the frame. The background is a deep emerald green studio backdrop, permanently integrated with the Trajan Pro font's gold "MERRY CHRISTMAS" all-caps arced text (It must be Text effects: Arcing text) as an inseparable, single background image. The text is always horizontally centered behind the figure's head and cannot be moved, separated, obscured, or replaced.
+      Top left:Very tight half-body close-up —Cut from above the shoulder. She faces the camera closely Eyes looking at the camera, one hand gently touching her cheek. Skin must appear luminous.
 
-      The figure and antlers are always in the foreground, clearly layered with the background, and layer blending or overlapping is not allowed. The overall effect is a cinematic festive atmosphere, with soft, controllable studio lighting and hyper-realistic rendering. Cartooning, toy-like designs, simplification, layer misalignment, font errors, and distortion of details are all strictly forbidden. 
+      Top right:Full-body seated pose in front of the Christmas tree — She gaze was directed to the right of the camera. she sits on the floor , legs slightly bent, fluffy white boots visible.Presents and soft toys arranged around her.
+
+      Bottom left:A playful,  pigeon-toed standing postur—Her gaze had to be directed to the right side of the camera.  It must be a full-body photo,Sweater drapes naturally. Holding a red balloon string (the balloon is floating upwards) and a small drink prop.
+
+      Bottom right:Side-profile close-up with precise pose and gaze — From chest up, shown in a 3/4 profile from her right side. Her body is turned about 60 degrees away from the camera, with the shoulder nearer to the camera slightly dropped so that the off-shoulder sweater reveals the curve of that shoulder and upper back. Her head is gently tilted back and turned toward the camera, but her eyes do not look into the lens; instead, her gaze is directed slightly past the camera and a little upward, as if looking at something in the distance, creating a dreamy, faraway expression. Lips are relaxed and slightly parted. 
+
+      Overall tone must feel , cinematic , but refined and high-end, with clean luminous skin tones and no harsh saturation.
     reference_folder: ""
     use_comparison_template: false
     use_multi_image: false
-
-  - folder: ../Media Files/Nano Banana/1118 4 Styles/1118 Christmas Snow Ball Female
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 可愛萌妹子二格
     prompt: |
-      Pixar-style chibi-style clay-textured Christmas snow globe, set against a realistic snowy night scene, surrounded by cool-toned pine trees and a deep blue forest, with a slightly misty, dark background highlighting the globe's brightness; fine snowflakes are falling. The slightly overhead, mid-range frontal composition focuses on the inside of the globe; the transparent glass contrasts sharply with the cool blue moonlight outside, creating a striking cool-warm effect against the warm amber light inside; the base is a double-layered matte wood carving, engraved with "MERRY CHRISTMAS". The inside of the globe is made of chibi-style clay and felt, with a smooth, matte finish and no plastic or metallic feel. Santa Claus A: large head, small body, short limbs, slightly to the left of center, wearing a red hat, white pom-pom, red coat, black belt, and black boots; his pure white hair and beard are made of clay, fluffy and rounded, with a matte, non-reflective finish; black pupil eyes, a cute and warm expression, leading the snowman-building. Character B: 0.8 times the size of A, standing on the right assisting in building the snowman. Appearance features are taken from the user-provided photo, including hairstyle, and facial expressions, presented in a chibi-style clay model. Clothing is 100% based on the user's image (Must be the same as the photo)and The Christmas outfit will only be shown if the uploaded photo shows the wearer shirtless. (Otherwise, the outfit needs to be the same as the one in the uploaded photo.). Includes a red Santa hat with white frosted edges. The background features a warm orange-lit cabin, softly lit Christmas tree lights, fluffy snow, and a cute snowman; the overall effect is a cozy, chibi-style fairytale, with the snow globe being the brightest focal point.
+      Use the person from the reference image and recreate a two-panel split scene with the exact composition and actions described below. The person’s identity must 100% match the reference image, but the environment, poses, props, and framing should follow this description precisely. The person must remain the same face as the reference image.
+      For the top panel, the entire scene must be photographed from a straight-on, frontal camera angle, with both the person and the table facing directly toward the camera rather than at any side angle or three-quarter view. The person sits at a wooden table decorated with a gingerbread house, desserts, candles, and small ornaments. She wears a red knitted cardigan and, instead of the original crocheted cherry-pattern headpiece, she now wears a festive Christmas Santa hat. Under the red cardigan, she has on a winter thick wool white one-piece dress. She raises both hands beside her head with elbows bent, each hand positioned near the sides of her face in a playful pose exactly like the hand placement from the reference image, but without forming any peace sign. Each hand is holding a small strawberry or berry delicately at the fingertips. Her facial expression is playful, lively, and pleasantly surprised—never shocked or frightened—while looking slightly upward or forward to convey a cheerful and positive mood. The background features warm lighting, a cozy indoor atmosphere, pastel tones, and floating confetti that together create a soft, festive ambiance.
+      For the bottom panel, the shot becomes a close-up cinematic composition taken strictly from a perfect 90-degree perpendicular angle to her face, capturing a clean side profile with rigorous precision. The camera must be placed exactly at a right angle, showing only one eye; the far eye, eyebrow, and the far cheek must remain completely hidden, with absolutely no three-quarter or partial frontal rotation. Her nose, lips, and chin need to appear in a crisp, flat side-profile silhouette. Her chin is almost resting on the wooden table—nearly lying down—so that her eye level aligns with the head of a wooden reindeer placed before her. She looks straight at the wooden reindeer, which sits about 30 cm away, maintaining a natural distance. She rests her head and one arm on the wooden table, gently touching or caressing the wooden reindeer with her hand. She is still wearing the same red knitted cardigan and Christmas hat as in the top panel, and the hat must be clearly visible from this angle. On the table around her are a halved grapefruit, sliced fruit, a cherry, and a drink with a straw in the foreground. The scene highlights her side profile, her hand, and the wooden reindeer, captured with dreamy, high-contrast, warm lighting.
+      Both panels must share consistent styling, using warm, cozy, soft-orange lighting and a retro, handmade, sweet, dreamy atmosphere with film-like softness and a pastel color palette. The overall color grading must avoid excessive yellow or orange tint; whites need to stay clean and natural, with a warm tone that is balanced rather than overpoweringly yellow. Highlights should be brightened to create strong separation between light and dark areas. Reds, oranges, and creamy tones should be rich and vivid but kept in a balanced warmth. Her face and skin should appear fair, bright, and porcelain-like with a clean, soft, slightly luminous quality. The skin tone must avoid strong yellow or yellow-orange casts, remaining pale and naturally glowing, with only a delicate rosy or peach undertone if desired. The whites must always remain clean.
+      The entire scene must decrease overall color saturation by approximately 50% compared to the original reference photo to produce a noticeably softer and more muted look, while still maintaining every other stylistic and color requirement already described. Additionally, the saturation must again be reduced by approximately 30% compared to the original reference photo, ensuring a softer and more muted visual presentation without violating the warm, dreamy artistic atmosphere specified. The final output must strictly avoid any yellow or overly yellow-orange tint. The two panels must merge without any black lines, borders, frames, shadows, or visible gaps; the transition between the upper and lower sections must be perfectly smooth and seamless. The environment must depict a cozy indoor room filled with items, and minimal or empty backgrounds should be strictly avoided.
     reference_folder: ""
     use_comparison_template: false
     use_multi_image: false
-
-  - folder: ../Media Files/Nano Banana/1118 4 Styles/1118 Christmas Snow Ball Male
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 歐式復古聖誕
     prompt: |
-      Pixar-style chibi-style clay-textured Christmas snow globe, set against a realistic snowy night scene, surrounded by cool-toned pine trees and a deep blue forest, with a slightly misty, dark background highlighting the globe's brightness; fine snowflakes are falling. The slightly overhead, mid-range frontal composition focuses on the inside of the globe; the transparent glass contrasts sharply with the cool blue moonlight outside, creating a striking cool-warm effect against the warm amber light inside; the base is a double-layered matte wood carving, engraved with "MERRY CHRISTMAS". The inside of the globe is made of chibi-style clay and felt, with a smooth, matte finish and no plastic or metallic feel. Santa Claus A: large head, small body, short limbs, slightly to the left of center, wearing a red hat, white pom-pom, red coat, black belt, and black boots; his pure white hair and beard are made of clay, fluffy and rounded, with a matte, non-reflective finish; black pupil eyes, a cute and warm expression, leading the snowman-building. Character B: 0.8 times the size of A, standing on the right assisting in building the snowman. Appearance features are taken from the user-provided photo, including hairstyle, and facial expressions, presented in a chibi-style clay model. Clothing is 100% based on the user's image (Must be the same as the photo)and The Christmas outfit will only be shown if the uploaded photo shows the wearer shirtless. (Otherwise, the outfit needs to be the same as the one in the uploaded photo.). Includes a red Santa hat with white frosted edges. The background features a warm orange-lit cabin, softly lit Christmas tree lights, fluffy snow, and a cute snowman; the overall effect is a cozy, chibi-style fairytale, with the snow globe being the brightest focal point.
+      Use the uploaded person as the subject.
+      The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
+
+      Create a high-end cinematic Christmas portrait set inside an ornate vintage European interior.
+      The visual style must replicate the aesthetic of early 2000s CCD digital cameras with stronger, more defined CCD light behavior:
+
+      strong shadows
+
+      strong halation around candlelight
+
+      no background bokeh circles, no scattered light dots, no soft glow or flare artifacts except candle halation
+
+      crisp CCD micro-contrast falloff with subtle film-like grain
+
+      Scene & Lighting
+
+      The subject is seated at a dining table in a classical mint-green room with carved baroque moldings and a white stone fireplace.
+      Lighting must emphasize distinct CCD characteristics:
+
+      Main light comes from multiple candles (2500–3000K) on the table.
+
+      Candle flames must create clear cross-shaped star flares (not round bokeh).
+
+      Highlights bloom softly but remain directional and controlled.
+
+      Shadows roll off with CCD-style The shadows on the figures and objects are strong.
+
+      No bright light dots or scattered glow in the background.
+
+      The Christmas tree, red ribbons, hanging evergreens, and mirror in the back  clean, without bokeh or reflective sparkles.
+
+      Pose & Composition
+
+      A relaxed three-quarter portrait with a languid, cinematic mood.
+
+      The subject sits in a naturally slouched, unposed posture.
+
+      Right hand gently lifts a grape toward the lips, fingers soft and effortless.
+
+      Left arm rests loosely on the table, elbow touching the surface lightly.
+
+      Head tilted slightly back, chin lifted subtly.
+
+      Gaze must meet the camera with a calm, dreamy, lightly seductive look.
+
+      Shoulders relaxed, with a natural curve.
+
+      Outfit & Accessories
+
+      She wears a deep red off-shoulder gown with matching semi-sheer red gloves softly gathered at the wrists.
+      Accessories include crystal drop earrings and a delicate gemstone necklace, reflecting only gentle candle highlights—no harsh sparkle.
+
+      Tabletop Details
+
+      The table includes grapes, antique cutlery, a vintage porcelain plate, melted pillar candles, and festive ribbons.
+      Candlelight creates strong CCD-style directional highlights on glass and metal surfaces, with soft blooming but no uncontrolled glare.
+
+      Overall Mood
+
+      A dreamy, intimate, cinematic Christmas atmosphere with:
+
+      Strong shadows
+
+      The main character's strong shadow is cast in the background.
+      warm candlelight
+
+      delicate haze
+
+      romantic European editorial quality
+
+      no background light pollution
     reference_folder: ""
     use_comparison_template: false
     use_multi_image: false
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 溫暖木屋-1
+    prompt: |
+      Identity Lock
+      Keep the subject’s exact face, expression, hairstyle, skin texture, and body proportions from the input image.
+      No beautification, no smoothing, no reinterpretation, no posing enhancement, no slimming, no idealization.
 
+      Lighting
+      Direct front on-camera flash with harsh bright highlights and very short shadows.
+      Flash lights only the subject and the chair.
+      Background stays dim but clearly visible—not pitch black.
+      No studio light, no cinematic light, no soft diffuse light.
+
+      Style & Atmosphere
+      Realistic, unpolished Christmas home snapshot at night.
+      Slight grain, uneven flash, natural imperfections, real skin, real home environment.
+      No model vibe, no professional styling—everything feels casual, spontaneous, and very “at home.”
+
+      Environment
+      A slightly messy Christmas living room with natural, lived-in clutter: scattered decorations, stockings, candles, small Santa dolls, garlands, faint Christmas lights, a wooden cabinet.
+      Everything looks casually placed, not arranged for a photoshoot.
+
+      Pose (Based on the vibe of the last reference image, but toned into a real-life home snapshot)
+
+      The subject sits deep in the leather armchair in an extremely relaxed, unstructured, almost slumped posture.
+      Upper body leans back comfortably with loose shoulders and no posing intention.
+      One leg extends forward loosely, the other bends or lifts slightly in a natural, soft, effortless way—similar to the relaxed playfulness in the last reference image, but not exaggerated or model-like.
+      Feet and legs must feel real, casual, and natural—not stylized, not posed.
+      Hands rest loosely without intention—on the armrest, on the lap, or holding the cardigan casually.
+
+      Expression remains soft, slightly tired, unfocused—completely natural and spontaneous, as if caught mid-relaxation by a sudden flash.
+
+      This maintains the ultra-lazy, warm, at-home feeling from the last sample, but with your natural realism, not the stylized look.
+
+      Outfit
+
+      White camisole, oversized chunky red knitted cardigan falling off the shoulders, red knitted leg warmers. (If a user uploads a photo of a male, and changes the lower body to wearing distressed black jeans, there will definitely be no red knitted leg warmers.)
+
+      Mood Summary
+
+      A cozy, real-life, extremely relaxed Christmas night snapshot with strong direct flash, a slightly brightened dim room, natural clutter, and a lazy, unposed posture inspired by the last reference image—but grounded in everyday realism, with no model atmosphere.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 溫暖木屋-2
+    prompt: |
+      Use the uploaded person as the subject. The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
+
+      Create a Christmas-themed photo that precisely replicates the lighting, atmosphere, and style of the reference image, matching the look of a vintage early-2000s CCD camera with direct flash. The lighting must feel raw and spontaneous, with a powerful on-camera flash that creates crisp, bright highlights on the skin, strong hard-edged shadows on the wall and furniture, and a slightly cool, neutral white balance. No cinematic softness or warm studio tones should appear. The flash should illuminate the subject harshly and evenly, flattening the textures in a way typical of point-and-shoot CCD devices while preserving the clean, polished quality of the image.
+
+      The pose must feel candid, relaxed, and effortless rather than posed. The subject reclines naturally in a large brown leather armchair, hips sinking deeply into the seat, back and shoulders settling casually into the cushion. The legs extend upward with a loose, playful bend: one leg raised at an angle that looks spontaneous and unforced, the foot slightly relaxed, while the other leg drapes casually over the chair edge. The arms fall in natural resting positions—one hand placed loosely on the thigh or near the sweater, the other draped softly along the armrest. The body language should communicate comfort, laziness, and natural looseness, mirroring the easy, unplanned posture seen in the reference.
+
+      She wears an oversized chunky red knit cardigan made from thick, heavy yarn with a visibly hand-knit texture. The cardigan hangs loosely and does not appear tailored or neat, extending far past the wrists. Beneath it she wears a white tank top and white shorts, accompanied by thick red knitted socks that match the cardigan. A slouched Santa hat with plush white trim sits slightly off-center on her head.(If you are a boy, please change to blue jeans.)
+
+      The environment must recreate the warm, cozy, cluttered holiday living room of the reference image. Behind the subject stands a large wooden cabinet with carved decorative panels, fully decorated with pine garlands, pinecones, embroidered Christmas stockings, and small Santa dolls arranged in a slightly chaotic, lived-in way. To the right stands a heavily decorated Christmas tree with frosted branches and abundant red ornaments. The floor is covered with an old-fashioned patterned carpet, and Christmas blankets, gift boxes, and knitted throws are casually scattered around the armchair. The space should not appear minimalistic; it must feel full, warm, nostalgic, and a bit messy.
+
+      The overall color palette must follow the CCD aesthetic: bright neutral whites, desaturated greens, rich reds, and a clean color balance without yellow tint. Flash reflections must appear strongly on leather, ornaments, and the subject’s skin. The atmosphere should evoke a candid, playful, slightly nostalgic Christmas snapshot with direct flash brightness, clean shadows, and a relaxed, intimate holiday feeling—perfectly matching the energy, spontaneity, and charm of the reference.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 旋轉木馬
+    prompt: |
+      The person’s face, expression, skin tone, makeup, hairstyle, and identifiable features must remain exactly the same as in the input image. No beautification, no smoothing, no reinterpretation, and no face distortion. Do not alter, reshape, or repaint the eyes in any way. The eyes must remain exactly as in the input image, with no redrawing or reconstruction.
+
+      Half-body shot, framed close enough to clearly show the person’s face and upper body. Pull the camera closer so the face appears larger, sharper, and more visible.
+      The person is riding a vintage carousel horse, with the upper body leaning slightly backward, one arm raised holding the pole, waist subtly twisted, and a very slight, gentle movement in the hair. The person and the carousel horse must face the same direction (toward the right side), with a bright happy smile. Place the person and the carousel horse exactly at the center of the frame.
+
+      Recreate the carousel environment with warm vintage lighting matching the reference photo:
+      Use soft amber-orange carousel bulbs with a brighter and more vivid incandescent glow. The bulbs appear noticeably warmer and more saturated than before, leaning slightly more toward orange-gold. Increase the overall bulb brightness so the light looks clearer and more luminous, with clean golden highlights instead of bloom or haze. The carousel lights cast stronger warm orange reflections on the panels, mirrors, and horses, matching the vivid warm glow seen in the reference image.
+
+      Keep the background extremely clean, simple, and uncluttered. No extra objects, no crowds, no decorations, no visual noise—only the essential carousel structure and glowing bulbs, with nothing else in the scene.
+
+      Atmosphere is cinematic, nostalgic, warm, and slightly dreamy, with soft grain and warm tones.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 Art Deco
+    prompt: |
+      Transform the uploaded portrait into a luxurious 1920s Art Deco–inspired fashion illustration. Keep the person’s facial structure, expression, skin tone, and overall identity clearly recognizable.
+
+      Art style & rendering:
+      • Highly detailed digital illustration with soft painterly textures, smooth gradients, and refined lighting.
+      • Use a glamorous color palette of emerald green, gold, champagne, ivory, and muted beige tones.
+      • Add a soft glowing rim light and subtle bloom to enhance the luxurious mood.
+
+      Fashion & styling:
+      • Restyle the hair into a short or softly waved 1920s bob that suits the person’s face, with a glossy finish.
+      • Add an Art Deco feather headpiece decorated with pearls, crystals, and geometric metal accents.
+      • Dress the person in an elegant 1920s evening gown in deep emerald or teal, with a plunging neckline, intricate gold embroidery, beaded patterns, and shimmering metallic details.
+      • Wrap an ivory feathered fur stole or faux-fur coat around the shoulders to emphasize opulence.
+
+      Jewelry & accessories:
+      • Add layered pearl and crystal necklaces, a choker, chandelier earrings, sparkling bracelets, and ornate rings.
+      • Make the gemstones and rhinestones catch the light with vivid reflections and tiny highlights.
+
+      Background & composition:
+      • European-style decorative backdrop with gold ornamental, or linesbaroque-inspired motifs such as sculpted patterns, elegant floral arrangements, or carved architectural frames.
+      • Use a clean, light background that contrasts with the rich colors of the dress and accessories.
+      • Frame the portrait from about the chest up, with the person slightly turned and one hand gracefully touching the necklace or resting near the collarbone, conveying confidence and glamour.
+
+      Overall mood: cinematic, elegant, and extravagant, as if from a high-society 1920s Art Deco fashion poster.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 80s-90s Parties Female
+    prompt: |
+      Transform the uploaded portrait into an 80–90s retro party-style photograph, keeping the person’s face, identity, hairstyle, makeup features, expression, and overall likeness completely recognizable. The pose should remain unchanged unless a slight adjustment is needed for stylistic adaptation. The overall visual atmosphere should evoke a retro film-camera look inspired by 80s–90s nightlife photography, characterized by a strong, dreamy point-flash effect that creates soft starburst flares and sparkling highlights. The image should contain slight film grain, a smooth bloom on bright areas, and warm analog color shifts that enhance the nostalgic nightclub ambience filled with glowing reflections and metallic textures.
+
+      The scene should take place in a vibrant party environment decorated with metallic tinsel curtains, shimmering backdrops, or mirrored surfaces in colors such as silver, red, neon pink, or iridescent tones to reinforce the festive mood. Use a soft, shallow depth-of-field with blurred motion reflections to emphasize an energetic nightlife setting. The background must contain no other people at all—no silhouettes, no crowds, and no reflections of other individuals. 
+
+      For fashion styling, dress the person in a form-fitting, long-sleeve, round-neck silver sequin bodycon mini dress. The fabric should be fully covered in reflective silver sequins that shimmer intensely under the flash, creating strong light halos, vivid sparkles, and glittering reflections with every angle. Subtle accessories such as crystal earrings or glossy metallic accents may be included, but they should not overpower the outfit.
+
+      The lighting should come from a strong direct flash positioned at the front or side, producing crisp shadows and bold highlights. Incorporate star-shaped reflections, lens flare streaks, and glowing halation around bright areas to amplify the retro party aesthetic while maintaining clear visibility of the face and enhancing the reflective qualities of the sequins. For makeup, intensify the red lipstick to appear bold, vivid, and glossy under the flash. Add soft metallic shimmer to the eye makeup and maintain luminous skin with a smooth retro-film glow.
+
+      The overall mood and composition should evoke sensuality, confidence, and a touch of glamorous nightlife energy. The person may appear seated, leaning, or casually posing in a relaxed party atmosphere, captured in a dreamy, cinematic moment that blends nostalgia with sparkling 80–90s retro glamour.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+  - folder: ../Media Files/Nano Banana/1121 10 Styles/1121 80s-90s Parties Male
+    prompt: |
+      Transform the uploaded portrait into an 80–90s retro party-style photograph, keeping the person’s face, identity, hairstyle, makeup features, expression, and overall likeness completely recognizable. The pose should remain unchanged unless a slight adjustment is needed for stylistic adaptation. The overall visual style should evoke a retro film-camera aesthetic inspired by 80s–90s nightlife photography, incorporating a strong, dreamy point-flash effect with soft starburst flares and sparkling highlights. The image should include slight film grain, soft bloom on bright areas, and warm analog color shifts, creating a dreamy nightclub or party ambience filled with glowing reflections and metallic textures.
+
+      The scene should take place in a vibrant party environment decorated with metallic tinsel curtains, shimmering backdrops, or mirrored surfaces in colors such as silver, red, neon pink, or iridescent tones to reinforce the festive mood. Use a soft, shallow depth-of-field with blurred motion reflections to emphasize an energetic nightlife setting. The background must contain no other people at all—no silhouettes, no crowds, and no reflections of other individuals.
+
+      For fashion styling in the male version, dress the person in a stylish silver-and-black sequin blazer that is tailored, glossy, and highly reflective under flash. Pair this with a deep charcoal or midnight-satin dress shirt, slightly unbuttoned at the collar to create a relaxed party-casual elegance. Add a subtle thin metallic chain necklace or minimal silver accessory to complement the outfit without overpowering it. The sequins and metallic fabric should catch the flash dramatically, producing vivid reflections and glittering highlights.
+
+      Lighting should come from a strong direct flash positioned at the front or side, creating crisp shadows and bold highlights. Star-shaped light reflections, lens flare streaks, and glowy halation around bright areas should be added to heighten the retro aesthetic while maintaining clear visibility of facial details and enhancing the reflective effects on the outfit.
+
+      For the male makeup focus, keep the face natural but polished, with clean skin that carries a soft retro-film glow. Optionally, add a subtle highlight at the cheekbones and nose bridge to enhance the flash reflections. Maintain natural-looking lips with a slight hydrated sheen to match the glossy party aesthetic.
+
+      The overall mood and composition should feel cool, confident, and slightly glamorous, capturing the essence of a nightlife portrait. The person may appear seated, leaning, or casually posing in a relaxed party mood. The final result should maintain a dreamy, cinematic feel that blends nostalgia with sparkling 80–90s glamour.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
 
 # Comments and documentation
 comments:
   folder_structure: "Each task folder should contain 'Source' and 'Generated_Output' subfolders. For multi-image tasks, also include 'Additional' subfolder."
   reference_folder: "Optional: Path to folder containing third set of images for 3-way comparison"
   template_usage: "use_comparison_template: true uses comparison_template_path (3 placeholders), false uses template_path (2 placeholders)"
+  model: "Gemini model to use for generation. 'gemini-2.5-flash-image', 'gemini-3-pro-image-preview'. Default: 'gemini-2.5-flash-image'. Can be overridden per task."
   use_multi_image: "Set to true to enable dual-image mode from Additional folder, false for single-image mode"
   output_group_tasks_by: "Set to 0 (or omit) to create individual reports per task. Set to N (e.g., 4) to group N tasks into one combined report. Example: with 4 tasks and group_tasks_by=4, creates 1 report; with 8 tasks, creates 2 reports."
   multi_image_config:

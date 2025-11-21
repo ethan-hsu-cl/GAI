@@ -183,7 +183,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "use_comparison_template": true
     }
   ],
-  "testbed": "http://192.168.31.40:8000/google_flash_image/"
+  "testbed": "http://192.168.31.40:8000/google_gemini_image/"
 }
 ```
 
@@ -206,7 +206,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "use_comparison_template": true
     }
   ],
-  "testbed": "http://192.168.31.40:8000/google_flash_image/",
+  "testbed": "http://192.168.31.40:8000/google_gemini_image/",
   "output": {
     "directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "group_tasks_by": 2

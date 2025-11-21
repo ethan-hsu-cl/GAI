@@ -8,7 +8,7 @@ model_version: v2.5-turbo
 comment_model_version: 'Model version to use for video generation. Options: ''v1.6'', ''v2.1''. Default is ''v2.1'' if not
   specified.'
 schedule:
-  start_time: ''
+  start_time: '00:00'
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 group_tasks_by: 4
 

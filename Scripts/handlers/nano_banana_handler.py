@@ -182,8 +182,12 @@ class NanoBananaHandler(BaseAPIHandler):
             self._current_additional_images = {}
         self._current_additional_images[str(file_path)] = additional_imgs
         
+        # Get model from task config or use default
+        model = task_config.get('model', 'gemini-2.5-flash-image')
+        
         return self.client.predict(
             prompt=task_config['prompt'],
+            model=model,
             image1=handle_file(str(file_path)),
             image2=handle_file(additional_imgs[0]) if additional_imgs[0] else '',
             image3=handle_file(additional_imgs[1]) if additional_imgs[1] else '',
