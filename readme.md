@@ -146,6 +146,13 @@ BaseFolder/
 
 All configuration files are located in the `Scripts/config/` directory and follow API-specific naming conventions.
 
+**Common Configuration Fields** (applicable to most APIs):
+
+- **`design_link`**: URL to design reference materials (optional)
+- **`source_video_link`**: URL to source video reference (optional)
+- **`reference_folder`**: Path to reference comparison folder (optional)
+- **`use_comparison_template`**: Enable comparison template for reports (boolean)
+
 ### **Kling Configuration** (`config/batch_config.json`)
 
 ```json
@@ -154,11 +161,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
     {
       "folder": "/path/to/TaskName1",
       "prompt": "Transform this portrait into a cinematic video",
-      "negative_prompt": "blurry, low quality",
-      "design_link": "https://your-design-link.com",
-      "source_video_link": "https://source-video-link.com",
-      "reference_folder": "/path/to/reference/folder",
-      "use_comparison_template": true
+      "negative_prompt": "blurry, low quality"
     }
   ],
   "model_version": "v2.1",
@@ -176,11 +179,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
     {
       "folder": "/path/to/TaskName1",
       "prompt": "Generate variations",
-      "use_multi_image": false,
-      "design_link": "https://your-design-link.com",
-      "source_video_link": "https://source-video-link.com",
-      "reference_folder": "/path/to/reference/folder",
-      "use_comparison_template": true
+      "use_multi_image": false
     }
   ],
   "testbed": "http://192.168.31.40:8000/google_gemini_image/"
@@ -201,9 +200,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
         "mode": "sequential",
         "folders": ["/path/to/Additional/images/folder1"],
         "allow_duplicates": false
-      },
-      "design_link": "https://your-design-link.com",
-      "use_comparison_template": true
+      }
     }
   ],
   "testbed": "http://192.168.31.40:8000/google_gemini_image/",
@@ -232,9 +229,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
     {
       "category": "Cinematic",
       "effect": "Zoom In",
-      "prompt": "Dramatic zoom effect with cinematic lighting",
-      "design_link": "https://your-design-link.com",
-      "source_video_link": "https://source-video-link.com"
+      "prompt": "Dramatic zoom effect with cinematic lighting"
     }
   ],
   "testbed": "http://192.168.31.40:8000/video_effect/"
@@ -252,9 +247,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "prompt": "Apply artistic style from reference images",
       "model": "viduq1",
       "duration": 5,
-      "resolution": "1080p",
-      "design_link": "https://your-design-link.com",
-      "source_video_link": "https://source-video-link.com"
+      "resolution": "1080p"
     }
   ],
   "testbed": "http://192.168.31.40:8000/video_effect/"
@@ -279,9 +272,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "effect": "Dynamic Motion",
       "prompt": "Add dynamic motion with anime style",
       "custom_effect_id": "",
-      "negative_prompt": "static, blurry, low quality",
-      "design_link": "https://your-design-link.com",
-      "source_video_link": "https://source-video-link.com"
+      "negative_prompt": "static, blurry, low quality"
     }
   ],
   "testbed": "http://192.168.31.40:8000/pixverse_image/"
@@ -305,11 +296,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "folder": "/path/to/TaskName1",
       "img_prompt": "Generate a portrait-oriented image of a realistic, clear plastic gashapon capsule",
       "model": "gpt-image-1",
-      "quality": "low",
-      "design_link": "https://your-design-link.com",
-      "source_video_link": "https://source-video-link.com",
-      "reference_folder": "/path/to/reference/folder",
-      "use_comparison_template": true
+      "quality": "low"
     }
   ],
   "testbed": "http://192.168.31.40:8000/genvideo/"
@@ -332,11 +319,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "folder": "/path/to/TaskName1",
       "prompt": "Face swap effect",
       "pairing_strategy": "one_to_one",
-      "requires_reference": true,
-      "reference_folder": "/path/to/reference/images",
-      "design_link": "https://your-design-link.com",
-      "source_video_link": "https://source-video-link.com",
-      "use_comparison_template": true
+      "requires_reference": true
     }
   ],
   "model": "gen4_aleph",
@@ -363,11 +346,7 @@ All configuration files are located in the `Scripts/config/` directory and follo
       "embed": "Hello!!",
       "num_outputs": 2,
       "seed": "-1",
-      "animation_mode": "move",
-      "design_link": "https://your-design-link.com",
-      "source_video_link": "https://source-video-link.com",
-      "reference_folder": "",
-      "use_comparison_template": false
+      "animation_mode": "move"
     }
   ],
   "testbed": "http://210.244.31.18:7014/"
@@ -615,12 +594,95 @@ Each metadata JSON file includes:
 - **Attempt count** and retry information
 - **Source file information** and links
 
-## 🚀 Command Reference
+## 🔧 Advanced Features & Architecture
 
-**Syntax:** `python core/runall.py [platform] [action] [options]`
+### **Handler System**
 
-- **Actions**: `process` | `report` | `auto` (default)
-- **Options**: `--config FILE` | `--parallel` | `--verbose`
-- **Platforms**: See Platform Commands table above
+The framework uses an auto-discovery handler system for API processing:
 
-**Note**: All commands must be run from the `Scripts/` directory.
+- **`HandlerRegistry`** - Automatically discovers and registers API handlers from the `handlers/` directory
+- **`BaseAPIHandler`** - Base class providing common processing logic (file validation, metadata saving, error handling)
+- **Individual Handlers** - API-specific handlers (e.g., `KlingHandler`, `NanoBananaHandler`) override only unique behavior
+
+**Key Methods:**
+
+- `process()` - Process a single file with retry logic
+- `process_task()` - Process entire task with file iteration
+- `_make_api_call()` - API-specific call (override in subclasses)
+- `_handle_result()` - API-specific result parsing (override in subclasses)
+
+### **Report Generation System**
+
+The unified report generator (`UnifiedReportGenerator`) provides:
+
+**Core Features:**
+
+- **`MediaPair`** dataclass - Unified data structure for all API types
+- **Template-based slides** - Automatic placeholder detection and media insertion
+- **Multi-API support** - Single codebase handles all 9+ API types
+- **Grouped reports** - Combine multiple tasks into one presentation
+- **Smart sorting** - Groups combination APIs (Wan, Runway) by video/reference
+
+**Performance Optimizations:**
+
+- `configure_performance(batch_size, max_workers, show_progress)` - Tune processing speed
+- Parallel metadata loading (40-50% faster)
+- Parallel frame extraction for videos
+- Batch aspect ratio computation
+- Automatic image format conversion (AVIF/WEBP/HEIC → JPG/PNG)
+
+**Utility Functions:**
+
+- `create_grouped_presentation()` - Multi-task combined reports
+- `ensure_supported_img_format()` - PowerPoint compatibility
+- `cleanup_caches()`, `cleanup_temp_frames()` - Memory management
+
+### **Core Processor Features**
+
+The unified API processor (`UnifiedAPIProcessor`) includes:
+
+**Automatic Conversions:**
+
+- `_convert_image_to_jpg()` - Auto-converts unsupported formats (AVIF, WEBP, HEIC) to JPG
+- `_get_video_info()` - Extracts video metadata using FFprobe
+
+**Smart Processing:**
+
+- `_group_endframe_pairs()` - Pairs start/end images for Kling Endframe
+- `get_optimal_runway_ratio()` - Finds best aspect ratio match for Runway
+- `_get_files_by_type()` - Universal file retrieval with auto-conversion
+- System sleep prevention using `wakepy` library (optional dependency)
+
+**Data Handling:**
+
+- `_capture_all_api_fields()` - Captures complete API response data
+- `_make_json_serializable()` - Converts complex objects for JSON storage
+- Universal metadata saving across all API types
+
+### **Factory Functions**
+
+Simplified object creation:
+
+```python
+# Create API processor
+from core.unified_api_processor import create_processor
+processor = create_processor("nano_banana", "config/custom.yaml")
+
+# Create report generator
+from core.unified_report_generator import create_report_generator
+generator = create_report_generator("kling", "config/custom.yaml")
+```
+
+### **Command-Line Utilities**
+
+The `runall.py` script provides:
+
+- **Parallel execution** - `--parallel` flag runs multiple APIs simultaneously
+- **Custom configs** - `--config FILE` override default configuration
+- **Verbose logging** - `--verbose` for detailed debug output
+- **Execution summaries** - Success rates and per-platform status
+- **Input validation** - Validates platforms, actions, and options
+
+### **Test Utilities**
+
+- **`Scripts/test_nano_api.py`** - Nano Banana API testing and validation script
