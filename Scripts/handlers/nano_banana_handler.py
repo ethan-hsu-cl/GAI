@@ -208,34 +208,71 @@ class NanoBananaHandler(BaseAPIHandler):
         
         # Check for failure patterns in response_data
         is_failed = False
-        failure_reason = error_msg
+        failure_reason = error_msg if error_msg else None
         has_images_in_response = False
-        text_failure_msg = None
+        text_responses_list = []
+        all_error_messages = []
+        
+        # Collect error_msg if present
+        if error_msg:
+            all_error_messages.append(error_msg)
         
         if response_data and isinstance(response_data, list):
             for item in response_data:
                 if isinstance(item, dict):
                     item_data = item.get('data')
+                    item_type = item.get('type')
                     
+                    # Check for explicit moderation block
                     if item_data == 'BLOCKED_MODERATION':
                         is_failed = True
                         failure_reason = 'BLOCKED_MODERATION'
-                    elif item.get('type') == 'Text':
-                        text_failure_msg = f"Generation failed: {item_data}"
-                    elif item.get('type') == 'Image':
+                        all_error_messages.append('BLOCKED_MODERATION')
+                    # Collect all text responses (could be errors or messages)
+                    elif item_type == 'Text':
+                        text_content = str(item_data) if item_data else ''
+                        if text_content:
+                            text_responses_list.append(text_content)
+                            all_error_messages.append(text_content)
+                    # Check for image responses
+                    elif item_type == 'Image':
                         has_images_in_response = True
-            
-            # Only treat text responses as failure if no images were generated
-            if text_failure_msg and not has_images_in_response:
-                is_failed = True
-                failure_reason = text_failure_msg
+                    # Capture any other unexpected item types
+                    else:
+                        if item_type or item_data:
+                            unknown_msg = f"Unknown response type: {item_type}, data: {item_data}"
+                            all_error_messages.append(unknown_msg)
+                            self.logger.warning(f" ⚠️ {unknown_msg}")
         
+        # Determine failure status and reason
+        if text_responses_list and not has_images_in_response:
+            is_failed = True
+            # Use the most specific error message available
+            if not failure_reason:
+                # Prefer the first non-empty text response as the failure reason
+                failure_reason = text_responses_list[0] if text_responses_list else "Unknown error"
+                # Don't add "Error:" prefix if it already looks like an error message
+                if not any(failure_reason.lower().startswith(prefix) for prefix in ['error', 'failed', 'blocked', 'invalid']):
+                    failure_reason = f"Error: {failure_reason}"
+        
+        # Early return for explicit failures
         if error_msg or is_failed:
             self.logger.info(f" ❌ API Error: {failure_reason}")
             metadata = {
-                'response_id': response_id, 'error': failure_reason, 'success': False,
-                'attempts': attempt + 1, 'processing_time_seconds': round(processing_time, 1)
+                'response_id': response_id, 
+                'error': failure_reason, 
+                'success': False,
+                'attempts': attempt + 1, 
+                'processing_time_seconds': round(processing_time, 1),
+                'processing_timestamp': datetime.now().isoformat(),
+                'api_name': self.api_name
             }
+            # Include all error messages for comprehensive debugging
+            if all_error_messages:
+                metadata['all_errors'] = all_error_messages
+            # Include text responses in failure metadata for debugging
+            if text_responses_list:
+                metadata['text_responses'] = text_responses_list
             if additional_imgs_info:
                 metadata['additional_images_used'] = additional_imgs_info
             self.processor.save_nano_metadata(Path(metadata_folder), base_name, file_name, 
@@ -247,12 +284,38 @@ class NanoBananaHandler(BaseAPIHandler):
             response_data, Path(output_folder), base_name)
         has_images = len(saved_files) > 0
         
-        # Save metadata with additional image info
+        # If no images were saved but we got here, treat as failure
+        if not has_images:
+            error_reason = "No images generated"
+            if text_responses:
+                # Extract text content for error message
+                text_contents = [tr.get('content', '') for tr in text_responses if isinstance(tr, dict)]
+                if text_contents:
+                    error_reason = f"Error: {text_contents[0]}"
+            
+            self.logger.info(f" ❌ {error_reason}")
+            metadata = {
+                'response_id': response_id,
+                'error': error_reason,
+                'text_responses': text_responses,
+                'success': False,
+                'attempts': attempt + 1,
+                'processing_time_seconds': round(processing_time, 1),
+                'processing_timestamp': datetime.now().isoformat(),
+                'api_name': self.api_name
+            }
+            if additional_imgs_info:
+                metadata['additional_images_used'] = additional_imgs_info
+            self.processor.save_nano_metadata(Path(metadata_folder), base_name, file_name,
+                                             metadata, task_config)
+            return False
+        
+        # Success case - images were generated
         metadata = {
             'response_id': response_id, 
             'saved_files': [Path(f).name for f in saved_files],
             'text_responses': text_responses, 
-            'success': has_images, 
+            'success': True, 
             'attempts': attempt + 1,
             'images_generated': len(saved_files), 
             'processing_time_seconds': round(processing_time, 1),
@@ -266,11 +329,8 @@ class NanoBananaHandler(BaseAPIHandler):
         self.processor.save_nano_metadata(Path(metadata_folder), base_name, file_name, 
                                          metadata, task_config)
         
-        if has_images:
-            self.logger.info(f" ✅ Generated: {len(saved_files)} images")
-            if additional_imgs_info:
-                self.logger.info(f" 🖼️ Additional images: {', '.join(additional_imgs_info)}")
-        else:
-            self.logger.info(f" ❌ No images generated")
+        self.logger.info(f" ✅ Generated: {len(saved_files)} images")
+        if additional_imgs_info:
+            self.logger.info(f" 🖼️ Additional images: {', '.join(additional_imgs_info)}")
         
-        return has_images
+        return True
