@@ -12,7 +12,7 @@ schedule:
   start_time: ""
   comment: "Time format: HH:MM (24-hour format). Leave empty to start immediately"
 
-root_source_video_link: 
+root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCCAvLVCEYjRJqk9FW45X-jAbwwuS616tyVNLcgwvaIOQM?e=pqxFhE
 root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g3a9900562f9_1_0#slide=id.g3a9900562f9_1_0
 
 tasks:
