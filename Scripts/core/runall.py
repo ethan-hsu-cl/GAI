@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 # API mapping for backward compatibility
 API_MAPPING = {
     'kling': 'kling',
+    'klingfx': 'kling_effects',
+    'kling_effects': 'kling_effects',
     'kling_endframe': 'kling_endframe',
     'kling_ttv': 'kling_ttv',
     'vidu': 'vidu_effects', 
@@ -27,6 +29,7 @@ API_MAPPING = {
 # Config file mapping
 CONFIG_MAPPING = {
     'kling': 'config/batch_kling_config.yaml',
+    'kling_effects': 'config/batch_kling_effects_config.yaml',
     'kling_endframe': 'config/batch_kling_endframe_config.yaml',
     'kling_ttv': 'config/batch_kling_ttv_config.yaml',
     'vidu_effects': 'config/batch_vidu_effects_config.yaml',
@@ -45,6 +48,7 @@ def show_usage():
     print()
     print("PLATFORMS:")
     print("  kling - Kling Image2Video processing")
+    print("  klingfx - Kling Video Effects (premade effects)")
     print("  kling_endframe - Kling Endframe (start/end image pairs)")
     print("  kling_ttv - Kling Text-to-Video processing")
     print("  vidu - Vidu Effects processing")
@@ -70,6 +74,7 @@ def show_usage():
     print("EXAMPLES:")
     print("  python runall.py nano report")
     print("  python runall.py kling process")
+    print("  python runall.py klingfx auto")
     print("  python runall.py kling_endframe auto")
     print("  python runall.py kling_ttv auto")
     print("  python runall.py vidu auto")

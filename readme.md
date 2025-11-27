@@ -56,6 +56,7 @@ python core/runall.py all auto --parallel --verbose
 | Short Name | Full Name | Description |
 | :-- | :-- | :-- |
 | `kling` | Kling 2.1 | Image-to-video generation with v2.1 model |
+| `klingfx` | Kling Effects | Apply premade video effects to images |
 | `pixverse` | Pixverse v4.5 | Effect-based video generation with custom effects |
 | `genvideo` | GenVideo | Image-to-image transformation (Gashapon style) |
 | `nano` | Nano Banana/Google Flash | Multi-image generation with AI models |
@@ -167,6 +168,49 @@ All configuration files are located in the `Scripts/config/` directory and follo
   "model_version": "v2.1",
   "testbed": "http://192.168.31.40:8000/kling/"
 }
+```
+
+### **Kling Effects Configuration** (`config/batch_kling_effects_config.yaml`)
+
+Applies premade video effects to images. Supports both preset effects and custom effect names.
+
+```yaml
+base_folder: ../Media Files/Kling Effects/1127 Test
+testbed: http://192.168.31.40:8000/kling/
+
+# Global settings
+duration: '5'
+
+# Effect selection (custom_effect has priority over effect)
+effect: 3d_cartoon_1      # Preset effect from dropdown
+custom_effect: ''          # Custom effect name (priority if specified)
+
+tasks:
+  - style_name: 3D Cartoon
+    effect: 3d_cartoon_1
+    custom_effect: ''       # Leave empty to use preset 'effect'
+  
+  - style_name: Custom Style
+    effect: ''
+    custom_effect: my_custom_effect  # Custom effect takes priority
+```
+
+**Effect Selection:**
+- Use `effect` to select from 100+ preset effects (e.g., `3d_cartoon_1`, `anime_figure`, `japanese_anime_1`)
+- Use `custom_effect` to specify a custom effect name (takes priority over `effect`)
+
+**Available Preset Effects (partial list):**
+`3d_cartoon_1`, `3d_cartoon_2`, `anime_figure`, `japanese_anime_1`, `american_comics`, `angel_wing`, `baseball`, `boss_coming`, `car_explosion`, `celebration`, `demon_transform`, `disappear`, `emoji`, `firework`, `gallery_ring`, `halloween_escape`, `jelly_jiggle`, `magic_broom`, `mushroom`, `pixelpixel`, `santa_gifts`, `steampunk`, `vampire_transform`, `zombie_transform`, and many more.
+
+**Folder Structure:**
+```
+BaseFolder/
+├── StyleName1/
+│   ├── Source/              # Input images
+│   ├── Generated_Video/     # Auto-created output folder
+│   └── Metadata/            # Auto-created metadata folder
+├── StyleName2/
+│   └── ...
 ```
 
 ### **Nano Banana Configuration** (`config/batch_nano_banana_config.json`)
@@ -532,6 +576,7 @@ sudo apt install ffmpeg
 ## 🎯 API-Specific Features
 
 - **Kling 2.1**: Streaming downloads, dual save logic, v2.1 model support, negative prompt support, custom duration/CFG settings
+- **Kling Effects**: 100+ premade video effects, custom effect name support, base folder structure, automatic error data dump on failure
 - **Pixverse v4.5**: Custom effects/styles, VideoID extraction, base folder structure, parallel validation, v4.5 model
 - **GenVideo**: Gashapon transformation, image-to-image generation, design link tracking, multiple AI model support (GPT/Gemini)
 - **Nano Banana**: Multi-image support (up to 3 images), sequential/random pairing modes, base64 image handling, deterministic reproducible outputs, grouped report generation

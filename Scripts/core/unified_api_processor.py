@@ -365,6 +365,8 @@ class UnifiedAPIProcessor:
         """Enhanced validation with parallel processing support"""
         if self.api_name == "kling":
             return self._validate_kling_structure()
+        elif self.api_name == "kling_effects":
+            return self._validate_kling_effects_structure()
         elif self.api_name == "kling_endframe":
             return self._validate_kling_endframe_structure()
         elif self.api_name == "kling_ttv":
@@ -803,6 +805,95 @@ class UnifiedAPIProcessor:
         if not valid_tasks:
             raise Exception("No valid Kling TTV tasks found")
         
+        return valid_tasks
+
+    def _validate_kling_effects_structure(self):
+        """
+        Validate Kling Effects structure with base folder and effect subfolders.
+        
+        Uses custom_effect (priority) or effect name from tasks to locate subfolders.
+        Each effect folder should have Source, Generated_Video, and Metadata subfolders.
+        """
+        base_folder = Path(self.config.get('base_folder', ''))
+        if not base_folder.exists():
+            raise FileNotFoundError(f"Base folder not found: {base_folder}")
+
+        valid_tasks = []
+        invalid_images = []
+
+        def process_task(task):
+            # Use custom_effect if specified, otherwise use effect
+            custom_effect = task.get('custom_effect', '')
+            effect = task.get('effect', '')
+            folder_name = custom_effect if custom_effect else effect
+            
+            if not folder_name:
+                self.logger.warning(f"⚠️ Task has no effect or custom_effect specified")
+                return None, []
+            
+            task_folder = base_folder / folder_name
+            source_dir = task_folder / "Source"
+
+            if not source_dir.exists():
+                self.logger.warning(f"⚠️ Source folder not found: {source_dir}")
+                return None, []
+
+            # Get and validate images
+            image_files = self._get_files_by_type(source_dir, 'image')
+
+            if not image_files:
+                self.logger.warning(f"⚠️ No images found in: {source_dir}")
+                return None, []
+
+            # Validate images
+            invalid_for_task = []
+            valid_count = 0
+
+            for img_file in image_files:
+                is_valid, reason = self.validate_file(img_file)
+                if not is_valid:
+                    invalid_for_task.append({
+                        'folder': folder_name, 'filename': img_file.name, 'reason': reason
+                    })
+                else:
+                    valid_count += 1
+
+            if valid_count > 0:
+                # Create output directories
+                (task_folder / "Generated_Video").mkdir(exist_ok=True)
+                (task_folder / "Metadata").mkdir(exist_ok=True)
+
+                # Add folder paths to task
+                enhanced_task = task.copy()
+                enhanced_task.update({
+                    'folder': str(task_folder),
+                    'folder_name': folder_name,
+                    'source_dir': str(source_dir),
+                    'generated_dir': str(task_folder / "Generated_Video"),
+                    'metadata_dir': str(task_folder / "Metadata")
+                })
+
+                self.logger.info(f"✓ {folder_name}: {valid_count}/{len(image_files)} valid images")
+                return enhanced_task, invalid_for_task
+
+            return None, invalid_for_task
+
+        # Process tasks
+        results = [process_task(task) for task in self.config.get('tasks', [])]
+
+        # Collect results
+        for task, invalid_for_task in results:
+            if task:
+                valid_tasks.append(task)
+            invalid_images.extend(invalid_for_task)
+
+        if invalid_images:
+            self.write_invalid_report(invalid_images, "kling_effects")
+            raise Exception(f"{len(invalid_images)} invalid images found")
+
+        if not valid_tasks:
+            raise Exception("No valid Kling Effects tasks found")
+
         return valid_tasks
 
     def _validate_vidu_effects_structure(self):

@@ -8,40 +8,18 @@ model_version: v2.5-turbo
 comment_model_version: 'Model version to use for video generation. Options: ''v1.6'', ''v2.1''. Default is ''v2.1'' if not
   specified.'
 schedule:
-  start_time: '00:00'
+  start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 group_tasks_by: 4
 
 tasks:
 - mode: std
-  folder: ../Media Files/Kling 2.5/1118 Party V8
+  folder: ../Media Files/Kling 2.5/1127 Party V4 Debug
   prompt: |
-    4:3 mid-shot, head-to-thigh framing, fixed stable camera with ultra-slow smooth orbit while gently pulling back. Luxury indoor studio, cool white soft lighting. Deep red velvet curtain and stacked red gift boxes background, Elegant woman standing centered, taking a few graceful steps left then naturally stopping, relaxed posture, smooth movement in sync with camera orbit, calm confident energy, direct gaze, soft assured smile, right hand holding champagne glass at chest height. Instant flash transforms outfit into pure white mini dress with clean-cut hemline above knees, shimmering with a quiet magical burst of silver-white particles focused around the transformation area; no sparkle trails beyond the dress, no floor interaction.Cold-white couture tone, bright metallic shimmer, quiet luxury, Dior/Vogue New Year cinematic style.
+    4:3 mid-shot, head-to-thigh framing, fixed stable camera with ultra-slow smooth orbit while gently pulling back, luxury indoor studio with cool white soft lighting, deep red velvet curtain and stacked red gift boxes background, dark glossy reflective floor with sparse high-gloss mirror-foil silver confetti squares (1–2 cm) creating vivid cold-white reflections and champagne highlights only on the floor layer, elegant woman standing centered taking a few graceful steps left then naturally stopping, relaxed posture, smooth movement in sync with camera orbit, calm confident energy, direct gaze, soft assured smile, right hand firmly holding a clearly visible champagne glass at chest height, instant flash completing the transformation into a pure white sequin mini dress above the knees with a clean-cut hemline and no fabric touching the floor, flash particles only around the dress while the floor confetti stays reflective, cold-white couture tone, bright metallic shimmer, quiet luxury, Dior/Vogue New Year cinematic style.
   negative_prompt: |
-    no long gown, no evening gown, no floor-length dress, no ankle-length skirt, no train, no cloth dragging, no translucent dress, no see-through fabric, no clothing residue, no outfit overlap, no partial outfit, no incomplete outfit, no half-changed outfit, no broken transformation, no interrupted outfit change, no fabric blending, no glitchy clothing, no mixed dress layers, no skirt fusion, no floating garments, no double outfits, no duplicate person, no blurry transformation, no sparkle fog, no smoke, no glow, no distortion, no pose mismatch, no motion blur, no blank expression, no cold stare, no serious face, no extra arms, no more than two arms,old outfit.
-  design_link: https://docs.google.com/presentation/d/1zR01DmJpSFYxI_3x4jWEaaZRqJSw3m1vVbekMPLP9e8/edit?slide=id.g39923764750_2_5#slide=id.g39923764750_2_5
-  source_video_link: 'https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCNJRJ2q7YwRYLhOI5SYs0iAQkvaBQMHW4f399hmw3ZFU0?e=jMiZnV'
-  reference_folder: ''
-  use_comparison_template: false
-
-- mode: std
-  folder: ../Media Files/Kling 2.5/1118 Party V4
-  prompt: |
-    4:3 mid-shot, head-to-thigh framing, fixed stable camera with ultra-slow smooth orbit while gently pulling back. Luxury indoor studio, cool white soft lighting. Deep red velvet curtain and stacked red gift boxes background, dark glossy reflective floor with sparse high-gloss silver foil confetti squares (mirror-foil 1–2 cm) creating vivid cold-white reflections and champagne highlights only on floor layer. Elegant woman standing centered, taking a few graceful steps left then naturally stopping, relaxed posture, smooth movement in sync with camera orbit, calm confident energy, direct gaze, soft assured smile, right hand holding champagne glass at chest height. Instant flash transforms outfit into pure white sequin mini dress above knees with clean-cut hemline, no fabric touching floor; flash particles only around dress, floor confetti stays reflective. Cold-white couture tone, bright metallic shimmer, quiet luxury, Dior/Vogue New Year cinematic style.
-  negative_prompt: |
-    no long gown, no evening gown, no floor-length dress, no ankle-length skirt, no train, no cloth dragging, no translucent dress, no see-through fabric, no clothing residue, no outfit overlap, no partial outfit, no incomplete outfit, no half-changed outfit, no broken transformation, no interrupted outfit change, no fabric blending, no glitchy clothing, no mixed dress layers, no skirt fusion, no floating garments, no double outfits, no duplicate person, no blurry transformation, no sparkle fog, no smoke, no glow, no distortion, no pose mismatch, no motion blur, no blank expression, no cold stare, no serious face, no extra arms, no more than two arms.
-  design_link: https://docs.google.com/presentation/d/1zR01DmJpSFYxI_3x4jWEaaZRqJSw3m1vVbekMPLP9e8/edit?slide=id.g39923764750_2_5#slide=id.g39923764750_2_5
-  source_video_link: 'https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgAqVFVgBLFASaAXk4T2QRjZAUQJ45TUgjBze21tWnV-g8U?e=hmcd1T'
-  reference_folder: ''
-  use_comparison_template: false
-
-- mode: std
-  folder: ../Media Files/Kling 2.5/1118 Firework V1
-  prompt: |
-    畫面背景灑落極大量、極高密度的銀白色亮片粒子，亮片為細小多面切割型，具強烈冷白金屬反光、閃爍明亮，層層堆疊、密集閃耀，效果如銀河般燦爛豐富，數量遠超常規，幾乎覆蓋整個背景，但每顆亮片依然細膩精緻，絕非長條彩帶、圓點或粉塵。所有亮片粒子僅限於背景區域，主角髮色、臉部、皮膚、手臂、服裝完全不被任何亮片粒子附著、覆蓋或穿透，主角區域始終乾淨清晰。 畫面以鏡頭水平平移開場，中央爆發超高密度銀白亮片粒子（僅作為背景切換特效），粒子覆蓋感極強，轉場氛圍華麗夢幻。粒子完全消失且新背景（夜晚高級宴會廳，主色調藍銀冷光、窗外煙火、城市夜景）穩定後，主角服裝再瞬間完成換裝，無粒子、遮罩或任何殘留。主角直接換上銀白色高級亮片緞面單肩長禮服，右肩裸露，腰間立體蝴蝶結裝飾，服裝貼身合體、金屬冷光明顯、細節銳利、無多餘配件。 畫面構圖為頭至大腿，主角正對鏡頭，優雅微笑舉杯敬酒，姿態自然。宴會廳細節包括水晶吊燈、紅禮盒金緞帶、白色花束、蠟燭、米白沙發、圓凳，畫面全程乾淨穩定，無殘影、異常、數字或雜物。 拿這個調整
-  negative_prompt: |
-    no clothing residue, no outfit overlap, no partial outfit, no fabric blending, no glitchy clothing, no mixed dress layers, no skirt fusion, no floating garments, no double outfits, no cloth trailing, no translucent dress, no blurry transformation, no sparkle fog, no smoke, no glow, no distortion, no duplicate person, no pose mismatch, no motion blur, no blank expression, no cold stare, no serious face
-  design_link: https://docs.google.com/presentation/d/1zR01DmJpSFYxI_3x4jWEaaZRqJSw3m1vVbekMPLP9e8/edit?slide=id.g39923764750_2_5#slide=id.g39923764750_2_5
-  source_video_link: 'https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDX7r9CxazRSYw3f4jjm_CAASsxy1-8hO3_pKai58xG_Qo?e=Ypxorf'
+    trousers,long gown, evening gown, floor-length dress, ankle-length skirt, train, cloth dragging, translucent dress, see-through fabric, clothing residue, outfit overlap, partial outfit, incomplete outfit, half-changed outfit, broken transformation, interrupted outfit change, fabric blending, glitchy clothing, mixed dress layers, skirt fusion, floating garments, double outfits, duplicate person, blurry transformation, sparkle fog, smoke, glow, distortion, pose mismatch, motion blur, blank expression, cold stare, serious face, extra arms, more than two arms,Bright Sky Blue,old outfit tint,old outfit style,Japanese sailor uniform.
+  design_link: https://docs.google.com/presentation/d/1zR01DmJpSFYxI_3x4jWEaaZRqJSw3m1vVbekMPLP9e8/edit?slide=id.g3a979719f3c_2_48#slide=id.g3a979719f3c_2_48
+  source_video_link: 
   reference_folder: ''
   use_comparison_template: false

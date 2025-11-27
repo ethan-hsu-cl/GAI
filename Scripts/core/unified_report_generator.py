@@ -146,6 +146,7 @@ class UnifiedReportGenerator:
         # Note: For kling, the actual display name is set dynamically based on config model
         self._api_display_names = {
             'kling': 'Kling',  # Will be updated based on model in config
+            'kling_effects': 'Kling Effects',
             'kling_endframe': 'Kling Endframe',  # Will be updated based on model in config
             'kling_ttv': 'Kling TTV',  # Will be updated based on model in config
             'nano_banana': 'Nano Banana',
@@ -231,6 +232,13 @@ class UnifiedReportGenerator:
                 **self.LAYOUT_2_MEDIA,
                 'title_format': 'Generation {index}: {source_file}',
                 'metadata_fields': ['task_id', 'model', 'prompt', 'processing_time_seconds', 'success'],
+            },
+            'kling_effects': {
+                **base_config,
+                'media_types': ['source', 'generated'],
+                **self.LAYOUT_2_MEDIA,
+                'title_format': 'Generation {index}: {source_file}',
+                'metadata_fields': ['effect_name', 'custom_effect', 'video_id', 'task_id', 'duration', 'processing_time_seconds', 'success'],
             },
             'kling_endframe': {
                 **base_config,
@@ -748,7 +756,7 @@ class UnifiedReportGenerator:
     
     def process_batch(self, task: Dict) -> List[MediaPair]:
         """Universal batch processing for all API types"""
-        if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
+        if self.api_name in ["vidu_effects", "vidu_reference", "pixverse", "kling_effects"]:
             return self.process_base_folder_structure(task)
         elif self.api_name == "genvideo":
             return self.process_genvideo_batch(task)
@@ -1310,6 +1318,67 @@ class UnifiedReportGenerator:
                         reference_paths=[],
                         effect_name=effect,
                         category=category,
+                        metadata=metadata,
+                        failed=not vid or not metadata.get('success', False)
+                    )
+                    pairs.append(pair)
+        
+        elif self.api_name == "kling_effects":
+            # Process kling effects - uses custom_effect or effect as folder name
+            # Support single-task filtering for grouped processing
+            tasks_to_process = [task] if (task.get('effect') or task.get('custom_effect')) else self.config.get('tasks', [])
+            
+            for task_config in tasks_to_process:
+                # custom_effect has priority over effect for folder name
+                custom_effect = task_config.get('custom_effect', '')
+                effect = custom_effect if custom_effect else task_config.get('effect', '')
+                if not effect:
+                    continue
+                
+                folders = {k: base_folder / effect / v
+                          for k, v in {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
+                
+                if not folders['src'].exists():
+                    logger.warning(f"Source folder not found for effect: {effect}")
+                    continue
+                
+                logger.info(f"Processing Kling effect: {effect}")
+                
+                # OPTIMIZED: Single-pass directory scanning
+                images, _, _ = self._scan_directory_once(folders['src'])
+                
+                _, raw_videos, _ = self._scan_directory_once(folders['vid'])
+                videos = {}
+                for f in raw_videos.values():
+                    # Extract key by removing effect suffix pattern
+                    key = self.extract_video_key(f.name, effect)
+                    videos[key] = f
+                
+                _, _, metadata_files = self._scan_directory_once(folders['meta'])
+                
+                # Batch load metadata
+                metadata_cache = self._load_json_batch(metadata_files) if metadata_files else {}
+                
+                logger.info(f"Images: {len(images)}, Videos: {len(videos)}, Meta: {len(metadata_files)}")
+                
+                # Pre-compute aspect ratios
+                all_media = list(images.values()) + list(videos.values())
+                if all_media:
+                    self._compute_aspect_ratios_batch(all_media, are_videos={p: True for p in videos.values()})
+                
+                # Create pairs
+                for key, img in images.items():
+                    metadata = metadata_cache.get(key, {})
+                    
+                    vid = videos.get(key)
+                    pair = MediaPair(
+                        source_file=img.name,
+                        source_path=img,
+                        api_type=self.api_name,
+                        generated_paths=[vid] if vid else [],
+                        reference_paths=[],
+                        effect_name=effect,
+                        category="Effects",
                         metadata=metadata,
                         failed=not vid or not metadata.get('success', False)
                     )
@@ -2146,11 +2215,31 @@ class UnifiedReportGenerator:
                 para.text, para.font.size, para.alignment = f"{pre}{txt}", Pt(24), PP_ALIGN.CENTER
 
     
+    def _remove_template_slides(self, ppt):
+        """Remove dummy template slides (slides 3 and 4) used for generation.
+        
+        These slides are placeholder slides in the template that are used as
+        layout references for creating content slides, but should not appear
+        in the final presentation.
+        """
+        # Slides are 0-indexed internally, so slides 3 and 4 are indices 2 and 3
+        # We need to remove them in reverse order to maintain correct indices
+        slides_to_remove = [3, 2]  # Remove slide 4 first, then slide 3
+        
+        for slide_idx in slides_to_remove:
+            if len(ppt.slides) > slide_idx:
+                slide_id = ppt.slides._sldIdLst[slide_idx].rId
+                ppt.part.drop_rel(slide_id)
+                del ppt.slides._sldIdLst[slide_idx]
+    
     def save_presentation(self, ppt, task, use_comparison, effect_names=None):
         """Save the presentation"""
         try:
+            # Remove dummy template slides before saving
+            self._remove_template_slides(ppt)
+            
             # Generate filename
-            if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
+            if self.api_name in ["vidu_effects", "vidu_reference", "pixverse", "kling_effects"]:
                 folder_name = Path(self.config.get('base_folder', '')).name
             else:
                 # Handle grouped tasks
@@ -2196,7 +2285,7 @@ class UnifiedReportGenerator:
             tasks = self.config.get('tasks', [])
             
             # Determine processing mode
-            if self.api_name in ["vidu_effects", "vidu_reference", "pixverse"]:
+            if self.api_name in ["vidu_effects", "vidu_reference", "pixverse", "kling_effects"]:
                 # Base folder structure APIs
                 if group_tasks_by and group_tasks_by > 1 and tasks:
                     # Base-folder APIs with grouping - process tasks individually
@@ -2344,14 +2433,17 @@ class UnifiedReportGenerator:
             return {}
         
         # Detect API type from task structure
-        is_base_folder_api = 'effect' in tasks[0] and 'folder' not in tasks[0]
+        # Check for effect or custom_effect (for kling_effects and vidu_effects), and no folder key
+        is_base_folder_api = ('effect' in tasks[0] or 'custom_effect' in tasks[0]) and 'folder' not in tasks[0]
         
         if is_base_folder_api:
-            # Base folder API (vidu_effects, vidu_reference, pixverse)
+            # Base folder API (vidu_effects, vidu_reference, pixverse, kling_effects)
             # Extract effect/category names for the combined title
             effect_names = []
             for task in tasks:
-                effect_names.append(task.get('effect', task.get('category', 'Unknown')))
+                # custom_effect has priority over effect
+                effect_name = task.get('custom_effect') or task.get('effect', task.get('category', 'Unknown'))
+                effect_names.append(effect_name)
             
             # Use config base folder and add grouped information
             combined = {
@@ -2390,7 +2482,7 @@ class UnifiedReportGenerator:
 
 def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""
-    supported_apis = ['kling', 'kling_endframe', 'kling_ttv', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan', 'veo']
+    supported_apis = ['kling', 'kling_effects', 'kling_endframe', 'kling_ttv', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan', 'veo']
     if api_name not in supported_apis:
         raise ValueError(f"Unsupported API: {api_name}. Supported: {supported_apis}")
     return UnifiedReportGenerator(api_name, config_file)
@@ -2399,7 +2491,7 @@ def create_report_generator(api_name, config_file=None):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Generate PowerPoint reports from API processing results')
-    parser.add_argument('api_name', choices=['kling', 'kling_endframe', 'kling_ttv', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan', 'veo'],
+    parser.add_argument('api_name', choices=['kling', 'kling_effects', 'kling_endframe', 'kling_ttv', 'nano_banana', 'vidu_effects', 'vidu_reference', 'runway', 'genvideo', 'pixverse', 'wan', 'veo'],
                        help='API type to generate report for')
     parser.add_argument('--config', '-c', help='Config file path (optional)')
     
