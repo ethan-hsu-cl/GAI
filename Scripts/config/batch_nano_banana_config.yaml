@@ -16,69 +16,6 @@ root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/o
 root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g3a9900562f9_1_0#slide=id.g3a9900562f9_1_0
 
 tasks:
-  - folder: ../Media Files/Nano Banana/1127 4 Styles/1127 韓式雜誌風四格
-    prompt: |
-      Create a cohesive four-panel Christmas editorial collage of the same young woman, based on the uploaded photo. Her face, expression, skin tone, makeup, hairstyle, and identifiable features must remain exactly the same as in the input image. The overall visual style must follow a cinematic holiday film look, maintaining neutral tones with absolutely no yellow color cast. Close-up or ultra-close-up photos must present the natural state of the object without any soft-focus effects, and background objects must not display astigmatism. Reds and greens should remain rich and cinematic throughout the composition.
-      She wears an oversized red chunky-knit off-shoulder sweater, approximately 400 gsm, with rich texture but rendered in a cinematic red tone. The sweater drapes loosely to mid-thigh. She pairs it with nude stockings and fluffy white fur boots, and a red Santa hat with matte white faux-fur trim sits slightly tilted on her head.
-      Four panels must be generated. In the top-left panel, she appears in a very tight half-body close-up cropped from above the shoulder. She faces the camera closely with her eyes looking directly at the viewer, and one hand gently touching her cheek. Her skin must appear luminous. In the top-right panel, she is shown in a full-body seated pose in front of the Christmas tree; her gaze is directed to the right of the camera as she sits on the floor with her legs slightly bent, the fluffy white boots clearly visible, and presents and soft toys arranged around her. The bottom-left panel shows her in a playful pigeon-toed standing posture. Her gaze must be directed to the right side of the camera. This must be a full-body photo where the sweater drapes naturally as she holds a red balloon string—with the balloon floating upward—and a small drink prop. The bottom-right panel presents a side-profile close-up with a precise pose and gaze. The shot is from the chest up, shown in a three-quarter profile from her right side. Her body is turned about 60 degrees away from the camera, with the shoulder nearer to the camera slightly dropped so that the off-shoulder sweater reveals the curve of that shoulder and upper back. Her head is gently tilted back and turned toward the camera, but her eyes do not look into the lens; instead, her gaze must be directed slightly past the camera and a little upward, as if looking at something in the distance, creating a dreamy, faraway expression. Her lips remain relaxed and slightly parted.
-      The overall tone must feel cinematic yet refined and high-end, with clean luminous skin tones and no harsh saturation.
-    reference_folder: ""
-    use_comparison_template: false
-    use_multi_image: false
-    
-  - folder: ../Media Files/Nano Banana/1127 4 Styles/1127 溫暖木屋-1
-    prompt: |
-      Use the uploaded person as the subject. The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
-
-      Lighting
-      Direct front on-camera flash with harsh bright highlights and very short shadows.
-      Flash lights only the subject and the chair.
-      Background stays dim but clearly visible—not pitch black.
-      No studio light, no cinematic light, no soft diffuse light.
-
-      Style & Atmosphere
-      Realistic, unpolished Christmas home snapshot at night.
-      Slight grain, uneven flash, natural imperfections, real skin, real home environment.
-      No model vibe, no professional styling—everything feels casual, spontaneous, and very “at home.”
-
-      Environment
-      A slightly messy Christmas living room with natural, lived-in clutter: scattered decorations, stockings, candles, small Santa dolls, garlands, faint Christmas lights, a wooden cabinet.
-
-      Pose ( a real-life home snapshot)
-
-      The subject sits deep in the leather armchair in an extremely relaxed, unstructured, almost slumped posture.
-
-      Upper body leans back comfortably with loose shoulders.One leg extends forward loosely, the other bends or lifts slightly in a natural, soft, effortless way—similar to the relaxed playfulness in the last reference image, but not exaggerated or model-like.
-      Feet and legs must feel real, casual, and natural—not stylized, not posed.Hands rest loosely without intention—on the armrest, on the lap, or holding the cardigan casually.Expression remains soft, slightly tired, unfocused—completely natural and spontaneous, as if caught mid-relaxation by a sudden flash.This maintains the ultra-lazy, warm, at-home feeling , but with natural realism, not the stylized look.
-
-      Outfit
-
-      White camisole and white denim shorts .oversized chunky red knitted cardigan falling off the shoulders, red knitted leg warmers. (If a user uploads a photo of a male, and changes the lower body to wearing distressed black jeans, there will definitely be no red knitted leg warmers.)
-
-      Mood Summary
-
-      A cozy, real-life, extremely relaxed Christmas night snapshot with strong direct flash, a slightly brightened dim room, natural clutter, and a lazy, unposed posture inspired —but grounded in everyday realism, with no model atmosphere.
-    reference_folder: ""
-    use_comparison_template: false
-    use_multi_image: false
-
-  - folder: ../Media Files/Nano Banana/1127 4 Styles/1127 溫暖木屋-2
-    prompt: |
-      Use the uploaded person as the subject. The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
-
-      Create a Christmas-themed photo that precisely replicates the lighting, atmosphere, and style of the reference image, matching the look of a vintage early-2000s CCD camera with direct flash. The lighting must feel raw and spontaneous, with a powerful on-camera flash that creates crisp, bright highlights on the skin, strong hard-edged shadows on the wall and furniture, and a slightly cool, neutral white balance. No cinematic softness or warm studio tones should appear. The flash should illuminate the subject harshly and evenly, flattening the textures in a way typical of point-and-shoot CCD devices while preserving the clean, polished quality of the image.
-
-      The pose must feel candid, relaxed, and effortless rather than posed. The subject reclines naturally in a large brown leather armchair, hips sinking deeply into the seat, back and shoulders settling casually into the cushion. , playful bend: one leg raised at an angle that looks spontaneous and unforced, the foot slightly relaxed, while the other leg drapes casually over the chair edge. The arms fall in natural resting positions—one hand placed loosely on the thigh or near the sweater, the other draped softly along the armrest. The body language should communicate comfort, laziness, and natural looseness, mirroring the easy,.There will absolutely be no situation where the legs are suspended and stretched out in the air.
-
-      She wears an oversized chunky red knit cardigan made from thick, heavy yarn with a visibly hand-knit texture. The cardigan hangs loosely and does not appear tailored or neat, extending far past the wrists. Beneath it she wears a white tank top and white shorts, accompanied by thick red knitted socks that match the cardigan. A slouched Santa hat with plush white trim sits slightly off-center on her head.(If you are a boy, please change to blue jeans.)
-
-      The environment must recreate the warm, cozy, cluttered holiday living room of the reference image. Behind the subject stands a large wooden cabinet with carved decorative panels, fully decorated with pine garlands, pinecones, embroidered Christmas stockings, and small Santa dolls arranged in a slightly chaotic, lived-in way. To the right stands a heavily decorated Christmas tree with frosted branches and abundant red ornaments. The floor is covered with an old-fashioned patterned carpet, and Christmas blankets, gift boxes, and knitted throws are casually scattered around the armchair. The space should not appear minimalistic; it must feel full, warm, nostalgic, and a bit messy.
-
-      The overall color palette must follow the CCD aesthetic: bright neutral whites, desaturated greens, rich reds, and a clean color balance without yellow tint. Flash reflections must appear strongly on leather, ornaments, and the subject’s skin. The atmosphere should evoke a candid, playful, slightly nostalgic Christmas snapshot with direct flash brightness, clean shadows, and a relaxed, intimate holiday feeling—perfectly matching the energy, spontaneity, and charm of the reference.
-    reference_folder: ""
-    use_comparison_template: false
-    use_multi_image: false
-
   - folder: ../Media Files/Nano Banana/1127 4 Styles/1127 旋轉木馬
     prompt: |
       Use the uploaded person as the subject. The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
@@ -102,8 +39,9 @@ comments:
   folder_structure: "Each task folder should contain 'Source' and 'Generated_Output' subfolders. For multi-image tasks, also include 'Additional' subfolder."
   reference_folder: "Optional: Path to folder containing third set of images for 3-way comparison"
   template_usage: "use_comparison_template: true uses comparison_template_path (3 placeholders), false uses template_path (2 placeholders)"
-  model: "Gemini model to use for generation. 'gemini-2.5-flash-image', 'gemini-3-pro-image-preview'. Default: 'gemini-2.5-flash-image'. Can be overridden per task."
-  use_multi_image: "Set to true to enable dual-image mode from Additional folder, false for single-image mode"
+  model: "Gemini model to use for generation. 'gemini-2.5-flash-image' (max 3 images, faster), 'gemini-3-pro-image-preview' (max 14 images, better quality). Default: 'gemini-2.5-flash-image'. Can be overridden per task."
+  resolution: "Output resolution. Options: '1K' (default). Can be overridden per task."
+  use_multi_image: "Set to true to enable multi-image mode from Additional folder, false for single-image mode"
   output_group_tasks_by: "Set to 0 (or omit) to create individual reports per task. Set to N (e.g., 4) to group N tasks into one combined report. Example: with 4 tasks and group_tasks_by=4, creates 1 report; with 8 tasks, creates 2 reports."
   multi_image_config:
     description: "Configuration for multi-image generation"

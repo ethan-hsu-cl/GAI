@@ -8,7 +8,19 @@ from .base_handler import BaseAPIHandler
 
 
 class NanoBananaHandler(BaseAPIHandler):
-    """Google Flash/Nano Banana handler with multi-image support."""
+    """Google Flash/Nano Banana handler with multi-image support.
+    
+    Supports:
+        - gemini-2.5-flash-image: max 3 images (faster)
+        - gemini-3-pro-image-preview: max 14 images (better quality)
+    """
+    
+    # Maximum images allowed per model
+    MODEL_MAX_IMAGES = {
+        'gemini-2.5-flash-image': 3,
+        'gemini-3-pro-image-preview': 14
+    }
+    DEFAULT_MAX_IMAGES = 3
     
     def __init__(self, processor):
         """Initialize handler with multi-image support."""
@@ -18,7 +30,15 @@ class NanoBananaHandler(BaseAPIHandler):
         self._source_file_indices = {}  # Track source file index for sequential matching
     
     def _load_image_pools(self, task_config):
-        """Load and cache image pools from additional folders."""
+        """Load and cache image pools from additional folders.
+        
+        Args:
+            task_config: Task configuration dictionary containing multi_image_config.
+        
+        Returns:
+            dict: Pool data with 'pools', 'mode', and 'allow_duplicates' keys,
+                  or None if multi-image is not configured.
+        """
         multi_image_config = task_config.get('multi_image_config', {})
         
         if not multi_image_config or not multi_image_config.get('enabled', False):
@@ -65,44 +85,70 @@ class NanoBananaHandler(BaseAPIHandler):
         return self._additional_image_pools[task_key]
     
     def _get_additional_images(self, file_path, task_config):
-        """Get additional images based on configuration mode."""
+        """Get additional images based on configuration mode.
+        
+        Args:
+            file_path: Path to the source file being processed.
+            task_config: Task configuration dictionary.
+        
+        Returns:
+            list: List of additional image paths (can be empty strings for unused slots).
+        """
+        # Get model to determine max images
+        model = task_config.get('model', 'gemini-2.5-flash-image')
+        max_images = self.MODEL_MAX_IMAGES.get(model, self.DEFAULT_MAX_IMAGES)
+        # Reserve 1 slot for source image
+        max_additional = max_images - 1
+        
         # Check if multi-image is explicitly disabled
         if not task_config.get('use_multi_image', True):
-            return ['', '']
+            return []
         
         # Check for static additional images (legacy support)
         additional_images = task_config.get('additional_images', {})
         if additional_images:
-            return [
-                additional_images.get('image1', ''),
-                additional_images.get('image2', '')
-            ]
+            result = []
+            # Support legacy format with image1, image2, etc.
+            for i in range(1, max_additional + 1):
+                img = additional_images.get(f'image{i}', '')
+                if img:
+                    result.append(img)
+            return result
         
         # Check for multi-image configuration
         pool_data = self._load_image_pools(task_config)
         if not pool_data or not pool_data['pools']:
-            return ['', '']
+            return []
         
         pools = pool_data['pools']
         mode = pool_data['mode']
         allow_duplicates = pool_data['allow_duplicates']
         
         if mode == 'random_pairing':
-            return self._random_pairing(pools, file_path, allow_duplicates)
+            return self._random_pairing(pools, file_path, allow_duplicates, max_additional)
         elif mode == 'sequential':
-            return self._sequential_selection(pools, file_path)
+            return self._sequential_selection(pools, file_path, max_additional)
         else:
             self.logger.warning(f" ⚠️ Unknown mode '{mode}', using random_pairing")
-            return self._random_pairing(pools, file_path, allow_duplicates)
+            return self._random_pairing(pools, file_path, allow_duplicates, max_additional)
     
-    def _random_pairing(self, pools, file_path, allow_duplicates):
-        """Randomly select one image from each pool, optionally avoiding duplicates."""
+    def _random_pairing(self, pools, file_path, allow_duplicates, max_additional):
+        """Randomly select one image from each pool, optionally avoiding duplicates.
+        
+        Args:
+            pools: List of image pools (each pool is a list of Path objects).
+            file_path: Path to the source file being processed.
+            allow_duplicates: Whether to allow duplicate combinations.
+            max_additional: Maximum number of additional images to return.
+        
+        Returns:
+            list: List of selected image paths as strings.
+        """
         selected = []
         max_attempts = 100
         
-        for pool in pools:
+        for pool in pools[:max_additional]:
             if not pool:
-                selected.append('')
                 continue
             
             if allow_duplicates:
@@ -120,13 +166,9 @@ class NanoBananaHandler(BaseAPIHandler):
                     # If we can't find unused after max_attempts, just use random
                     selected.append(str(random.choice(pool)))
         
-        # Pad with empty strings if we have fewer than 2 pools
-        while len(selected) < 2:
-            selected.append('')
-        
-        return selected[:2]  # Return only first 2
+        return selected[:max_additional]
     
-    def _sequential_selection(self, pools, file_path):
+    def _sequential_selection(self, pools, file_path, max_additional):
         """Select images sequentially from each pool based on source file index.
         
         Ensures one-to-one matching when enough images are available:
@@ -134,6 +176,14 @@ class NanoBananaHandler(BaseAPIHandler):
         - First source file → first additional image(s)
         - Second source file → second additional image(s)
         - When pool is smaller than source files, cycles back using modulo
+        
+        Args:
+            pools: List of image pools (each pool is a list of Path objects).
+            file_path: Path to the source file being processed.
+            max_additional: Maximum number of additional images to return.
+        
+        Returns:
+            list: List of selected image paths as strings.
         """
         # Get the source file's index from our pre-built index
         task_key = None
@@ -149,7 +199,7 @@ class NanoBananaHandler(BaseAPIHandler):
         
         selected = []
         
-        for pool in pools:
+        for pool in pools[:max_additional]:
             if pool:
                 # Use the source file index for one-to-one matching
                 # When there are enough images, each source gets a unique additional image
@@ -164,17 +214,20 @@ class NanoBananaHandler(BaseAPIHandler):
                         self.logger.debug(f" 🔗 One-to-one match: source#{file_index} → additional#{index}")
                     else:
                         self.logger.debug(f" 🔄 Cycling match: source#{file_index} → additional#{index} (pool size: {pool_size})")
-            else:
-                selected.append('')
         
-        # Pad with empty strings if needed
-        while len(selected) < 2:
-            selected.append('')
-        
-        return selected[:2]
+        return selected[:max_additional]
     
     def _make_api_call(self, file_path, task_config, attempt):
-        """Make Nano Banana API call with multi-image support."""
+        """Make Nano Banana API call with multi-image support.
+        
+        Args:
+            file_path: Path to the source image file.
+            task_config: Task configuration dictionary.
+            attempt: Current attempt number (0-indexed).
+        
+        Returns:
+            tuple: API response tuple (response_id, error_msg, response_data).
+        """
         additional_imgs = self._get_additional_images(file_path, task_config)
         
         # Store the additional images used for this specific file (for metadata)
@@ -185,18 +238,45 @@ class NanoBananaHandler(BaseAPIHandler):
         # Get model from task config or use default
         model = task_config.get('model', 'gemini-2.5-flash-image')
         
+        # Get resolution from task config or use default
+        resolution = task_config.get('resolution', '1K')
+        
+        # Build images list: source image first, then additional images
+        images_list = [handle_file(str(file_path))]
+        for img_path in additional_imgs:
+            if img_path:
+                images_list.append(handle_file(img_path))
+        
+        # Log image count for debugging
+        max_images = self.MODEL_MAX_IMAGES.get(model, self.DEFAULT_MAX_IMAGES)
+        self.logger.debug(f" 📷 Sending {len(images_list)} images (max {max_images} for {model})")
+        
         return self.client.predict(
             prompt=task_config['prompt'],
             model=model,
-            image1=handle_file(str(file_path)),
-            image2=handle_file(additional_imgs[0]) if additional_imgs[0] else '',
-            image3=handle_file(additional_imgs[1]) if additional_imgs[1] else '',
+            images=images_list,
+            resolution=resolution,
             api_name=self.api_defs['api_name']
         )
     
     def _handle_result(self, result, file_path, task_config, output_folder, 
                       metadata_folder, base_name, file_name, start_time, attempt):
-        """Handle Nano Banana API result with multi-image tracking."""
+        """Handle Nano Banana API result with multi-image tracking.
+        
+        Args:
+            result: API response tuple (response_id, error_msg, response_data).
+            file_path: Path to the source image file.
+            task_config: Task configuration dictionary.
+            output_folder: Path to save generated outputs.
+            metadata_folder: Path to save metadata files.
+            base_name: Base name for output files.
+            file_name: Original source file name.
+            start_time: Processing start timestamp.
+            attempt: Current attempt number (0-indexed).
+        
+        Returns:
+            bool: True if processing succeeded, False otherwise.
+        """
         response_id, error_msg, response_data = result[:3]
         processing_time = time.time() - start_time
         
