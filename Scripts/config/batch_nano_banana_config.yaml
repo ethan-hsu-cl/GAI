@@ -12,24 +12,61 @@ schedule:
   start_time: ""
   comment: "Time format: HH:MM (24-hour format). Leave empty to start immediately"
 
-root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCCAvLVCEYjRJqk9FW45X-jAbwwuS616tyVNLcgwvaIOQM?e=pqxFhE
-root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g3a9900562f9_1_0#slide=id.g3a9900562f9_1_0
+root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgB2NoS2QzdMTb8m8erR4Ce2AWv-3rSbMkYarECCv4QQrBc?e=Px4WOd
+root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g3aa95882f4b_0_20#slide=id.g3aa95882f4b_0_20
 
 tasks:
-  - folder: ../Media Files/Nano Banana/1127 4 Styles/1127 旋轉木馬
+  - folder: ../Media Files/Nano Banana/1128 2 Styles/1128 溫暖木屋-1
     prompt: |
       Use the uploaded person as the subject. The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
 
-      Half-body shot, framed close enough to clearly show the person’s face and upper body. Pull the camera closer so the face appears larger, sharper, and more visible.
+      Lighting
+      Direct front on-camera flash with harsh bright highlights and very short shadows.
+      Flash lights only the subject and the chair.
+      Background stays dim but clearly visible—not pitch black.
+      No studio light, no cinematic light, no soft diffuse light.
 
-      The figure and the carousel are placed in the center of the image. The figure is riding a vintage carousel, leaning slightly back, with one arm raised to hold onto a bar, a slight twist of the waist, and hair gently swaying. Both the figure and the carousel must face the same direction (to the right), with bright smiles. If wearing a skirt, the figure will appear to be sitting naturally and appropriately to the side, with the skirt flowing gracefully. If wearing trousers, the figure will be interpreted as straddling the carousel.Unnatural sitting postures or contorted body positions are strictly prohibited.
+      Style & Atmosphere
+      Realistic, unpolished Christmas home snapshot at night.
+      Slight grain, uneven flash, natural imperfections, real skin, real home environment.
+      No model vibe, no professional styling—everything feels casual, spontaneous, and very “at home.”
 
-      environment with warm vintage lighting matching :
-      Use soft amber-orange carousel bulbs with a brighter and more vivid incandescent glow. The bulbs appear noticeably warmer and more saturated than before, leaning slightly more toward orange-gold. Increase the overall bulb brightness so the light looks clearer and more luminous, with clean golden highlights instead of bloom or haze. The carousel lights cast stronger warm orange reflections on the panels, mirrors, and horses, matching the vivid warm glow seen in the reference image.
+      Environment
+      A slightly messy Christmas living room with natural, lived-in clutter: scattered decorations, stockings, candles, small Santa dolls, garlands, faint Christmas lights, a wooden cabinet.
 
-      Keep the background extremely clean, simple, and uncluttered. No extra objects, no crowds, no decorations, no visual noise—only the essential carousel structure and glowing bulbs, with nothing else in the scene.
+      Outfit
+      Users uploading photos of women typically wear a white tank top and white denim shorts, with a loose red chunky knit cardigan casually draped over their shoulders, paired with red knit leg warmers. If uploading photos of men, the upper body must be dressed in a white tank top and a loose red chunky knit cardigan, while the lower body must be dressed in ripped black jeans; red knit leg warmers are strictly prohibited.
 
-      Atmosphere is cinematic, nostalgic, warm, and slightly dreamy, with soft grain and warm tones.
+      Pose ( a real-life home snapshot)
+
+      The subject sits deep in the leather armchair in an extremely relaxed, unstructured, almost slumped posture.
+
+      Upper body leans back comfortably with loose shoulders.One leg extends forward loosely, the other bends or lifts slightly in a natural, soft, effortless way—similar to the relaxed playfulness in the last reference image, but not exaggerated or model-like.
+      Feet and legs must feel real, casual, and natural—not stylized, not posed.Hands rest loosely without intention—on the armrest, on the lap, or holding the cardigan casually.Expression remains soft, slightly tired, unfocused—completely natural and spontaneous, as if caught mid-relaxation by a sudden flash.This maintains the ultra-lazy, warm, at-home feeling , but with natural realism, not the stylized look.
+
+      Mood Summary
+
+      A cozy, real-life, extremely relaxed Christmas night snapshot with strong direct flash, a slightly brightened dim room, natural clutter, and a lazy, unposed posture inspired —but grounded in everyday realism, with no model atmosphere.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1128 2 Styles/1128 溫暖木屋-2
+    prompt: |
+      Use the uploaded person as the subject. The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
+
+      Create a Christmas-themed photo that precisely replicates the lighting, atmosphere, and style of the reference image, matching the look of a vintage early-2000s CCD camera with direct flash. The lighting must feel raw and spontaneous, with a powerful on-camera flash that creates crisp, bright highlights on the skin, strong hard-edged shadows on the wall and furniture, and a slightly cool, neutral white balance. No cinematic softness or warm studio tones should appear. The flash should illuminate the subject harshly and evenly, flattening the textures in a way typical of point-and-shoot CCD devices while preserving the clean, polished quality of the image.
+
+      outfit
+      Users uploading photos of women wear a white tank top and white denim shorts, with a loose red chunky knit cardigan casually draped over their shoulders, paired with red knit leg warmers. (If uploading photos of men, the upper body must be a white tank top and a loose red chunky knit cardigan, the lower body must be blue denim trousers, and red knit leg warmers are prohibited.) Both men and women will have a fluffy white-brimmed Santa hat perched askew on their heads.
+
+      The pose must feel candid, relaxed, and effortless rather than posed. The subject reclines naturally in a large brown leather armchair, hips sinking deeply into the seat, back and shoulders settling casually into the cushion. , playful bend: one leg raised at an angle that looks spontaneous and unforced, the foot slightly relaxed, while the other leg drapes casually over the chair edge. The arms fall in natural resting positions—one hand placed loosely on the thigh or near the sweater, the other draped softly along the armrest. The body language should communicate comfort, laziness, and natural looseness, mirroring the easy,.There will absolutely be no situation where the legs are suspended and stretched out in the air.
+
+
+      The environment must recreate the warm, cozy, cluttered holiday living room of the reference image. Behind the subject stands a large wooden cabinet with carved decorative panels, fully decorated with pine garlands, pinecones, embroidered Christmas stockings, and small Santa dolls arranged in a slightly chaotic, lived-in way. To the right stands a heavily decorated Christmas tree with frosted branches and abundant red ornaments. The floor is covered with an old-fashioned patterned carpet, and Christmas blankets, gift boxes, and knitted throws are casually scattered around the armchair. The space should not appear minimalistic; it must feel full, warm, nostalgic, and a bit messy.
+
+      The overall color palette must follow the CCD aesthetic: bright neutral whites, desaturated greens, rich reds, and a clean color balance without yellow tint. Flash reflections must appear strongly on leather, ornaments, and the subject’s skin. The atmosphere should evoke a candid, playful, slightly nostalgic Christmas snapshot with direct flash brightness, clean shadows, and a relaxed, intimate holiday feeling.
+
     reference_folder: ""
     use_comparison_template: false
     use_multi_image: false

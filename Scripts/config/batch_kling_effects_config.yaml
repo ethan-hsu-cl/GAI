@@ -1,7 +1,6 @@
 # Kling Video Effects Configuration
 # Applies premade video effects to images using the Kling API
 
-base_folder: ../Media Files/Kling Effects/1127 2 Styles
 output_directory: /Users/ethanhsu/Desktop/GAI/Report
 testbed: http://192.168.31.40:8000/kling/
 template_path: templates/I2V templates.pptx
@@ -14,8 +13,10 @@ output:
   group_tasks_by: 4
 
 schedule:
-  start_time: ''
+  start_time: '18:00'
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
+
+base_folder: ../Media Files/Kling Effects/1128 8 Styles
 
 design_link: 'https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=46494616#gid=46494616'
 source_video_link: ''
@@ -27,10 +28,28 @@ source_video_link: ''
 # The effect name (custom_effect or effect) is used as the subfolder name in base_folder
 tasks:
   - effect: 
-    custom_effect: 'jumping_ginger_joy'
-  
+    custom_effect: 'santa_gift'
+
   - effect: 
-    custom_effect: 'snowboarding'
+    custom_effect: 'snowglobe'
+
+  - effect: 
+    custom_effect: 'steampunk_christmas'
+
+  - effect: 
+    custom_effect: 'ornament_crash'
+
+  - effect: 
+    custom_effect: 'santa_express'
+
+  - effect: 
+    custom_effect: 'coronation_of_frost'
+
+  - effect: 
+    custom_effect: 'lv_0' # 圣诞写真
+
+  - effect: 
+    custom_effect: '粒子風' # 圣诞奇幻
 
 comments:
   base_folder: >

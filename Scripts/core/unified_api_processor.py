@@ -29,6 +29,16 @@ file download command example:
 yt-dlp -f "bv*[vcodec~='^(h264|avc)']+ba[acodec~='^(mp?4a|aac)']" "https://youtube.com/playlist?list=PLSgBrV2b0XA_ofBZ4c3e85sTNBh3BKN2y&si=_5VpzvdI7hsF-a4o"
 """
 
+
+class ValidationError(Exception):
+    """Exception raised when file validation fails.
+    
+    This exception signals that invalid files were found during validation.
+    When caught, processing should stop and report generation should be skipped.
+    """
+    pass
+
+
 class UnifiedAPIProcessor:
     """
     Enhanced Consolidated API processor supporting multiple endpoints with all individual processor features:
@@ -400,7 +410,7 @@ class UnifiedAPIProcessor:
                 self.logger.info(f"✓ Task {i+1}: {result[1]}/{result[2]} valid images")
         if invalid_images:
             self.write_invalid_report(invalid_images, "kling")
-            raise Exception(f"{len(invalid_images)} invalid images found")
+            raise ValidationError(f"{len(invalid_images)} invalid images found")
         return valid_tasks
 
     def _validate_kling_endframe_structure(self):
@@ -452,7 +462,7 @@ class UnifiedAPIProcessor:
         
         if invalid_images:
             self.write_invalid_report(invalid_images, "kling_endframe")
-            raise Exception(f"{len(invalid_images)} invalid images found")
+            raise ValidationError(f"{len(invalid_images)} invalid images found")
         
         return valid_tasks
     
@@ -551,7 +561,7 @@ class UnifiedAPIProcessor:
 
         if invalid_images:
             self.write_invalid_report(invalid_images, "nano_banana")
-            raise Exception(f"{len(invalid_images)} invalid images found")
+            raise ValidationError(f"{len(invalid_images)} invalid images found")
 
         return valid_tasks
 
@@ -630,7 +640,7 @@ class UnifiedAPIProcessor:
         
         if invalid_videos:
             self.write_invalid_report(invalid_videos, 'runway')
-            raise Exception(f"{len(invalid_videos)} invalid videos found")
+            raise ValidationError(f"{len(invalid_videos)} invalid videos found")
         
         return valid_tasks
 
@@ -720,11 +730,11 @@ class UnifiedAPIProcessor:
         # Report validation errors
         if invalid_images:
             self.write_invalid_report(invalid_images, 'wan_images')
-            raise Exception(f"{len(invalid_images)} invalid images found")
+            raise ValidationError(f"{len(invalid_images)} invalid images found")
         
         if invalid_videos:
             self.write_invalid_report(invalid_videos, 'wan_videos')
-            raise Exception(f"{len(invalid_videos)} invalid videos found")
+            raise ValidationError(f"{len(invalid_videos)} invalid videos found")
         
         return valid_tasks
 
@@ -889,7 +899,7 @@ class UnifiedAPIProcessor:
 
         if invalid_images:
             self.write_invalid_report(invalid_images, "kling_effects")
-            raise Exception(f"{len(invalid_images)} invalid images found")
+            raise ValidationError(f"{len(invalid_images)} invalid images found")
 
         if not valid_tasks:
             raise Exception("No valid Kling Effects tasks found")
@@ -966,7 +976,7 @@ class UnifiedAPIProcessor:
 
         if invalid_images:
             self.write_invalid_report(invalid_images)
-            raise Exception(f"{len(invalid_images)} invalid images found")
+            raise ValidationError(f"{len(invalid_images)} invalid images found")
 
         return valid_tasks
 
@@ -1108,25 +1118,33 @@ class UnifiedAPIProcessor:
             return "1:1"
 
     def write_invalid_report(self, invalid_files, api_suffix=""):
-        """Enhanced invalid files report"""
-        report_name = f"invalid_{self.api_name}_report.txt"
-        if api_suffix:
-            report_name = f"invalid_images_{api_suffix}_report.txt"
-
-        with open(report_name, 'w', encoding='utf-8') as f:
-            f.write(f"INVALID FILES ({len(invalid_files)} total)\n")
-            f.write(f"Generated: {datetime.now()}\n\n")
-
-            for file in invalid_files:
-                if 'folder' in file:
-                    if 'filename' in file:
-                        f.write(f"❌ {file['folder']}: {file['filename']} - {file['reason']}\n")
-                    else:
-                        f.write(f"❌ {file['name']} in {file['folder']}: {file['reason']}\n")
-                elif 'type' in file:
-                    f.write(f"❌ {file['name']} ({file['type']}) in {file.get('folder', 'unknown')}: {file['reason']}\n")
+        """Print invalid files report to terminal instead of creating a file.
+        
+        Args:
+            invalid_files: List of dictionaries containing invalid file information.
+            api_suffix: Optional suffix to identify the API type in the header.
+        """
+        api_label = api_suffix.upper() if api_suffix else self.api_name.upper()
+        
+        self.logger.error(f"\n{'='*60}")
+        self.logger.error(f"❌ INVALID FILES REPORT - {api_label}")
+        self.logger.error(f"{'='*60}")
+        self.logger.error(f"Total invalid files: {len(invalid_files)}")
+        self.logger.error(f"Generated: {datetime.now()}")
+        self.logger.error(f"{'-'*60}")
+        
+        for file in invalid_files:
+            if 'folder' in file:
+                if 'filename' in file:
+                    self.logger.error(f"  ❌ {file['folder']}: {file['filename']} - {file['reason']}")
                 else:
-                    f.write(f"❌ {file['name']} in {file.get('path', 'unknown')}: {file['reason']}\n")
+                    self.logger.error(f"  ❌ {file['name']} in {file['folder']}: {file['reason']}")
+            elif 'type' in file:
+                self.logger.error(f"  ❌ {file['name']} ({file['type']}) in {file.get('folder', 'unknown')}: {file['reason']}")
+            else:
+                self.logger.error(f"  ❌ {file['name']} in {file.get('path', 'unknown')}: {file['reason']}")
+        
+        self.logger.error(f"{'='*60}\n")
 
     def wait_for_schedule(self):
         """Wait for scheduled time if specified"""
@@ -1437,7 +1455,7 @@ class UnifiedAPIProcessor:
                 self.logger.info(f"✓ Task {i}: {result[1]}/{result[2]} valid images")
         if invalid_images:
             self.write_invalid_report(invalid_images, "genvideo")
-            raise Exception(f"{len(invalid_images)} invalid images found")
+            raise ValidationError(f"{len(invalid_images)} invalid images found")
         return valid_tasks
 
     def validate_pixverse_structure(self):
@@ -1506,7 +1524,7 @@ class UnifiedAPIProcessor:
         
         if invalid_images:
             self.write_invalid_report(invalid_images, "pixverse")
-            raise Exception(f"{len(invalid_images)} invalid images found")
+            raise ValidationError(f"{len(invalid_images)} invalid images found")
         
         return valid_tasks
 
@@ -1551,12 +1569,18 @@ class UnifiedAPIProcessor:
         
         Returns:
             bool: True if processing completed successfully, False otherwise
+        
+        Raises:
+            ValidationError: If file validation fails (propagates to caller).
         """
         if not self.load_config():
             return False
 
         try:
             valid_tasks = self.validate_and_prepare()
+        except ValidationError:
+            # Re-raise ValidationError to signal report should be skipped
+            raise
         except Exception as e:
             self.logger.error(str(e))
             return False

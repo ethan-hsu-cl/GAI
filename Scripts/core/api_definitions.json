@@ -10,7 +10,7 @@
             ".tiff"
         ],
         "validation": {
-            "max_size_mb": 10,
+            "max_size_mb": 30,
             "min_dimension": 300,
             "aspect_ratio": [
                 0.4,

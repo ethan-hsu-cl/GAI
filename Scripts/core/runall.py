@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 
 # Import unified processors and report generators
-from unified_api_processor import create_processor
+from unified_api_processor import create_processor, ValidationError
 from unified_report_generator import create_report_generator
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
@@ -144,7 +144,17 @@ def get_platforms_to_run(platform_arg):
         return [platform_arg]
 
 def run_processor(api_name, config_file=None):
-    """Run API processor for given platform"""
+    """Run API processor for given platform.
+    
+    Args:
+        api_name: Name of the API to process.
+        config_file: Optional path to config file.
+    
+    Returns:
+        tuple: (success: bool, skip_report: bool)
+            - success: True if processing completed successfully
+            - skip_report: True if validation failed and report should be skipped
+    """
     try:
         logger.info(f"🔄 Processing: {api_name.replace('_', ' ').title()}")
 
@@ -156,11 +166,16 @@ def run_processor(api_name, config_file=None):
         else:
             logger.error(f"❌ {api_name} processing failed")
 
-        return success
+        return success, False  # success status, don't skip report
 
+    except ValidationError as e:
+        logger.error(f"❌ {api_name} validation failed: {e}")
+        logger.warning(f"⚠️ Skipping report generation due to validation errors")
+        return False, True  # failed, skip report
+    
     except Exception as e:
         logger.error(f"❌ {api_name} processing error: {e}")
-        return False
+        return False, False  # failed, but don't skip report (other errors)
 
 def run_report_generator(api_name, config_file=None):
     """Run report generator for given platform"""
@@ -194,7 +209,16 @@ def run_report_generator(api_name, config_file=None):
         return False
 
 def run_platform(platform, action, config_file=None):
-    """Run processing and/or reporting for a single platform"""
+    """Run processing and/or reporting for a single platform.
+    
+    Args:
+        platform: Platform name to run.
+        action: Action to perform ('process', 'report', or 'auto').
+        config_file: Optional path to config file.
+    
+    Returns:
+        dict: Results dictionary with 'processing' and/or 'reporting' keys.
+    """
     api_name = API_MAPPING[platform]
 
     # Use provided config or default
@@ -208,14 +232,20 @@ def run_platform(platform, action, config_file=None):
         config_file = None
 
     results = {}
+    skip_report = False
 
     # Run processing if requested
     if action in ['process', 'auto']:
-        results['processing'] = run_processor(api_name, config_file)
+        processing_success, skip_report = run_processor(api_name, config_file)
+        results['processing'] = processing_success
 
-    # Run reporting if requested
+    # Run reporting if requested (skip if validation failed during processing)
     if action in ['report', 'auto']:
-        results['reporting'] = run_report_generator(api_name, config_file)
+        if skip_report:
+            logger.warning(f"⏭️ Skipping report generation for {platform} due to validation errors")
+            results['reporting'] = False
+        else:
+            results['reporting'] = run_report_generator(api_name, config_file)
 
     return results
 
