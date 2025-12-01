@@ -12,61 +12,330 @@ schedule:
   start_time: ""
   comment: "Time format: HH:MM (24-hour format). Leave empty to start immediately"
 
-root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgB2NoS2QzdMTb8m8erR4Ce2AWv-3rSbMkYarECCv4QQrBc?e=Px4WOd
-root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g3aa95882f4b_0_20#slide=id.g3aa95882f4b_0_20
+root_source_video_link: 
+root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g3aa95882f4b_0_271#slide=id.g3aa95882f4b_0_271
 
 tasks:
-  - folder: ../Media Files/Nano Banana/1128 2 Styles/1128 溫暖木屋-1
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 噴水雪花CCD感照
     prompt: |
-      Use the uploaded person as the subject. The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
+      Use the uploaded person as the subject, keeping their face, facial features, hairstyle, skin tone, makeup, expression, and body proportions exactly the same as in the input photo.
 
-      Lighting
-      Direct front on-camera flash with harsh bright highlights and very short shadows.
-      Flash lights only the subject and the chair.
-      Background stays dim but clearly visible—not pitch black.
-      No studio light, no cinematic light, no soft diffuse light.
 
-      Style & Atmosphere
-      Realistic, unpolished Christmas home snapshot at night.
-      Slight grain, uneven flash, natural imperfections, real skin, real home environment.
-      No model vibe, no professional styling—everything feels casual, spontaneous, and very “at home.”
+      Each generated image should recreate the style found in popular social media snow-night portraits:
+      a dark outdoor night background, falling snow illuminated by flash, strong direct-flash highlights on the face, crisp shadow edges, slightly overexposed skin, high contrast, and visible flash reflections on snowflakes.
 
-      Environment
-      A slightly messy Christmas living room with natural, lived-in clutter: scattered decorations, stockings, candles, small Santa dolls, garlands, faint Christmas lights, a wooden cabinet.
+      The system randomly generates one of five actions to create a portrait photo, based on the following five states. Each photo shows a person in a snowy night scene and is taken directly using the camera flash, similar to a candid street shot.
 
-      Outfit
-      Users uploading photos of women typically wear a white tank top and white denim shorts, with a loose red chunky knit cardigan casually draped over their shoulders, paired with red knit leg warmers. If uploading photos of men, the upper body must be dressed in a white tank top and a loose red chunky knit cardigan, while the lower body must be dressed in ripped black jeans; red knit leg warmers are strictly prohibited.
+      1.Holding a transparent umbrella in the snow — standing naturally while snow falls around them.
 
-      Pose ( a real-life home snapshot)
+      2.Close-up direct-flash portrait — subject looking directly into the camera with snowflakes visible at close range.
 
-      The subject sits deep in the leather armchair in an extremely relaxed, unstructured, almost slumped posture.
+      3.Playful winter motion — subject leaning or reaching forward as if playing in the snow, showing cheerful movement.
 
-      Upper body leans back comfortably with loose shoulders.One leg extends forward loosely, the other bends or lifts slightly in a natural, soft, effortless way—similar to the relaxed playfulness in the last reference image, but not exaggerated or model-like.
-      Feet and legs must feel real, casual, and natural—not stylized, not posed.Hands rest loosely without intention—on the armrest, on the lap, or holding the cardigan casually.Expression remains soft, slightly tired, unfocused—completely natural and spontaneous, as if caught mid-relaxation by a sudden flash.This maintains the ultra-lazy, warm, at-home feeling , but with natural realism, not the stylized look.
+      4.Scarf winter fashion look — subject wearing a warm scarf and posing candidly while snow falls.
 
-      Mood Summary
+      5.Winter street snapshot — subject standing on a nighttime street with snow and warm city lights behind them.
 
-      A cozy, real-life, extremely relaxed Christmas night snapshot with strong direct flash, a slightly brightened dim room, natural clutter, and a lazy, unposed posture inspired —but grounded in everyday realism, with no model atmosphere.
+      All images must maintain:
+      • a realistic night atmosphere
+      • flash-lit snowflakes floating in mid-air
+      • natural winter fashion styling that complements the uploaded person's look
+      • no distortion, no extra limbs, no inconsistent facial appearances
+      • realistic shadows and reflections
+      • clean image quality, with the snow illuminated by strong direct flash
+      work should present a different and realistic night snow scene, all taken using the phone's built-in flash, with a stylish and natural style, suitable for sharing on social media.
     reference_folder: ""
     use_comparison_template: false
     use_multi_image: false
 
-  - folder: ../Media Files/Nano Banana/1128 2 Styles/1128 溫暖木屋-2
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 對鏡畫口紅 1
     prompt: |
-      Use the uploaded person as the subject. The subject’s face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain exactly the same as in the input photo.
+      Use the uploaded person as the subject.Their face, facial features, expression, skin tone, hairstyle, makeup, and identifiable traits must remain unchanged.
 
-      Create a Christmas-themed photo that precisely replicates the lighting, atmosphere, and style of the reference image, matching the look of a vintage early-2000s CCD camera with direct flash. The lighting must feel raw and spontaneous, with a powerful on-camera flash that creates crisp, bright highlights on the skin, strong hard-edged shadows on the wall and furniture, and a slightly cool, neutral white balance. No cinematic softness or warm studio tones should appear. The flash should illuminate the subject harshly and evenly, flattening the textures in a way typical of point-and-shoot CCD devices while preserving the clean, polished quality of the image.
+      The subject stands in front of an ornate golden-framed mirror in a dimly lit room draped with dark red velvet curtains and subtle baroque textures. The mirror must clearly show both the subject’s front view and the reflected side view. The reflection must match the subject exactly without distortion.Unnecessary hand, foot, or human shadows are strictly prohibited With unreasonable mirror reflections. 
 
-      outfit
-      Users uploading photos of women wear a white tank top and white denim shorts, with a loose red chunky knit cardigan casually draped over their shoulders, paired with red knit leg warmers. (If uploading photos of men, the upper body must be a white tank top and a loose red chunky knit cardigan, the lower body must be blue denim trousers, and red knit leg warmers are prohibited.) Both men and women will have a fluffy white-brimmed Santa hat perched askew on their heads.
+      Create a cinematic vanity-mirror beauty scene with a soft, dreamy, vintage atmosphere.
 
-      The pose must feel candid, relaxed, and effortless rather than posed. The subject reclines naturally in a large brown leather armchair, hips sinking deeply into the seat, back and shoulders settling casually into the cushion. , playful bend: one leg raised at an angle that looks spontaneous and unforced, the foot slightly relaxed, while the other leg drapes casually over the chair edge. The arms fall in natural resting positions—one hand placed loosely on the thigh or near the sweater, the other draped softly along the armrest. The body language should communicate comfort, laziness, and natural looseness, mirroring the easy,.There will absolutely be no situation where the legs are suspended and stretched out in the air.
+      Lighting is warm and directional from the upper front-left, casting soft  highlights on the cheekbones, nose bridge, lips, and hair. Shadows are gentle and diffused, creating a romantic film-like glow. The overall tone is White gold with no yellow overcast. Skin should look luminous and slightly dewy.
 
+      Hair mustbacklit, with glowing warm rim light outlining the strands.
 
-      The environment must recreate the warm, cozy, cluttered holiday living room of the reference image. Behind the subject stands a large wooden cabinet with carved decorative panels, fully decorated with pine garlands, pinecones, embroidered Christmas stockings, and small Santa dolls arranged in a slightly chaotic, lived-in way. To the right stands a heavily decorated Christmas tree with frosted branches and abundant red ornaments. The floor is covered with an old-fashioned patterned carpet, and Christmas blankets, gift boxes, and knitted throws are casually scattered around the armchair. The space should not appear minimalistic; it must feel full, warm, nostalgic, and a bit messy.
+      The subject’s pose(Half-body photo):
+      Eyes look at her own reflection with a soft, dreamy gaze.
 
-      The overall color palette must follow the CCD aesthetic: bright neutral whites, desaturated greens, rich reds, and a clean color balance without yellow tint. Flash reflections must appear strongly on leather, ornaments, and the subject’s skin. The atmosphere should evoke a candid, playful, slightly nostalgic Christmas snapshot with direct flash brightness, clean shadows, and a relaxed, intimate holiday feeling.
+      Her posture must feel relaxed, feminine, and slightly angled toward the mirror.
 
+      In her other hand, she held a gold lipstick next to the mirror, as if she were touching up her makeup.
+
+      Makeup should feature glossy lips, subtle blush, and warm brown-gold eye makeup with reflective shimmer.
+
+      She wears a Exquisite  red strapless top and mini skirt with a slightly textured fabric and soft folds. Jewelry such as thin gold bracelets may appear naturally.(Handwritten text will never cover the face)
+
+      The mirror reflects the handwritten text of a lipstick (Happy New Year) and solid Heart symbol, with a texture like a soft peach-gold lipstick. The text must appear handwritten(cursive), The font is free and unrestrained.not computer-generated.
+
+      Background should remain softly blurred but still readable: deep red drapery, vintage patterns, and warm light creating depth.
+
+      Overall mood:
+      soft, intimate, cinematic, , dreamy feminine atmosphere with realistic mirror reflections and delicate film-grain texture.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 對鏡畫口紅 2
+    prompt: |
+      Use the uploaded person as the subject, and ensure that their face, makeup style, hairstyle, skin tone, body proportions, and expression remain exactly the same as in the uploaded photo. The person must keep their original hair color, and the system must not change it to a different color or lighter shade. 
+      The image only shows the person's reflection in the mirror. Reflection of a person in a mirror : lifting one hand gently toward her cheek in a seductive gesture, creating a dramatic S-curve along the spine.The reflection Prohibited show : a second face, not show mismatched gestures, and not display any impossible angle.
+      The subject wears a sparkling red sequin slip dress with a low-cut open back and thin spaghetti straps. The sequins must strongly catch the flash and create bright, star-like reflections across the fabric. 
+      A bold handwritten red lipstick message appears on the mirror reading “Cheers to a new year! ” with a small red heart. The writing must sit naturally on the mirror surface, following its exact perspective and lighting, and must not float or appear digitally added.
+      A modern gray marble bathroom , without showing the ceiling, overhead lights, or elements outside the intended framing. The lighting must come entirely from a strong direct on-camera flash at close distance. The flash must produce harsh shadows, bright highlights, sharp edge shadows, and a high-contrast glossy appearance on the skin, just like a real party-style snapshot with no soft studio lighting.
+      The entire image must feel: bold, glamorous, cold-toned marble, strong flash, dark hair, reflective sequins, and a confident, close-up New Year snapshot captured at the exact same angle.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 對鏡畫口紅 3
+    prompt: |
+      Use the uploaded person as the subject. Their face, facial features, expression, skin tone, hairstyle and identifiable attributes must remain entirely unchanged from the input image, and proportions must remain realistic without distortion or stylization. The final composition must recreate the atmosphere, lighting, and styling of the provided reference image with high precision.
+
+      Generate an elegant vintage-style vanity-table scene where the subject sits before a large illuminated dressing mirror framed with warm Hollywood-style globe bulbs. The camera captures a mid-to-three-quarter view of the subject from slightly behind and to the side, emphasizing her profile and the reflection in the mirror. The subject applies lipstick with her right hand raised gracefully toward her lips, while her left hand rests lightly on the table among makeup products. Both her real self and her mirror reflection must show consistent, physically accurate poses and expressions with no mismatched limbs, duplicate hands, or unnatural distortions. The mirror must follow correct optical rules without showing anything that the camera cannot logically see.
+      an elegant, strapless black evening gown with embroidered metallic-gold detailing at the bust with visible texture and ornate gold patterns .The lower half is a shimmering gold fabric puffy skirt dress. luxury couture eveningwear. She wears a classic pearl necklace and matching pearl drop earrings, which catch soft highlights from the surrounding bulbs. 
+      Ambient lighting in the room must stay low, ensuring the warm bulbs act as the dominant source. The mirror surface must be clean and reflective, clearly showing the subject’s reflection with proper exposure and depth.(The figures will not turn yellowish)
+
+      Lighting must remain and directional, coming primarily from the surrounding vanity bulbs. The skin should appear luminous with soft  reflections, and shadows must be gentle but defined enough to create a dimensional cinematic atmosphere. 
+
+      The dressing table tablecloth is made of high-quality black velvet.The vanity tabletop must be filled with makeup items arranged naturally and symmetrically, including lipsticks, brushes, powders, and perfume bottles. Each object must cast realistic small shadows and reflections according to the warm direct lighting.
+      On the mirror surface, drawn with bright red lipstick, must be the handwritten text “Happy New Year and all the best! ”, placed at a natural angle, slightly curved to follow the mirror perspective. The writing must appear as real lipstick strokes with visible texture, not floating or digitally imposed, and must adhere naturally to the reflective glass surface. 2~3 small star drawn in the same lipstick style appears beside the text. The written message must never obstruct the subject’s , lips, or essential facial details in either the real view or the reflection.
+
+      The overall mood should evoke a luxurious vintage dressing-room ambiance with  light, elegant glamour, rich contrast, and a polished editorial quality while maintaining full realism and sophistication.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 對鏡畫口紅 4
+    prompt: |
+      Use the uploaded person as the subject.
+      Their face, facial features, makeup style, hairstyle, skin tone, expression, and body proportions must remain exactly the same as in the uploaded photo.
+
+      Create a playful New Year snapshot taken in front of a mirror.
+      The image must replicate the look and feel of a direct-flash selfie-style celebration photo: bright on-camera flash lighting, soft shadows behind the subject, slightly warm indoor tones, and a natural candid mood.
+
+      The subject sits in front of a mirror wearing a cozy red outfit such as a red sweater or knit top.
+
+      pose must match the reference style: both hands raised near her face in a cheerful, playful gesture, palms facing forward, with red lipstick writing on her palms reading “20” on the left hand and “26” on the right hand.
+
+      smile must look natural, lively, and full of New Year joy.
+
+      The mirror reflection must be physically accurate, aligned with the real pose, and must not show duplicate hands, extra limbs, mismatched expressions, or impossible angles.
+      Only one mirror should be visible.
+
+      On the mirror surface, handwritten red lipstick text must appear naturally attached to the glass and read:
+      “2026 Happy New Year :)”
+      with small hearts or doodles around it, matching the style of casual lipstick handwriting.
+
+      Lighting must be bright and frontal, like a small flash from a phone or compact camera.
+      Shadows should be soft but visible, giving a candid celebration-photo atmosphere.
+      Skin tone must look natural and not washed out.
+      Colors must remain warm and cheerful, emphasizing red elements.
+
+      The background should be a simple indoor environment such as a bedroom or dressing area with warm lighting, but should not distract from the subject. The camera angle must not capture the ceiling; it should focus on the person, the mirror, and the text.
+
+      The final image should feel festive, intimate, and joyful — like a spontaneous New Year greeting photo shared on social media, with accurate reflections, clean lighting, and an authentic celebratory mood.
+
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 對鏡畫口紅 5
+    prompt: |
+      narrative in a three-frame vertical collage (3:4 overall, each 4:3).
+      The person’s face, hairstyle, and skin tone must remain exactly as in the uploaded photo, with no alteration or stylizationTheir face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain completely unchanged.
+
+      , each in a soft warm-lit indoor environment, matching the aesthetic of a cozy New Year selfie session taken beside a mirror.Create a bright, clean, youthful New Year atmosphere with warm ambient lighting, soft direct flash, smooth shadows, and a natural glowing skin tone. The color palette should focus on warm creams, light beige, and red accents.
+
+      The subject wears an off-shoulder red knit sweater that looks soft, slightly oversized, and relaxed around the shoulders and sleeves. The outfit must match the cozy and casual aesthetic, not glamorous or overly stylized.
+
+      All three scenes must include a mirror behind the subject, and the handwritten red lipstick text “2026 HAPPY NEW YEAR :)” with small hearts must appear naturally on the mirror surface, with small hearts or doodles around it, matching the style of casual lipstick handwriting.with realistic smear texture and natural perspective. The writing must not float in the air.
+      The mirror reflection must always remain physically correct, with no duplicated limbs, no mismatched facial expressions, and no impossible angles.
+
+      For the top frame:
+      The subject sits comfortably while holding a cat or small pet in her arms. She poses with a soft smile and relaxed expression. One hand either gently touches her face or rests naturally on the cat. The reflection must match.
+
+      For the middle frame:
+      The subject forms a heart shape with her hands in front of her chest. She smiles brightly, with a warm expression. The mirror reflection shows the same hand gesture and facial expression.
+
+      For the middle frame:
+      A gentle, shy, or sweet pose where the subject rests one hand lightly on her cheek while tilting her head slightly. A soft, natural smile. The mirror reflection follows the same pose correctly.
+
+      Each frame must have soft direct flash, warm ambient background lights, natural shadows, and clean white walls or beige-toned indoor decor.
+      style should feel bright, friendly, cozy, festive, and youthful—like a warm New Year greeting photo set shared on social media.
+
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 對鏡畫口紅 6
+    prompt: |
+      Use the uploaded person as the only subject. Their face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain perfectly recognizable and identical across all images. Create a four-panel 2026 New Year photo series captured within one cohesive late-night celebration moment. No other people may appear anywhere, including reflections or backgrounds.
+
+      The visual style reflects early-2000s CCD flash photography, with strong direct flash, bright facial highlights, crisp shadows, slight digital softness, vivid saturated colors, and high micro-contrast. The flash strongly illuminates the subject against darker surroundings, creating a casual yet glamorous nightlife New Year’s Eve mood.
+
+      The person wears a white halter-neck open-back top with a structured shoulder-cut silhouette (not thin straps), clearly exposing shoulders and back, featuring a red-toned cute illustrated graphic on the front. This is paired with a dark red body-hugging mini skirt. A faux-fur outerwear piece with a brown base mixed with black fur strands is styled consistently across all images. Makeup is glossy and defined, with expressive eyes and standout lips. Outfit, hair, and makeup remain fully consistent in all panels.
+
+      Across the mirror, write “2026 Happy New Year” in lipstick with multiple hand-drawn heart shapes. The writing appears handwritten, playful, slightly imperfect, subtly smudged, and layered naturally over mirror reflections and flash glare, clearly visible without covering the face.
+
+      Two images are flash-on mirror selfies.
+      Over-the-shoulder open-back mirror selfie: the body turns to the right, fully revealing the open back, while the head turns back to look at the mirror. The phone is visible with flash on, and the face and upper body are clearly illuminated. The faux-fur coat is half-worn and slipping off, draped loosely around the arms so the shoulders and back remain exposed, creating a relaxed, natural, elegant look.
+      Front-facing mirror selfie: the subject faces the mirror directly, holding the phone with one hand, flash on, with clear mirror glare and bright illumination on the face and upper body.
+
+      The remaining two images naturally complement the series (not mirror selfies), maintaining identical outfit, lighting, mood, and identity. All four photos appear as if taken consecutively during the same late-night New Year moment.
+
+      Arrange the images as a clean four-grid collage with consistent lighting, color tone, styling, and identity. The final result feels personal, stylish, intimate, and celebratory — a confident 2026 New Year flash photo series centered on self-expression and nightlife energy.
+
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 背景貴氣女-原髮型
+    prompt: |
+      Use the uploaded person. Their face, facial features, expression, skin tone, hairstyle, makeup, and body proportions must remain completely unchanged. Create a luxurious, cinematic, vintage European bar scene. The lighting must be dramatically low-key with platinum highlights from chandeliers and wall sconces, and the illumination should reproduce the same depth and atmosphere as the reference image. The skin should show clear dimensionality under focused highlights, while the background remains deep and shadowed, with the light wrapping softly around the shoulders and back to create a smooth, sculpted gradient from bright to dark. The overall tone must remain platinum-based rather than yellow, maintaining rich blacks, precise separation between foreground and background, and realistic reflections.
+
+      It must be sleeveless, The evening gown must be a red satin dress with a clean, elegant open-back cut that dips low and smoothly reveals the spine line with the fabric made of heavy satin that displays fluid sheen, directional reflections, and a smooth surface. Long matching satin gloves extend above the elbows and must share the same sheen behavior as the dress.
+
+      The pose must match natural elegance and curvature. The subject sits sideways on an ornate bar chair and turns the upper body slightly toward the camera. The back should form a graceful S-curve, with shoulders subtly angled to emphasize the open-back design. The right arm bends softly while holding a crystal wine glass at mid-chest level. The left arm rests naturally on the marble bar counter. The head turns over the shoulder with a confident, seductive, softly focused gaze toward the camera, creating the sensation of a poised and elegant moment seen from a reversed angle. Facial expression must remain calm, refined, and non-rigid.
+
+      The environment must resemble an old European luxury bar or lounge, including heavy gold moldings, large crystal chandeliers, ornate picture frames, dark polished walls, and a marble countertop. The scene must include the complete bar setup visible in the reference image: crystal wine glasses, bottles arranged on the counter or on back shelves, metallic bar accessories, and soft reflections captured realistically in the marble surface and mirrored panels behind the subject. Background illumination must be slightly darker than the foreground but still filled with visible chandeliers and point lights creating subtle soft reflections.
+
+      The overall atmosphere must retain polished, with painterly lighting, realistic texture, no yellow cast, and a distinctly cinematic depth that matches.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 仙女棒兩宮格 
+    prompt: |
+      Use the uploaded person as the subject, keeping their face, facial features, makeup, hairstyle, skin tone, and body proportions exactly the same as in the uploaded image. Create a two-panel collage composed of two identical photos, each designed in a style similar to a warm and natural outdoor photo of New Year's fireworks.
+
+      The setting is a dark open space near water and trees, illuminated mainly by handheld sparklers and soft ambient lights in the distance. The overall mood should feel warm, romantic, slightly cinematic, and lively, with gentle bokeh from faraway lamps and a subtle night haze.
+
+      Top : The subject must face the camera, holding a lit sparkler with one hand above the other, displaying a natural, relaxed, and happy expression.
+
+      Bottom: Close-up of the face, facing the camera with a relaxed and cheerful expression, the frame only reaching the shoulders, no more than a super close-up. turned to the side, holding the sparkler.
+
+      The angles of the other two photos can be varied—side view, over the shoulder, or a playful back view—but must maintain realism, conforming to realistic reflections, shadows, and human anatomy. All poses should appear relaxed and natural, as if capturing a joyful moment from a New Year's celebration.
+
+      The subject must wear a fluffy light-colored faux-fur jacket layered over a simple black dress, with soft sparkler light reflecting on the fur and skin. Perhaps due to the movement, the fur coat naturally slipped down to her shoulders.(If the user uploads a photo of a man, he must wear a cool, stylish light-colored suede jacket, naturally layered over a simple dark inner outfit. The suede texture should catch the warm sparkler light softly, with gentle highlights reflecting on the jacket and skin. Due to natural movement, the jacket may sit slightly relaxed on the shoulders, enhancing a spontaneous, candid feel.).The lighting should replicate real handheld sparkler illumination: bright, warm spark bursts near the hands, dynamic highlights on the fur, and soft falloff into the surrounding darkness. The night background should be detailed yet subdued, containing silhouettes of winter trees, faint reflections on water, and distant streetlights or building lights with natural bokeh. Snowflakes may be present in one or two frames, softly falling and catching the light for added festive atmosphere.
+
+      Each sparkler must emit bright, crisp, realistic sparks with slight motion blur, producing a celebratory New Year mood. Subtle sense of dynamic speed and blurThe entire collage must maintain a cohesive color tone—cool night ambient tones contrasted with warm sparkler glow. Ensure that no extra limbs, distorted hands, or impossible poses appear, and every frame should preserve the real identity and appearance of the uploaded person.
+
+      The final collage must look like two high-quality candid New Year celebration photos captured on a phone at night, full of warmth, joy, intimacy, and festive energy.
+
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 煙火 四公格-鬆弛感UP
+    prompt: |
+      Use the uploaded person exactly as they are, keeping the same face, hair texture, makeup, expression style, body proportions, and natural aura. Generate a four-frame collage of equal size, each frame feeling like a real New Year’s Eve moment captured by a handheld camera with strong, direct on-camera flash. The images must not look posed or studio-like; they must feel spontaneous, imperfect, and full of movement, as if a friend captured them during a night celebration outdoors.
+
+      and the intense direct flash creates slight overexposure on the skin, glossy highlights on the shoulders and cheeks, and small blown-out reflections in the eyes. Hair must move naturally in the wind, slightly messy in a flattering way, never stiff or perfectly arranged. The subject’s expressions must shift subtly between frames—real smiles, small laughs, relaxed eye contact, or glancing to the side—never the controlled expression of a formal photoshoot. The skin glow should come from the flash, not from soft beauty lighting, and the background should remain dark, grainy, and filled with distant lights and silhouettes of people, giving a lively festival atmosphere.
+
+      Clothing
+
+      A white strapless dress and a loose black leather jacket casually draped over the shoulders. (If the user uploaded a male photo, the upper body is a white sweatshirt, and a loose black leather jacket the lower body is changed to ripped black jeans.)
+
+      In the upper-left frame, a Very close-up view of the subject with fireworks exploding behind them the composition captures a close candid moment, as if shot just as the subject turns toward the camera with a natural, wind-blown smile, fireworks blooming behind.
+
+      In the upper-right frame, show the subject from half-body distance, standing outdoors and facing the fireworks while turning their head back toward the camera with a bright, celebratory expression. The background should show an open nighttime space—such as a waterfront, beach, or riverside—with fireworks lighting the sky. The pose must look natural and festive.the subject stands at a slight angle with the jacket slipping casually off the shoulder, not intentionally posed, and the expression is soft but unguarded.
+
+      In the lower-left frame, the subject appears in a three-quarter-body shot on a lively nighttime street, captured in a candid celebratory moment. 
+
+      In the lower-right frame, the subject holds a sparkler in the most natural, real-life way—Shaky camera .arm relaxed, wrist loose, not lifted deliberately for the camera—while the flash and sparkler light mix to create uneven shadows and warm reflections, and the expression shows a candid moment rather than a performance for the lens.
+
+      The entire collage must feel like authentic nightlife snapshots: slightly imperfect, full of movement, flash-heavy, high-contrast, and emotionally alive, with no staged gestures, no symmetrical posing, and no beauty-shoot atmosphere—only the spontaneous charm of real New Year fireworks caught in fleeting moments.
+
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 貴氣名媛風-酒杯
+    prompt: |
+      Use the uploaded person as the subject.
+      Their face, facial features, makeup, hairstyle, skin tone, body shape, and proportions must remain exactly the same as in the uploaded photo.
+
+      Create a glamorous nighttime luxury-scene portrait in the style of a high-end fashion editorial.
+      The subject must appear standing confidently beside a luxury black car, with the background showing a softly illuminated urban night setting—parking lot lights, building facade lights, and a cinematic nighttime glow.
+
+      The subject must wear a fitted, deep wine-red velvet mini dress that highlights an elegant silhouette. The dress should have a soft sheen and rich texture. Over the dress, the subject wears a short golden-brown fur coat that looks thick, luxurious, and voluminous. The outfit should also include glamorous red high heels and delicate jewelry such as gold earrings and a necklace that subtly catch the light.
+
+      The pose must be natural and The legs should appear longer in the whole photo.The subject holds a wine glass filled with red wine in one hand, posed delicately and elegantly.The other hand rests lightly on the hip, creating a confident, high-fashion posture.
+
+      Lighting must mimic real flash photography at night: bright direct flash illuminating the subject’s face and outfit, sharp shadows, strong highlights on the car and the fur coat, and clean nighttime contrast.
+      The car’s surface should reflect the flash realistically without distortion.
+      Avoid any unrealistic reflections or duplicated limbs.
+
+      The overall mood must feel premium, cinematic, glamorous, and slightly dramatic—like a luxury nightlife magazine shot.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 貴氣名媛風-車
+    prompt: |
+      Use the uploaded person as the subject.
+      Their face, facial features, expression, hairstyle, makeup style, body proportions, and skin tone must remain exactly the same as in the uploaded photo.
+
+      Create a high-fashion night street shoot in a European luxury district, with the atmosphere and style matching the reference image. The scene must depict a glamorous nighttime boulevard illuminated by warm architectural lighting, luxury hotels or classical buildings with columns and statues, and soft golden street lamps. The environment should feel rich, modern, and cinematic.
+
+      The subject stands confidently beside the side profile of a luxury white car, positioned parallel to the street. Only the side body of the car is visible; the front of the car must not appear in the frame. The car must appear naturally integrated into the scene, positioned slightly behind the subject. No brand logos, emblems, text, or identifiable markings may be visible anywhere on the car. The lighting should combine soft ambient street lights with subtle rim-light along the subject's silhouette, ensuring the skin remains smooth and luminous without harsh shadows.
+
+      She is wearing a fitted black mini dress with thin straps, paired with sheer black stockings and black pointed-toe heels. A plush beige faux-fur coat is draped casually over her shoulders. She carries a glossy black designer handbag in one hand, with a natural, elegant grip. The pose must be confident, feminine, and stylish: one leg slightly forward, shoulders relaxed, and a refined model-like posture. The legs should appear longer in the whole photo.
+
+      The overall mood must be high-end editorial, with clean lighting, no exaggerated bokeh, and realistic texture on the clothing, fur coat, handbag, and car surface. Colors should remain warm and cinematic, maintaining the natural tones of the uploaded person. The image should convey luxury, confidence, and modern elegance in a nighttime European city setting.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 貴氣名媛風-飯店走廊
+    prompt: |
+      Use the uploaded person as the subject.
+      Their face, makeup style, hairstyle, skin tone, body proportions, and facial expression must remain exactly the same as in the uploaded photo.
+
+      Create a luxurious indoor fashion portrait in a warm-toned hotel hallway. 
+
+      The subject stands slightly angled toward the camera, leaning subtly against the wooden door frame with a confident and graceful posture. The head is slightly tilted, gaze directed toward the camera with a poised, calm expression.
+
+      She wears a long, deep-red sequin evening dress that fits smoothly along the body without distortion. The dress must have a natural shimmer that catches the warm ambient light. Over the dress, she wears a white faux-fur jacket draped loosely across the shoulders, giving a soft, luxurious texture contrast.
+
+      She holds a small, pearl-embellished handbag in one hand, with the other hand relaxed near the jacket hem or lightly touching the bag strap. Jewelry must include elegant, sparkling earrings and a layered necklace that matches the mood of a luxury evening portrait.
+
+      Background must be a hotel corridor with warm wall sconces, soft golden ambient lighting, framed artwork on the walls, and a wooden door behind the subject. The perspective should feel natural and cinematic, with a slight lens compression similar to a portrait lens (around 85mm–105mm equivalent).
+
+      Lighting should be warm and soft, creating gentle highlights on the sequins and subtle shadows under the chin and along the dress for depth. Skin must appear smooth and evenly lit with no harsh flash effect.
+
+      Overall tone: elegant, refined, high-end fashion editorial, with clean textures, realistic shadows, and a luxurious evening mood.
+    reference_folder: ""
+    use_comparison_template: false
+    use_multi_image: false
+
+  - folder: ../Media Files/Nano Banana/1201 14 Styles/1201 貴氣名媛風-飯店房間派對風
+    prompt: |
+      Please use the person in the uploaded photo as your subject.
+
+      The person's face shape, makeup, hairstyle, skin tone, body proportions, and facial expression must be exactly the same as the person in the uploaded photo.
+
+      Take a luxurious indoor party-style portrait in a warm-toned hotel bedroom.
+
+      The woman in the photo will randomly appear in one of three situations: 1. Facing the camera, lying on a white bed, in an elegant and charming pose. She slightly tilts her head, her gaze casually fixed on the camera with a smile, exuding charm. 2. Or holding a champagne glass and smiling broadly at the camera. 3. Kneeling on the bed, holding a champagne glass (half-body shot up to her legs).
+
+      She is wearing a light pink long-haired knit cardigan, a short design. The color is a soft milky pink with a delicate matte sheen. The fabric is made of medium-length wool blend yarn, fluffy and breathable, and the soft diffused light creates a warm and comfortable visual effect.
+
+      This cardigan features a loose, cropped silhouette with slightly dropped shoulders and extra-long sleeves reaching to the fingertips. Its excellent drape gives it a light and airy feel, like a cloud. The front features a medium V-neck with delicate ribbed piping, and a matching button adorns the center of the neckline. The knit fabric is a loose, long-pile knit, light and flowing, while the hem and front feature a denser ribbed knit, maintaining the shape while adding softness.
+
+      The bottom is a pair of pink long-pile knit shorts, in the same color family and similar texture as the top, creating a coordinated look. The shorts are high-waisted with a drawstring at the waist. The loose A-line silhouette drapes beautifully and reaches the upper thigh, highlighting the long, slender lines of the legs.
+
+      For footwear, she wears off-white, fluffy mid-calf socks, thick and soft, reaching mid-calf for both warmth and a touch of femininity. Over the socks are beige, thick-soled snow boots made of matte suede or a similar material, with a rounded, comfortable shaft. The heel height is approximately 3-4 cm, complementing the style of winter loungewear and subtly adding height.
+
+      The background must be a hotel bedroom, equipped with warm-toned wall lamps, soft ambient lighting, and artwork hanging on the wall. The perspective should be natural and cinematic, using a slightly compressed lens, a portrait lens (equivalent focal length approximately 85-105 mm). Gold and white balloons float in the air, and subtle gold and silver sequins on the sheets create a New Year's party atmosphere.
+
+      Overall style: elegant, sophisticated, high-end fashion cinematic style, with clean and crisp visuals, realistic lighting, and a luxurious nighttime atmosphere.
     reference_folder: ""
     use_comparison_template: false
     use_multi_image: false

@@ -13,10 +13,10 @@ output:
   group_tasks_by: 4
 
 schedule:
-  start_time: '18:00'
+  start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: ../Media Files/Kling Effects/1128 8 Styles
+base_folder: ../Media Files/Kling Effects/1201 8 Styles
 
 design_link: 'https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=46494616#gid=46494616'
 source_video_link: ''
