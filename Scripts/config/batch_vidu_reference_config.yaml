@@ -14,7 +14,9 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 design_link: https://docs.google.com/presentation/d/1zR01DmJpSFYxI_3x4jWEaaZRqJSw3m1vVbekMPLP9e8/edit?slide=id.g3aa4579e46f_0_43#slide=id.g3aa4579e46f_0_43
-source_video_link: 
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDw_qp5Z0WeToudNg5CXSXtAf9B22LKOZA9s2mTQ2o9Y88?e=3K0Ovu
+
+
 tasks:
 - effect: New Year Japan Style v4
   prompt: |
