@@ -6,7 +6,7 @@ model: gemini-3-pro-image-preview
 
 output:
   directory: /Users/ethanhsu/Desktop/GAI/Report
-  group_tasks_by: 3
+  group_tasks_by: 4
 
 schedule:
   start_time: ""
