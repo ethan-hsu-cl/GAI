@@ -1,5 +1,5 @@
 {
-    "testbed": "http://210.244.31.18:7014/",
+    "testbed": "http://210.244.31.18:7008/",
     "output_directory": "/Users/ethanhsu/Desktop/GAI/Report",
     "template_path": "templates/I2V templates.pptx",
     "comparison_template_path": "templates/I2V Comparison Template.pptx",

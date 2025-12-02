@@ -393,7 +393,7 @@ BaseFolder/
       "animation_mode": "move"
     }
   ],
-  "testbed": "http://210.244.31.18:7014/"
+  "testbed": "http://210.244.31.18:7008/"
 }
 ```
 

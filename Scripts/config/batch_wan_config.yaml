@@ -1,4 +1,4 @@
-testbed: http://210.244.31.18:7014/
+testbed: http://210.244.31.18:7008/
 output_directory: /Users/ethanhsu/Desktop/GAI/Report
 template_path: templates/I2V templates.pptx
 comparison_template_path: templates/I2V Comparison Template.pptx
@@ -16,8 +16,9 @@ schedule:
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 design_link: ''
 source_video_link: ''
+
 tasks:
-- folder: ../Media Files/Wan 2.2/1114 三振舞
+- folder: ../Media Files/Wan 2.2/1202 10 Styles
   prompt: ''
   embed: ''
   num_outputs: 1
@@ -27,6 +28,8 @@ tasks:
   source_video_link: ''
   reference_folder: ''
   use_comparison_template: true
+
+
 comments:
   folder_structure: Each task folder should have 'Source Image' and 'Source Video' subfolders. All images will be cross-matched
     with all videos (e.g., 4 images × 5 videos = 20 total generations).
