@@ -196,6 +196,7 @@ tasks:
 ```
 
 **Effect Selection:**
+
 - Use `effect` to select from 100+ preset effects (e.g., `3d_cartoon_1`, `anime_figure`, `japanese_anime_1`)
 - Use `custom_effect` to specify a custom effect name (takes priority over `effect`)
 
@@ -203,7 +204,8 @@ tasks:
 `3d_cartoon_1`, `3d_cartoon_2`, `anime_figure`, `japanese_anime_1`, `american_comics`, `angel_wing`, `baseball`, `boss_coming`, `car_explosion`, `celebration`, `demon_transform`, `disappear`, `emoji`, `firework`, `gallery_ring`, `halloween_escape`, `jelly_jiggle`, `magic_broom`, `mushroom`, `pixelpixel`, `santa_gifts`, `steampunk`, `vampire_transform`, `zombie_transform`, and many more.
 
 **Folder Structure:**
-```
+
+```bash
 BaseFolder/
 ├── StyleName1/
 │   ├── Source/              # Input images
