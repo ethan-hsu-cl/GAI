@@ -39,18 +39,18 @@ class WanHandler(BaseAPIHandler):
             self.logger.warning(f"⚠️ No videos found in {source_video_folder}")
             return
         
-        # Cross-match: all combinations
+        # Cross-match: all combinations (video-first ordering to match report slides)
         total_combinations = len(image_files) * len(video_files)
         self.logger.info(
-            f"🔄 Cross-matching {len(image_files)} images × {len(video_files)} videos "
+            f"🔄 Cross-matching {len(video_files)} videos × {len(image_files)} images "
             f"= {total_combinations} generations"
         )
         
         successful = 0
         combination_num = 0
         
-        for image_file in image_files:
-            for video_file in video_files:
+        for video_file in video_files:
+            for image_file in image_files:
                 combination_num += 1
                 self.logger.info(
                     f" 🎬 {combination_num}/{total_combinations}: "
@@ -173,12 +173,12 @@ class WanHandler(BaseAPIHandler):
         if not video_path:
             raise ValueError("No video path returned from API")
         
-        # Generate output filename
+        # Generate output filename (video-first ordering)
         image_name = Path(file_path).stem
         video_name = Path(task_config['video_file']).stem
         animation_mode = task_config.get('animation_mode', 'move')
         
-        output_filename = f"{image_name}_{video_name}_{animation_mode}.mp4"
+        output_filename = f"{video_name}_{image_name}_{animation_mode}.mp4"
         output_path = Path(output_folder) / output_filename
         
         # Handle video file (either URL or local path)
@@ -215,7 +215,7 @@ class WanHandler(BaseAPIHandler):
         
         self.processor.save_metadata(
             Path(metadata_folder), 
-            f"{image_name}_{video_name}", 
+            f"{video_name}_{image_name}", 
             file_name,
             metadata, 
             task_config

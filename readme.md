@@ -411,10 +411,11 @@ Each task folder must contain:
 
 **Cross-Matching Behavior:**
 
-Wan 2.2 automatically cross-matches all images with all videos:
+Wan 2.2 automatically cross-matches all videos with all images (video-first ordering):
 
-- 4 images × 5 videos = 20 total generations
+- 5 videos × 4 images = 20 total generations
 - Each combination creates a unique animated output
+- Files are named using video-first convention: `{video_name}_{image_name}_{mode}.mp4`
 
 **Parameters:**
 
@@ -583,7 +584,7 @@ sudo apt install ffmpeg
 - **Vidu Effects**: Effect-based processing, parallel validation, auto aspect ratio detection, category organization
 - **Vidu Reference**: Multi-image references (up to 6), smart reference finding, aspect ratio selection, multilingual prompt support
 - **Runway Gen4**: Video + image pairing strategies (one-to-one/all-combinations), face swap, multiple aspect ratios, Gen4 Aleph model
-- **Wan 2.2**: Automatic image cropping to video aspect ratio, image-video cross-matching, dual animation modes (move/mix), two-step API workflow
+- **Wan 2.2**: Automatic image cropping to video aspect ratio, video-image cross-matching (video-first ordering), dual animation modes (move/mix), two-step API workflow
 - **Google Veo**: Text-to-video generation (no input files required), multiple model versions (2.0 to 3.1), prompt enhancement, optional audio generation, person generation controls, lossless compression (Veo 3+)
 
 ### **Deterministic Processing**
@@ -600,7 +601,7 @@ This is particularly important for:
 - **Nano Banana sequential mode**: Same source file always paired with same additional images
 - **Vidu Reference**: Consistent reference image selection
 - **Runway pairing**: Predictable video-reference combinations
-- **Wan 2.2 cross-matching**: Consistent image-video pairing order
+- **Wan 2.2 cross-matching**: Consistent video-image pairing order (video-first)
 - **Report generation**: Consistent slide ordering across regenerations
 
 ## 🔍 Troubleshooting
@@ -621,7 +622,8 @@ This is particularly important for:
   - Vidu Effects: `{filename}_{effect}_effect.mp4`
   - Vidu Reference: `{filename}_{effect}_reference.mp4`
   - Pixverse: `{filename}_{effect}.mp4`
-  - Runway: `{filename}_runway.mp4` or `{filename}__{reference_name}_runway.mp4`
+  - Runway: `{filename}_runway.mp4` or `{filename}_ref_{reference_name}_runway_generated.mp4`
+  - Wan 2.2: `{video_name}_{image_name}_{animation_mode}.mp4`
 - **Images**:
   - Nano Banana: `{filename}_image_{index}.{ext}` (multiple images per source)
   - GenVideo: `{filename}_generated.{ext}`
