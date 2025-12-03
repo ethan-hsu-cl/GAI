@@ -94,6 +94,30 @@ class BaseAPIHandler:
         """Get appropriate source field name based on API."""
         return "source_video" if self.api_name == "runway" else "source_image"
     
+    def _is_file_processed(self, file_path, metadata_folder):
+        """Check if a file has already been successfully processed.
+        
+        Args:
+            file_path: Path to the source file.
+            metadata_folder: Path to the metadata folder.
+        
+        Returns:
+            bool: True if file has successful metadata, False otherwise.
+        """
+        base_name = Path(file_path).stem
+        metadata_file = Path(metadata_folder) / f"{base_name}_metadata.json"
+        
+        if metadata_file.exists():
+            try:
+                import json
+                with open(metadata_file, 'r') as f:
+                    metadata = json.load(f)
+                # Only skip if previous processing was successful
+                return metadata.get('success', False)
+            except (json.JSONDecodeError, IOError):
+                return False
+        return False
+    
     def process_task(self, task, task_num, total_tasks):
         """Process entire task - common structure for most APIs."""
         folder = Path(task.get('folder', task.get('folder_path', '')))
@@ -116,7 +140,15 @@ class BaseAPIHandler:
         
         # Process files
         successful = 0
+        skipped = 0
         for i, file_path in enumerate(files, 1):
+            # Check if file was already successfully processed
+            if self._is_file_processed(file_path, metadata_folder):
+                self.logger.info(f" ⏭️ {i}/{len(files)}: {file_path.name} (already processed)")
+                skipped += 1
+                successful += 1
+                continue
+            
             self.logger.info(f" 🖼️ {i}/{len(files)}: {file_path.name}")
             
             if self.processor.process_file(file_path, task, output_folder, metadata_folder):
@@ -125,7 +157,7 @@ class BaseAPIHandler:
             if i < len(files):
                 time.sleep(self.api_defs.get('rate_limit', 3))
         
-        self.logger.info(f"✓ Task {task_num}: {successful}/{len(files)} successful")
+        self.logger.info(f"✓ Task {task_num}: {successful}/{len(files)} successful ({skipped} skipped)")
     
     def _get_output_folder(self, folder):
         """Get output folder name based on API type."""

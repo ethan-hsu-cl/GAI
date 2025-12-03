@@ -16,7 +16,7 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: ../Media Files/Kling Effects/1202 8 Styles
+base_folder: ../Media Files/Kling Effects/1203 8 Styles
 
 design_link: 'https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=46494616#gid=46494616'
 source_video_link: ''
@@ -28,28 +28,28 @@ source_video_link: ''
 # The effect name (custom_effect or effect) is used as the subfolder name in base_folder
 tasks:
   - effect: 
-    custom_effect: 'santa_gift'
+    custom_effect: 'ornament_crash' # 圣诞彩球撞撞撞
 
   - effect: 
-    custom_effect: 'snowglobe'
+    custom_effect: 'coronation_of_frost' # 冰雪精灵
 
   - effect: 
-    custom_effect: 'steampunk_christmas'
+    custom_effect: 'santa_gift' # 圣诞惊喜礼盒
 
   - effect: 
-    custom_effect: 'ornament_crash'
+    custom_effect: 'santa_express' # 礼物派送
 
   - effect: 
-    custom_effect: 'santa_express'
+    custom_effect: 'snowglobe' # 水晶球圣诞写真
 
-  - effect: 
-    custom_effect: 'coronation_of_frost'
+  # - effect: 
+  #   custom_effect: 'christmas_photo_shoot' # 圣诞写真
 
-  - effect: 
-    custom_effect: 'lv_0' # 圣诞写真
+  # - effect: 
+  #   custom_effect: 'particle_santa_surround' # 圣诞奇幻
 
-  - effect: 
-    custom_effect: '粒子風' # 圣诞奇幻
+  # - effect: 
+  #   custom_effect: 'steampunk_christmas' # 蒸汽圣诞夜
 
 comments:
   base_folder: >

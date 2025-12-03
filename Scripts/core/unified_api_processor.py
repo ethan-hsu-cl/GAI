@@ -1431,14 +1431,46 @@ class UnifiedAPIProcessor:
         self.logger.info(f"📁 Task {task_num}/{total_tasks}: {task_name or source_folder.parent.name}")
         image_files = self._get_files_by_type(source_folder, 'image')
         successful = 0
+        skipped = 0
         for i, img_file in enumerate(image_files, 1):
+            # Check if file was already successfully processed
+            if self._is_file_processed(img_file, metadata_folder):
+                self.logger.info(f" ⏭️ {i}/{len(image_files)}: {img_file.name} (already processed)")
+                skipped += 1
+                successful += 1
+                continue
+            
             self.logger.info(f" 🖼️ {i}/{len(image_files)}: {img_file.name}")
             if self.process_file(img_file, task, output_folder, metadata_folder):
                 successful += 1
             if i < len(image_files):
                 time.sleep(self.api_definitions.get('rate_limit', 3))
-        self.logger.info(f"✓ Task {task_num}: {successful}/{len(image_files)} successful")
+        self.logger.info(f"✓ Task {task_num}: {successful}/{len(image_files)} successful ({skipped} skipped)")
         return successful
+    
+    def _is_file_processed(self, file_path, metadata_folder):
+        """Check if a file has already been successfully processed.
+        
+        Args:
+            file_path: Path to the source file.
+            metadata_folder: Path to the metadata folder.
+        
+        Returns:
+            bool: True if file has successful metadata, False otherwise.
+        """
+        import json
+        base_name = Path(file_path).stem
+        metadata_file = Path(metadata_folder) / f"{base_name}_metadata.json"
+        
+        if metadata_file.exists():
+            try:
+                with open(metadata_file, 'r') as f:
+                    metadata = json.load(f)
+                # Only skip if previous processing was successful
+                return metadata.get('success', False)
+            except (json.JSONDecodeError, IOError):
+                return False
+        return False
 
     def process_task(self, task, task_num, total_tasks):
         """Process task using registered handler."""

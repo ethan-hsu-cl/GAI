@@ -6,90 +6,23 @@ model: gemini-3-pro-image-preview
 
 output:
   directory: /Users/ethanhsu/Desktop/GAI/Report
-  group_tasks_by: 4
+  group_tasks_by: 0
 
 schedule:
   start_time: ""
   comment: "Time format: HH:MM (24-hour format). Leave empty to start immediately"
 
-root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCUWIm2nvZQTLXko8jxjrTVARJb_vyVDwmovIxF0ug1cko?e=m8k78o
-root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g39a308c5e69_1_72#slide=id.g39a308c5e69_1_72
+root_source_video_link: 
+root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g3a3db5c45cb_0_0#slide=id.g3a3db5c45cb_0_0
 
 tasks:
-  - folder: ../Media Files/Nano Banana/1202 4 Styles/1202 仙女棒兩宮格1
+  - folder: ../Media Files/Nano Banana/1203 1 Style/1203 Year End Recap
     prompt: |
-      Use the uploaded person as the subject, keeping their face, facial features, makeup, hairstyle, skin tone, and body proportions exactly the same as in the uploaded image. Create a two-panel collage composed of two identical photos, each designed in a style similar to a warm and natural outdoor photo of New Year's fireworks.
-
-      The setting is a dark open space near water and trees, illuminated mainly by handheld sparklers and soft ambient lights in the distance. The overall mood should feel warm, romantic, slightly cinematic, and lively, with gentle bokeh from faraway lamps and a subtle night haze.
-
-      Top : The subject must face the camera, holding a lit sparkler with one hand above the other, displaying a natural, relaxed, and happy expression.
-
-      Bottom: Close-up of the face, facing the camera with a relaxed and cheerful expression, the frame only reaching the shoulders, no more than a super close-up. turned to the side, holding the sparkler.
-
-      The angles of the other two photos can be varied—side view, over the shoulder, or a playful back view—but must maintain realism, conforming to realistic reflections, shadows, and human anatomy. All poses should appear relaxed and natural, as if capturing a joyful moment from a New Year's celebration.
-
-      The subject must wear a fluffy light-colored faux-fur jacket layered over a simple black dress, with soft sparkler light reflecting on the fur and skin. Perhaps due to the movement, the fur coat naturally slipped down to her shoulders.(If the user uploads a photo of a man, he must wear a cool, stylish light-colored suede jacket, naturally layered over a simple dark inner outfit. The suede texture should catch the warm sparkler light softly, with gentle highlights reflecting on the jacket and skin. Due to natural movement, the jacket may sit slightly relaxed on the shoulders, enhancing a spontaneous, candid feel.).The lighting should replicate real handheld sparkler illumination: bright, warm spark bursts near the hands, dynamic highlights on the fur, and soft falloff into the surrounding darkness. The night background should be detailed yet subdued, containing silhouettes of winter trees, faint reflections on water, and distant streetlights or building lights with natural bokeh. Snowflakes may be present in one or two frames, softly falling and catching the light for added festive atmosphere.
-
-      Each sparkler must emit bright, crisp, realistic sparks with slight motion blur, producing a celebratory New Year mood. Subtle sense of dynamic speed and blurThe entire collage must maintain a cohesive color tone—cool night ambient tones contrasted with warm sparkler glow. Ensure that no extra limbs, distorted hands, or impossible poses appear, and every frame should preserve the real identity and appearance of the uploaded person.
-
-      The final collage must look like two high-quality candid New Year celebration photos captured on a phone at night, full of warmth, joy, intimacy, and festive energy.
+      Create a 9:16 realistic scrapbook-style postcard collage using a vertical-stack composition centered on the canvas while keeping the original uploaded photo completely intact.The photo I provide should appear exactly as it is—without being redrawn, enhanced, altered, or replaced by any newly generated faces, or characters. It should simply be placed inside a soft-shadowed polaroid frame with a minimal border or light tape on the edges, but the image itself must remain unchanged. The background should be a clean single-color surface with subtle paper texture, gentle grain, tiny fibers, and faint notebook-style horizontal lines, without any scenery or objects—just a calm, matte paper-page feel. At the top of the collage, place a postcard paper layer with subtle fibers, ensuring it never overlaps the polaroid. Below it, include the user’s uploaded "original photo" styled as a soft-shadowed polaroid with a minimal frame or lightly taped edges. Avoid generated new photo instead original photo. Avoid any modifications to the photos. Together, the postcard and polaroid should occupy more than half of the canvas, remaining vertically centered and perfectly aligned. On the postcard, write one short poetic wish inspired by the emotion of the uploaded image: a future-focused sentence of no more than twelve words, grammatically correct, with no spelling errors, no repeated words, and avoiding openings like “Next year,” “May,” or “I hope.” The handwriting must appear messy, cozy, imperfect, and human, not clean or font-like, but don't use cursive. Add three to four small real-object elements related to the photo, each around five percent of the canvas, designed to look like actual physical materials—paper, metal, plastic, fabric, or glass. Avoid including any objects or text related to the year. These items must appear to be placed or taped naturally on the top layer, with soft realistic shadows, no white sticker outlines, and slight imperfections allowed. Include a realistic postage stamp with perforated edges among these objects. Ensure all components sit naturally with soft, non-glowing shadows, avoiding floating effects. The final image should feel like a clean, minimal, modern editorial collage photographed as a flat-lay, with neutral warm or soft lighting and a gentle analog film-inspired mood. Don't make the visual space too crowded. Please leave more blank space.
     reference_folder: ""
     use_comparison_template: false
     use_multi_image: false
 
-  - folder: ../Media Files/Nano Banana/1202 4 Styles/1202 仙女棒兩宮格2
-    prompt: |
-      Use the uploaded person as the subject, keeping their face, facial features, makeup, hairstyle, skin tone, and body proportions exactly the same as in the uploaded image. Create a two-panel collage composed of two photos. Candid night-time New Year beside a dark riverside path. The lighting must match the mood of a direct-flash snapshot taken outdoors at night: the background should remain very dark with minimal ambient light, while the subject is illuminated by a strong on-camera flash that creates crisp shadows, bright reflections on the eyes, and a slightly harsh but natural flash highlight on the skin and jacket. The flash must make the jacket glow in the foreground while the environment behind remains nearly black except for a few faint lights far across the river.
-
-      The subject must wear a night-appropriate outerwear that suits this riverside flash scene.
-
-      If the user uploads a photo of a man, he should be wearing a khaki corduroy jacket with a shearling (Lamb wool) collar and lapel, layered over a black inner shirt, with the corduroy texture clearly visible under flash lighting.
-
-      Top: The subject must face the camera, holding a lit sparkler with one hand above the other, displaying a natural, relaxed, and happy expression.If a user uploads a photo of a man, the action will change to holding a party confetti cannon, with confetti naturally spraying out (deep foreground). Holding a sparkler is prohibited.
-
-      Bottom: Close-up of the face, facing the camera with a relaxed and cheerful expression, the frame only reaching the shoulders, no more than a super close-up, turned to the side, holding the sparkler.If a user uploads a photo of a man, the action will change to holding a party confetti cannon, with confetti naturally spraying out (deep foreground). Holding a sparkler is prohibited.
-
-      If the subject is a woman, should be wearing a short, cropped shearling (Lamb wool) coat, worn loosely so it can naturally slip down from the shoulders due to movement, subtly exposing the shoulders and collarbone, layered over a The dress is a body-hugging black sequin mini dress made from a fine knit fabric interwoven with micro-sequins. The material has moderate elasticity, shaping smoothly along the body. The sequins are evenly distributed to create a subtle starry shimmer rather than strong reflective patches, giving the dress a refined, understated glamour.
-      The neckline uses a silver-white jeweled halter design, where two wide jewel-encrusted straps extend from the collarbones upward to meet at the back of the neck. This silver jeweled halter is bright, intricate, stable in shape, and forms the visual highlight of the dress. From the bust to the hem, the fabric remains a continuous black sequin texture with a clean, fitted H-line mini silhouette ending at mid-thigh.
-      The tights are sheer black dotted hosiery at around 15–20 denier, lightweight and form-fitting with a soft matte transparency. Small black dots are evenly spaced across the surface — subtle, orderly, and not dense — adding delicate visual detail that complements the dress perfectly.
-
-      The pose must look spontaneous, candid, and full of movement, never stiff or posed, similar to a fun moment caught mid-action. The hands should lift the sparklers casually, with natural arm angles and relaxed fingers, instead of symmetrical or model-like poses. The expression should appear soft and happy, with a real-life candid feel, not like a studio photo. The sparkler light must be small, bright, and sharp, with thin sparks that react to the flash.
-
-      The background must remain a dark, minimally lit riverside scene with silhouettes of winter trees and almost no visible city lights, keeping the overall environment dim so the viewer feels the nighttime atmosphere. The contrast between the dark environment and the bright flash-lit subject is essential. The colors must be neutral and clean, avoiding warm cinematic tones and avoiding bright ambient lighting. The camera angle should match a handheld snapshot taken at arm’s length, slightly lower or level with the subject, with the subject gently leaning toward the flash.
-
-      Ensure the final mood looks like a real, natural outdoor flash photo taken during New Year celebrations, with an unpolished, lively, intimate energy—dark background, bright foreground, sparkler glow, candid expression, and no staged or overly perfect posing.
-      adding delicate visual detail that complements the dress perfectly.
-
-      The pose must look spontaneous, candid, and full of movement, never stiff or posed, similar to a fun moment caught mid-action. The hands should lift the sparklers casually, with natural arm angles and relaxed fingers, instead of symmetrical or model-like poses. The expression should appear soft and happy, with a real-life candid feel, not like a studio photo. The sparkler light must be small, bright, and sharp, with thin sparks that react to the flash.
-
-      The background must remain a dark, minimally lit riverside scene with silhouettes of winter trees and almost no visible city lights, keeping the overall environment dim so the viewer feels the nighttime atmosphere. The contrast between the dark environment and the bright flash-lit subject is essential. The colors must be neutral and clean, avoiding warm cinematic tones and avoiding bright ambient lighting. The camera angle should match a handheld snapshot taken at arm’s length, slightly lower or level with the subject, with the subject gently leaning toward the flash.
-
-      Ensure the final mood looks like a real, natural outdoor flash photo taken during New Year celebrations, with an unpolished, lively, intimate energy—dark background, bright foreground, sparkler glow, candid expression, and no staged or overly perfect posing.
-    reference_folder: ""
-    use_comparison_template: false
-    use_multi_image: false
-
-  - folder: ../Media Files/Nano Banana/1202 4 Styles/1202 新年日出兩宮格 V1
-    prompt: |
-      Use the uploaded person and keep their face, hairstyle, makeup, skin tone, expression, and body proportions exactly the same. Generate a two-photo layout stacked vertically, with both images showing the subject clearly facing the camera. The setting is a quiet winter morning by the seaside railing during sunrise, where the sky displays a deep gradient of orange, red, and soft blue tones above the dark coastline. The lighting must use strong direct on-camera flash, creating bright highlights on the subject’s face and clothing while the background remains darker, just like a real snapshot taken at dawn.
-
-      The subject is wearing a fitted black winter turtleneck that clearly outlines the silhouette while remaining soft and natural. The upper photo shows the subject standing sideways near the railing, gently turning back toward the camera while holding a smartphone in one hand as if capturing the sunrise. The pose must appear casual and candid, with the hair slightly moving and the expression soft and natural. The lower photo shows the subject standing with her back facing the sunrise, one hand resting lightly on the railing as she turns her head toward the lens with a warm smile, maintaining a relaxed, non-posed feeling. Both images must preserve the realism of a handheld flash snapshot: crisp shadows, bright facial highlights, natural skin texture, clean contrast, and a slightly darkened early-morning atmosphere with the sunrise glowing behind.
-
-      The final result should feel natural, intimate, and spontaneous, delivering two cohesive sunrise flash photos of the same person in consistent styling and mood.
-    reference_folder: ""
-    use_comparison_template: false
-    use_multi_image: false
-
-  - folder: ../Media Files/Nano Banana/1202 4 Styles/1202 新年日出兩宮格 V3
-    prompt: |
-      Use the uploaded person as the subject, keeping their face, hairstyle, makeup, expression, skin tone and body proportions exactly the same. Generate two vertically stacked sunrise portraits taken outdoors at a high-altitude coastal viewpoint. The atmosphere must strongly resemble a candid early-morning snapshot lit by a direct on-camera flash: the subject should appear brighter than the background, with sharp, crisp highlight edges on the face and clothing, while the scenery behind remains darker and slightly muted. The flash illumination must clearly separate the subject from the environment, preserving the natural glossy reflection on the skin without flattening the features.
-      The sunrise sky must match the dramatic atmospheric quality of a real sunrise with clouds present—layered cloud streaks, soft cloud banks, or subtle textured cloud formations catching warm orange, gold and pink light near the horizon, gradually blending into deep blue farther upward. The scene should feel like standing above a coastal city still in pre-dawn blue hour, with the lights from distant buildings faintly visible but never overpowering the sky. The transition of the sky’s colors must be rich, soft and distinctly cloud-lit, rather than a plain gradient.
-      The subject is wearing a fitted black turtleneck winter top paired with a loose, open-front light-beige or oatmeal-gray wool blazer. The blazer must look soft, oversized, and naturally draped, with relaxed shoulders and an organic silhouette that matches real fabric movement in outdoor wind. Its color must stay neutral and cool-toned, complementing the sunrise hues.
-      In the first image, the subject stands at the lookout railing holding up a phone toward the sunrise, turning back over the shoulder toward the camera with a natural, calm expression. The pose must feel spontaneous, not staged, with subtle strands of hair catching the backlight of the rising sun while the flash brightens the face from the front.
-      In the second image, the subject faces the railing with both hands gently resting on it, turning back to the camera with a soft smile. The sunrise remains behind them, illuminating the clouds with a warm glow while the flash keeps the subject sharp and bright in the foreground. Both compositions must clearly show the face, maintain realism, preserve all identity details from the uploaded photo, and fully achieve the contrast-rich look of a flash-lit sunrise portrait with vivid cloud formations and a dramatic horizon.
-    reference_folder: ""
-    use_comparison_template: false
-    use_multi_image: false
 
 # Comments and documentation
 comments:
