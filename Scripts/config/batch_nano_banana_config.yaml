@@ -12,11 +12,13 @@ schedule:
   start_time: ""
   comment: "Time format: HH:MM (24-hour format). Leave empty to start immediately"
 
-root_source_video_link: 
+root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCUWn3LGIbxTLuYED6B8m0BASuN3aU-ko2pPQkacXrP-zg?e=72pPpR
 root_design_link: https://docs.google.com/presentation/d/1H6krGUSYM6KSr2iOFyXRCcADnZlS8QYl4F9DCRxf9zU/edit?slide=id.g3a3db5c45cb_0_0#slide=id.g3a3db5c45cb_0_0
 
 tasks:
-  - folder: ../Media Files/Nano Banana/1203 1 Style/1203 Year End Recap
+  - folder: ../Media Files/Nano Banana/1203 Year End Recap
+    model: gemini-3-pro-image-preview
+    resolution: 1K
     prompt: |
       Create a 9:16 realistic scrapbook-style postcard collage using a vertical-stack composition centered on the canvas while keeping the original uploaded photo completely intact.The photo I provide should appear exactly as it is—without being redrawn, enhanced, altered, or replaced by any newly generated faces, or characters. It should simply be placed inside a soft-shadowed polaroid frame with a minimal border or light tape on the edges, but the image itself must remain unchanged. The background should be a clean single-color surface with subtle paper texture, gentle grain, tiny fibers, and faint notebook-style horizontal lines, without any scenery or objects—just a calm, matte paper-page feel. At the top of the collage, place a postcard paper layer with subtle fibers, ensuring it never overlaps the polaroid. Below it, include the user’s uploaded "original photo" styled as a soft-shadowed polaroid with a minimal frame or lightly taped edges. Avoid generated new photo instead original photo. Avoid any modifications to the photos. Together, the postcard and polaroid should occupy more than half of the canvas, remaining vertically centered and perfectly aligned. On the postcard, write one short poetic wish inspired by the emotion of the uploaded image: a future-focused sentence of no more than twelve words, grammatically correct, with no spelling errors, no repeated words, and avoiding openings like “Next year,” “May,” or “I hope.” The handwriting must appear messy, cozy, imperfect, and human, not clean or font-like, but don't use cursive. Add three to four small real-object elements related to the photo, each around five percent of the canvas, designed to look like actual physical materials—paper, metal, plastic, fabric, or glass. Avoid including any objects or text related to the year. These items must appear to be placed or taped naturally on the top layer, with soft realistic shadows, no white sticker outlines, and slight imperfections allowed. Include a realistic postage stamp with perforated edges among these objects. Ensure all components sit naturally with soft, non-glowing shadows, avoiding floating effects. The final image should feel like a clean, minimal, modern editorial collage photographed as a flat-lay, with neutral warm or soft lighting and a gentle analog film-inspired mood. Don't make the visual space too crowded. Please leave more blank space.
     reference_folder: ""

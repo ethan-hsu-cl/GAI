@@ -10,7 +10,7 @@ duration: 5
 
 output:
   directory: /Users/ethanhsu/Desktop/GAI/Report
-  group_tasks_by: 4
+  group_tasks_by: 3
 
 schedule:
   start_time: ''

@@ -18,7 +18,7 @@ root_design_link: https://docs.google.com/spreadsheets/d/1Rnin9ASAYecB103SocZztN
 source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgBz_wmL082WTIT0kpwuFG0aAQBJajegC4FTblN9zIL39fc?e=vTr3lz
 
 tasks:
-- folder: ../Media Files/Wan 2.2/1202 10 Styles
+- folder: ../Media Files/Wan 2.2/1204 1 Style
   prompt: ''
   embed: ''
   num_outputs: 1
