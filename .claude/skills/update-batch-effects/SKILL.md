@@ -25,13 +25,18 @@ In order of precedence:
 
 ## Step 2 — Parse the user's effect list
 
-The user supplies a newline-separated list. Each line is one of:
+The user supplies a newline-separated list, or a table pasted from a deck/sheet. Each line/row is one of:
 - `effect_name` — name only. Used for Kling and Vidu.
 - `effect_name<TAB>id` or `effect_name<whitespace>id` (id is all digits) — name + numeric ID. Used for Pixverse.
+- If the source is a table with a `Type` column (e.g. `Human`, `Pet`), capture it per row.
 
 For Pixverse, every entry must have an ID. If any entry is missing one, stop and ask the user.
 
 For Vidu, default `category` to `People` unless the user specifies otherwise.
+
+### Type column → `source_type`
+
+If the table has a `Type` column, add `source_type: <value>` (lowercased) to each task whose type is not the default `human` (e.g. `pet`). Omit the field entirely for `human`/default rows — don't write `source_type: human`. This field drives auto-copying of images into each effect's Source folder from `Media Files/Sources` at run time (see `folder_structure` comment in the config for details); it isn't something this skill acts on directly.
 
 ## Step 3 — Format the new `tasks:` block
 
@@ -44,10 +49,12 @@ tasks:
     custom_effect: 'NAME_1'
   - effect:
     custom_effect: 'NAME_2'
+    source_type: pet
 ```
 - 2-space indent for list items
 - `custom_effect` value quoted with single quotes
 - No blank lines between entries
+- `source_type` (if present) is the last line of the entry, unquoted, only for non-`human` rows
 
 ### Vidu Effects
 ```yaml
@@ -57,10 +64,12 @@ tasks:
 
 - category: People
   custom_effect_name: NAME_2
+  source_type: pet
 ```
 - Top-level array (no leading indent on `-`)
 - `custom_effect_name` value unquoted
 - One blank line between entries
+- `source_type` (if present) is the last line of the entry, unquoted, only for non-`human` rows
 
 ### Pixverse
 ```yaml
@@ -74,11 +83,13 @@ tasks:
     prompt: ''
     custom_effect_id: 'ID_2'
     negative_prompt: ''
+    source_type: pet
 ```
 - 2-space indent for list items
 - `effect` value unquoted; `custom_effect_id` quoted with single quotes
 - `prompt` and `negative_prompt` always empty strings
 - One blank line between entries
+- `source_type` (if present) is the last line of the entry, unquoted, only for non-`human` rows
 
 ## Step 4 — Apply the edit
 

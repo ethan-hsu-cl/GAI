@@ -72,6 +72,13 @@ comments:
   custom_effect_id: |
     Pixverse template ID (the API's template_id parameter). Required.
     Obtain from the Pixverse platform.
+  source_type: |
+    Optional per-task type used to auto-populate an empty Source folder.
+    Options: 'human' (default), 'pet'.
+    Resolution order: base_folder/Source/<Type> or base_folder/'Source <Type>'
+    or flat base_folder/Source (if any exist) win over the shared
+    Media Files/Sources library, matched by type. Re-synced on every run;
+    manually added extras in an effect's Source folder are never deleted.
   image_count: |
     Number of source images to feed into each API call (1-4).
     Default: 1. Must match the template's expected input count.
@@ -112,8 +119,11 @@ comments:
   folder_structure: |
     Expected structure:
     base_folder/
+    ├── Source/                 # optional; shared pool auto-synced into every
+    │                           # effect's Source below — see source_type
     ├── Effect Name 1/
     │   ├── Source/             # All inputs for this effect; chunked by image_count
+    │   │                       # (auto-synced from a pool each run)
     │   ├── Generated_Video/    # (created automatically)
     │   └── Metadata/           # (created automatically)
     └── Effect Name 2/

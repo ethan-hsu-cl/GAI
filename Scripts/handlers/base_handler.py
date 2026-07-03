@@ -3,6 +3,7 @@ Base API Handler - Consolidates all common processing logic.
 New APIs only need to implement the unique parts.
 """
 import time
+import shutil
 from pathlib import Path
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -47,6 +48,11 @@ class BaseAPIHandler:
         'Gateway Timeout',
     ]
     
+    # Type keywords that steer effect Source-folder auto-population toward a
+    # specific Media Files/Sources subfolder (see _resolve_media_sources_pool).
+    # Anything not matching a keyword here falls back to the default 'human' type.
+    NON_DEFAULT_SOURCE_TYPE_KEYWORDS = ['Pet']
+
     # Upper bound on parallel API requests (server-side queue safety)
     MAX_CONCURRENT_REQUESTS = 10
 
@@ -673,12 +679,113 @@ class BaseAPIHandler:
             raise ValidationError(f"{len(invalid_images)} invalid images found")
         return valid_tasks
 
+    def _media_files_sources_root(self):
+        """Absolute path to Media Files/Sources, independent of the caller's cwd."""
+        return Path(__file__).resolve().parent.parent.parent / "Media Files" / "Sources"
+
+    def _list_image_files(self, folder):
+        """Non-mutating image listing (no format conversion / resize side effects).
+
+        Safe to call against shared source pools (base_folder/Source, Media
+        Files/Sources) that must not be modified in place. Use
+        processor._get_files_by_type for per-effect Source folders instead,
+        since that path is expected to normalize formats.
+        """
+        folder = Path(folder)
+        if not folder.is_dir():
+            return []
+        exts = set(self.processor._all_image_exts)
+        return sorted(
+            (f for f in folder.iterdir() if f.is_file() and f.suffix.lower() in exts),
+            key=lambda p: p.name.lower()
+        )
+
+    def _resolve_media_sources_pool(self, source_type):
+        """Pick a folder under Media Files/Sources matching source_type.
+
+        Filters candidate 'Source*' folders by type keyword (or excludes known
+        non-default keywords for the default 'human' type), then prefers names
+        containing '20', then names containing 'Sample', then the most
+        recently modified folder.
+        """
+        sources_root = self._media_files_sources_root()
+        if not sources_root.is_dir():
+            return None
+
+        candidates = [d for d in sources_root.iterdir()
+                      if d.is_dir() and d.name.lower().startswith('source')]
+        if not candidates:
+            return None
+
+        type_norm = (source_type or 'human').strip().lower()
+        if type_norm in ('human', 'default', ''):
+            filtered = [d for d in candidates
+                        if not any(kw.lower() in d.name.lower()
+                                   for kw in self.NON_DEFAULT_SOURCE_TYPE_KEYWORDS)]
+        else:
+            filtered = [d for d in candidates if type_norm in d.name.lower()]
+        pool = filtered or candidates
+
+        with_20 = [d for d in pool if '20' in d.name]
+        pool = with_20 or pool
+        with_sample = [d for d in pool if 'sample' in d.name.lower()]
+        pool = with_sample or pool
+
+        if len(pool) == 1:
+            return pool[0]
+        return max(pool, key=lambda d: d.stat().st_mtime)
+
+    def _resolve_base_source_pool(self, base_folder, source_type):
+        """Look for a Source pool directly under base_folder, shared across all
+        effect subfolders, honoring optional per-type subfolders/siblings:
+
+            base_folder/Source/<Type>          e.g. Source/Pet
+            base_folder/'Source <Type>'        e.g. 'Source Pet'
+            base_folder/Source                 flat pool (default/any type)
+
+        Returns the first non-empty match, or None if base_folder has no
+        usable Source folder (caller should fall back to Media Files/Sources).
+        """
+        source_root = base_folder / "Source"
+        type_title = (source_type or 'human').strip().title()
+
+        for candidate in (source_root / type_title, base_folder / f"Source {type_title}"):
+            if self._list_image_files(candidate):
+                return candidate
+
+        if source_root.is_dir() and self._list_image_files(source_root):
+            return source_root
+        return None
+
+    def _resolve_source_pool(self, base_folder, source_type):
+        """base_folder's own Source (if present) wins; otherwise fall back to
+        the shared Media Files/Sources library, matched by source_type."""
+        pool = self._resolve_base_source_pool(base_folder, source_type)
+        if pool:
+            return pool
+        return self._resolve_media_sources_pool(source_type)
+
+    def _sync_source_images(self, pool_dir, dest_dir):
+        """Copy every image from pool_dir into dest_dir, overwriting same-named
+        files. Never deletes files already in dest_dir that aren't in
+        pool_dir, so manually-added extras survive re-runs."""
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        for img in self._list_image_files(pool_dir):
+            shutil.copy2(img, dest_dir / img.name)
+
     def _validate_base_folder_effects_structure(self, tasks, config, effect_key='effect',
                                                  custom_effect_key='custom_effect',
                                                  parallel=False):
         """Validate base_folder/effect_name/Source pattern.
 
         Shared pattern for effects-based APIs (kling_effects, vidu_effects, pixverse).
+
+        Before validating, each task's Source folder is auto-populated from
+        (in priority order): a Source pool directly under base_folder (see
+        _resolve_base_source_pool), or the shared Media Files/Sources library
+        matched by the task's optional 'source_type' (default 'human'; see
+        _resolve_media_sources_pool). Existing files are refreshed on every
+        run but never deleted.
 
         Args:
             tasks: List of task dicts each containing an effect key.
@@ -711,6 +818,11 @@ class BaseAPIHandler:
             task_folder.mkdir(parents=True, exist_ok=True)
             source_dir = task_folder / "Source"
             source_dir.mkdir(exist_ok=True)
+
+            source_type = task.get('source_type', 'human')
+            pool = self._resolve_source_pool(base_folder, source_type)
+            if pool:
+                self._sync_source_images(pool, source_dir)
 
             image_files = self.processor._get_files_by_type(source_dir, 'image')
             if not image_files:

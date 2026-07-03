@@ -68,6 +68,13 @@ comments:
     Custom effect name that takes priority over the preset 'effect' option.
     Also used as the folder name when specified.
     Use for new/unreleased effects or custom named effects.
+  source_type: |
+    Optional per-task type used to auto-populate an empty Source folder.
+    Options: 'human' (default), 'pet'.
+    Resolution order: base_folder/Source/<Type> or base_folder/'Source <Type>'
+    or flat base_folder/Source (if any exist) win over the shared
+    Media Files/Sources library, matched by type. Re-synced on every run;
+    manually added extras in an effect's Source folder are never deleted.
   duration: |
     Video duration in seconds.
     Options: 5, 10
@@ -87,8 +94,10 @@ comments:
   folder_structure: |
     Expected structure:
     base_folder/
+    ├── Source/               (optional; shared pool auto-copied into every
+    │                          effect's Source below — see source_type)
     ├── effect_name_1/
-    │   ├── Source/
+    │   ├── Source/           (auto-synced from a pool each run)
     │   │   └── image.jpg
     │   ├── Generated_Video/  (created automatically)
     │   └── Metadata/  (created automatically)
