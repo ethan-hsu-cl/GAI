@@ -37,7 +37,14 @@ class PixverseI2vHandler(BaseAPIHandler):
     def _make_api_call(self, file_path, task_config, attempt):
         """Make Pixverse API call."""
         default_settings = self.config.get("default_settings", {})
-        
+        custom_effect_id = task_config.get("custom_effect_id", "")
+        effect = task_config.get("effect", "none")
+
+        if custom_effect_id:
+            self.logger.info(f"   Using custom effect: {effect} (id={custom_effect_id})")
+        elif effect and effect != "none":
+            self.logger.info(f"   Using preset effect: {effect}")
+
         return self.client.predict(
             model=default_settings.get("model", "v6"),
             duration=default_settings.get("duration", "5s"),
@@ -45,8 +52,8 @@ class PixverseI2vHandler(BaseAPIHandler):
             motion_mode=default_settings.get("motion_mode", "normal"),
             quality=default_settings.get("quality", "540p"),
             style=default_settings.get("style", "none"),
-            effect=task_config.get("effect", "none") if not task_config.get("custom_effect_id") else "none",
-            custom_effect_id=task_config.get("custom_effect_id", ""),
+            effect=effect if not custom_effect_id else "none",
+            custom_effect_id=custom_effect_id,
             negative_prompt=task_config.get("negative_prompt", ""),
             prompt=task_config.get("prompt", ""),
             use_url=False,
@@ -78,10 +85,13 @@ class PixverseI2vHandler(BaseAPIHandler):
             if match:
                 video_id = match.group(1)
         
+        if video_id:
+            self.logger.info(f" Video ID: {video_id}")
+
         # Try to save video first (prioritize video output over error checking)
         output_url = all_fields.get('output_url')
         output_video = result[1] if len(result) > 1 else None
-        
+
         effect = task_config.get("effect", "none")
         output_video_name = f"{base_name}_{effect.replace(' ', '_')}_effect.mp4"
         output_path = Path(output_folder) / output_video_name
@@ -138,7 +148,8 @@ class PixverseI2vHandler(BaseAPIHandler):
             **all_fields
         }
         
-        self.processor.save_metadata(Path(metadata_folder), base_name, file_name, 
+        self.processor.save_metadata(Path(metadata_folder), base_name, file_name,
                                     metadata, task_config)
-        
+        self.logger.info(f" ✅ Generated: {output_video_name}")
+
         return True

@@ -249,6 +249,10 @@ class PixverseEffectHandler(BaseAPIHandler):
                 f"'{task_config.get('effect', '')}'"
             )
 
+        self.logger.info(
+            f"   Using custom effect: {task_config.get('effect', '')} (id={template_id})"
+        )
+
         return self.client.predict(
             model=default_settings.get('model', 'v6'),
             duration=default_settings.get('duration', 5),
@@ -284,6 +288,9 @@ class PixverseEffectHandler(BaseAPIHandler):
             match = re.search(r'VideoID:\s*(\d+)', error_message)
             if match:
                 video_id = match.group(1)
+
+        if video_id:
+            self.logger.info(f" Video ID: {video_id}")
 
         output_url = all_fields.get('output_url')
         output_video = result[1] if len(result) > 1 else None
@@ -339,4 +346,5 @@ class PixverseEffectHandler(BaseAPIHandler):
         self.processor.save_metadata(Path(metadata_folder), base_name,
                                      selected_names[0] if selected_names else file_name,
                                      base_metadata, task_config)
+        self.logger.info(f" ✅ Generated: {output_video_name}")
         return True

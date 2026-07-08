@@ -51,7 +51,7 @@ class BaseAPIHandler:
     # Type keywords that steer effect Source-folder auto-population toward a
     # specific Media Files/Sources subfolder (see _resolve_media_sources_pool).
     # Anything not matching a keyword here falls back to the default 'human' type.
-    NON_DEFAULT_SOURCE_TYPE_KEYWORDS = ['Pet']
+    NON_DEFAULT_SOURCE_TYPE_KEYWORDS = ['Pet', 'Building']
 
     # Upper bound on parallel API requests (server-side queue safety)
     MAX_CONCURRENT_REQUESTS = 10

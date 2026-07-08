@@ -20,88 +20,93 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Pixverse Effects/0702 14 Styles
+base_folder: Media Files/Pixverse Effects/0703 16 Styles
 template_path: templates/I2V templates 3rd party.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1441759153#gid=1441759153
 provider_reference_link: https://aisphere.feishu.cn/wiki/GKwywQM3oixt4EkOM1IceWw8n5f?table=tblfxIxbTQwb57kk&view=vewTVy4A0p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgButiXYCKhJSIDA06yamfQXAVKfHT2LPS7hIfn4cWYG3-k?e=60f6zo
+source_video_link:
 
 tasks:
-  - effect: Tokyo Drift
+  - effect: GOALS Rush
     prompt: ''
-    custom_effect_id: '388850822837312'
+    custom_effect_id: '406218913317312'
     negative_prompt: ''
 
-  - effect: Doomsday Frost
+  - effect: Feeling Good
     prompt: ''
-    custom_effect_id: '368889104245735'
+    custom_effect_id: '389908394208832'
     negative_prompt: ''
 
-  # - effect: Finally Free
-  #   prompt: ''
-  #   custom_effect_id: '407825592214848'
-  #   negative_prompt: ''
-
-  - effect: Sharp Post-Match Comment
+  - effect: Apex Aesthetic
     prompt: ''
-    custom_effect_id: '404955806201792'
+    custom_effect_id: '399815460334400'
     negative_prompt: ''
 
-  - effect: Watch this
+  - effect: Helicopter Show
     prompt: ''
-    custom_effect_id: '395253042098112'
+    custom_effect_id: '402681598491648'
     negative_prompt: ''
 
-  - effect: Pit Crew Moment
+  - effect: Little Dino Ride
     prompt: ''
-    custom_effect_id: '402687993764864'
+    custom_effect_id: '396331605587904'
     negative_prompt: ''
 
-  - effect: 'Cyber Armor: Rain Reborn'
+  - effect: Fatal Ace
     prompt: ''
-    custom_effect_id: '410133101388544'
+    custom_effect_id: '394754123468736'
     negative_prompt: ''
 
-  - effect: Street to Glory
+  - effect: Palm Decode
     prompt: ''
-    custom_effect_id: '408661207662528'
+    custom_effect_id: '400223288594880'
     negative_prompt: ''
 
-  - effect: World Traverse
+  - effect: Gloom to Bloom
     prompt: ''
-    custom_effect_id: '408869061406656'
+    custom_effect_id: '392392566261184'
     negative_prompt: ''
 
-  - effect: Lava Rise
+  - effect: Divine Mode Activated
     prompt: ''
-    custom_effect_id: '410285445698304'
+    custom_effect_id: '395286837630912'
     negative_prompt: ''
 
-  - effect: Mini Football Hero
+  - effect: Full Throttle
     prompt: ''
-    custom_effect_id: '410317363057408'
+    custom_effect_id: '396493410627520'
     negative_prompt: ''
 
-  - effect: One Shot Legend
+  - effect: 'The Tiny Nom Nom: LIVE'
     prompt: ''
-    custom_effect_id: '409767750265728'
+    custom_effect_id: '393969466697664'
     negative_prompt: ''
 
-  - effect: Thriller Dance
+  - effect: The Private Press
     prompt: ''
-    custom_effect_id: '409766559675264'
+    custom_effect_id: '394709589270464'
     negative_prompt: ''
 
-  - effect: Dai Dai dance
+  - effect: Skyfall Vanguard
     prompt: ''
-    custom_effect_id: '409589071559552'
+    custom_effect_id: '394577285404032'
     negative_prompt: ''
 
-  - effect: Today is My Birthday
+  - effect: Moonlit Eid
     prompt: ''
-    custom_effect_id: '408891141511104'
+    custom_effect_id: '392968539895680'
+    negative_prompt: ''
+
+  - effect: Alien Sand Plains
+    prompt: ''
+    custom_effect_id: '392596845600576'
+    negative_prompt: ''
+
+  - effect: Hawak mo ang beat
+    prompt: ''
+    custom_effect_id: '392415610586560'
     negative_prompt: ''
 
 comments:
@@ -119,7 +124,7 @@ comments:
     Obtain from the Pixverse platform.
   source_type: |
     Optional per-task type used to auto-populate an empty Source folder.
-    Options: 'human' (default), 'pet'.
+    Options: 'human' (default), 'pet', 'building'.
     Resolution order: base_folder/Source/<Type> or base_folder/'Source <Type>'
     or flat base_folder/Source (if any exist) win over the shared
     Media Files/Sources library, matched by type. Re-synced on every run;

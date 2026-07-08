@@ -264,7 +264,11 @@ class ViduReferenceHandler(BaseAPIHandler):
         
         video_url = all_fields.get('video_url')
         error_msg = all_fields.get('error_msg')
-        
+        task_id = all_fields.get('task_id')
+
+        if task_id:
+            self.logger.info(f" Task ID: {task_id}")
+
         if error_msg:
             raise ValueError(f"API error: {error_msg}")
         

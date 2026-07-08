@@ -6,6 +6,7 @@ template_path: templates/I2V templates 3rd party.pptx
 
 # Global settings (can be overridden per task)
 duration: 5
+concurrent_requests: 3
 
 output:
   directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
@@ -15,11 +16,11 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Kling Effects/0629 14 Effects
+base_folder: Media Files/Kling Effects/0707 14 Effects
 
 design_link: https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=1225550147#gid=1225550147
 provider_reference_link: https://app.klingai.com/global/dev/document-api/quickStart/productIntroduction/effectsCenter
-source_video_link:
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgD3Ujsclk0kRofVm6-B23xkAdTwdCsP4OICoxi-_bkLfao?e=dFnRxp
 
 # Tasks - each represents a style/effect to apply
 # Effect selection per task:
@@ -29,8 +30,6 @@ source_video_link:
 tasks:
   - effect:
     custom_effect: 'rampage_ape'
-  - effect:
-    custom_effect: 'rocket_rocket'
   - effect:
     custom_effect: 'arg_hot_dance'
   - effect:
@@ -48,7 +47,11 @@ tasks:
   - effect:
     custom_effect: 'flyer'
   - effect:
+    custom_effect: 'rocketrocket'
+    source_type: building
+  - effect:
     custom_effect: 'building_sweater'
+    source_type: building
   - effect:
     custom_effect: 'pure_white_wings'
   - effect:
@@ -70,7 +73,7 @@ comments:
     Use for new/unreleased effects or custom named effects.
   source_type: |
     Optional per-task type used to auto-populate an empty Source folder.
-    Options: 'human' (default), 'pet'.
+    Options: 'human' (default), 'pet', 'building'.
     Resolution order: base_folder/Source/<Type> or base_folder/'Source <Type>'
     or flat base_folder/Source (if any exist) win over the shared
     Media Files/Sources library, matched by type. Re-synced on every run;
@@ -79,6 +82,9 @@ comments:
     Video duration in seconds.
     Options: 5, 10
     Default: 5 (global setting)
+  concurrent_requests: |
+    Number of tasks to process in parallel. Set at root level to apply to
+    all tasks, or per-task to override. Default: 1 (sequential).
   output_group_tasks_by: |
     Set to 0 (or omit) to create individual reports per task. 
     Set to N to group N tasks into one combined report.

@@ -119,7 +119,7 @@ class RunwayHandler(BaseAPIHandler):
     def process_task(self, task, task_num, total_tasks):
         """Override: Handle video-reference pairing strategies."""
         folder = Path(task['folder'])
-        self.logger.info(f"Task {task_num}/{total_tasks}: {folder.name}")
+        self.logger.info(f"📁 Task {task_num}/{total_tasks}: {folder.name}")
         
         source_folder = folder / "Source"
         output_folder = folder / "Generated_Video"
@@ -150,7 +150,7 @@ class RunwayHandler(BaseAPIHandler):
                         skipped += 1
                         continue
                     
-                    self.logger.info(f"{i}/{total}: {video_file.name} + {ref_image.name}")
+                    self.logger.info(f" 🖼️ {i}/{total}: {video_file.name} + {ref_image.name}")
                     task_config = task.copy()
                     task_config['reference_image'] = str(ref_image)
                     
@@ -173,7 +173,7 @@ class RunwayHandler(BaseAPIHandler):
                         skipped += 1
                         continue
                     
-                    self.logger.info(f"{i}/{len(pairs)}: {video_file.name} + {ref_image.name}")
+                    self.logger.info(f" 🖼️ {i}/{len(pairs)}: {video_file.name} + {ref_image.name}")
                     task_config = task.copy()
                     task_config['reference_image'] = str(ref_image)
                     
@@ -196,7 +196,7 @@ class RunwayHandler(BaseAPIHandler):
                     skipped += 1
                     continue
                 
-                self.logger.info(f"{i}/{len(video_files)}: {video_file.name} (text-to-video)")
+                self.logger.info(f" 🖼️ {i}/{len(video_files)}: {video_file.name} (text-to-video)")
                 
                 if self.processor.process_file(str(video_file), task, output_folder, metadata_folder):
                     successful += 1
@@ -204,7 +204,7 @@ class RunwayHandler(BaseAPIHandler):
                 if i < len(video_files):
                     time.sleep(self.api_defs.get('rate_limit', 3))
         
-        self.logger.info(f"Task {task_num}: {successful} successful ({skipped} skipped)")
+        self.logger.info(f"✓ Task {task_num}: {successful} successful ({skipped} skipped)")
     
     def _make_api_call(self, file_path, task_config, attempt):
         """Make Runway API call."""
@@ -268,6 +268,6 @@ class RunwayHandler(BaseAPIHandler):
             metadata, task_config)
         
         if video_saved:
-            self.logger.info(f"Generated {output_filename}")
+            self.logger.info(f" ✅ Generated: {output_filename}")
         
         return video_saved

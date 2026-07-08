@@ -74,7 +74,7 @@ comments:
     Obtain from the Pixverse platform.
   source_type: |
     Optional per-task type used to auto-populate an empty Source folder.
-    Options: 'human' (default), 'pet'.
+    Options: 'human' (default), 'pet', 'building'.
     Resolution order: base_folder/Source/<Type> or base_folder/'Source <Type>'
     or flat base_folder/Source (if any exist) win over the shared
     Media Files/Sources library, matched by type. Re-synced on every run;
