@@ -16,11 +16,11 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Kling Effects/0707 14 Effects
+base_folder: Media Files/Kling Effects/0709 16 Effects
 
 design_link: https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=1225550147#gid=1225550147
 provider_reference_link: https://app.klingai.com/global/dev/document-api/quickStart/productIntroduction/effectsCenter
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgD3Ujsclk0kRofVm6-B23xkAdTwdCsP4OICoxi-_bkLfao?e=dFnRxp
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDhUH_UTH6UQ5eWYsCX4D3cAbNA7CIgVPhBYbaz7k0RFKE?e=mAlKRM
 
 # Tasks - each represents a style/effect to apply
 # Effect selection per task:
@@ -29,35 +29,37 @@ source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedri
 # The effect name (custom_effect or effect) is used as the subfolder name in base_folder
 tasks:
   - effect:
-    custom_effect: 'rampage_ape'
+    custom_effect: 'shrug_dance'
   - effect:
-    custom_effect: 'arg_hot_dance'
+    custom_effect: 'soccer_star'
   - effect:
-    custom_effect: 'bra_hot_dance'
+    custom_effect: 'thumbs_up_pro'
   - effect:
-    custom_effect: 'fra_hot_dance'
+    custom_effect: 'guardian_spirit'
   - effect:
-    custom_effect: 'bra_goal'
+    custom_effect: 'cry_cry'
   - effect:
-    custom_effect: 'arg_goal'
+    custom_effect: 'instant_kid'
   - effect:
-    custom_effect: 'por_goal'
+    custom_effect: 'lie_flat'
   - effect:
-    custom_effect: 'magic_fireball'
+    custom_effect: 'samba_fever'
   - effect:
-    custom_effect: 'flyer'
+    custom_effect: 'get_rich_quick'
   - effect:
-    custom_effect: 'rocketrocket'
-    source_type: building
+    custom_effect: 'send_my_love'
   - effect:
-    custom_effect: 'building_sweater'
-    source_type: building
+    custom_effect: 'the_exercise'
   - effect:
-    custom_effect: 'pure_white_wings'
+    custom_effect: 'the_hip_sway'
   - effect:
-    custom_effect: 'black_wings'
+    custom_effect: 'jealousy_sway'
   - effect:
-    custom_effect: 'golden_wing'
+    custom_effect: 'african_sway'
+  - effect:
+    custom_effect: 'inner_voice'
+  - effect:
+    custom_effect: 'eagle_snatch'
 
 comments:
   base_folder: |
