@@ -791,7 +791,7 @@ class UnifiedReportGenerator:
         # vidu_reference: source + reference images from Reference folder
         # pixverse_effect: all source images used in a single /submit_5 iteration
         if (media_type == 'source' and
-            self.api_name in ('nano_banana', 'openai_image', 'vidu_reference', 'pixverse_effect') and
+            self.api_name in ('nano_banana', 'openai_image', 'vidu_reference', 'pixverse_effect', 'i2i2v') and
             pair.additional_source_paths):
             # Check if all additional sources are images (not videos)
             all_images = all(
@@ -2605,8 +2605,13 @@ class UnifiedReportGenerator:
 
         elif self.api_name == "i2i2v":
             # i2i2v: per-task folders with Source/, Generated_Frames/,
-            # Generated_Video/, Metadata/. Each source image yields exactly one
-            # intermediate frame and one final video — match by source stem.
+            # Generated_Video/, Metadata/. The report is driven off the
+            # generated iterations (frame/video/metadata files share a
+            # base_name), NOT the raw Source pool: in random-source mode the
+            # handler names outputs "iterNNN_<stems>" combining one or more
+            # randomly selected source images, so output names never equal an
+            # individual source filename. Each iteration's source image(s) are
+            # resolved from its metadata (selected_source_images / source_image).
             tasks_to_process = [task] if task.get('folder') else self.config.get('tasks', [])
 
             for task_config in tasks_to_process:
@@ -2634,16 +2639,19 @@ class UnifiedReportGenerator:
                 _, videos, _ = self._scan_directory_once(folders['vid'])
                 _, _, metadata_files = self._scan_directory_once(folders['meta'])
 
-                # Frames are named {source_stem}_image.{ext}; strip the suffix
-                # so the lookup key matches the source/video key.
-                frames_by_source = {}
+                # Frames are named {base_name}_image.{ext}; strip the suffix so
+                # the lookup key matches the video / metadata base_name key.
+                frames_by_base = {}
                 for key, path in frame_images.items():
                     if key.endswith('_image'):
-                        frames_by_source[key[:-len('_image')]] = path
+                        frames_by_base[key[:-len('_image')]] = path
                     else:
-                        frames_by_source[key] = path
+                        frames_by_base[key] = path
 
                 metadata_cache = self._load_json_batch(metadata_files) if metadata_files else {}
+
+                # Resolve source filenames (recorded in metadata) back to paths.
+                source_by_name = {p.name: p for p in source_images.values()}
 
                 # Pre-compute aspect ratios for stacked-layout sizing.
                 all_media = (list(source_images.values()) + list(frame_images.values())
@@ -2653,22 +2661,41 @@ class UnifiedReportGenerator:
                         all_media, are_videos={p: True for p in videos.values()}
                     )
 
+                # One pair per generated iteration, keyed by base_name.
+                iteration_keys = set(frames_by_base) | set(videos) | set(metadata_cache)
+
                 logger.info(
                     f"Source: {len(source_images)}, Frames: {len(frame_images)}, "
-                    f"Videos: {len(videos)}, Meta: {len(metadata_files)}"
+                    f"Videos: {len(videos)}, Meta: {len(metadata_files)}, "
+                    f"Iterations: {len(iteration_keys)}"
                 )
 
-                for key, img in source_images.items():
-                    video_path = videos.get(key)
-                    frame_path = frames_by_source.get(key)
+                for key in sorted(iteration_keys):
                     metadata = metadata_cache.get(key, {})
+                    frame_path = frames_by_base.get(key)
+                    video_path = videos.get(key)
+
+                    # Source image(s) used for this iteration, from metadata.
+                    selected_names = metadata.get('selected_source_images') or []
+                    if not selected_names and metadata.get('source_image'):
+                        selected_names = [metadata['source_image']]
+                    selected_paths = [source_by_name[n] for n in selected_names
+                                      if n in source_by_name]
+                    # Fall back to a source whose stem matches the base_name
+                    # (non-random mode, or metadata missing).
+                    if not selected_paths and key in source_images:
+                        selected_paths = [source_images[key]]
+
+                    source_path = selected_paths[0] if selected_paths else None
+                    additional = selected_paths[1:]
 
                     pair = MediaPair(
-                        source_file=img.name,
-                        source_path=img,
+                        source_file=(source_path.name if source_path else key),
+                        source_path=source_path,
                         api_type=self.api_name,
                         generated_paths=[video_path] if video_path else [],
                         reference_paths=[frame_path] if frame_path else [],
+                        additional_source_paths=additional,
                         effect_name=style_name,
                         category="I2I2V",
                         metadata=metadata,
