@@ -21,6 +21,96 @@ from PIL import Image
 from .base_handler import BaseAPIHandler
 
 
+def build_selection_plan(source_images, task_config, model_max,
+                         default_min_images, logger):
+    """Build the source-image groups used by iteration-based generation.
+
+    This is module-level shared image-generation logic so orchestrators such as
+    I2I2V can use the exact same selection behavior as Nano Banana and OpenAI
+    Image without maintaining a separate helper module.
+
+    Returns:
+        tuple: ``(selection_plan, selection_mode)`` where the plan contains one
+        list of image paths per iteration.
+    """
+    min_images = task_config.get('min_images', default_min_images)
+    max_images = task_config.get('max_images', model_max)
+
+    min_images = max(1, min(min_images, model_max))
+    max_images = max(min_images, min(max_images, model_max))
+
+    total_available = len(source_images)
+    if not source_images:
+        return [], 'sequential_sorted'
+
+    max_images = min(max_images, total_available)
+    min_images = min(min_images, max_images)
+
+    num_iterations = task_config.get('num_iterations', 0)
+    if num_iterations <= 0:
+        num_iterations = total_available
+
+    iteration_counts = []
+    for iteration_index in range(num_iterations):
+        if num_iterations <= 1:
+            num_images = max_images
+        elif min_images == max_images:
+            num_images = min_images
+        else:
+            num_counts = max_images - min_images + 1
+            bucket = (iteration_index * num_counts) // num_iterations
+            bucket = min(bucket, num_counts - 1)
+            num_images = min_images + bucket
+        iteration_counts.append(num_images)
+
+    total_needed = sum(iteration_counts)
+    use_deterministic_random = task_config.get('use_deterministic_random', False)
+    random_seed = task_config.get('random_seed')
+
+    if use_deterministic_random:
+        if random_seed is not None:
+            seed = int(random_seed)
+            logger.info(f" 🎲 Using deterministic random mode with seed: {seed}")
+        else:
+            seed = abs(hash(str(task_config.get('folder', '')))) % (2**32)
+            logger.info(f" 🎲 Using deterministic random mode (auto-seed: {seed})")
+        selection_mode = f'deterministic_random_seed_{seed}'
+    else:
+        seed = None
+        selection_mode = 'sequential_sorted'
+        logger.info(" 📝 Using sequential sorted mode")
+
+    if total_needed <= total_available:
+        logger.info(
+            f" ✅ Optimal selection: {total_needed} images needed, "
+            f"{total_available} available (no repeats)"
+        )
+    else:
+        cycles = (total_needed + total_available - 1) // total_available
+        logger.warning(
+            f" ⚠️ {total_needed} images needed but only {total_available} available. "
+            f"Images will repeat across {cycles} cycles."
+        )
+
+    selection_plan = []
+    available_pool = []
+    for iteration_index in range(num_iterations):
+        num_images = iteration_counts[iteration_index]
+        if len(available_pool) < num_images:
+            refill = source_images[:]
+            if use_deterministic_random:
+                # Use a local RNG so planning does not mutate process-global
+                # random state used by concurrent handlers.
+                random.Random(seed).shuffle(refill)
+            available_pool.extend(refill)
+
+        selected = available_pool[:num_images]
+        available_pool = available_pool[num_images:]
+        selection_plan.append(sorted(selected, key=lambda x: x.name.lower()))
+
+    return selection_plan, selection_mode
+
+
 class BaseImageGenerationHandler(BaseAPIHandler):
     """Shared base for multi-image generation handlers."""
 
@@ -471,102 +561,10 @@ class BaseImageGenerationHandler(BaseAPIHandler):
         model = task_config.get('model', self.DEFAULT_MODEL)
         model_max = self.MODEL_MAX_IMAGES.get(model, self.DEFAULT_MAX_IMAGES)
 
-        min_images = task_config.get('min_images', self.DEFAULT_MIN_IMAGES)
-        max_images = task_config.get('max_images', model_max)
-
-        # Validate and clamp to model limits
-        min_images = max(1, min(min_images, model_max))
-        max_images = max(min_images, min(max_images, model_max))
-
         source_images = self._get_source_images_for_task(task_config)
-        total_available = len(source_images)
-
-        if not source_images:
-            return []
-
-        # Clamp max to available images
-        max_images = min(max_images, total_available)
-        min_images = min(min_images, max_images)
-
-        num_iterations = task_config.get('num_iterations', 0)
-        if num_iterations <= 0:
-            num_iterations = total_available
-
-        # Pre-calculate image counts for each iteration (even bucket distribution)
-        iteration_counts = []
-        for iteration_index in range(num_iterations):
-            if num_iterations <= 1:
-                num_images = max_images
-            elif min_images == max_images:
-                num_images = min_images
-            else:
-                num_counts = max_images - min_images + 1
-                bucket = (iteration_index * num_counts) // num_iterations
-                bucket = min(bucket, num_counts - 1)
-                num_images = min_images + bucket
-            iteration_counts.append(num_images)
-
-        total_needed = sum(iteration_counts)
-
-        use_deterministic_random = task_config.get('use_deterministic_random', False)
-        random_seed = task_config.get('random_seed', None)
-
-        if use_deterministic_random:
-            if random_seed is not None:
-                seed = int(random_seed)
-                self.logger.info(f" 🎲 Using deterministic random mode with seed: {seed}")
-            else:
-                seed = abs(hash(task_key)) % (2**32)
-                self.logger.info(f" 🎲 Using deterministic random mode (auto-seed: {seed})")
-            selection_mode = f'deterministic_random_seed_{seed}'
-        else:
-            selection_mode = 'sequential_sorted'
-            self.logger.info(f" 📝 Using sequential sorted mode")
-
-        if total_needed <= total_available:
-            self.logger.info(
-                f" ✅ Optimal selection: {total_needed} images needed, "
-                f"{total_available} available (no repeats)"
-            )
-        else:
-            cycles = (total_needed + total_available - 1) // total_available
-            self.logger.warning(
-                f" ⚠️ {total_needed} images needed but only {total_available} available. "
-                f"Images will repeat across {cycles} cycles."
-            )
-
-        if use_deterministic_random:
-            source_pool = source_images[:]
-            random.seed(seed)
-            random.shuffle(source_pool)
-            self.logger.debug(f" 🔀 Shuffled source pool with seed {seed}")
-        else:
-            source_pool = source_images[:]
-
-        # Build selection plan by consuming from pool sequentially
-        selection_plan = []
-        available_pool = []
-
-        for iteration_index in range(num_iterations):
-            num_images = iteration_counts[iteration_index]
-
-            # Refill pool if needed
-            if len(available_pool) < num_images:
-                if use_deterministic_random:
-                    temp_pool = source_images[:]
-                    random.seed(seed)
-                    random.shuffle(temp_pool)
-                    available_pool.extend(temp_pool)
-                else:
-                    available_pool.extend(source_images[:])
-
-            # Consume images from pool (no repeats within cycle)
-            selected = available_pool[:num_images]
-            available_pool = available_pool[num_images:]
-
-            # Sort selected images for consistent API input ordering
-            selected = sorted(selected, key=lambda x: x.name.lower())
-            selection_plan.append(selected)
+        selection_plan, selection_mode = build_selection_plan(
+            source_images, task_config, model_max, self.DEFAULT_MIN_IMAGES, self.logger
+        )
 
         self._selection_modes[task_key] = selection_mode
 

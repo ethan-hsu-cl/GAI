@@ -293,8 +293,13 @@ class BaseAPIHandler:
         raise last_exception
     
     def process(self, file_path, task_config, output_folder, metadata_folder, attempt, max_retries):
-        """Process a single file. Override _make_api_call() to customize."""
-        base_name = Path(file_path).stem
+        """Process a single file. Override _make_api_call() to customize.
+
+        Iteration-style callers (e.g. random source selection) may set
+        ``task_config['_base_name']`` to name outputs/metadata after the
+        iteration instead of the source file.
+        """
+        base_name = task_config.get('_base_name') or Path(file_path).stem
         file_name = Path(file_path).name
         start_time = time.time()
 
@@ -366,7 +371,7 @@ class BaseAPIHandler:
         """Save failure metadata - common for all APIs."""
         # Handle text-to-video cases where file_path might be None
         if file_path is not None:
-            base_name = Path(file_path).stem
+            base_name = task_config.get('_base_name') or Path(file_path).stem
             file_name = Path(file_path).name
         else:
             # For text-to-video, use style name or fallback
@@ -407,19 +412,21 @@ class BaseAPIHandler:
         """Get appropriate source field name based on API."""
         return "source_video" if self.api_name == "runway" else "source_image"
     
-    def _get_processing_status(self, file_path, metadata_folder):
+    def _get_processing_status(self, file_path, metadata_folder, base_name=None):
         """Get detailed processing status for a file.
-        
+
         Args:
             file_path: Path to the source file.
             metadata_folder: Path to the metadata folder.
-        
+            base_name: Optional metadata key override (iteration-style callers
+                whose outputs aren't named after the source file).
+
         Returns:
             tuple: (is_complete, status_reason) where:
                 - is_complete: True if file should be skipped
                 - status_reason: 'success', 'failed_exhausted', or None if not complete
         """
-        base_name = Path(file_path).stem
+        base_name = base_name or Path(file_path).stem
         metadata_file = Path(metadata_folder) / f"{base_name}_metadata.json"
         
         if metadata_file.exists():

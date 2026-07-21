@@ -7,6 +7,35 @@ from PIL import Image
 from .base_handler import BaseAPIHandler
 
 
+def predict_image_to_video(client, image_path, *, prompt, mode='std', duration=5,
+                           cfg=0.5, model='v1.6', negative_prompt='',
+                           sound_enabled=False, multishot_type='none',
+                           multishot_df=None, end_frame_image=None,
+                           resolution='720p', api_name='/Image2Video'):
+    """Call Kling's current 12-parameter ``/Image2Video`` endpoint."""
+    if multishot_df is None:
+        multishot_df = {
+            "headers": ["prompt", "duration"],
+            "data": [],
+            "metadata": None,
+        }
+    return client.predict(
+        image=handle_file(str(image_path)),
+        prompt=prompt,
+        mode=mode,
+        duration=duration,
+        cfg=cfg,
+        model=model,
+        negative_prompt=negative_prompt,
+        sound_enabled=sound_enabled,
+        multishot_type=multishot_type,
+        multishot_df=multishot_df,
+        end_frame_image=end_frame_image,
+        resolution=resolution,
+        api_name=api_name,
+    )
+
+
 class KlingHandler(BaseAPIHandler):
     """Kling Image2Video handler."""
 
@@ -44,19 +73,20 @@ class KlingHandler(BaseAPIHandler):
 
     def _make_api_call(self, file_path, task_config, attempt):
         """Make Kling API call."""
-        return self.client.predict(
-            image=handle_file(str(file_path)),
+        return predict_image_to_video(
+            self.client,
+            file_path,
             prompt=task_config['prompt'],
             mode=task_config.get('mode', 'std'),
-            duration=5,
+            duration=task_config.get('duration', 5),
             cfg=0.5,
             model=self.config.get('model_version', 'v2.1'),
             negative_prompt=task_config.get('negative_prompt', ''),
             sound_enabled=task_config.get('sound_enabled', False),
-            voice_ids=task_config.get('voice_ids', ''),
             multishot_type=task_config.get('multishot_type', 'none'),
             multishot_df=task_config.get('multishot_df', {"headers": ["prompt", "duration"], "data": [], "metadata": None}),
             end_frame_image=None,
+            resolution=task_config.get('resolution', '720p'),
             api_name=self.api_defs['api_name']
         )
     

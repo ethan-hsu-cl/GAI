@@ -16,11 +16,11 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Kling Effects/0709 16 Effects
+base_folder: Media Files/Kling Effects/0717 16 Effects
 
 design_link: https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=1225550147#gid=1225550147
 provider_reference_link: https://app.klingai.com/global/dev/document-api/quickStart/productIntroduction/effectsCenter
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDhUH_UTH6UQ5eWYsCX4D3cAbNA7CIgVPhBYbaz7k0RFKE?e=mAlKRM
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgACZs7EMLuvTZPzAjoJixejATv9oylfk4Q_HvVzNs4eH9A?e=AsSaCu
 
 # Tasks - each represents a style/effect to apply
 # Effect selection per task:
@@ -29,37 +29,38 @@ source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedri
 # The effect name (custom_effect or effect) is used as the subfolder name in base_folder
 tasks:
   - effect:
-    custom_effect: 'shrug_dance'
+    custom_effect: 'hug_from_past'
   - effect:
-    custom_effect: 'soccer_star'
+    custom_effect: 'idol_live'
   - effect:
-    custom_effect: 'thumbs_up_pro'
+    custom_effect: 'pet_burst'
+    source_type: pet
   - effect:
-    custom_effect: 'guardian_spirit'
+    custom_effect: 'cute_pumpkin_transform'
   - effect:
-    custom_effect: 'cry_cry'
+    custom_effect: 'cute_ghost_transform'
   - effect:
-    custom_effect: 'instant_kid'
+    custom_effect: 'halloween_escape'
   - effect:
-    custom_effect: 'lie_flat'
+    custom_effect: 'demon_transform'
   - effect:
-    custom_effect: 'samba_fever'
+    custom_effect: 'gallery_ring'
   - effect:
-    custom_effect: 'get_rich_quick'
+    custom_effect: '3d_cartoon_2'
   - effect:
-    custom_effect: 'send_my_love'
+    custom_effect: 'dollar_rain'
   - effect:
-    custom_effect: 'the_exercise'
+    custom_effect: 'ski_ski'
   - effect:
-    custom_effect: 'the_hip_sway'
+    custom_effect: 'disappear'
   - effect:
-    custom_effect: 'jealousy_sway'
+    custom_effect: 'mythic_style'
   - effect:
-    custom_effect: 'african_sway'
+    custom_effect: 'dishwasher'
   - effect:
-    custom_effect: 'inner_voice'
+    custom_effect: 'santa_gifts'
   - effect:
-    custom_effect: 'eagle_snatch'
+    custom_effect: 'long_hair'
 
 comments:
   base_folder: |

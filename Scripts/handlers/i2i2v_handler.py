@@ -20,11 +20,14 @@ Per-task folder layout:
     └── Metadata/
 """
 import base64
+import json
 import queue
+import random
 import re
 import shutil
 import threading
 import time
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
@@ -32,6 +35,206 @@ from gradio_client import Client, handle_file
 from PIL import Image
 
 from .base_handler import BaseAPIHandler, ValidationError
+from .image_generation_base import build_selection_plan
+from .kling_handler import predict_image_to_video
+
+
+# Original-frame staging is specific to the I2I2V pipeline. It lives here so
+# the orchestrator remains self-contained rather than depending on a separate
+# one-purpose handler module.
+STAGE_DEFAULT_SEED = 42
+STAGE_IMAGE_EXTS = {'.png', '.jpg', '.jpeg', '.webp'}
+STAGE_PIPELINE_DIRS = {
+    'Source', 'Additional', 'Original_Source', 'Generated_Frames',
+    'Generated_Video', 'Metadata',
+}
+STAGE_RESET_DIRS = ('Source', 'Additional', 'Generated_Frames', 'Original_Source')
+STAGE_OUTPUT_INDEX_RE = re.compile(r'^(?P<base>.+?)_image(?:_\d+)?$')
+
+
+def _stage_images_in(folder):
+    folder = Path(folder)
+    if not folder.is_dir():
+        return []
+    return sorted(
+        (p for p in folder.iterdir()
+         if p.is_file() and p.suffix.lower() in STAGE_IMAGE_EXTS),
+        key=lambda p: p.name.lower(),
+    )
+
+
+def _stage_copy_missing(src, dest):
+    if dest.exists():
+        return False
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dest)
+    return True
+
+
+def _stage_frame_base(output_path):
+    match = STAGE_OUTPUT_INDEX_RE.match(output_path.stem)
+    return match.group('base') if match else output_path.stem
+
+
+def _find_original_runs(task_folder):
+    if not task_folder.is_dir():
+        return []
+    return [
+        folder for folder in task_folder.iterdir()
+        if folder.is_dir()
+        and folder.name not in STAGE_PIPELINE_DIRS
+        and (folder / 'Generated_Output').is_dir()
+    ]
+
+
+def _report_original_mode(original):
+    meta_dir = original / 'Metadata'
+    if not meta_dir.is_dir():
+        return 'no metadata'
+    additional_counts = Counter()
+    random_selection_count = 0
+    total = 0
+    for metadata_file in meta_dir.glob('*_metadata.json'):
+        try:
+            metadata = json.loads(metadata_file.read_text(encoding='utf-8'))
+        except (json.JSONDecodeError, OSError):
+            continue
+        total += 1
+        if metadata.get('selected_source_images') or metadata.get('random_source_selection'):
+            random_selection_count += 1
+        additional_counts[len(metadata.get('additional_images_used') or [])] += 1
+    if not total:
+        return 'no readable metadata'
+    parts = [f'{total} calls']
+    if random_selection_count:
+        parts.append(f'random source selection: {random_selection_count}')
+    paired = sum(count for size, count in additional_counts.items() if size > 0)
+    if paired:
+        distribution = ', '.join(
+            f'{size} additional × {count}'
+            for size, count in sorted(additional_counts.items()) if size > 0
+        )
+        parts.append(f'multi-image pairing: {paired} ({distribution})')
+    if additional_counts.get(0) and not random_selection_count:
+        parts.append(f'single-image: {additional_counts[0]}')
+    return '; '.join(parts)
+
+
+def _read_additional_index(original):
+    index = {}
+    meta_dir = original / 'Metadata'
+    if not meta_dir.is_dir():
+        return index
+    suffix = '_metadata.json'
+    for metadata_file in meta_dir.glob(f'*{suffix}'):
+        base = metadata_file.name[:-len(suffix)]
+        try:
+            metadata = json.loads(metadata_file.read_text(encoding='utf-8'))
+        except (json.JSONDecodeError, OSError):
+            continue
+        additional = metadata.get('additional_images_used') or []
+        if additional:
+            index[base] = list(additional)
+    return index
+
+
+def _reset_staged(task_folder):
+    removed = []
+    for name in STAGE_RESET_DIRS:
+        folder = task_folder / name
+        if folder.is_dir():
+            shutil.rmtree(folder)
+            removed.append(name)
+    return removed
+
+
+def stage_task_folder(task_folder, limit=None, seed=STAGE_DEFAULT_SEED,
+                      reset=False, log=print):
+    """Stage dropped-in image-generation results for an I2I2V video-only run."""
+    task_folder = Path(task_folder)
+    originals = _find_original_runs(task_folder)
+    if not originals:
+        return False
+
+    for original in originals:
+        log(f'📁 {task_folder.name}')
+        log(f'   original run: {original.name}  [{_report_original_mode(original)}]')
+
+        if reset:
+            cleared = _reset_staged(task_folder)
+            if cleared:
+                log(f"   reset: cleared {', '.join(cleared)}")
+
+        all_outputs = _stage_images_in(original / 'Generated_Output')
+        total = len(all_outputs)
+        if limit is not None and 0 < limit < total:
+            rng = random.Random(f'{seed}:{original.name}')
+            outputs = sorted(rng.sample(all_outputs, limit), key=lambda p: p.name.lower())
+            log(f'   sampling: {limit} of {total} outputs (seed {seed})')
+        else:
+            outputs = all_outputs
+
+        frames_dir = task_folder / 'Generated_Frames'
+        copied_frames = 0
+        frame_bases = set()
+        for output in outputs:
+            base = _stage_frame_base(output)
+            frame_bases.add(base)
+            copied_frames += _stage_copy_missing(
+                output, frames_dir / f'{base}_image{output.suffix}'
+            )
+
+        real_sources = _stage_images_in(original / 'Source')
+        real_stems = {source.stem for source in real_sources}
+        copied_sources = 0
+        copied_originals = 0
+        for source in real_sources:
+            if source.stem in frame_bases:
+                copied_sources += _stage_copy_missing(
+                    source, task_folder / 'Source' / source.name
+                )
+            else:
+                copied_originals += _stage_copy_missing(
+                    source, task_folder / 'Original_Source' / source.name
+                )
+
+        additional_index = _read_additional_index(original)
+        referenced = {
+            name for base in frame_bases
+            for name in additional_index.get(base, [])
+        }
+        original_additional = {
+            image.name: image for image in _stage_images_in(original / 'Additional')
+        }
+        additional_to_copy = (
+            [original_additional[name] for name in referenced
+             if name in original_additional]
+            if referenced else list(original_additional.values())
+        )
+        copied_additional = sum(
+            _stage_copy_missing(
+                image, task_folder / 'Additional' / image.name
+            )
+            for image in additional_to_copy
+        )
+
+        self_referential = 0
+        for output in outputs:
+            base = _stage_frame_base(output)
+            if base not in real_stems:
+                self_referential += _stage_copy_missing(
+                    output, task_folder / 'Source' / f'{base}{output.suffix}'
+                )
+
+        summary = (
+            f'   staged: {copied_sources} source, '
+            f'{self_referential} self-referential source, '
+            f'{copied_frames} frames, {copied_additional} additional'
+        )
+        if copied_originals:
+            summary += f', {copied_originals} preserved in Original_Source'
+        log(summary)
+    return True
 
 
 class I2i2vHandler(BaseAPIHandler):
@@ -47,6 +250,31 @@ class I2i2vHandler(BaseAPIHandler):
     ]
     BASE64_MIN_LEN = 2048
 
+    # Max images the image-gen step accepts per call, per model. Mirrors the
+    # image-generation handlers so multi-image pairing / random source selection
+    # are clamped identically here.
+    MODEL_MAX_IMAGES = {
+        'gemini-2.5-flash-image': 3,
+        'gemini-3-pro-image-preview': 14,
+        'gemini-3.1-flash-image-preview': 14,
+        'gpt-image-1': 10,
+        'gpt-image-1.5': 10,
+        'gpt-image-2': 10,
+    }
+    DEFAULT_MODEL_MAX_IMAGES = 3
+
+    # These image-selection settings may be declared once at the config root.
+    # A task-level value takes precedence over its root-level default.
+    GLOBAL_TASK_DEFAULT_KEYS = (
+        'use_random_source_selection',
+        'min_images',
+        'max_images',
+        'num_iterations',
+        'use_deterministic_random',
+        'random_seed',
+        'video_resolution',
+    )
+
     def __init__(self, processor):
         super().__init__(processor)
         self._kling_client = None  # lazy init
@@ -61,6 +289,14 @@ class I2i2vHandler(BaseAPIHandler):
         # Maps str(source_path) → image-gen seconds for frames the producer
         # generated ahead of time, so the consumer can report honest timings.
         self._prefetch_times = {}
+        # Maps str(source_path) → image-input info (additional/selected images)
+        # for prefetched frames, so metadata stays complete when the video stage
+        # reuses a frame instead of regenerating it.
+        self._prefetch_inputs = {}
+        # Per-task caches for multi-image pairing.
+        self._additional_pools = {}   # task_key → {'pools': [[Path,...]], 'mode': str}
+        self._source_indices = {}     # task_key → {str(source_path): sorted_index}
+        self._pool_lock = threading.Lock()
 
     def _get_kling_client(self):
         """Lazily create the Kling Gradio client (separate testbed).
@@ -106,18 +342,59 @@ class I2i2vHandler(BaseAPIHandler):
             return self._get_concurrent_requests(task)
         return max(1, min(val, self.MAX_CONCURRENT_REQUESTS))
 
+    def _reuse_stage_options(self, config):
+        """Read the reuse-original-frames staging options from config.
+
+        Returns ``(enabled, limit, seed, reset)``. Staging is a no-op unless a
+        task folder actually contains a dropped-in original-run folder, so it is
+        enabled by default; set ``reuse_original_frames: false`` to disable.
+        """
+        enabled = config.get('reuse_original_frames', True)
+        limit = config.get('reuse_original_limit')
+        if limit is not None:
+            try:
+                limit = int(limit)
+            except (TypeError, ValueError):
+                self.logger.warning(f"⚠️ Ignoring non-integer reuse_original_limit: {limit!r}")
+                limit = None
+        seed = config.get('reuse_original_seed', STAGE_DEFAULT_SEED)
+        reset = bool(config.get('reuse_original_reset', False))
+        return enabled, limit, seed, reset
+
     def validate_structure(self, tasks, config):
-        """Validate per-task Source/ layout and prepare enhanced tasks."""
+        """Validate per-task Source/ layout and prepare enhanced tasks.
+
+        Before validating each task, stage any dropped-in original-run folder
+        (video-only reuse) so ``runall`` picks it up automatically. Controlled by
+        the ``reuse_original_*`` config options; a no-op when no original folder
+        is present.
+        """
         valid_tasks = []
         invalid_images = []
 
+        stage_enabled, stage_limit, stage_seed, stage_reset = self._reuse_stage_options(config)
+        global_task_defaults = {
+            key: config[key]
+            for key in self.GLOBAL_TASK_DEFAULT_KEYS
+            if key in config
+        }
+
         for i, task in enumerate(tasks, 1):
+            # Root values are defaults only; explicit per-task settings win.
+            task = {**global_task_defaults, **task}
             folder = Path(task.get('folder', ''))
             if not folder or str(folder) == '':
                 self.logger.warning(f"⚠️ Task {i}: Missing folder path")
                 continue
 
             folder.mkdir(parents=True, exist_ok=True)
+
+            if stage_enabled:
+                stage_task_folder(
+                    folder, limit=stage_limit, seed=stage_seed,
+                    reset=stage_reset, log=self.logger.info,
+                )
+
             source_folder = folder / "Source"
             source_folder.mkdir(exist_ok=True)
 
@@ -199,6 +476,100 @@ class I2i2vHandler(BaseAPIHandler):
                 return candidate
         return None
 
+    def _model_max_images(self, task_config):
+        """Max images the image-gen step accepts for this task's model."""
+        model = task_config.get('image_model') or \
+            self.api_defs.get('api_params', {}).get('image_model', '')
+        return self.MODEL_MAX_IMAGES.get(model, self.DEFAULT_MODEL_MAX_IMAGES)
+
+    def _load_additional_pool(self, task_config):
+        """Load and cache the Additional-folder image pools for a task.
+
+        Mirrors the image-generation handlers: one pool per configured folder
+        (defaulting to the task's ``Additional/`` folder), each sorted by name.
+        Returns a dict ``{'pools': [[Path, ...], ...], 'mode': str}``.
+        """
+        task_key = str(task_config.get('folder', ''))
+        with self._pool_lock:
+            if task_key not in self._additional_pools:
+                cfg = task_config.get('multi_image_config') or {}
+                folders = cfg.get('folders')
+                if not folders:
+                    folders = [str(Path(task_config.get('folder', '')) / 'Additional')]
+                pools = []
+                for fp in folders:
+                    folder = Path(fp)
+                    if folder.is_dir():
+                        imgs = self.processor._get_files_by_type(folder, 'image')
+                        imgs = sorted(imgs, key=lambda x: x.name.lower())
+                        if imgs:
+                            pools.append(imgs)
+                            self.logger.info(f"   📂 Loaded {len(imgs)} additional images from {folder.name}")
+                self._additional_pools[task_key] = {
+                    'pools': pools,
+                    'mode': cfg.get('mode', 'sequential'),
+                }
+            return self._additional_pools[task_key]
+
+    def _source_index(self, source_path, task_config):
+        """Sorted-order index of a source file (for sequential pairing)."""
+        task_key = str(task_config.get('folder', ''))
+        with self._pool_lock:
+            if task_key not in self._source_indices:
+                source_folder = Path(task_config.get('folder', '')) / 'Source'
+                src = self.processor._get_files_by_type(source_folder, 'image') \
+                    if source_folder.is_dir() else []
+                src = sorted(src, key=lambda x: x.name.lower())
+                self._source_indices[task_key] = {str(p): i for i, p in enumerate(src)}
+            return self._source_indices[task_key].get(str(source_path), 0)
+
+    def _get_additional_images(self, source_path, task_config):
+        """Pick one additional image per configured folder for a source image.
+
+        Sequential mode pairs by the source's sorted index (cycling if a pool is
+        smaller); random_pairing picks at random. Capped at model_max − 1 so the
+        source image itself always fits. Returns a list of path strings.
+        """
+        if not task_config.get('use_multi_image', False):
+            return []
+        data = self._load_additional_pool(task_config)
+        pools = data['pools']
+        if not pools:
+            return []
+        max_additional = self._model_max_images(task_config) - 1
+        if max_additional <= 0:
+            return []
+        idx = self._source_index(source_path, task_config)
+        picks = []
+        for pool in pools:
+            if not pool:
+                continue
+            if data['mode'] == 'random_pairing':
+                picks.append(str(random.choice(pool)))
+            else:
+                picks.append(str(pool[idx % len(pool)]))
+        return picks[:max_additional]
+
+    def _build_image_inputs(self, source_path, task_config):
+        """Resolve the ordered image inputs for the image-gen call.
+
+        Returns ``(paths, info)`` where ``paths`` is a list of file paths (the
+        primary/source first) and ``info`` records what was added, for metadata.
+
+        Precedence: an explicit ``_selected_images`` list (random source
+        selection) wins; otherwise multi-image pairing appends Additional-folder
+        images; otherwise just the single source image.
+        """
+        selected = task_config.get('_selected_images')
+        if selected:
+            paths = [Path(p) for p in selected]
+            return paths, {'selected_source_images': [p.name for p in paths]}
+        additional = self._get_additional_images(source_path, task_config)
+        if additional:
+            paths = [Path(source_path)] + [Path(p) for p in additional]
+            return paths, {'additional_images_used': [Path(p).name for p in additional]}
+        return [Path(source_path)], {}
+
     def _call_image_api(self, source_path, task_config):
         """Generate an image via /nano_banana or /openai_image.
 
@@ -227,14 +598,17 @@ class I2i2vHandler(BaseAPIHandler):
         if not prompt:
             raise ValueError("image_prompt is empty")
 
-        images_list = [handle_file(str(source_path))]
+        image_inputs, input_info = self._build_image_inputs(source_path, task_config)
+        images_list = [handle_file(str(p)) for p in image_inputs]
+        debug = {'service': service, 'model': model, **input_info}
 
         # Note prefetch (producer) vs inline (consumer fallback) so the source
         # of the image-gen call is clear when stages interleave.
         where = 'prefetch' if threading.current_thread().name.startswith('i2i2v-prefetch') else 'inline'
+        extra = f", images={len(images_list)}" if len(images_list) > 1 else ""
         self.logger.info(
             f"   🖼️ [IMG] {where} · service={service}, model={model}, "
-            f"resolution={resolution}, aspect={aspect_ratio}"
+            f"resolution={resolution}, aspect={aspect_ratio}{extra}"
         )
 
         if service == 'openai_image':
@@ -249,7 +623,7 @@ class I2i2vHandler(BaseAPIHandler):
                     images=images_list,
                     api_name=api_name,
                 )
-            return self._parse_openai_image_response(result), {'service': service, 'model': model}
+            return self._parse_openai_image_response(result), debug
         else:
             with self._image_semaphore:
                 result = self.client.predict(
@@ -260,7 +634,7 @@ class I2i2vHandler(BaseAPIHandler):
                     aspect_ratio=aspect_ratio,
                     api_name=api_name,
                 )
-            return self._parse_nano_banana_response(result), {'service': service, 'model': model}
+            return self._parse_nano_banana_response(result), debug
 
     def _parse_nano_banana_response(self, result):
         """Extract base64 image bytes from a /nano_banana response.
@@ -423,14 +797,24 @@ class I2i2vHandler(BaseAPIHandler):
         prompt = task_config.get('video_prompt', '')
         negative_prompt = task_config.get('video_negative_prompt', '')
         sound_enabled = self._resolve_sound_enabled(task_config, api_params)
+        resolution = str(
+            task_config.get('video_resolution')
+            or api_params.get('video_resolution', '720p')
+        ).lower()
+        if resolution not in ('720p', '1080p'):
+            self.logger.warning(
+                f" ⚠️ Unsupported video_resolution={resolution!r}; using '720p'"
+            )
+            resolution = '720p'
 
         self.logger.info(
             f"   🎬 [VID] kling: model={model}, mode={mode}, duration={duration}, "
-            f"sound={sound_enabled}"
+            f"resolution={resolution}, sound={sound_enabled}"
         )
 
-        result = client.predict(
-            image=handle_file(str(image_path)),
+        result = predict_image_to_video(
+            client,
+            image_path,
             prompt=prompt,
             mode=mode,
             duration=duration,
@@ -438,10 +822,10 @@ class I2i2vHandler(BaseAPIHandler):
             model=model,
             negative_prompt=negative_prompt,
             sound_enabled=sound_enabled,
-            voice_ids='',
             multishot_type='none',
             multishot_df={"headers": ["prompt", "duration"], "data": [], "metadata": None},
             end_frame_image=None,
+            resolution=resolution,
             api_name=self.api_defs.get('kling_api_name', '/Image2Video'),
         )
         return result
@@ -454,13 +838,16 @@ class I2i2vHandler(BaseAPIHandler):
         """
         frames_folder = Path(task_config.get('frames_dir')
                              or Path(task_config['folder']) / "Generated_Frames")
-        base_name = Path(file_path).stem
+        base_name = task_config.get('_base_name') or Path(file_path).stem
 
         # Step 1 — image gen (or reuse)
         image_start = time.time()
         existing = self._existing_generated_image(frames_folder, base_name)
         if existing:
             generated_image_path = existing
+            # Input info captured when the frame was prefetched (additional /
+            # selected images), so reused-frame metadata stays complete.
+            prefetch_input = self._prefetch_inputs.pop(str(file_path), {})
             prefetch_time = self._prefetch_times.pop(str(file_path), None)
             if prefetch_time is not None:
                 # Frame was produced ahead of time by the prefetch worker; the
@@ -469,11 +856,11 @@ class I2i2vHandler(BaseAPIHandler):
                     f"   🖼️ [IMG] prefetched frame ready: {existing.name} "
                     f"({prefetch_time:.1f}s, overlapped)"
                 )
-                image_debug = {'reused': False, 'prefetched': True}
+                image_debug = {'reused': False, 'prefetched': True, **prefetch_input}
                 image_time = prefetch_time
             else:
                 self.logger.info(f"   🖼️ [IMG] reusing existing frame: {existing.name}")
-                image_debug = {'reused': True}
+                image_debug = {'reused': True, **prefetch_input}
                 image_time = 0.0
         else:
             parsed, image_debug = self._call_image_api(file_path, task_config)
@@ -536,10 +923,13 @@ class I2i2vHandler(BaseAPIHandler):
             'image_prompt': task_config.get('image_prompt', ''),
             'generated_image': generated_image_path.name if generated_image_path else None,
             'image_reused': result['image_debug'].get('reused', False),
+            'additional_images_used': result['image_debug'].get('additional_images_used'),
+            'selected_source_images': result['image_debug'].get('selected_source_images'),
             'image_processing_time': round(result['image_time'], 1),
             'video_model': task_config.get('video_model', 'v3'),
             'video_mode': task_config.get('video_mode', 'pro'),
             'video_duration': task_config.get('video_duration', 5),
+            'video_resolution': task_config.get('video_resolution', '720p'),
             'video_prompt': task_config.get('video_prompt', ''),
             'video_negative_prompt': task_config.get('video_negative_prompt', ''),
             'video_sound_enabled': self._resolve_sound_enabled(
@@ -593,10 +983,16 @@ class I2i2vHandler(BaseAPIHandler):
             if not self._existing_generated_image(frames_folder, base_name):
                 self.logger.info(f"   🖼️ [IMG] gen start → {name}")
                 t0 = time.time()
-                parsed, _ = self._call_image_api(file_path, enhanced_task)
+                parsed, debug = self._call_image_api(file_path, enhanced_task)
                 self._save_generated_image(parsed, frames_folder, base_name)
                 dt = time.time() - t0
                 self._prefetch_times[str(file_path)] = dt
+                # Stash which images fed this frame so the video stage can record
+                # them in metadata when it reuses the prefetched frame.
+                self._prefetch_inputs[str(file_path)] = {
+                    k: debug[k] for k in ('additional_images_used', 'selected_source_images')
+                    if k in debug
+                }
                 self.logger.info(f"   🖼️ [IMG] gen done ✓ {name} ({dt:.1f}s)")
             return True, None
         except Exception as e:  # noqa: BLE001 — surface to caller, don't crash thread
@@ -698,6 +1094,9 @@ class I2i2vHandler(BaseAPIHandler):
 
         Caps resolve per stage via ``image_concurrency`` / ``video_concurrency``,
         each falling back to the shared ``concurrent_requests`` (then 1).
+
+        When ``use_random_source_selection`` is set, delegates to the
+        iteration-based path instead of the 1-source-per-video pipeline.
         """
         folder = Path(task.get('folder', ''))
         source_folder = Path(task.get('source_dir', folder / "Source"))
@@ -708,6 +1107,13 @@ class I2i2vHandler(BaseAPIHandler):
         frames_folder.mkdir(parents=True, exist_ok=True)
         output_folder.mkdir(parents=True, exist_ok=True)
         metadata_folder.mkdir(parents=True, exist_ok=True)
+
+        if task.get('use_random_source_selection', False):
+            self._process_task_random_source(
+                task, task_num, total_tasks, folder, source_folder,
+                frames_folder, output_folder, metadata_folder,
+            )
+            return
 
         style_name = task.get('style_name', folder.name)
         image_concurrency = self._get_stage_concurrency(task, 'image_concurrency')
@@ -795,6 +1201,103 @@ class I2i2vHandler(BaseAPIHandler):
             self._prefetch_times.clear()
 
         self.logger.info(f"✓ Task {task_num}: {successful}/{total} successful ({skipped} skipped)")
+
+    def _process_task_random_source(self, task, task_num, total_tasks, folder,
+                                    source_folder, frames_folder, output_folder,
+                                    metadata_folder):
+        """Iteration-based pipeline for random source selection.
+
+        Builds a reproducible selection plan (same config + Source folder =
+        same selections) picking ``min_images``–``max_images`` images from the
+        Source folder per iteration. Each iteration runs image-gen on the
+        selected images → one frame → one Kling video, named after the
+        iteration (``iterNNN_...``). Resume-safe: iterations whose metadata
+        already records success/exhaustion are skipped, and an existing
+        ``{base}_image.*`` frame is reused (video-only re-runs).
+        """
+        style_name = task.get('style_name', folder.name)
+        source_images = self.processor._get_files_by_type(source_folder, 'image')
+        source_images = sorted(source_images, key=lambda x: x.name.lower())
+        if not source_images:
+            self.logger.warning(f" ⚠️ No source images found in {source_folder}")
+            return
+
+        model_max = self._model_max_images(task)
+        selection_plan, selection_mode = build_selection_plan(
+            source_images, task, model_max, 1, self.logger
+        )
+        if not selection_plan:
+            self.logger.warning(f" ⚠️ Empty selection plan for {style_name}")
+            return
+
+        num_iterations = len(selection_plan)
+        workers = self._get_stage_concurrency(task, 'video_concurrency')
+        suffix = f" (random source · {selection_mode})"
+        self.logger.info(
+            f"📁 Task {task_num}/{total_tasks}: {style_name}{suffix} — "
+            f"{num_iterations} iterations, {len(source_images)} source images"
+        )
+
+        # Partition up front so already-finished iterations are skipped.
+        work_items = []
+        successful = 0
+        skipped = 0
+        for it_idx, selected in enumerate(selection_plan):
+            if not selected:
+                continue
+            primary = selected[0]
+            if len(selected) == 1:
+                base_name = f"iter{it_idx:03d}_{primary.stem}"
+            else:
+                names = "_".join(img.stem for img in selected)
+                if len(names) > 150:
+                    names = names[:147] + "..."
+                base_name = f"iter{it_idx:03d}_{names}"
+
+            is_complete, status = self._get_processing_status(
+                primary, metadata_folder, base_name=base_name
+            )
+            if is_complete:
+                if status == 'success':
+                    successful += 1
+                skipped += 1
+                continue
+            work_items.append((it_idx, base_name, primary, selected))
+
+        if not work_items:
+            self.logger.info(
+                f"✓ Task {task_num}: {successful}/{num_iterations} successful ({skipped} skipped)"
+            )
+            return
+
+        def run_one(item):
+            it_idx, base_name, primary, selected = item
+            per_call = task.copy()
+            per_call['frames_dir'] = str(frames_folder)
+            per_call['_base_name'] = base_name
+            per_call['_selected_images'] = [str(p) for p in selected]
+            self.logger.info(
+                f" 🎲 {it_idx + 1}/{num_iterations}: {base_name} ({len(selected)} images)"
+            )
+            return self.processor.process_file(
+                primary, per_call, output_folder, metadata_folder
+            )
+
+        if workers > 1:
+            self.logger.info(
+                f" 🚀 Dispatching {len(work_items)} iterations, up to {workers} concurrent"
+            )
+            successful += self._run_concurrent(work_items, run_one, workers)
+        else:
+            for idx, item in enumerate(work_items):
+                if run_one(item):
+                    successful += 1
+                if idx < len(work_items) - 1:
+                    time.sleep(self.api_defs.get('rate_limit', 5))
+
+        self.logger.info(
+            f"✓ Task {task_num}: {successful}/{num_iterations} successful ({skipped} skipped)"
+        )
 
     def validate_file(self, file_path, file_type='image'):
         """Validate input image with i2i2v's relaxed limits."""
