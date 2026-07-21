@@ -2676,7 +2676,13 @@ class UnifiedReportGenerator:
                     video_path = videos.get(key)
 
                     # Source image(s) used for this iteration, from metadata.
+                    # Prefer selected_source_images; fall back to _selected_images
+                    # (present even when the frame was reused, where
+                    # selected_source_images is omitted), then to source_image.
                     selected_names = metadata.get('selected_source_images') or []
+                    if not selected_names:
+                        selected_names = [Path(p).name
+                                          for p in (metadata.get('_selected_images') or [])]
                     if not selected_names and metadata.get('source_image'):
                         selected_names = [metadata['source_image']]
                     selected_paths = [source_by_name[n] for n in selected_names
