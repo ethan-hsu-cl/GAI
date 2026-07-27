@@ -22,8 +22,8 @@ testbed: http://192.168.31.161/external-testbed/image_generation/
 schedule:
   start_time: ''
 
-root_design_link: https://docs.google.com/presentation/d/1-e6NLHCk6MQ7gbBdVuJyRU0IQSA6o6HBFdpvqXLUXjQ/edit?slide=id.g3ec0d14ed4e_0_27#slide=id.g3ec0d14ed4e_0_27
-root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgAqw__ph3OmRYgOtxGrafV-AZ3RWSE4rObh16Qy2Mimepo?e=84RZkD
+root_design_link: https://docs.google.com/presentation/d/1xT9a1gE_QG0yiXRDWEhwrci5g-1PjybeMkfZ22yQDTA/edit?slide=id.g3f5a7872589_1_0#slide=id.g3f5a7872589_1_0
+root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDRqmXaBEw1SYYQpiTDYGtZAdiZBLDe2kE4qzo-ZkY28wE?e=T5Acqi
 
 # Reuse original i2i frames (video-only). If a task folder contains a dropped-in
 # original-run folder, the handler stages a subset before processing (applied
@@ -34,7 +34,7 @@ reuse_original_seed: 42
 reuse_original_reset: false
 
 # Global image-source selection defaults. Individual tasks can override any key.
-use_random_source_selection: true
+use_random_source_selection: false
 min_images: 2
 max_images: 2
 num_iterations: 25
@@ -43,25 +43,29 @@ random_seed: 42
 video_resolution: '720p'
 
 tasks:
-
-  - style_name: 熱門雙人拍貼-雪洞
-    folder: Media Files/I2I2V/0717 11 Styles/0717 熱門雙人拍貼-雪洞
+  - style_name: '經典電影海報 - 樂來越愛你 La La Land'
+    folder: 'Media Files/I2I2V/0724 9 Styles/0724 經典電影海報 - 樂來越愛你 La La Land'
     image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
+    image_model: gemini-3-pro-image
     image_resolution: '1K'
     image_aspect_ratio: '3:4'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
     image_prompt: |
-      Please use two people as the sole subjects in your uploaded photo, ensuring their true identities are fully preserved. Their faces, features, bone structure, hairstyles, skin tones, and expressions must remain unchanged. The system must not modify their body proportions, makeup, jawline, nose, or eyes, nor beautify, age, stylize, smooth, or add any other people.
+      Use the two uploaded people as the only subjects. Their exact identities must be preserved with absolute accuracy. The generated faces must match the uploaded subjects 1:1, and the system is strictly forbidden from generating or resembling any actors from the film La La Land, including Ryan Gosling or Emma Stone. It must never replace the uploaded subjects with celebrity faces or merge their facial structure with those actors. Their faces, facial features, bone structure, hairstyles, expressions, and overall identities must remain unchanged exactly as in the uploaded photos. Do not modify their proportions, makeup style, hair color, jawline, or eyes, and do not apply smoothing, stylization, beautification, aging effects, or add any additional people.
 
-      Place the people in an outdoor snow scene, composing the shot through a heart-shaped opening naturally formed by the snow. The heart-shaped opening should have a natural and realistic effect; the snow texture should be irregular and soft, with natural thickness and slightly transparent edges to capture light. Avoid harsh outlines or perfect symmetry; the snow should have a hand-carved texture, looking realistic and blending into the authentic winter scene.
+      The clothing must follow the film’s aesthetic faithfully. Any male subject must wear Sebastian’s outfit — a white dress shirt with sleeves rolled up, the top button left unbuttoned, the black slim necktie loosened casually around the collar, black suit trousers, black socks, and black-and-white spectator shoes. If both uploaded people are male, they must both wear Sebastian’s full outfit. Any female subject must wear Mia’s outfit — a yellow square-neck short-sleeve dress with a soft, flowing skirt, and matching black-and-white spectator shoes.
 
-      Use very close-up shots of the people's proportions, filling their faces with the heart-shaped opening. Their heads must occupy approximately 45% to 55% of the height of the heart-shaped opening, appearing very close to the camera. Their faces shouldn't appear too small or too far away; they must be large, prominent, and positioned in the upper-middle area of ​​the heart-shaped opening to create a selfie-like intimacy.
+      Create a realistic La La Land–style movie poster in which the two subjects sit on a simple wooden bench with a small distance between them. Their bodies face forward with hands resting naturally on their legs, while their heads turn gently toward each other as if sharing a quiet, cinematic moment together. They must not look at the camera. The camera framing must be pulled back significantly farther than before so that the two subjects occupy only about one-third of the full image composition. This wider framing must emphasize the cinematic environment, creating more atmospheric negative space while keeping the perspective level and eye-level for a natural, grounded feeling.
 
-      In the uploaded photo of the two of them, they must wear black coats, perhaps paired with black scarves and gloves, posing in a relaxed and natural manner, as if taking a selfie or capturing a fleeting moment. The subjects can lean slightly forward, smile naturally, or make small, interactive gestures, such as making a "V" sign or grabbing a handful of snow, ensuring the movements are natural and fluid, not deliberately posed.
+      Beside the female subject, place a soft, flexible red handbag with noticeably softer material, resting flat on the bench surface. On the ground near her feet, include a pair of blue peep-toe high heels with thin heels and delicate ankle straps, positioned as if casually knocked over and lying on their side.
 
-      Use soft natural light to illuminate the scene—whether it's the warm hues of sunrise or the cool, bright light of the sky—casting soft shadows on the snow to create a clean and crisp winter atmosphere. The background should show an open snowfield, with soft colors for the horizon and sky. The light should fall softly on the snow, creating delicate highlights and natural reflections.
+      The background must depict an elevated overlook of Los Angeles at dusk, with warm pink-orange sunset tones gradually transitioning into deep twilight blue. The city lights should glow atmospherically below, creating a dreamy but realistic dusk ambiance. The lighting and palette must reflect La La Land’s signature aesthetic — a smooth gradient sky, elegant warm-to-cool color transitions, soft edges, and gentle film-like contrast, forming an overall romantic and cinematic mood.
 
-      The final image should present a bright, natural, and romantic atmosphere—a realistic winter portrait framed by a heart-shaped snow scene. Natural light, natural expressions, and a lifelike snowscape work together to create a unique visual effect, making the two subjects appear tall and their faces clear.
+      At the top left of the poster, include the title “L'AMOUR” in the authentic movie font, using tall geometric serif lettering with thin, elegant, art-deco inspired shapes, generous spacing, and clean white coloring. Directly beneath it, left-aligned, add “LOVE HAPPENS BETWEEN DREAMS.” in small, thin, uppercase sans-serif text with subtle spacing. The typography must blend naturally with the composition and must not obstruct the subjects.
+
+      The final poster must appear cinematic, modern, romantic, and visually consistent with an authentic La La Land promotional image. No parody elements, no cartoonish styling, no added people, no incorrect environmental details, and absolutely no substitution of the uploaded subjects with the original film actors. Only the two uploaded subjects in the correct outfits, sitting on the bench overlooking the Los Angeles dusk skyline, captured in a refined, film-accurate aesthetic.
 
     video_model: v3
     video_mode: pro
@@ -69,73 +73,94 @@ tasks:
     video_ratio: '3:4'
     video_sound_enabled: true
     video_prompt: |
-      Static locked camera, close framing maintained throughout.
-      The two people turn to look at each other and laugh together.
-      One person gently tosses a bit of snow toward the other's face, teasing playfully.
-      The other flinches with a surprised laugh, then reaches over and playfully brushes the snow off their partner's cheek.
-      They both burst into laughter, foreheads leaning together.
-      One wraps an arm around the other's shoulder, pulling them close.
-      They rest cheek to cheek, smiling warmly at the camera together.
+      The camera slowly pulls back (dolly out) in a smooth, steady motion throughout, gradually revealing more of the surroundings while keeping both subjects centered and fully visible head to toe the entire time.
+      The two people slowly turn their heads toward each other and share a soft, lingering gaze. They gently rise to their feet together and join hands, coming into a close dance hold.
+      They begin an expressive, flowing partner dance — one leads the other into a graceful outward spin under their raised joined hands, arms extending wide, then draws them back in close. They sway with bigger, sweeping motions, stepping around a shared center as they turn together in a full, graceful 360-degree circle, staying in the same spot. One gently guides the other into a soft, shallow dip and lifts them back up smoothly. The movements are large but elegant, fluid and romantic, their connection and held hands maintained throughout.
+      They come back together face to face, foreheads lightly meeting, eyes softly closing, both breaking into warm tender smiles, still swaying gently.
     video_negative_prompt: ''
 
     concurrent_requests: 3
 
-  - style_name: 熱門雙人拍貼 - 洗衣機拍貼
-    folder: Media Files/I2I2V/0717 11 Styles/0717 熱門雙人拍貼 - 洗衣機拍貼
+  - style_name: 'My Silly Human'
+    folder: 'Media Files/I2I2V/0724 9 Styles/0724 My Silly Human'
     image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
+    image_model: gemini-3-pro-image
+    image_resolution: '2K'
+    image_aspect_ratio: '4:3'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
     image_prompt: |
-      Use the two uploaded people as the only subjects. Their real faces, facial features, identities, expressions, hairstyles, outfits, and proportions must remain exactly the same as in the uploaded photos. No beautification, no stylization, and no extra people.
+      A highly realistic photograph using the uploaded domestic pet as the main subject.
+      Do not change the pet’s face, markings, body type, or breed from the uploaded photo.
 
-      Create a realistic Korean-style photo-booth scene captured from inside a large washing machine drum. The camera is placed inside the drum, pointing outward through the fully open door. The drum must form a bright, metallic circular frame with natural reflections, realistic shadows, and correct depth. The circular edge of the washing machine door should emit a soft, bright light ring that illuminates the subjects’ faces, similar to an internal ring-light built into the drum.
+      The pet sits in the foreground, leaning against a wooden sign that it is holding or resting on.
+      The sign must clearly read: “MY SILLY HUMAN”.
 
-      At least one subject must lean halfway into the washing machine—upper body entering the drum naturally, such as resting their torso inside or leaning forward deeply. Their hands may rest on the glowing washing-machine frame, or reach partially into the drum as part of the pose. Their positions must feel physically grounded and integrated with the washer structure. The subject leaning in should be illuminated by a strong, soft, internal photo-booth light inside the drum, making their face appear brighter.
+      In the background, use the uploaded human photo as the sleeping pet owner.
+      Do not change the human’s face, hairstyle, or identity.
+      The human is sleeping soundly on the living room sofa with mouth slightly open, captured candidly in a natural and humorous moment.
 
-      Both subjects should appear slightly larger in frame and stand close to the washing machine opening, filling the view while keeping their proportions and height differences accurate and realistic. Their interaction should feel playful and spontaneous, matching Korean purikura vibes—soft smiles, cute gestures, light teasing expressions, or peace signs.
-
-      Add real, wearable Valentine’s-themed head accessories (such as heart headbands or fabric bunny ears). These must fit naturally to their heads with accurate shadows and lighting, not stickers or floating graphics.
-
-      The background should resemble a clean, pastel-toned Korean laundry room or photo-booth set with tiles and minimal décor. Lighting must be bright, soft, and even, with a gentle pastel tint. The entire image must be cohesive and realistic, with no compositing artifacts, no layering issues, and no style changes to the subjects’ faces or clothing.
-
-      The composition should focus mainly on the subjects, with only a minimal portion of the drum interior visible as a framing element.
+      The scene takes place in a cozy modern living room.
+      Warm soft lighting, shallow depth of field (bokeh), and realistic cinematic atmosphere.
+      50mm lens realism, ultra-realistic lighting, sharp focus on the pet and the sign, detailed fur texture, photographic clarity.
+      Aspect ratio 3:4.
 
     video_model: v3
     video_mode: pro
     video_duration: 5
-    video_ratio: '3:4'
+    video_ratio: '4:3'
     video_sound_enabled: true
     video_prompt: |
-      Static locked camera, close framing maintained throughout.
-      Both people smile playfully at the camera, then turn to look at each other.
-      One person wiggles their bunny ear headband teasingly, making a funny face.
-      The other laughs and playfully pokes their partner's cheek.
-      They both burst into laughter, leaning closer together.
-      One person raises a hand and makes a peace sign near their face.
-      The other joins in, also flashing a peace sign, both grinning at the camera.
+      Use the uploaded image as ground truth for subject count, species, faces, fur/hair, outfits, and scene. Do not add or remove any subject.
+      Static locked camera, warm cozy indoor lighting held throughout.
+
+      Animate by role — every subject filling each role performs its motion independently:
+
+      - Pet(s) beside the wooden "MY SILLY HUMAN" sign: starts with a deadpan stare at camera, slightly unimpressed. Slow blink, ear twitch. Then
+        clearly turns its head toward the sleeping human and holds the gaze for a long moment, watching them with an innocent, wide-eyed "not my fault"
+        expression, ears perking slightly. After a beat, slowly turns its head back to the camera and resumes the same deadpan, done-with-it look.
+        Sign stays upright, steady, and readable throughout.
+
+      - Sleeping human(s) in the background: deeply asleep and restless.
+        Performs a clearly visible full roll — starting from the current position, slowly rolls onto their side with their back turning toward
+        the camera, shoulders and hips fully rotating, one arm flopping over. Holds the side-facing position briefly, then slowly rolls back to face
+        upward again, head settling into the pillow. Throughout, obvious snoring motion with mouth opening on each snore, chest rising
     video_negative_prompt: ''
 
     concurrent_requests: 3
 
-  - style_name: 熱門雙人拍貼 - 電梯仰頭自拍
-    folder: Media Files/I2I2V/0717 11 Styles/0717 熱門雙人拍貼 - 電梯仰頭自拍
+  - style_name: '羅馬建築前 V3'
+    folder: 'Media Files/I2I2V/0724 9 Styles/0724 羅馬建築前 V3'
     image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
+    image_model: gemini-3.1-flash-image
     image_resolution: '1K'
     image_aspect_ratio: '3:4'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
     image_prompt: |
-      Use the two uploaded people as the only subjects. Their faces, facial features, identities, hairstyles, expressions, and clothing must remain exactly the same as in the uploaded photos. Do not beautify, stylize, or alter their appearance, and do not add any extra people.
+      Use the uploaded photos as the ONLY references for the human subjects. The uploaded photos may contain 1 to 3 different users. Create the final image with exactly the same number of people as the uploaded photos. Preserve each person’s recognizable identity, facial features, skin tone, hairstyle, body proportions, and natural appearance individually. Each subject must clearly look like the corresponding person from the uploaded photos. Do not merge faces, swap identities, duplicate anyone, heavily stylize, over-beautify, or change identity. No extra main subject may appear.
 
-      Create a playful four-frame photo-booth collage styled like CCTV cameras inside an elevator. Each frame should look like it was captured by a corner-mounted security camera positioned high in the upper corner of a shiny metal elevator, creating a downward diagonal view. The overall viewpoint must feel like a real corner CCTV camera looking down toward the subjects rather than a centered ceiling camera.
+      Create a realistic, elegant ancient Greek-inspired beauty portrait in front of grand classical Greek architecture with a wide Mediterranean coastal view. Include Greek ruins or temple-like elements such as marble columns, stone steps, or pale stone walls, but do not let stone architecture dominate the background. Most of the background must open into distant ocean, rich blue sea, open sky, or a coastal horizon. The image should feel bright, graceful, luxurious, timeless, and visually striking, like a high-end fashion editorial.
 
-      The two subjects must appear together in all four frames, wearing exactly the same clothes as shown in the uploaded photos. Their body proportions and heights must stay realistic and consistent in every frame. The entire collage should feel unified and shot in the same physical elevator environment.
+      Style the subject in elegant ancient Greek fashion. Clothing must be white or ivory, inspired by authentic Greek draped garments, with soft flowing fabric, graceful folds, and refined classical styling. Add gold accessories such as a gold laurel crown or gold leaf headpiece, gold earrings, gold necklace, bracelets, arm cuffs, rings, or an ornate gold waist detail. The styling should feel noble, tasteful, and sophisticated, not theatrical.
 
-      The visual style should present a high-angle overhead CCTV perspective within a 2×2 four-frame collage. Each frame should include subtle labels such as “CAMERA 1,” “CAMERA 2,” “CAMERA 3,” and “CAMERA 4,” along with a small red “REC” icon. A light fisheye distortion should be visible to mimic elevator surveillance lenses. The elevator interior must feature metallic walls and accurate reflections that remain consistent across all four images, but the lighting and overall atmosphere should feel soft, bright, clean, and pastel-tinted—similar to a Korean-style photo booth—while still maintaining the CCTV framing and angle.
+      If the subject is female: dress her in a beautiful white or ivory ancient Greek gown such as a draped chiton, peplos, or Grecian one-shoulder / softly wrapped dress. Include refined gold details such as a gold belt, decorative shoulder clasp, gold trim, or a gold waist ornament. Add feminine gold jewelry and a delicate gold laurel crown or headpiece. Her hairstyle may be softly waved, braided, partially pinned up, or arranged in an elegant Greco-inspired updo, while still preserving her real hairstyle naturally. The overall look should feel graceful, regal, and goddess-like, but still realistic and tasteful.
 
-      The subjects’ poses and interactions should feel playful and casual, such as making peace signs, leaning into each other, hugging, making cute expressions, or pointing toward the camera. The mood should remain fun and natural, similar to a Korean-style photo booth but presented as CCTV footage. Identity preservation is critical—faces must remain exactly the same as in the uploaded photos, with no stylization, no added accessories unless already present in the images, and no changes to makeup, lighting on the face, or skin texture. No beauty filters or face-editing effects should be applied.
+      If the subject is male: dress him in a white or ivory ancient Greek outfit such as a draped chiton, tunic, or himation-style garment, with elegant layered fabric and classical structure. The outfit may include a draped shoulder cloth, wrapped waist detail, gold belt, subtle gold trim, gold arm cuffs, or a gold laurel crown. The styling should feel noble, heroic, and refined, with a clean classical silhouette rather than heavy armor.
 
-      The final output should be a realistic four-frame elevator CCTV-style collage featuring the two uploaded subjects from a corner-mounted surveillance angle, showing playful poses, consistent clothing, accurate proportions, and perfectly preserved facial identity.
+      The pose is very important. Avoid stiff straight-standing poses. Each subject should appear relaxed, natural, graceful, and editorial. Use elegant, dynamic poses such as sitting on stone steps, leaning lightly against a marble column, resting one hand on a stone ledge, turning the body in a three-quarter angle, walking slowly through the ruins, looking into the distance, lightly touching jewelry or fabric, or shifting weight naturally. If multiple subjects are present, arrange them as a cohesive group portrait with varied but harmonious poses. Avoid making everyone stand in the same pose.
+
+      Use flattering golden natural sunlight with a fixed luxury-editorial color treatment. The overall tone must be bright, clean, warm, polished, and professionally color-graded: creamy sunlit marble, ivory-white fabric, soft gold jewelry, rich Mediterranean blue sea, and a clearly visible gradient sky. The sky must have a beautiful, obvious, natural gradient instead of a flat single-color sky. It should transition smoothly from clear pale blue at the upper sky into warm golden peach, soft apricot, blush pink, or subtle lavender near the horizon. The gradient should be visually noticeable, elegant, luminous, and cinematic, like a refined Mediterranean sunset sky. Avoid gray, dull, cold, muddy, greenish, overly orange, flat blue, or phone-photo color.
+
+      The subject / subjects must be clearly under sunlight. Part of the body must be visibly bathed in direct sun, and the face must also be directly touched by sunlight. Do not place the subject entirely in shade. At least part of the forehead, cheeks, nose bridge, and lips must be illuminated by real sunlight, creating a clear balance of sunlit highlights and soft shadows while keeping the facial features readable, recognizable, and naturally defined. Avoid lighting where the face is fully shaded, hidden by architectural shadow, or lit only by weak ambient bounce light.
+
+      Add a subtle gentle breeze. The breeze should softly lift and move the flowing Greek fabric, draped edges, loose hair strands, ribbons, and small garment details in a natural, elegant way. The movement should feel light, graceful, and Mediterranean, adding life and atmosphere without making the pose messy or overly windy.
+
+      The composition should feel like a premium high-fashion editorial portrait. Use an eye-level or slightly low-angle camera perspective only. Do not use a high-angle or top-down view. Use a long-lens / telephoto look for elegant compression, clean subject separation, and a refined premium-camera feel. The framing can be half-body, three-quarter body, or full-body depending on the pose, but the subject / subjects must remain visually dominant. Frame them with columns or ruins while keeping most of the background open to sea, sky, or coastal horizon. Avoid a background made entirely of pale stone surfaces.
+
+      Keep the final image realistic, high-quality, and naturally photographed. Preserve believable anatomy, realistic fabric draping, natural hands, proper interaction with the environment, and clear subject identity. Avoid cartoon style, fantasy exaggeration, modern clothing, modern accessories, messy background, extra people, distorted hands, awkward posture, text, logos, or watermarks. The final result should feel like an elegant ancient Greek-inspired editorial portrait of the uploaded person / people, beautifully posed among classical ruins, wearing mandatory gold accessories, bathed in golden sunlight, with a clear Mediterranean sea backdrop and a vivid gradient sky.
 
     video_model: v3
     video_mode: pro
@@ -143,1218 +168,54 @@ tasks:
     video_ratio: '3:4'
     video_sound_enabled: true
     video_prompt: |
-      Use the UPLOADED IMAGE as the primary reference for the two girls' faces, hairstyles, body types, and outfits — keep their identity consistent. For anything not defined by the image, generate naturally on your own.
-      A single video as a fixed 2x2 split-screen grid, four security-camera feeds shown at once — top-left "CAMERA 1", top-right "CAMERA 2", bottom-left "CAMERA 3", bottom-right "CAMERA 4". Each quadrant shows the SAME two girls (matching the image) in the SAME elevator from a slightly different high overhead corner angle, wide-angle fisheye lens, glossy reflective metallic walls, a small red "REC" indicator per quadrant. The grid layout, white frame borders, and CAMERA labels stay fixed throughout. No zooming, no panel ever fills the screen, no cuts.
-      Each panel's pose and motion stay strictly within its own quadrant and never bleed into others — the white borders are hard boundaries. Poses differ per panel, environment stays identical. All four panels are EQUALLY important, sharp, and lit — none dominates, none is the highlight, none blurrier or smaller.
-      Each quadrant holds a DIFFERENT pose at the same moment, so the four never match. Pose-driven with SMALL, gentle, controlled movements — clear held poses, soft slow transitions, no big swinging arms, no exaggerated motion. Stylish, photogenic, influencer-style, flattering even lighting, calm candid vibe.
+      Animate only what is already visible in the reference — do not add or remove anyone. Keep every person's identity, outfit, hairstyle, body
+      proportions, and starting position exactly as in the reference. Both subjects stay locked in their exact world positions and keep their relative
+      scale to each other; nothing about them is re-scaled, warped, morphed, or repositioned by the animation.
 
-      CAMERA 1: Cheek-to-cheek lean, chins slightly up, soft smiles, small peace sign near the face — then a relaxed hands-near-hips pose, bodies softly angled to camera.
-      CAMERA 2: Turned slightly toward each other, soft laughing smiles, leaning lightly in — then a calm side-by-side pose, arms loosely folded.
-      CAMERA 3: Cheek to cheek, one softly touching the other's cheek — then a small synchronized finger-heart near their faces.
-      CAMERA 4: Both gently raising hands into a small heart near their heads — then a soft over-the-shoulder pose, one hand under the chin.
+      Standing figure: slowly shifts weight onto one leg, one hand slides casually into a pocket or rests at the hip while the other arm hangs relaxed at the side. Chin lifts slightly, shoulders roll back into a confident stance. Head turns slowly toward the camera with a cool, composed
+      expression — a faint, restrained half-smile at most. Feet stay planted, no stepping.
 
-      Each panel ends on its OWN distinct final pose — CAM1 hands-near-hips, CAM2 folded arms side-by-side, CAM3 small finger-heart, CAM4 hand-under-chin — no two endings alike. Small motion throughout, distinct start and end poses per quadrant, four feeds equally clear, balanced framing, calm candid feel.
-    video_negative_prompt: |
-      identity change, face different from reference, outfit different from reference, big movements, exaggerated motion, matching ending poses, one panel more prominent, uneven focus, blurry panels, panels different sizes, single dominant subject, elements crossing between panels, different environments per panel, grid lines drifting, extra limbs, distorted faces
+      Seated figure: subtly straightens posture, one hand rests elegantly on the lap or thigh while the other adjusts to a poised position — on the seat edge, on the knee, or brushing a strand of hair back. Legs stay crossed or in their original position. Head tilts slightly and turns toward the camera
+      with a quiet, aloof gaze, chin lifted just enough to read as confident. Body stays seated in place.
+
+      Both movements are small, slow and restrained — quiet grace, not busy motion. No physical contact, no leaning toward each other; each holds their
+      own space with composed independence. Flowing fabric and loose strands of hair drift softly in a gentle breeze throughout.
+
+      Mood & style: cold, refined, high-end elegance — the energy of a high-fashion editorial. Cool desaturated grade with steely blue and slate tones; crisp directional key light with a clean cool rim/hair light separating the subjects from a dim, minimal background; subtle filmic contrast, deep controlled shadows.
+
+      Camera: a slow, sweeping cinematic orbit (circular dolly) arcing boldly around the two subjects — roughly a 180° half-turn — with wide, dramatic parallax as the dim background slides past behind them. It eases in gently, builds momentum through the middle of the arc, then eases out, combined with a very slight crane/boom rising from a low hero angle up to eye level. Both subjects stay centered and fully in frame the entire time. The camera travels through space while the subjects remain locked in place. Anamorphic widescreen feel, shallow depth of field; the cool rim light grazes their silhouettes as the angle changes. Smooth, unhurried, weighty motion —
+      dramatic but controlled. No sudden cuts, no snap zooms, no jitter, no warping, no distortion.
+    video_negative_prompt: ''
 
     concurrent_requests: 3
 
-  - style_name: 電影海報-FRIENDS
-    folder: Media Files/I2I2V/0717 11 Styles/0717 電影海報-FRIENDS
+  - style_name: 'Mom Doodle (Human)'
+    folder: 'Media Files/I2I2V/0724 9 Styles/0724 Mom Doodle (Human)'
     image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
+    image_model: gemini-3.1-flash-image
     image_resolution: '2K'
     image_aspect_ratio: '3:4'
-    image_prompt: |
-      Please use all uploaded photos as the only source of characters in the image. Their faces, facial features, bone structure, hairstyles, expressions, and overall identities must remain perfectly identical to the uploaded photos. The system must not alter their facial proportions, makeup style, jawline, nose shape, or eye shape. No face smoothing, beautification, aging, or stylization is allowed.
-
-      All characters must appear as if they were photographed together at the same time and in the same studio environment, with consistent lighting, color tone, and photographic realism. The number of people in the image must match the number of uploaded photos, with no additional characters added. All characters are seated side by side behind a single wooden table, shown from the upper body up, arranged tightly in a horizontal, cinematic poster-style composition.
-
-      The scene should follow a classic American TV show poster aesthetic. In the foreground, place a slightly vintage wooden table with visible wood texture. Several characters should naturally lean in together to share the same chocolate milkshake, with multiple people drinking from a single glass at the same time. Each character must have their own individual straw, even when sharing the same milkshake, and every character should be actively drinking through their straw. Hands must rest casually on the table or remain out of frame, and no one should be holding or gripping the straws. Avoid a one-person-one-drink arrangement; instead, emphasize shared milkshakes to reinforce a sense of closeness and friendship. If the number of uploaded people is three or fewer (including three), all characters must share and drink from one single chocolate milkshake. If the number of uploaded people is four, use exactly two chocolate milkshakes, with the characters evenly divided so that two people share one milkshake and the other two people share the second milkshake. Each milkshake should be topped with whipped cream d a cherry on top. In addition to the main chocolate milkshakes, place one to two creamy chocolate dessert drinks in tall glass cups, with cherry on top, clearly showing layers of chocolate syrup and cream on the table, to enrich the scene while keeping the composition clean and uncluttered. A white plate was placed under tall glasses containing creamy chocolate dessert drinks. The interaction between people and desserts should feel natural, candid, and friendly.
-
-      All characters must be looking directly toward the camera while drinking, maintaining eye contact with the viewer to create a strong, engaging poster presence.
-
-      The camera angle should be close to eye level, slightly balanced rather than dramatic, with a comfortable viewing distance that shows the group clearly without feeling too close or wide.
-      All characters and the wooden table must be positioned in the lower portion of the image. At least the upper half of the canvas must remain open, uncluttered negative space reserved exclusively for the title text. The composition should clearly separate the subject area below and the title area above.
-      The framing should feel calm, evenly spaced, and poster-like, allowing all characters to be seen clearly with natural proportions.
-
-      The background should be a clean, solid-colored wall in a muted gray or blue-gray tone, with no decorations or patterns, keeping the focus on the people and the table. The camera angle should be slightly below eye level with a subtle upward perspective, creating a close, intimate group feeling where everyone appears equally important. Lighting should be soft, even, and studio-like, without harsh shadows, producing a polished yet warm poster-quality photograph.
-
-      At the top center of the image, add the title text “FAMILY” The lettering must have a hand-drawn, slightly irregular black line style. Between each letter, place a small circular dot, alternating in red, blue, and yellow colors. The spacing, proportions, and alignment of the letters and dots should be clean, balanced, and consistent. The title must be clearly readable and positioned so it does not overlap or cover any faces. The typography should closely resemble a classic TV show poster design rather than a modern or decorative font.
-
-      The overall mood should feel warm, relaxed, and friendship-focused, resembling an iconic ensemble TV show poster. The final image should immediately evoke a classic American sitcom group poster feeling, while featuring only the uploaded people, realistic photography, accurate faces, and a faithful recreation of the described layout, props, and typography.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Static locked camera, framing maintained throughout, same background and lighting kept consistent.
-      Feature EXACTLY the people shown in the uploaded image — do not add or remove anyone, keep each person's face, hairstyle, body and outfit consistent with the reference.
-      Everyone visible in the frame is hanging out happily together, mixing lively chatting with playful physical movement.
-      They turn toward the people beside them and talk with bright smiles, then break into laughter — leaning in, gently nudging or bumping shoulders with the person next to them.
-      Someone throws a peace sign beside their face, another tilts their head back laughing, hands moving and gesturing naturally.
-      They sway a little, lean close together, then glance back at the camera with warm cheerful grins.
-      Balanced mix of talking and expressive body movement, lively joyful atmosphere, glossy skin glow, natural candid feel.
-    video_negative_prompt: |
-      adding people, removing people, changing the number of people, duplicating a person, extra person, merging subjects, faces overlapping, identity change, distorted faces, deformed hands, malformed fingers, extra limbs, stiff frozen poses, only talking with no movement, harsh lighting,identity change
-
-    concurrent_requests: 3
-
-  - style_name: 拍貼系列-金魚
-    folder: Media Files/I2I2V/0717 11 Styles/0717 拍貼系列-金魚
-    image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    image_prompt: |
-      Use the uploaded person as the ONLY subject in all panels. Preserve the subject’s real face, facial features, identity, skin tone, hairstyle, and body proportions EXACTLY as in the uploaded photo. Do not beautify, stylize, or alter identity in any way. No extra people may appear. No non-uploaded individuals may appear.
-
-      Create a playful four-frame photo-booth collage styled like a goldfish aquarium photo booth, closely matching the provided reference image. The two uploaded subjects must always appear together in all four frames, maintaining realistic scale, consistent distance, and natural body proportions, wearing exactly the same clothing and hairstyles as in the uploaded photos. The entire composition must feel like it was captured in a single continuous physical aquarium environment, not four separate images.
-
-      The subjects appear behind one continuous, invisible aquarium glass plane, with goldfish swimming naturally between the camera and the subjects. The glass must feel optically neutral and unobtrusive, showing only extremely subtle diffusion without reflections, glare, shine, light streaks, mirrored effects, or visible glass surfaces. There must never be any visible water surface, reflective bands, horizontal or vertical light lines, exposure breaks, or any form of top or bottom reflection. The image must not contain waterline artifacts, mirrored faces, ghosting, double outlines, motion trails, or duplicated facial features under any circumstances.
-
-      The layout must be a perfectly balanced 2×2 grid, seamlessly stitched into a single continuous image with absolutely no borders, no dividers, no seams, no margins, and no panel separation cues. The background must remain visually continuous from top to bottom and side to side, with identical density, color depth, haze, and exposure across all four frames, so the collage reads as one uninterrupted space rather than stacked images.
-
-      The background color and atmosphere must closely match the reference image, remaining deep navy-blue to near-black at all times. The background should feel dense, calm, and subdued, with no visible light sources, no beams, no gradients, no glow patches, and no directional lighting. The background must never appear cyan, teal, turquoise, greenish, bright blue, or illuminated, and must never compete with the subjects’ faces for visual attention.
-
-      Lighting must be fully diffused, soft, and frontal. The subjects’ faces must be the brightest and most visually anchored elements in every frame, clearly lifted by exposure and midtones without altering facial structure or texture. Facial highlights should appear clean and natural on the forehead, nose bridge, and cheeks, while the surrounding environment remains darker and restrained. Skin tones must precisely match the reference image, staying within neutral-warm beige to soft peach undertones. Skin must never appear gray, bluish, cyan, greenish, desaturated, underwater-muted, or color-shifted. Any blue cast from the environment must be completely excluded from the skin while preserving the deep blue background. Skin must feel alive, human, and naturally luminous, with no smoothing, no beauty filters, and no artificial enhancement.
-
-      Goldfish should swim gently and naturally in the foreground with soft edges and realistic depth. Their colors must remain warm golden-yellow to soft orange only, with natural variation and no white, pale, cream, lemon-yellow, glowing, or overexposed appearance. Goldfish must never cross directly in front of eyes, nose, mouth, or central facial features, and must never obscure identity. Fish may pass near hair edges, cheeks, shoulders, or the outer frame area only.
-
-      Each of the four frames must feature a different, natural interaction between the two subjects, such as leaning closer together, softly pointing at a fish, sharing a quiet smile, reacting playfully, or gently observing the aquarium. The interactions must feel spontaneous, relaxed, and photo-booth-like, never posed, stiff, symmetrical, or repeated across frames.
-
-      Global contrast should be slightly lowered and black levels softened to maintain a cinematic underwater depth. Highlights must bloom gently and evenly without streaks, bands, reflections, or artifacts. Avoid HDR effects, high clarity, sharpening halos, artificial edge definition, structural separation lines, or any visual cues that suggest layering or compositing.
-
-      The final image must feel dreamy, cinematic, calm, and intimate, unmistakably resembling a real goldfish aquarium photo booth. It must contain no reflection lines, no light bands, no ghosting, no mirrored effects, and no background lighting artifacts, with color, lighting, and atmosphere tightly aligned to the reference image.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      A single video built as a fixed 2x2 grid of four camera panels, arranged as two equal rows and two equal columns. Each panel occupies exactly one quarter of the frame, separated by clean straight seams — one vertical seam down the exact center and one horizontal seam across the exact middle. Every panel's content stays strictly inside its own quarter and never crosses these center seams; the four-panel layout stays fixed the entire time, no zooming, no panel ever filling the screen, no cuts. Absolutely no text, letters, labels, numbers, captions or watermarks anywhere in the frame.
-      All four panels show the SAME two people in the SAME dark aquarium-lit setting with small goldfish drifting slowly in the foreground. In every panel they remain two separate distinct individuals who never blend or morph together, the auburn-haired one anchored toward the left of her panel and the dark-haired one anchored toward the right of her panel, each keeping her own face and body.
-      Each panel animates a COMPLETELY DIFFERENT type of energy and settles on its own distinct final pose:
-      Top-left — almost motionless glamour: they hold a still magazine-style pose, chins lifted, barely moving, one throwing a single crisp peace sign, finally freezing in an elegant posed stillness with calm confident smiles.
-      Top-right — playful and cute: one playfully pokes the other's cheek while the other scrunches her nose and reacts with a mischievous grin, a light teasing sideways interaction, finally settling mid-tease with the fingertip still on the cheek and both giggling.
-      Bottom-left — cute finger hearts: staying in place and facing forward without turning, they lean their heads close together and each form a small finger heart beside their cheeks, sweet bright smiles, finally holding the finger hearts still side by side.
-      Bottom-right — quiet and tender: they sink slowly into a deep close side embrace, eyes gently closing as one buries her head into the other's shoulder, the calmest most intimate beat, finally resting wrapped together in a soft still hug as a goldfish drifts slowly past.
-      Strongly contrasting energy between panels, each panel its own distinct mood, soft aquarium lighting, natural candid feel.
-    video_negative_prompt: |
-      identity change, face different from reference, outfit different from reference, inconsistent faces between panels, different people in different panels, big movements, exaggerated motion, matching ending poses, identical final poses across panels, one panel more prominent, uneven focus, blurry panels, panels different sizes, unequal panel sizes, single dominant subject, only one panel visible, panel filling the screen, zooming in, elements crossing between panels, subjects merging together, two people blending into one, faces overlapping, different environments per panel, grid lines drifting, shifting seams, uneven grid, text, letters, words, numbers, labels, captions, watermark, timestamp, camera labels, extra limbs, distorted faces, deformed hands, malformed fingers, spinning, rotating body, subject drifting out of panel
-
-    concurrent_requests: 3
-
-  - style_name: 拍貼系列-Style3:2020S
-    folder: Media Files/I2I2V/0717 11 Styles/0717 拍貼系列-Style3:2020S
-    image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    image_prompt: |
-      Use all uploaded photos as the only subjects. Their real identities must remain recognizable and consistent.
-      Preserve the subjects’ facial features, identity, skin tone, hairstyle, and body proportions EXACTLY as in the uploaded photos.
-
-      The input consists of 2 to 4 different people (all unique individuals).
-
-      GLOBAL IDENTITY & COUNT RULES (CRITICAL):
-      – Each uploaded person may appear multiple times across different frames
-      – BUT the same person must NEVER appear twice within the SAME frame
-      – No frame may contain duplicated faces or cloned identities
-      – No hallucinated or extra people are allowed
-
-      FRAME POPULATION RULES (VERY IMPORTANT):
-      – Each frame must contain either:
-        • exactly 2 people
-        • exactly 3 people
-        • or all 4 people together
-      – A frame with ONLY 1 person is STRICTLY FORBIDDEN
-      – The exact number of people per frame may vary randomly
-      – Not all frames need to contain the same number of people
-
-      Adding the same person repeatedly within a single frame
-      or adding people who haven't uploaded photos
-      is strictly prohibited.
-
-      ────────────────────────
-      PURPOSE & STYLE:
-      ────────────────────────
-      This is a photographic purikura-style filter application inspired by CURRENT Japanese purikura trends (FJK / SJK / LJK),
-      NOT a realistic portrait and NOT a modern beauty editorial.
-
-      ────────────────────────
-      IDENTITY PRESERVATION RULES:
-      ────────────────────────
-      – The same people must remain clearly identifiable
-      – Facial structure, face shape, and hairstyle must remain consistent
-      – Do NOT replace faces
-      – Do NOT merge faces
-      – Do NOT turn subjects into illustrations, anime, or dolls
-
-      ────────────────────────
-      FACIAL TREATMENT (EYES ARE CRITICAL – CURRENT PURIKURA STYLE):
-      ────────────────────────
-      – Eyes must appear about 25–30% larger than the original image, achieved through facial proportion refinement, NOT exaggerated scaling
-      – Slightly taller eye shape with soft rounded corners
-      – Clean, soft upper eyelid line (no harsh eyeliner, no cat-eye)
-      – Subtle lower eyelid fullness (natural aegyo-sal impression, not drawn)
-      – Iris size and color remain realistic (no glow, no anime shine)
-      – Eye whites clean and bright but NOT over-whitened
-      – Eyes must feel soft, friendly, and human, never cartoonish or doll-like
-
-      Face & skin:
-      – Overall face slightly more compact and centralized (very subtle)
-      – Mild jawline softening only
-      – Skin retouching light, clean, and purikura-like
-      – No plastic skin, no heavy whitening, no editorial beauty look
-
-      ────────────────────────
-      STYLE & BOOTH IDENTITY:
-      ────────────────────────
-      Create a playful four-frame photo-booth collage styled like a CURRENT Japanese purikura booth popular among FJK / SJK / LJK.
-
-      Overall vibe:
-      – cute
-      – trendy
-      – clean
-      – soft
-      – girly
-      – Instagram-ready
-      – unmistakably modern Japanese purikura aesthetic
-
-      ────────────────────────
-      LAYOUT:
-      ────────────────────────
-      – Perfect 2×2 four-frame grid
-      – Equal-sized panels
-      – Seamlessly stitched edge-to-edge
-      – NO borders, margins, dividers, or white lines
-      – One unified purikura output (not separated images)
-
-      ────────────────────────
-      SUBJECTS & POSES (REFERENCE-ALIGNED):
-      ────────────────────────
-      – Relative positions and scale remain consistent across frames
-      – Each frame must feature a DIFFERENT pose
-      – Poses must closely imitate reference purikura poses, including:
-        • peace signs close to the face or eyes
-        • cheek-touch pose
-        • finger-heart near chin
-        • slight head tilt with close shoulder distance
-        • leaning together for intimacy
-      – Expressions should be soft, cute, and natural:
-        gentle smile / shy smile / light pout
-      – Avoid exaggerated comedy poses or large spacing between subjects
-      – Clothing must remain unchanged
-
-      ────────────────────────
-      HEAD ACCESSORIES:
-      ────────────────────────
-      – Add bows or headbands to SOME subjects only
-      – Accessories appear in RANDOM 1–2 frames only
-      – At most TWO frames may contain head accessories
-      – Never appear in all four frames
-
-      – Sequined pink ribbon headband
-      – Lace plush headband (soft, fluffy texture)
-      – Kitty-style pink glitter bow headband (purikura booth rental feel)
-
-      – Accessories should feel playful, bold, and slightly exaggerated
-      – Slightly oversized but controlled
-      – Clearly readable at thumbnail size
-
-      Color direction:
-      – High-saturation candy colors:
-        hot pink, vivid baby pink, cherry red, bright mint green
-      – Must stand out clearly from hair and background
-      – Avoid muted or dusty tones
-
-      Placement rules:
-      – On top of the head or slightly off-center
-      – Do NOT obscure bangs, eyes, eyebrows, or facial features
-
-      Restrictions:
-      – Do NOT use animal ears
-      – Do NOT use cosplay or luxury accessories
-      – Do NOT overload accessories
-
-      ────────────────────────
-      BACKGROUND & LIGHTING:
-      ────────────────────────
-      – Simple, clean purikura booth background
-      – Soft pastel tones only (pink / white / light purple)
-      – Flat, friendly booth lighting
-      – Soft glow without haze
-      – No detailed environments
-
-      ────────────────────────
-      DECORATIONS (CRITICAL UPDATE – HEARTS ONLY):
-      ────────────────────────
-      – DO NOT add ANY text, letters, numbers, words, or typography
-      – DO NOT add speech bubbles, stars, sparkles, stickers, outlines, glow effects, or neon effects
-      – Add ONLY hand-drawn heart doodles
-
-      Heart appearance:
-      – Hand-drawn pen / marker style
-      – Flat color fill or simple outline ONLY
-      – NO glow, NO neon, NO gradient
-      – Uneven, imperfect stroke thickness
-      – Casual, human-drawn feeling
-
-      Heart color palette ONLY:
-      – hot pink
-      – bright red
-      – vivid pastel pink
-
-      Heart distribution rules:
-      – ONLY 2 out of the 4 frames may contain hearts
-      – Remaining frames must have ZERO decorations
-      – Do NOT distribute evenly
-      – Never overlap eyes, eyebrows, nose, or mouth
-
-      ────────────────────────
-      MOOD & INTENT:
-      ────────────────────────
-      Cute, intimate friendship memories captured in a CURRENT Japanese purikura booth.
-      The final image should feel:
-      – pastel
-      – bubbly
-      – clean
-      – softly retouched
-      – trendy
-      – unmistakably modern Japanese purikura.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      A single video built as a fixed 2x2 purikura-style photo booth collage, four equal panels arranged in two rows and two columns, divided by soft pink border frames that stay fixed the entire time. Each panel stays in its own quarter throughout, no zooming, no cuts. Cute hand-drawn heart doodles in pink, magenta, and red are scattered playfully across the collage as decorative elements.All four panels show the SAME two girls in a bright pastel photo booth setting with soft pink and pale lilac backdrops. They remain two separate distinct individuals in every panel, never blending together, each keeping her own face and body. Bright even beauty-lighting brightens their skin with a soft flawless glow, warm cheerful mood throughout.Each panel animates a DIFFERENT sweet purikura pose and settles on its own distinct final pose:Top-left — double peace signs: both girls lean cheek to cheek with bright wide smiles, each throwing a crisp peace sign up beside her face, tilting their heads playfully, finally holding the pose with sparkling eyes and radiant grins.Top-right — finger hearts together: they lean their heads close and each form a small finger heart beside their cheeks, blinking cutely, finally settling with the finger hearts held still and sweet closed-mouth smiles.Bottom-left — playful mismatch: one girl props her chin on her hand and puckers her lips in a cute duckface, while the other leans in from the side flashing a peace sign near her cheek with a mischievous grin, finally holding the mismatched pose with a giggle.Bottom-right — cozy cheek-to-cheek: they nestle close cheek to cheek facing the camera, one gently cupping the other's face with her hand, finally settling into a soft warm smile together, eyes crinkling happily.Soft cute movements, bright cheerful purikura atmosphere, glossy skin glow, playful youthful energy, natural candid feel Bottom-right — cozy cheek-to-cheek: they nestle close cheek to cheek facing the camera, one gently cupping the other's face with her hand, finally settling into a soft warm smile together, eyes crinkling happily.
-      The hand-drawn heart doodles stay visible and consistent throughout the entire video, scattered across the pink borders and panel corners as a fixed decorative layer that does not move or disappear.
-      Soft cute movements, bright cheerful purikura atmosphere, glossy skin glow, playful youthful energy, natural candid feel.
-    video_negative_prompt: |
-      identity change, inconsistent faces between panels, different people in each panel, subjects merging together, faces overlapping, identical poses across panels, panels different sizes, panel filling the screen, shifting seams, text, letters, words, numbers, watermark, timestamp, distorted faces, deformed hands, extra limbs, dark shadows, harsh lighting, subject drifting out of panel,identity change, inconsistent faces between panels, different people in each panel, subjects merging together, faces overlapping, identical poses across panels, panels different sizes, panel filling the screen, shifting seams, text, letters, words, numbers, watermark, timestamp, distorted faces, deformed hands, extra limbs, dark shadows, harsh lighting, subject drifting out of panel, fading doodles, disappearing hearts, animated doodles, flickering overlays
-
-    concurrent_requests: 3
-
-  - style_name: 攝影兩宮格
-    folder: Media Files/I2I2V/0717 11 Styles/0717 攝影兩宮格
-    image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
-    image_resolution: '2K'
-    image_aspect_ratio: '3:4'
-    image_prompt: |
-      Please use all uploaded photos as the only source of characters in the image. Preserve every person’s real face, facial features, bone structure, skin tone, hairstyle, clothing, and overall identity exactly as shown in their original photos. Do not beautify faces, smooth skin, stylize features, alter proportions, change age, or modify identity in any way. No additional people may appear. Each uploaded person must appear only once in the final image, with no duplication, cloning, or repeated faces.
-
-      Create a vertically oriented image divided clearly into two stacked horizontal frames, resembling a casual photo exchange between friends. The overall mood should feel natural, playful, and nostalgic, inspired by a Japanese springtime aesthetic. The setting should feel like a green park in early spring, with soft sunlight, fresh greenery, trees, and a relaxed outdoor atmosphere. The color tone should be light, airy, and slightly warm, emphasizing fresh greens and gentle daylight. The two stacked frames must be seamlessly stitched together with no white borders, gaps, margins, or visible separators of any kind. The transition between the upper and lower frames should be clean and continuous, forming a single unified image.
-
-      [Upper Frame: The Photographer] In the upper frame, randomly select one single person from the uploaded users to act as the photographer. This person must appear alone in the upper frame. The character should be posing with a compact camera or film camera, gently and naturally holding it near their face rather than actively taking a photo. The camera should rest casually against the face, covering only one eye, while the other eye remains clearly visible. Both eyes must be open, relaxed, and clearly visible with no blinking. The upper frame must be shot from a clear low-angle (upward-looking) perspective. The background should be dominated by sky, treetops, or bright open air, with no visible ground. The pose should feel calm, casual, and intentional. The photographer must be fully intact within the upper frame with no cut-off limbs or rendering errors.
-
-      [Lower Frame: The Viewfinder Scene] In the lower frame, depict all remaining uploaded users together, excluding the person used in the upper frame. This represents the scene being photographed. The camera viewpoint is from above (high-angle), looking downward toward the group sitting on a picnic blanket on the grass. The background consists entirely of grass and the picnic blanket, with no horizon line. Characters should be interacting casually, sitting close together with lively, genuine expressions (peace signs, leaning in, laughing).
-
-      [Crucial: Viewfinder Overlay Construction] The lower frame must feature a strict and absolute "Edge-to-Edge Viewfinder" overlay, exactly matching the style and placement of the solid black frame in image_3.png.
-
-      The Border: The entire lower frame must be enclosed by a single, thick, solid black rectangular bezel that acts as the absolute physical limit of the image. This black line must be perfectly flush with and become the outermost edge of the entire lower canvas. There must be ZERO padding, ZERO margins, and absolutely NO white space between the black line and the actual edge of the image file. The black line is the final, hard boundary.
-
-      Closed Loop: The black border must be a complete, unbroken, four-sided closed rectangle. Do not use disconnected corner brackets ( ｢ ｣ ) or broken lines. It must be a solid connected box that hugs the very edge of the image boundary, containing the entire scene.
-
-      UI Elements: Inside this black perimeter, overlay minimal white camera UI elements: a small "REC" indicator (top left corner) and a battery icon (top right corner). These icons must sit inside the image, close to the black border.
-
-      No Other Guides: Absolutely NO grid lines, NO rule-of-thirds lines, NO focus squares in the middle, and NO face-detection boxes. Keep the center of the image completely clean.
-
-      [Atmosphere] Both frames share consistent lighting: soft daylight, gentle shadows, springtime warmth. The final image should clearly read as a "Photographer (Top) vs. What They See (Bottom)" narrative, with accurate identities and a clean, edge-to-edge viewfinder graphic in the bottom half.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Two-panel vertical split screen, one horizontal panel on top and one on the bottom, divided by a clean straight seam that stays fixed the entire time. No zooming, no cuts, the two-panel layout and seam hold throughout.
-      Keep every person's face, hairstyle, body and outfit consistent with the uploaded image; do not add or remove anyone.
-
-      Scene & mood: a warm sunny spring afternoon in a park, cherry blossoms and fresh green leaves swaying gently in the breeze, soft golden sunlight, the nostalgic feel of capturing a carefree day on a vintage film camera.
-
-      TOP PANEL — the photographer:
-      Camera work: smooth orbiting camera arcing slowly around the photographer, circling gently from one side to the other while keeping the same distance, no zoom.
-      Action: the person raises a vintage film camera up to their eye with both hands, tilts slightly to frame the shot, presses the shutter with a small
-      pleased smile, then lowers the camera down to chest level and breaks into a big warm laugh, brushing hair from their face as the breeze lifts it,
-      glancing off to the side as if watching their friend.
-
-      BOTTOM PANEL — the one being filmed, shown as a camera viewfinder with a fixed REC mark, battery icon and framing corners:
-      Camera work: smooth arcing orbit slowly circling around the subject, keeping constant distance, no zoom, gentle and natural.
-      Action: the person sits alone on the picnic blanket, full of warm relaxed energy. They look toward the camera with a bright happy smile, tilting the head playfully, then laugh softly and brush hair back as the breeze stirs it. They lift a hand into a small peace sign near the face, then rest the chin lightly on the hand with a soft dreamy smile, glancing off to the side before turning back to the camera with a warm affectionate gaze. Grass, petals and blanket fringe stir in the soft spring wind.
-
-      Balanced mix of gentle expressive gestures, warm cheerful nostalgic
-      spring atmosphere, cinematic film look, natural candid feel.
-    video_negative_prompt: |
-      zoom in, zoom out, pushing in, dolly zoom, adding people, removing people, changing the number of people, duplicating a person, extra person, merging subjects, faces overlapping, identity change, face different from reference, outfit different from reference, panels different sizes, panel filling the screen, shifting seam, rotating frame, moving REC mark, distorted faces, deformed hands, malformed fingers, extra limbs, stiff frozen poses, harsh lighting
-
-    concurrent_requests: 3
-
-  - style_name: 夏日煙火-雙人
-    folder: Media Files/I2I2V/0717 11 Styles/0717 夏日煙火-雙人
-    image_service: nano_banana
-    image_model: gemini-3.1-flash-image-preview
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    image_prompt: |
-      [HIGH-PRIORITY REFERENCE AND SUBJECT ROLE LOCK]
-
-      * Exact Subject Count Rule: The provided reference image contains exactly two referenced subjects. Use only these two referenced subjects throughout the entire triptych. Do not add, remove, duplicate, merge, replace, or invent any subject.
-
-      * Referenced Subject Assignment:
-
-        * If one referenced subject is male-presenting and one referenced subject is female-presenting, assign the male-presenting subject as Referenced Subject A and the female-presenting subject as Referenced Subject B.
-        * If both referenced subjects have the same or unclear gender presentation, assign the left-side or first clearly visible referenced subject as Referenced Subject A, and the right-side or second clearly visible referenced subject as Referenced Subject B.
-        * Keep this A/B assignment fixed and unchanged across all three panels.
-
-      * Panel Role Distribution Lock:
-
-        * Top panel main focus: Referenced Subject A only.
-        * Middle panel: Referenced Subject A and Referenced Subject B together.
-        * Bottom panel main focus: Referenced Subject B only.
-        * The top and bottom panels must feature two different referenced subjects as the main focus. Do not use the same face, same identity, or same facial structure in both the top and bottom panels.
-        * Do not swap, blend, average, or repeat the identities of Referenced Subject A and Referenced Subject B.
-
-      * Distinct Subject Identity Rule: Referenced Subject A and Referenced Subject B must remain visually distinct and individually recognizable across the triptych. Preserve each subject’s own facial identity, facial proportions, facial structure, face shape, eyes, nose, mouth, skin texture, natural likeness, gender presentation, age impression, and original expression.
-
-      [YUKATA & STYLING DETAILS]
-
-      * Attire: Both referenced subjects wear elegant, light-colored summer yukata with delicate floral patterns, such as pale ivory, cream, soft beige, or light blue.
-
-      * Hair Styling: Style each referenced subject according to their original gender presentation from the reference image. For any female-presenting referenced subject, style the hair into a neat summer festival updo or soft low bun, with a delicate hydrangea hair ornament featuring small pale blue, white, or soft pink blossoms. For any male-presenting referenced subject, preserve the original hairstyle from the reference image while keeping it naturally integrated with the summer yukata styling.
-
-      [GLOBAL STYLE, SCENE, AND INTEGRATION]
-
-      * Style: Realistic cinematic photo-series, three-panel vertical triptych.
-      * Scene: A quiet Japanese summer night memory by the seaside. The entire image should feel connected by time and atmosphere.
-      * Color Tone: A deep blue night sky consistent across all panels, seamlessly integrated with warm sparkler and fireworks lighting.
-      * Facial Lighting: Ensure each subject’s face receives clear, natural light from the scene, with visible illumination across the facial features. The face should show gentle highlights and soft shadows, keeping the eyes, nose, cheeks, and overall face shape clearly defined and naturally integrated with the surrounding fireworks or sparkler light.
-      * Atmosphere: A soft, cinematic film-still aesthetic with gentle grain and a cohesive shallow depth of field.
-      * Background: Softly blurred seaside: a deep blue coastal night, faint distant ocean horizon, and small shoreline bokeh lights.
-      * Scene Integration: The subjects should appear photographed in-camera within the same seaside night environment, not placed in front of a separate background. Match the subjects, background, fireworks, shoreline lights, exposure, sharpness, film grain, and depth of field into one continuous photographic space. Warm fireworks light and golden sparkler glow should softly wrap around the face, hair, shoulders, hands, and yukata folds, while the deep blue coastal night ambience adds gentle cool fill light to the shadow areas. Add subtle atmospheric haze, smoke, and light bloom around the subject edges, slightly overlapping the hair and shoulders, so the subjects feel naturally embedded in the night air.
-
-      [TOP PANEL: REFERENCED SUBJECT A WITH CAMERA & IMPRESSIVE FIREWORKS]
-
-      * Main Subject: Focus on Referenced Subject A only as the main subject of this panel. Preserve Referenced Subject A’s original identity, facial features, facial proportions, gender presentation, age impression, and natural expression from the reference image.
-      * Subject Separation: Do not use Referenced Subject B’s face, facial structure, or identity for the top panel main subject.
-      * Action/Pose: Referenced Subject A holds a vintage or retro-style camera naturally with both hands, positioned from chest level to face level, centered slightly below the eyes.
-      * Composition: Use a close-up with a softly angled side-facing composition rather than a front-facing camera pose. The subject’s face should be turned naturally toward the side, with a clear three-quarter view or gentle side profile. Keep the visible eye, eyebrow, nose bridge, cheek, lips, and main face shape clearly readable, while the camera may overlap the lower center portion of the face. The facial identity should remain clear and complete, but the subject should appear focused on photographing the scene instead of facing straight toward the viewer.
-      * Background:The deep blue night sky is filled broadly and abundantly with layered fireworks spread across most of the sky, creating a rich and immersive backdrop. In this top panel, render the fireworks with a noticeably softer focus and a stronger depth-of-field effect, so the background fireworks appear more blurred, more atmospheric, and more distant behind the subject. Only a small portion of the fireworks may remain slightly more defined, while most bursts should appear softened by cinematic blur, gentle bloom, and distance-based defocus. The fireworks should still vary in size, shape, brightness, blooming stage, and distance, with softened sparkling trails, subtle haze, smoke, and layered light diffusion that enhance the sense of depth without competing with the subject.
-      * Lighting & Integration: Cinematic night lighting softly contours the face with warm firework glow and realistic reflections. Add gentle rim lighting on the hair and shoulders so Referenced Subject A feels naturally connected to the sky and scene.
-
-      [MIDDLE PANEL: REFERENCED SUBJECT A AND REFERENCED SUBJECT B WITH SPARKLERS & CALM BAY]
-
-      * Subjects: Show both Referenced Subject A and Referenced Subject B together by the seaside. Both subjects must remain individually recognizable and visually distinct.
-      * Composition: Half-body shot, showing both referenced subjects from around the waist or chest upward by the seaside.
-      * Action/Pose: Candid, relaxed, naturally connected poses. Referenced Subject A and Referenced Subject B each hold a lit sparkler in a slightly different position, creating gentle movement and a real captured-moment feeling.
-      * Expression: Keep both expressions close to the reference image, with only subtle, quiet happiness added for an intimate summer-night mood.
-      * Background: Clean, open deep blue coastal night bay with faint distant bokeh lights and ocean darkness.
-      * Lighting & Integration: The lit sparklers act as the main light source, casting warm golden highlights onto hands, faces, yukata folds, and skin, naturally integrating both referenced subjects into the foreground darkness.
-
-      [BOTTOM PANEL: REFERENCED SUBJECT B & FIREWORKS]
-
-      * Main Subject: Focus on Referenced Subject B only as the main subject of this panel. Preserve Referenced Subject B’s original identity, facial features, facial proportions, gender presentation, age impression, and natural expression from the reference image.
-      * Subject Separation: Do not use Referenced Subject A’s face, facial structure, or identity for the bottom panel main subject.
-      * Composition: Intimate cinematic composition.
-      * Action/Pose: Referenced Subject B turns back softly toward the viewer or across the bay. The face appears in a graceful profile or three-quarter view, with the nose bridge, cheek, lips, eyes, and main face shape clearly preserved from the reference image.
-      * Background:The deep blue night sky is filled widely with abundant, brilliant layered fireworks that spread across most of the sky, creating a fuller and more immersive fireworks backdrop. The fireworks should occupy a large portion of the background rather than concentrating in a single cluster. Keep a gentle shallow depth-of-field effect so some fireworks remain softly defined while others fall into a softer blur, enhancing the cinematic depth of the scene. The fireworks vary in size, shape, blooming stage, and distance, with soft bokeh, subtle haze, warm reflected light, and a naturally layered sense of space.
-      * Lighting & Integration: Referenced Subject B is softly lit by a blend of warm firework reflections and distant seaside lights. Use gentle contrast between the illuminated cheek and softly shadowed areas, with subtle rim lighting on the hair and yukata collar.
-
-      [FINAL CONSISTENCY CHECK]
-
-      * Re-verify that all three panels use only Referenced Subject A and Referenced Subject B from the provided reference image.
-      * Keep the exact subject count, facial identity, gender presentation, facial proportions, and natural expression consistent across all panels.
-      * Confirm that the top panel main subject is Referenced Subject A, the middle panel shows both Referenced Subject A and Referenced Subject B, and the bottom panel main subject is Referenced Subject B.
-      * Confirm that the top and bottom panels do not repeat the same subject, same face, same facial structure, or same identity.
-      * Preserve Referenced Subject A and Referenced Subject B as two separate people with clearly different identities.
-      * Make the three panels feel like one continuous cinematic seaside summer-night sequence, with cohesive film texture, deep blue night color grading, warm sparkler and firework lighting, realistic rim light, and natural scene integration.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Vertical three-panel split screen (triptych), three equal horizontal panels stacked top to middle to bottom, divided by clean straight seams. Each panel stays in its own third throughout, no zooming, no cuts, no text or watermarks anywhere. All three panels share the SAME seaside night setting with a dark blue sky, distant coastline lights, and large fireworks blooming vividly in the background. The man in the top and middle panels is the SAME person, and the woman in the middle and bottom panels is the SAME person, both wearing the same floral summer yukata across panels.Top Panel (The Photographer):
-      The young man raises a vintage film camera up to his eye with both hands, tracking a burst of fireworks across the sky, then quickly pivots and lifts the camera higher to catch a second explosion. He presses the shutter with a small triumphant grin, lowers the camera fully, and breaks into a bright open smile as huge fireworks bloom and cascade behind him, his hair and yukata sleeves stirred by a gust of sea breeze.Middle Panel (Sparklers Together):
-      The couple stands close side by side holding lit sparklers that crackle brightly, showering sparks. They swing the sparklers in wide playful arcs, drawing glowing trails through the air, then laugh out loud and turn sharply toward each other. She leans in against his shoulder while he tilts his head down to meet hers, both laughing openly as sparks dance around their faces and fireworks burst overhead.Bottom Panel (The Quiet Gaze):
-      The young woman stands with massive fireworks blooming behind her. She slowly turns her whole upper body toward the camera, hair and yukata sleeves lifting in the breeze, then breaks into a radiant warm smile and gives a soft delighted laugh, her eyes lighting up as a huge cascading firework explodes and showers golden light behind her.Technical Focus: cinematic film look, warm night tones with cool blue background, dynamic slow-motion capturing hair and fabric movement, glowing sparkler and firework highlights, 4K, high consistency between panels.
-    video_negative_prompt: ''
-
-    concurrent_requests: 3
-
-  - style_name: 櫻花微夢 (桜に包まれて) (Human)
-    folder: Media Files/I2I2V/0717 11 Styles/0717 櫻花微夢 (桜に包まれて) (Human)
-    image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    image_prompt: |
-      CRITICAL FACE ID LOCK — PRIORITY 1 (EXTREME) :
-      Use the uploaded photo(s) as the ONLY and ABSOLUTE source of the SUBJECT’s face.
-      The generated face must be the SAME REAL SUBJECT as in the input photo.
-      Do NOT alter facial structure, proportions, skin texture, ethnicity, or identity.
-      No beautification. No smoothing. No facial adjustment.
-
-      If input a photo of an animal, it will naturally interact with people or naturally sit on the grass with correct physical weight and shadow.
-
-      The overall color tone is bright and clear with slightly increased saturation, ensuring cherry blossoms appear soft pink rather than white. Highlights remain luminous without washing out color, preserving a fresh sakura pink while maintaining a clean, neutral daylight balance. Neutral spring daylight reaches the subject’s face, creating subtle light-and-shadow contrast on the skin without warm coloration. The environment consists only of blooming cherry blossom trees, evoking purity, renewal, and quiet seasonal beauty.
-
-      Photos must be taken during the peak cherry blossom season in spring. Photos must be original images, taken in different poses, and all must be taken in a park where cherry blossoms are in full bloom. Absent faces and duplicate people are strictly prohibited.CRITICAL PERSON COUNT RULE (NON-NEGOTIABLE):
-
-      The number of people in the final image MUST exactly match the number of uploaded input people.(ABSOLUTELY CRUCIAL)
-      Do NOT add extra people.
-      Do NOT remove any person.
-      Do NOT duplicate any person.
-      Do NOT merge faces.
-
-      Each uploaded person must appear once and only once.
-      No repetition.
-      No cloning.
-      No additional characters.
-
-      ────────────────────────────
-      COMPOSITION — JAPANESE MAGAZINE COVER STYLE (CRITICAL)
-      ────────────────────────────
-
-      True 90-degree overhead shot.
-
-      Subjects must occupy 82–90% of the frame.
-      Faces must appear visually large and intimate.
-
-      Camera positioned closer than previous versions.
-      Crop tightly around heads and upper torsos.
-      Reduce empty grass significantly.
-
-      Framing should feel like a Japanese fashion magazine cover,
-      not a wide lifestyle advertisement shot.
-
-      No distant perspective.
-
-      ⚠️ IF INPUT IS A SINGLE SUBJECT:
-
-      The camera must move even closer than group framing.
-
-      The crop must include the full head + shoulders + chest and reach at least to below the bust line (lower chest visible).
-      Head + upper torso (down to below bust) must fill approximately 85–92% of the frame height.
-      The face must feel intimate and near the lens.
-      Reduce surrounding grass by an additional 20%.
-      Minimize visible empty areas around shoulders.
-      Avoid excessive negative space around the head.
-      Avoid small-scale subject rendering.
-
-      The visual feeling must be:
-      close
-      editorial
-      personal
-      not distant
-
-      ────────────────────────────
-      SUBJECT ORIENTATION & ANGLE LOCK — EXTREMELY IMPORTANT
-      ────────────────────────────
-
-      When the input contains a SINGLE SUBJECT:
-
-      The subject must be oriented upright in the frame with the HEAD positioned toward the TOP of the image.
-
-      FORBIDDEN:
-      – upside-down orientation
-      – head located at bottom of frame
-      – 180° inversion
-      – sideways / horizontal entry (subject lying left-to-right across the frame)
-      – any 90% rotated head/body angle
-      – any “hanging / inverted” look
-      – any “dropped into frame” look
-
-      Required orientation structure:
-
-      TOP OF FRAME
-      → subject head and hair
-
-      CENTER OF FRAME
-      → subject face and eyes looking up toward camera
-
-      LOWER FRAME
-      → shoulders + chest (down to below bust)
-
-      Allowed rotation / tilt:
-      maximum ±15° from vertical.
-      (Only a gentle diagonal is allowed. No strong rotation.)
-
-      The body axis must run generally top-to-bottom (portrait orientation),
-      never left-to-right.
-
-      ────────────────────────────
-      SINGLE SUBJECT POSE & ACTION LOCK (VERY IMPORTANT)
-      ────────────────────────────
-
-      Single-subject pose must be an editorial “reclined” portrait, not a flat stiff lay-down.
-
-      The subject is gently reclined on a dense sakura-petal ground with grass visible in gaps.
-      Upper back and shoulders supported by the ground, but the pose must feel softly propped and composed (not fully flat).
-      Neck line clean and relaxed.
-      Chin slightly raised toward camera (subtle), creating a natural face contour.
-
-      Hair:
-      Long hair spread softly around the head following gravity.
-      Hair must feel naturally placed, not perfectly fanned.
-      Some petals resting on hair.
-
-      Hands / action (choose ONE, keep it natural):
-      Option A: One hand raised near the face holding a single small sakura flower close to one eye area (not covering the full eye), delicate fingers.
-      Option B: One hand lightly touching near the cheek while holding a sakura flower.
-      The other arm must be relaxed and lower in the frame, partially visible, not mirrored, not symmetrical.
-
-      Expression:
-      Calm, soft, gentle smile or neutral soft lips.
-      Eyes looking upward directly to the camera.
-      No exaggerated expression, no “advertising” grin.
-
-      ────────────────────────────
-      CAMERA–SUBJECT SPATIAL RELATION LOCK
-      ────────────────────────────
-
-      The subject must feel naturally positioned on the ground .
-      Soft contact shadows under hairline, neck, shoulders, and along the jaw.
-
-      ────────────────────────────
-      ANTI-GEOMETRY LAYOUT (EXTREMELY IMPORTANT)
-      ────────────────────────────
-
-      FORBIDDEN:
-
-      – perfect circle
-      – radial star formation
-      – evenly spaced heads
-      – symmetrical cross
-      – mirrored layout
-      – balanced four-corner arrangement
-      – geometric alignment
-      – evenly radiating angles
-      – identical head distance from center
-
-      REQUIRED:
-
-      Subjects must feel like they lay down at slightly different times.
-
-      One subject slightly overlaps another’s personal space.
-      One subject closer to camera.
-      One subject slightly farther outward.
-      Uneven spacing between each head (clear irregular gaps).
-      Varied rotation angles (minimum 25–50° difference).
-      At least one head rotated off-axis noticeably.
-      At least one subject slightly breaking the circular flow.
-
-      Heads must NOT form a clean ring.
-      The circle must feel imperfect and slightly broken.
-
-      Hair must spread naturally following gravity.
-      No evenly fanned shapes.
-      Some hair overlapping grass organically.
-
-      Hands must not mirror each other.
-      Avoid identical chest-rest poses.
-      One hand relaxed beside body.
-      One hand partially bent.
-      One hand slightly shifted or asymmetric.
-
-      Arrangement must feel:
-      unguarded
-      relaxed
-      spontaneous
-      organic
-
-      as if captured mid-moment.
-
-      Not staged.
-      Not evenly distributed.
-      Not compositionally perfect.
-
-      One subject must subtly break visual balance.
-
-      ────────────────────────────
-      VISUAL HIERARCHY — MAGAZINE COVER FEEL
-      ────────────────────────────
-
-      There must be a soft visual hierarchy.
-
-      One subject slightly more central or visually dominant.
-      Others orbit loosely around.
-
-      Avoid equal visual weight in four corners.
-      Maintain asymmetry.
-      Avoid balanced quadrant layout.
-
-      ────────────────────────────
-      GROUND & PETALS (ADJUSTED)
-      ────────────────────────────
-
-      Grass slightly compressed under head and shoulders.
-      Soft contact shadows under hair and neck.
-
-      Cherry blossoms must create a near full-ground coverage effect.
-
-      Petal density increased noticeably.
-
-      Clusters should overlap and partially cover grass.
-
-      Grass must still be visible in gaps, but pink coverage should visually dominate.
-
-      Create the feeling of:
-
-      “lying on a carpet of fallen sakura”
-
-      Petals scattered organically in layers.
-      Some small piles.
-      Some petals resting on hair and clothing.
-
-      No floating petals.
-
-      Avoid large uninterrupted green areas.
-
-      Reduce visible green dominance.
-
-      ────────────────────────────
-      FOREGROUND BLOSSOMS — COVER FRAME
-      ────────────────────────────
-
-      Soft-focus cherry blossoms must consistently appear
-      from upper frame edges.
-
-      Strong creamy bokeh (f/2.0 feel).
-
-      Large soft foreground blur.
-
-      Do NOT block faces.
-
-      Create soft natural framing.
-
-      Not symmetrical.
-
-      ────────────────────────────
-      LIGHTING — SOFT FUJI SPRING COVER (ADJUSTED)
-      ────────────────────────────
-
-      Soft diffused spring sunlight.
-
-      Light must feel filtered through thin cherry blossom branches.
-
-      Very gentle light falloff.
-
-      No harsh top-down sun.
-
-      No sharp dapple shadows.
-
-      Reduce contrast 30%.
-
-      Very soft shadow edges.
-
-      Creamy highlight rolloff.
-
-      Subtle luminous bloom around bright areas (extremely light).
-
-      Light should feel:
-
-      airy
-      romantic
-      translucent
-      natural
-
-      like a Japanese spring editorial cover.
-
-      Skin must retain natural texture.
-
-      No gloss.
-
-      No commercial clarity.
-
-      No HDR effect.
-
-      ────────────────────────────
-      COLOR PROFILE — FUJI COVER TONE
-      ────────────────────────────
-
-      – slightly desaturated
-      – creamy brightness
-      – soft pink undertone
-      – reduce green saturation 25%
-      – lower micro-contrast
-      – gentle highlight rolloff
-
-      Cherry blossoms must appear:
-
-      soft sakura pink (not white)
-
-      not overexposed
-
-      not magenta
-
-      Green grass should feel muted and subdued,
-      not vivid or dominant.
-
-      Skin:
-
-      natural texture preserved.
-
-      No smoothing.
-
-      No glow filter.
-
-      ────────────────────────────
-      WARDROBE — SPRING COVER PALETTE
-      ────────────────────────────
-
-      White, cream, blush pink, pale butter yellow.
-
-      Light breathable fabrics.
-
-      No dark tones.
-
-      No strong color blocking.
-
-      Soft spring editorial feel.
-
-      ────────────────────────────
-      ABSOLUTE RESTRICTIONS
-      ────────────────────────────
-
-      NO:
-
-      – upside-down subjects
-      – any inverted / hanging / 180° rotated look
-      – any 90% rotated head/body angle
-      – any sideways/horizontal entry pose
-      – head positioned at bottom of frame
-      – evenly spaced heads
-      – perfect circular layout
-      – small subjects in frame
-      – wide empty grass areas
-      – geometric symmetry
-      – strong contrast shadows
-      – commercial advertising sharpness
-      – beauty retouch
-      – plastic skin
-      – overly staged positioning
-      – No text is allowed.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Only animate what is already visible; do not add or remove anyone, keep everyone's identity, outfit, hairstyle, and lying-down position exactly as in the reference. Everyone stays lying on the ground throughout, heads resting close together, never sitting up, rolling away, or moving their faces closer together.
-
-      The one lying with head toward the top of the frame: a soft tender smile slowly growing, a slow gentle blink, a slight turn of the head toward the other, one hand slowly lifting a cherry blossom and twirling it softly near the face.
-
-      The one lying with head toward the bottom of the frame: eyes softening into a loving look, a soft smile slowly forming, a slight turn of the head toward the other, one hand slowly reaching up to lightly touch or hold the other's hand.
-
-      Both share a warm affectionate gaze and a soft loving mood, hands meeting gently, faces staying at their original distance. A few cherry blossom petals drift down slowly, loose strands of hair stirring faintly in the breeze throughout. The camera slowly rotates overhead in one continuous smooth motion, keeping both subjects centered in frame at their original size and position. Overall pace is slow, gentle, and unhurried, flowing smoothly and continuously without any pause, jump, or sudden change in rhythm from start to finish.
-    video_negative_prompt: ''
-
-    concurrent_requests: 3
-
-  - style_name: 櫻花微夢 (桜に包まれて) (Pet)
-    folder: Media Files/I2I2V/0717 11 Styles/0717 櫻花微夢 (桜に包まれて) (Pet)
-    image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    image_prompt: |
-      CRITICAL FACE ID LOCK — PRIORITY 1 (EXTREME) :
-      Use the uploaded photo(s) as the ONLY and ABSOLUTE source of the SUBJECT’s face.
-      The generated face must be the SAME REAL SUBJECT as in the input photo.
-      Do NOT alter facial structure, proportions, skin texture, ethnicity, or identity.
-      No beautification. No smoothing. No facial adjustment.
-
-      If input a photo of an animal, it will naturally interact with people or naturally sit on the grass with correct physical weight and shadow.
-
-      The overall color tone is bright and clear with slightly increased saturation, ensuring cherry blossoms appear soft pink rather than white. Highlights remain luminous without washing out color, preserving a fresh sakura pink while maintaining a clean, neutral daylight balance. Neutral spring daylight reaches the subject’s face, creating subtle light-and-shadow contrast on the skin without warm coloration. The environment consists only of blooming cherry blossom trees, evoking purity, renewal, and quiet seasonal beauty.
-
-      Photos must be taken during the peak cherry blossom season in spring. Photos must be original images, taken in different poses, and all must be taken in a park where cherry blossoms are in full bloom. Absent faces and duplicate people are strictly prohibited.CRITICAL PERSON COUNT RULE (NON-NEGOTIABLE):
-
-      The number of people in the final image MUST exactly match the number of uploaded input people.(ABSOLUTELY CRUCIAL)
-      Do NOT add extra people.
-      Do NOT remove any person.
-      Do NOT duplicate any person.
-      Do NOT merge faces.
-
-      Each uploaded person must appear once and only once.
-      No repetition.
-      No cloning.
-      No additional characters.
-
-      ────────────────────────────
-      COMPOSITION — JAPANESE MAGAZINE COVER STYLE (CRITICAL)
-      ────────────────────────────
-
-      True 90-degree overhead shot.
-
-      Subjects must occupy 82–90% of the frame.
-      Faces must appear visually large and intimate.
-
-      Camera positioned closer than previous versions.
-      Crop tightly around heads and upper torsos.
-      Reduce empty grass significantly.
-
-      Framing should feel like a Japanese fashion magazine cover,
-      not a wide lifestyle advertisement shot.
-
-      No distant perspective.
-
-      ⚠️ IF INPUT IS A SINGLE SUBJECT:
-
-      The camera must move even closer than group framing.
-
-      The crop must include the full head + shoulders + chest and reach at least to below the bust line (lower chest visible).
-      Head + upper torso (down to below bust) must fill approximately 85–92% of the frame height.
-      The face must feel intimate and near the lens.
-      Reduce surrounding grass by an additional 20%.
-      Minimize visible empty areas around shoulders.
-      Avoid excessive negative space around the head.
-      Avoid small-scale subject rendering.
-
-      The visual feeling must be:
-      close
-      editorial
-      personal
-      not distant
-
-      ────────────────────────────
-      SUBJECT ORIENTATION & ANGLE LOCK — EXTREMELY IMPORTANT
-      ────────────────────────────
-
-      When the input contains a SINGLE SUBJECT:
-
-      The subject must be oriented upright in the frame with the HEAD positioned toward the TOP of the image.
-
-      FORBIDDEN:
-      – upside-down orientation
-      – head located at bottom of frame
-      – 180° inversion
-      – sideways / horizontal entry (subject lying left-to-right across the frame)
-      – any 90% rotated head/body angle
-      – any “hanging / inverted” look
-      – any “dropped into frame” look
-
-      Required orientation structure:
-
-      TOP OF FRAME
-      → subject head and hair
-
-      CENTER OF FRAME
-      → subject face and eyes looking up toward camera
-
-      LOWER FRAME
-      → shoulders + chest (down to below bust)
-
-      Allowed rotation / tilt:
-      maximum ±15° from vertical.
-      (Only a gentle diagonal is allowed. No strong rotation.)
-
-      The body axis must run generally top-to-bottom (portrait orientation),
-      never left-to-right.
-
-      ────────────────────────────
-      SINGLE SUBJECT POSE & ACTION LOCK (VERY IMPORTANT)
-      ────────────────────────────
-
-      Single-subject pose must be an editorial “reclined” portrait, not a flat stiff lay-down.
-
-      The subject is gently reclined on a dense sakura-petal ground with grass visible in gaps.
-      Upper back and shoulders supported by the ground, but the pose must feel softly propped and composed (not fully flat).
-      Neck line clean and relaxed.
-      Chin slightly raised toward camera (subtle), creating a natural face contour.
-
-      Hair:
-      Long hair spread softly around the head following gravity.
-      Hair must feel naturally placed, not perfectly fanned.
-      Some petals resting on hair.
-
-      Hands / action (choose ONE, keep it natural):
-      Option A: One hand raised near the face holding a single small sakura flower close to one eye area (not covering the full eye), delicate fingers.
-      Option B: One hand lightly touching near the cheek while holding a sakura flower.
-      The other arm must be relaxed and lower in the frame, partially visible, not mirrored, not symmetrical.
-
-      Expression:
-      Calm, soft, gentle smile or neutral soft lips.
-      Eyes looking upward directly to the camera.
-      No exaggerated expression, no “advertising” grin.
-
-      ────────────────────────────
-      CAMERA–SUBJECT SPATIAL RELATION LOCK
-      ────────────────────────────
-
-      The subject must feel naturally positioned on the ground .
-      Soft contact shadows under hairline, neck, shoulders, and along the jaw.
-
-      ────────────────────────────
-      ANTI-GEOMETRY LAYOUT (EXTREMELY IMPORTANT)
-      ────────────────────────────
-
-      FORBIDDEN:
-
-      – perfect circle
-      – radial star formation
-      – evenly spaced heads
-      – symmetrical cross
-      – mirrored layout
-      – balanced four-corner arrangement
-      – geometric alignment
-      – evenly radiating angles
-      – identical head distance from center
-
-      REQUIRED:
-
-      Subjects must feel like they lay down at slightly different times.
-
-      One subject slightly overlaps another’s personal space.
-      One subject closer to camera.
-      One subject slightly farther outward.
-      Uneven spacing between each head (clear irregular gaps).
-      Varied rotation angles (minimum 25–50° difference).
-      At least one head rotated off-axis noticeably.
-      At least one subject slightly breaking the circular flow.
-
-      Heads must NOT form a clean ring.
-      The circle must feel imperfect and slightly broken.
-
-      Hair must spread naturally following gravity.
-      No evenly fanned shapes.
-      Some hair overlapping grass organically.
-
-      Hands must not mirror each other.
-      Avoid identical chest-rest poses.
-      One hand relaxed beside body.
-      One hand partially bent.
-      One hand slightly shifted or asymmetric.
-
-      Arrangement must feel:
-      unguarded
-      relaxed
-      spontaneous
-      organic
-
-      as if captured mid-moment.
-
-      Not staged.
-      Not evenly distributed.
-      Not compositionally perfect.
-
-      One subject must subtly break visual balance.
-
-      ────────────────────────────
-      VISUAL HIERARCHY — MAGAZINE COVER FEEL
-      ────────────────────────────
-
-      There must be a soft visual hierarchy.
-
-      One subject slightly more central or visually dominant.
-      Others orbit loosely around.
-
-      Avoid equal visual weight in four corners.
-      Maintain asymmetry.
-      Avoid balanced quadrant layout.
-
-      ────────────────────────────
-      GROUND & PETALS (ADJUSTED)
-      ────────────────────────────
-
-      Grass slightly compressed under head and shoulders.
-      Soft contact shadows under hair and neck.
-
-      Cherry blossoms must create a near full-ground coverage effect.
-
-      Petal density increased noticeably.
-
-      Clusters should overlap and partially cover grass.
-
-      Grass must still be visible in gaps, but pink coverage should visually dominate.
-
-      Create the feeling of:
-
-      “lying on a carpet of fallen sakura”
-
-      Petals scattered organically in layers.
-      Some small piles.
-      Some petals resting on hair and clothing.
-
-      No floating petals.
-
-      Avoid large uninterrupted green areas.
-
-      Reduce visible green dominance.
-
-      ────────────────────────────
-      FOREGROUND BLOSSOMS — COVER FRAME
-      ────────────────────────────
-
-      Soft-focus cherry blossoms must consistently appear
-      from upper frame edges.
-
-      Strong creamy bokeh (f/2.0 feel).
-
-      Large soft foreground blur.
-
-      Do NOT block faces.
-
-      Create soft natural framing.
-
-      Not symmetrical.
-
-      ────────────────────────────
-      LIGHTING — SOFT FUJI SPRING COVER (ADJUSTED)
-      ────────────────────────────
-
-      Soft diffused spring sunlight.
-
-      Light must feel filtered through thin cherry blossom branches.
-
-      Very gentle light falloff.
-
-      No harsh top-down sun.
-
-      No sharp dapple shadows.
-
-      Reduce contrast 30%.
-
-      Very soft shadow edges.
-
-      Creamy highlight rolloff.
-
-      Subtle luminous bloom around bright areas (extremely light).
-
-      Light should feel:
-
-      airy
-      romantic
-      translucent
-      natural
-
-      like a Japanese spring editorial cover.
-
-      Skin must retain natural texture.
-
-      No gloss.
-
-      No commercial clarity.
-
-      No HDR effect.
-
-      ────────────────────────────
-      COLOR PROFILE — FUJI COVER TONE
-      ────────────────────────────
-
-      – slightly desaturated
-      – creamy brightness
-      – soft pink undertone
-      – reduce green saturation 25%
-      – lower micro-contrast
-      – gentle highlight rolloff
-
-      Cherry blossoms must appear:
-
-      soft sakura pink (not white)
-
-      not overexposed
-
-      not magenta
-
-      Green grass should feel muted and subdued,
-      not vivid or dominant.
-
-      Skin:
-
-      natural texture preserved.
-
-      No smoothing.
-
-      No glow filter.
-
-      ────────────────────────────
-      WARDROBE — SPRING COVER PALETTE
-      ────────────────────────────
-
-      White, cream, blush pink, pale butter yellow.
-
-      Light breathable fabrics.
-
-      No dark tones.
-
-      No strong color blocking.
-
-      Soft spring editorial feel.
-
-      ────────────────────────────
-      ABSOLUTE RESTRICTIONS
-      ────────────────────────────
-
-      NO:
-
-      – upside-down subjects
-      – any inverted / hanging / 180° rotated look
-      – any 90% rotated head/body angle
-      – any sideways/horizontal entry pose
-      – head positioned at bottom of frame
-      – evenly spaced heads
-      – perfect circular layout
-      – small subjects in frame
-      – wide empty grass areas
-      – geometric symmetry
-      – strong contrast shadows
-      – commercial advertising sharpness
-      – beauty retouch
-      – plastic skin
-      – overly staged positioning
-      – No text is allowed.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Only animate what is already visible; do not add or remove anyone or anything, keep the person's and the pet's identity, the person's outfit and hairstyle, and both subjects' lying-down positions exactly as in the reference. Both the person and the pet stay lying on the ground throughout, heads resting close together, never sitting up, standing, rolling away, or moving their faces closer together.
-
-      The person (lying with head toward the top of the frame): a soft tender smile slowly growing, a slow gentle blink, a slight turn of the head toward the pet, one hand slowly lifting a cherry blossom and twirling it softly near the face, then the same hand slowly reaching down to lightly rest on and gently stroke the pet.
-
-      The pet (nestled close beside the person, head lower in the frame): eyes softening into a warm, trusting look with one slow gentle blink, ears relaxing with a faint twitch, the face softening into a content expression, a slight turn of the head toward the person to nuzzle a little closer, then leaning gently into the person's hand — resting its chin against the person's shoulder or hand, or slowly lifting one paw to rest lightly on the person's hand. A slow, faint tail wag (for a dog) or a soft flick of the tail tip and a quiet, purr-like settling (for a cat).
-
-      Both share a warm affectionate gaze and a soft loving mood, gently making contact as the person's hand meets the pet's fur, faces staying at their original distance. A few cherry blossom petals drift down slowly, loose strands of the person's hair and the pet's soft fur stirring faintly in the breeze throughout. The camera slowly rotates overhead in one continuous smooth motion, keeping both subjects centered in frame at their original size and position. Overall pace is slow, gentle, and unhurried, flowing smoothly and continuously without any pause, jump, or sudden change in rhythm from start to finish.
-    video_negative_prompt: ''
-
-    concurrent_requests: 3
-
-  - style_name: Giant Garden V2
-    folder: Media Files/I2I2V/0717 11 Styles/0717 Giant Garden V2
-    image_service: nano_banana
-    image_model: gemini-3-pro-image-preview
-    image_resolution: '2K'
-    image_aspect_ratio: '3:4'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
     image_prompt: |
       CRITICAL FACE ID LOCK — PRIORITY 1 (EXTREME): Use the uploaded photo(s) as the ONLY and ABSOLUTE source of each SUBJECT’s face. The generated faces must be the SAME REAL SUBJECTS as in the input photos, copied directly from the input, NOT reconstructed, NOT reinterpreted. Do NOT beautify, optimize, stylize, idealize, or normalize the faces in any way. Do NOT adjust facial proportions, features, symmetry, skin texture, or age. Do NOT change ethnicity, race, or regional facial characteristics. If any face does not immediately look identical to the corresponding input SUBJECT, the result is INVALID and must be regenerated. The faces must remain structurally and texturally identical to the input photos.
 
       SUBJECT & SOURCE IMAGE RULES: Use the uploaded user photos as the ONLY visual sources for all SUBJECTS. The number of SUBJECTS in the final image must EXACTLY match the number of uploaded photos (1–4 only). No extra SUBJECTS. No duplicated faces. No merged identities. No face swapping. All facial features must come ONLY from the input photos.
 
-      Create a whimsical portrait inside a surreal oversized garden. The background is a large painted scenic landscape wall with visible oil-painting brush strokes showing rolling hills and sky. The painted wall must fill the entire frame edge-to-edge with no borders or visible surroundings. The ground resembles soft fresh green grass. Lighting is bright, soft, and evenly diffused, illuminating both subjects and environment while maintaining a playful surreal atmosphere, with a fresh spring color tone, balanced neutral whites (no yellow cast), slightly increased color saturation, and a light airy pastel palette that feels clean, vibrant, and not warm-yellow tinted, prioritizing a fresh spring pastel color style over vintage or painterly color tones.
+      Realistic studio photography with a clean, light gray background and diffused lighting. Subjects are seated on the floor, positioned in close, intimate physical proximity. Prioritize placing the adult female subject (mother) in the central position among the grouping. If multiple subjects are present, they display warm, happy interactions with a deep sense of family connection, including gentle leaning, soft touches, and shared gazes. Facial expressions must clearly convey happiness and emotional warmth with soft, happy smiles. One subject casually holds a paintbrush. Soft, bright studio lighting evenly illuminates the scene with a clean and airy feel. The light is gently diffused while maintaining subtle highlights on the subjects, creating a luminous and warm appearance without strong directional shadows. The entire image remains consistently sharp and in focus, with no depth-of-field blur.
 
-      Subjects appear full body while occupying a large portion of the frame, with the camera positioned relatively close so the subjects collectively occupy more than half of the image area. The subjects should appear visually dominant in the frame, while the giant tulips remain large but may be partially cropped or extend beyond the frame to preserve their scale without reducing subject size. Surround them with several giant tulips featuring fresh green stems and leaves (bright natural green, not yellowed or desaturated), large stylized leaves, and exaggerated red or pink tulip heads. Subjects may interact naturally with the flowers by touching stems or holding leaves.
+      Foreground effect: Hand-painted acrylic illustrations appear directly integrated within the scene, as if freely drawn in the air around the subjects. These elements do not belong to any visible surface or physical medium, and no transparent panel, glass, or material is present. Hand-painted acrylic illustrations are placed sparingly (6-8 elements total) and must be related to Mother's Day themes, including: flowers, gift boxes, greeting cards, hearts, and ribbons. Elements vary in size (a mix of small, medium, and slightly larger accents) and are distributed in a naturally scattered, irregular manner, with loose spacing and non-uniform placement, creating a light, unstructured, and organic arrangement.These elements show translucency and visible brush strokes. Color palette includes moderately saturated warm tones (pink, coral, sunflower yellow, fresh green). These elements are rendered as clean, simple, stylized icons with limited internal detail, maintaining high transparency, luminous quality, and an airy feel. They reveal the subjects behind.
 
-      If multiple subjects appear, arrange them in a slightly staggered composition rather than a straight line. They should remain close to each other and at similar camera distance with only subtle front-to-back variation. One subject may sit or lean on a large Easter egg in the foreground while others stand nearby among the tulips. Subjects should remain clearly visible, similar in scale, and not appear distant.
+      Placement: Illustrations are anchored in the lower portion of the composition, forming a clear visual base beneath the subjects. The majority of elements remain below the subjects’ seated position, with only minimal upward variation. Elements are distributed horizontally with slight irregularity, maintaining a grounded and stable composition. The upper area of the frame remains open and largely free of decorative elements, preserving visual focus on the subjects and heart line.
 
-      Subjects wear Alice in Wonderland–inspired clothing. If the subject is female, must wear a dress (never a suit or shorts), pastel blue Alice-style dress with white apron, puff sleeves, fitted bodice, clearly visible black ribbon bow tie at the neckline, and vintage fairytale details, with black Mary Jane shoes and white short socks.
-      If the subject is male, must wear a suit (never a dress or skirt), pastel blue short suit with tailored jacket, matching shorts, white shirt, and clearly visible black ribbon bow tie at the collar, with black polished leather shoes and white short socks.
-      If the subject is animal, must remain natural and wear no clothing.
+      Primary graphic:  A clearly pink/ coral visible hand-painted heart line flows dynamically, encircling all subjects present as a cohesive group. This continuous heart line must physically intertwine with the subjects, creating explicit layered depth. Different segments are precisely rendered to pass in front of specific body parts (e.g., an arm or shoulder) and behind others (e.g., a subject's back), defining a clear, defined 3D woven pattern around the group.  The thin stroke remains painterly with visible acrylic texture and slight organic irregularity.
 
-      Decorative oversized Easter eggs appear as props, scaled larger than real eggs. Some may be scattered across the grass while subjects may also hold one.
+      Styling: Female subjects wear white, cream, or pale yellow tulle dresses. Male subjects wear simple white shirt and beige pants. Overall styling is elegant and whimsical.
 
-      The final image should resemble an artistic editorial photograph inside a whimsical oversized garden, combining giant tulips, a painted scenic wall, oversized Easter eggs, bright soft lighting, and a magical storybook atmosphere, with a bright spring-like color grading, clean whites, gentle pastel tones, and slightly enhanced saturation for a lively, fresh, non-yellow appearance.
+      Color palette: moderately saturated tones with a soft, warm, and gentle appearance. Colors should feel slightly muted and blended rather than sharp or highly contrasted.
+
+      Composition: Medium shot, centered framing. Subjects occupy 80% of the frame. Color palette includes moderately saturated warm red, coral pink, sunflower yellow, and fresh green with a soft matte finish. Edges of painted elements are softly diffused, creating a warm and tender atmosphere. No text, logos, or furniture.
 
     video_model: v3
     video_mode: pro
@@ -1362,22 +223,356 @@ tasks:
     video_ratio: '3:4'
     video_sound_enabled: true
     video_prompt: |
-      Use the uploaded image as ground truth for subject count, species, faces, hair, outfits, and scene. Only animate what is already visible — never add, remove, or invent any subject or new animal. Static locked camera, soft daylight, backdrop and camera held still throughout.
-
-      Every subject stays in place (no walking, sitting, standing, jumping, or leaving frame), keeping its own identity, outfit, and position exactly as in the reference:
-
-      - The taller one in the pale-blue suit: a warm radiant smile blooming, a soft delighted laugh, an elegant head tilt toward the camera, one hand
-        rising gracefully into a gentle wave, posture poised and relaxed, hair lightly stirred by the breeze.
-
-      - The smaller one in the blue apron dress: a bright happy smile lighting up, eyes sparkling with a sweet giggle, a small graceful sway of the shoulders, hands lifting daintily in a charming little gesture, hair-bow swaying softly.
-
-      - Any pet already in the image: slow blink, ear twitch, subtle head tilt, one gentle tail flick. If none is visible, no animal appears at all.
-
-      Giant tulips sway gracefully — stems swaying side to side, petals rocking softly, leaves drifting in the breeze. Painted eggs and backdrop stay still. Joyful yet elegant storybook feel, refined and gentle throughout.
+      The two subjects stay in their seated hug; one gently rubs the other's back and gives a light squeeze, the other nuzzles in and tilts her head to rest cheek to cheek. They both giggle, blink, then slowly turn to look toward the front with warm bright smiles. Small natural movements only — shoulders, hands, head and expressions. The wide full-body framing stays fixed and unchanged, no zoom, no push-in, no crop. All painted hearts, flowers, gift and ribbon remain fully visible and unchanged.
     video_negative_prompt: ''
 
     concurrent_requests: 3
 
+  - style_name: 'Mom Doodle (Pet)'
+    folder: 'Media Files/I2I2V/0724 9 Styles/0724 Mom Doodle (Pet)'
+    image_service: nano_banana
+    image_model: gemini-3.1-flash-image
+    image_resolution: '2K'
+    image_aspect_ratio: '3:4'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
+    image_prompt: |
+      CRITICAL FACE ID LOCK — PRIORITY 1 (EXTREME): Use the uploaded photo(s) as the ONLY and ABSOLUTE source of each SUBJECT’s face. The generated faces must be the SAME REAL SUBJECTS as in the input photos, copied directly from the input, NOT reconstructed, NOT reinterpreted. Do NOT beautify, optimize, stylize, idealize, or normalize the faces in any way. Do NOT adjust facial proportions, features, symmetry, skin texture, or age. Do NOT change ethnicity, race, or regional facial characteristics. If any face does not immediately look identical to the corresponding input SUBJECT, the result is INVALID and must be regenerated. The faces must remain structurally and texturally identical to the input photos.
+
+      SUBJECT & SOURCE IMAGE RULES: Use the uploaded user photos as the ONLY visual sources for all SUBJECTS. The number of SUBJECTS in the final image must EXACTLY match the number of uploaded photos (1–4 only). No extra SUBJECTS. No duplicated faces. No merged identities. No face swapping. All facial features must come ONLY from the input photos.
+
+      Realistic studio photography with a clean, light gray background and diffused lighting. Subjects are seated on the floor, positioned in close, intimate physical proximity. Prioritize placing the adult female subject (mother) in the central position among the grouping. If multiple subjects are present, they display warm, happy interactions with a deep sense of family connection, including gentle leaning, soft touches, and shared gazes. Facial expressions must clearly convey happiness and emotional warmth with soft, happy smiles. One subject casually holds a paintbrush. Soft, bright studio lighting evenly illuminates the scene with a clean and airy feel. The light is gently diffused while maintaining subtle highlights on the subjects, creating a luminous and warm appearance without strong directional shadows. The entire image remains consistently sharp and in focus, with no depth-of-field blur.
+
+      Foreground effect: Hand-painted acrylic illustrations appear directly integrated within the scene, as if freely drawn in the air around the subjects. These elements do not belong to any visible surface or physical medium, and no transparent panel, glass, or material is present. Hand-painted acrylic illustrations are placed sparingly (6-8 elements total) and must be related to Mother's Day themes, including: flowers, gift boxes, greeting cards, hearts, and ribbons. Elements vary in size (a mix of small, medium, and slightly larger accents) and are distributed in a naturally scattered, irregular manner, with loose spacing and non-uniform placement, creating a light, unstructured, and organic arrangement.These elements show translucency and visible brush strokes. Color palette includes moderately saturated warm tones (pink, coral, sunflower yellow, fresh green). These elements are rendered as clean, simple, stylized icons with limited internal detail, maintaining high transparency, luminous quality, and an airy feel. They reveal the subjects behind.
+
+      Placement: Illustrations are anchored in the lower portion of the composition, forming a clear visual base beneath the subjects. The majority of elements remain below the subjects’ seated position, with only minimal upward variation. Elements are distributed horizontally with slight irregularity, maintaining a grounded and stable composition. The upper area of the frame remains open and largely free of decorative elements, preserving visual focus on the subjects and heart line.
+
+      Primary graphic:  A clearly pink/ coral visible hand-painted heart line flows dynamically, encircling all subjects present as a cohesive group. This continuous heart line must physically intertwine with the subjects, creating explicit layered depth. Different segments are precisely rendered to pass in front of specific body parts (e.g., an arm or shoulder) and behind others (e.g., a subject's back), defining a clear, defined 3D woven pattern around the group.  The thin stroke remains painterly with visible acrylic texture and slight organic irregularity.
+
+      Styling: Female subjects wear white, cream, or pale yellow tulle dresses. Male subjects wear simple white shirt and beige pants. Overall styling is elegant and whimsical.
+
+      Color palette: moderately saturated tones with a soft, warm, and gentle appearance. Colors should feel slightly muted and blended rather than sharp or highly contrasted.
+
+      Composition: Medium shot, centered framing. Subjects occupy 80% of the frame. Color palette includes moderately saturated warm red, coral pink, sunflower yellow, and fresh green with a soft matte finish. Edges of painted elements are softly diffused, creating a warm and tender atmosphere. No text, logos, or furniture.
+
+    video_model: v3
+    video_mode: pro
+    video_duration: 5
+    video_ratio: '3:4'
+    video_sound_enabled: true
+    video_prompt: |
+      The person gently wraps an arm around the pet and pulls it a little closer, softly pats its back, strokes its head and scratches behind its ear; the pet leans into the touch, nuzzles against the person's hand, its ears flick and it looks up affectionately. They share a warm look with a soft laugh from the person, then both slowly turn to face the front with bright relaxed smiles. Movement stays within the upper body — arms, hands, head and expressions only. The wide full-body framing stays fixed, no zoom or crop. All painted hearts, flowers, gift and ribbon stay fully visible and unchanged.
+    video_negative_prompt: ''
+
+    concurrent_requests: 3
+
+  - style_name: '棒球風網美照 V3'
+    folder: 'Media Files/I2I2V/0724 9 Styles/0724 棒球風網美照 V3'
+    image_service: nano_banana
+    image_model: gemini-3-pro-image
+    image_resolution: '2K'
+    image_aspect_ratio: '3:4'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
+    image_prompt: |
+      CRITICAL FACE ID LOCK — PRIORITY 1 (EXTREME) :
+      Use the uploaded photo(s) as the ONLY and ABSOLUTE source of the SUBJECT’s face. The generated face must be the SAME REAL SUBJECT as in the input photo, copied directly from the input, NOT reconstructed, NOT reinterpreted. Do NOT beautify, optimize, stylize, idealize, or normalize the face in any way.
+      If the face does not immediately look identical to the input SUBJECT, the result is INVALID and must be regenerated. The face must be directly copied from the input photo at the pixel-structure level, not re-generated or averaged.
+
+      SUBJECT & SOURCE IMAGE RULES:
+      Use the uploaded user photos as the ONLY visual sources for all SUBJECTS.
+      - The number of SUBJECTS in the final image must EXACTLY match the number of uploaded photos (1–4 only)
+      - No extra SUBJECTS
+      - No duplicated faces
+
+      MANDATORY STYLING ADJUSTMENT:
+      Refine and blend SUBJECT outfits into a mix of retro varsity aesthetic, 90s preppy style, and city-girl streetwear.
+
+      Tight, symmetrical cinematic fashion photography as a high-fashion magazine cover, with no text, no typography, no logos, and no graphic overlays.
+      The camera is positioned slightly above eye level with a gently tilted wide-angle view, creating mild downward compression and strong vertical depth; avoid fully side-on or pure profile viewpoints. The camera remains precisely aligned with the stadium seating lines, forming strong leading lines toward a clear vanishing point.
+
+      Subjects are casually dispersed across nearby rows of forest-green, American vintage-style stadium seats. While the seats themselves remain uniformly oriented in the same forward-facing direction with no variation or rotation—appearing clean and well-maintained—the subjects break this linear rigidity with dynamic, high-fashion poses, such as leaning asymmetrically on armrests or subtly tilting their torsos. Limbs must respect the physical structure of the stadium seats; no legs, feet, or bodies may pass through gaps, armrests, or solid seat components. No subject may appear suspended, floating, or unsupported by the stadium seating or ground.
+
+      All subject poses must be physically plausible and grounded in real-world body mechanics, with clear points of contact and weight support. Each subject must have at least one clear physical support point (feet on steps, seated contact, or leaning against a solid surface).
+      Limbs must respect the physical structure of the stadium seats; no legs, feet, or bodies may pass through gaps, armrests, or solid seat components.
+
+      Complementing this posture, most subjects are not looking directly at the camera, captured in candid, off-guard moments to enhance a natural, lived-in fashion atmosphere, while maintaining cool, detached, confident high-fashion editorial expressions.
+
+      Subjects may hold casual stadium snacks or cheering props in vintage packaging, featuring controlled red and yellow accents that add visual highlights without overpowering the overall color palette. No flags.
+
+      The background is minimalist and tightly cropped, showing only geometric forest-green plastic seats and the stadium’s metal roof structure features clean, revealing a clear blue sky with natural, realistic cloud formations. Ensure the roof follows a logical geometric grid with smooth, finished edges, avoiding any fragmented or jagged appearances.
+
+      Soft, diffused lighting creates a timeless editorial atmosphere with gentle contrast, restrained saturation, and subtle fine-grain texture, evoking an established fashion sensibility without referencing any specific era.
+
+    video_model: v3
+    video_mode: pro
+    video_duration: 5
+    video_ratio: '3:4'
+    video_sound_enabled: true
+    video_prompt: |
+      Both subjects stay locked in their original seats with no position change; only the camera moves around them. The camera performs a slow, smooth orbit — a gentle quarter-turn arc gliding around the two subjects, easing in and out, keeping both fully in frame the entire time.
+
+      Both subjects are watching a game happening in front of them. They hold a relaxed, natural pose with calm, pleasant expressions, eyes gently tracking the action in front of them. They maintain their poses steadily, with soft, subtle shifts in expression — a light smile, a calm and content look. Their hair drifts softly in the breeze throughout.
+
+      The rows of green stadium seats, roof structure, railings and fences remain fully static. Only the clouds in the sky drift slowly across the background. Smooth, unhurried motion with a warm, calm, cinematic feel.
+    video_negative_prompt: ''
+
+    concurrent_requests: 3
+
+  - style_name: '夏日煙火-多人'
+    folder: 'Media Files/I2I2V/0724 9 Styles/0724 夏日煙火-多人'
+    image_service: nano_banana
+    image_model: gemini-3.1-flash-image
+    image_resolution: '1K'
+    image_aspect_ratio: '3:4'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
+    image_prompt: |
+      ### [Highest Priority: Reference Image Usage]
+      * **Identity & Likeness Preservation:** Use the user-provided reference image only to preserve the exact identity, facial features, facial structure, face shape, eyes, nose, mouth, skin texture, natural likeness, body proportions, age impression, and overall facial consistency of each referenced subject as accurately as possible. Fully integrate these preserved identity traits into the new composition, styling, lighting, and scene described below.
+
+      * **Subject Count Control:** Use exactly the same subject count as shown in the reference image. Every referenced subject must appear clearly in the final image as an individual visible person. Only the referenced subject or referenced subjects may appear in the final image, and the same subject count must be preserved throughout the entire image.
+
+      * **Individual Subject Mapping:** Treat each referenced subject as one fixed individual. If the reference image contains multiple subjects, show every referenced subject clearly in the final image with their own distinct face, body placement, and visual role. Each referenced subject should remain recognizable and should not be replaced by background figures, partial silhouettes, or extra festival crowd elements.
+
+      * **Expression Consistency:** Keep each referenced subject’s expression natural, subtle, and close to the original reference expression. Use restrained facial expressions, gentle smiles, relaxed eyes, and calm facial movement. Preserve each subject’s core facial identity as the highest priority so the face remains stable, recognizable, and strongly consistent with the reference image.
+
+      * **Visibility & Angle Control:** Keep each referenced subject visually identifiable in the final image. Present all referenced subjects in a front-facing, three-quarter, or natural side-profile angle, with at least part of the face and facial features clearly visible.
+
+      ### [Core Scene & Mood]
+      * **Setting:** Create a realistic cinematic Japanese summer night photograph of the referenced subject or referenced subjects by the seaside. The scene takes place near a calm waterfront at night, with a wide open sky and soft sea reflections.
+
+      * **Atmosphere:** A nostalgic summer atmosphere. The overall mood should feel natural, quiet, emotional, and cinematic, like a candid memory from a Japanese summer film.
+
+      ### [Subject Action & Interaction]
+      * **Items & Actions:** Each referenced subject naturally holds one simple summer festival item, such as a clear glass ramune soda bottle with a transparent body and plain label-free surface, a handheld festival fan, or a candied apple held near the body. The item should be held casually as part of the scene, while the subject’s facial expression remains close to the reference image.
+
+      * **Gaze & Face Direction:** Keep each referenced subject in a natural candid moment with an off-camera gaze. Their eyes and face direction should gently turn toward the fireworks, the seaside, the handheld festival item, or another referenced subject. Use relaxed three-quarter or natural side-facing angles so the subjects feel like they are enjoying the scene rather than posing directly for the camera.
+
+      * **Multi-Subject Dynamics:** If the reference image contains multiple subjects, all referenced subjects should appear together and interact in a calm, natural, and lightly warm way. Their interaction should feel relaxed and realistic, with gentle eye contact between the referenced subjects, subtle smiles, and natural body language.
+
+      * **Poses:** Their poses, gestures, body directions, spacing, gaze directions, and depth placement should feel varied, relaxed, and organic while preserving the exact subject count from the reference image. The overall interaction should feel candid and genuine, like a real snapshot captured during a quiet summer night festival outing.
+
+      ### [Composition & Framing]
+      * **Framing:** Use a realistic candid photography composition with all referenced subjects placed naturally within the scene. Show the referenced subject or referenced subjects from a medium distance, allowing both the seaside atmosphere and the fireworks-filled night sky to remain important in the frame. The sky should take up a large portion of the image while every referenced subject remains clearly visible.
+
+      * **Motion:** The composition should feel natural and cinematic, with a soft sense of motion from body posture, handheld festival items, and fireworks light.
+
+      ### [Fireworks & Sky]
+      * **Sky Quality:** The sky should feel like a real summer blue-hour night by the sea, with a medium-deep blue atmosphere, natural nighttime depth, subtle cloud texture, faint smoke, and gentle photographic grain. Keep the sky clearly nighttime with a clean blue mood and realistic atmospheric variation.
+
+      * **Natural Sky Rendering:** Render the sky and seaside with a natural photographic look, including soft uneven haze, subtle smoke layers, realistic tonal variation, and a clear separation between sky, sea, and shoreline. The background should feel like an actual night photograph rather than a smooth digital color wash.
+
+      * **Fireworks Distribution:** The night sky is densely filled with brilliant fireworks spread widely across the entire frame. The fireworks should appear naturally scattered across the sky in a broad, layered, and immersive way, with multiple bursts distributed throughout the upper and surrounding areas rather than concentrated in one single spot. The overall arrangement should feel expansive, irregular, and visually rich.
+
+      * **Fireworks Aesthetics:** Use luminous fireworks with a refined mix of soft champagne gold, warm white, pale lemon yellow, muted mint green, soft cyan-blue, powdery lavender, gentle blush pink, pale coral, and delicate rose-red accents. The colors should feel varied, translucent, and softly layered, like elegant pastel fireworks glowing through light smoke, while staying refined and softly balanced. The fireworks should feature clear radiant lines, delicate sparkling trails, soft bloom, atmospheric haze, and gentle smoke, with subtle color variation between each burst.
+
+      * **Contrast:** Keep enough darker blue space and nighttime depth around the fireworks so their brightness remains visually striking. The sky should feel softly glowing yet still dark enough to support strong fireworks contrast and a clear summer-night atmosphere.
+
+      ### [Background & Depth of Field]
+      * **Depth of Field:** Use a realistic shallow depth of field for the distant background. Keep the sea, distant shoreline, and faraway lights softly atmospheric and out of focus, while all referenced subjects remain clear and recognizable.
+
+      * **Focus & Reflections:** Emphasize the soft reflections of the fireworks across the water rather than any ground detail. Only the fireworks in the sky should retain visible shape and recognizable outlines, while the rest of the distant background remains gently blurred and unobtrusive.
+
+      * **Background Control:** Keep the background as a clean seaside night scene with fireworks, water, shoreline atmosphere, and soft distant lights. The image should show only the referenced subject or referenced subjects, with the background kept clear of festival stalls, booths, extra festival objects, and additional human figures.
+
+      ### [Outfit Styling]
+      * **Yukata Saturated Tones:** The referenced subject or referenced subjects visible in the image wear more saturated summer yukata. The yukata should feel fresh, soft, and understated, with a clean Japanese summer festival style. Use richer, more saturated tones such as vivid rose pink, deep berry pink, cobalt blue, bright azure blue, or deep navy blue, combined with crisp white or lightly tinted floral or botanical patterns.
+
+      * **Gender-Specific Rules:** For female subjects, richer tones may include vivid rose pink, deep berry pink, cobalt blue, bright azure blue, or deep navy blue. For male subjects, prefer cobalt blue, bright azure blue, deep navy blue, muted indigo, slate blue, or other cool-toned saturated colors, while keeping the styling clean and natural.
+
+      * **Style:** Keep the yukata elegant, fresh, and understated, with simple floral or botanical details, balanced contrast, and a natural summer festival feeling.
+
+      ### [Hair & Accessories]
+      * **Female Subjects:** If the subject is female, style the hair naturally for a Japanese summer festival look. For longer hair, create a neat soft updo, low gathered bun, or compact festival bun. For shorter hair, preserve the short hairstyle while adding a delicate floral hair ornament.
+
+      * **Ornaments:** The hair ornament should feature small white or pale ivory flowers with soft translucent petals, subtle pale blue accents, and a refined natural finish, placed beside the bun or near the side of the hair. It should feel delicate, fresh, and understated.
+
+      * **Male/Animal Subjects:** If the subject is male or an animal, keep the original hair or fur identity consistent with the reference image and do not add hair ornaments.
+
+      ### [Lighting & Color]
+      * **Lighting Filter:** Use natural night photography lighting with a clean, luminous Japanese cinematic summer-night filter.
+
+      * **Color Grading:** The overall color grading should feel clean, soft, and photographic, built around a medium blue Japanese evening atmosphere. Use cool blue tones across the night sky, sea surface, and ambient shadows, with soft cyan-blue and muted indigo accents. Keep the image fresh, cinematic, and realistic while preserving clear nighttime depth and contrast.
+
+      * **Illumination:** Each referenced subject should be clearly visible and softly illuminated by reflected fireworks light, soft festival lighting, and gentle seaside ambient glow. The skin tone should remain natural and healthy, balanced between the cool blue seaside atmosphere and the warm golden festival light.
+
+      * **Glow & Exposure:** The fireworks should glow in an elegant, varied pastel palette, including champagne gold, warm white, pale lemon yellow, muted mint green, soft cyan-blue, powdery lavender, gentle blush pink, pale coral, and delicate rose-red accents. Their colors should appear airy, luminous, and softly diffused through subtle smoke, creating a refined multi-colored fireworks atmosphere. Their light should softly bloom into the blue night sky and reflect across the sea, creating a gentle luminous contrast against the cool background. Keep the overall exposure naturally balanced, with clean highlights, readable midtones, and softly airy shadows. Preserve enough darkness in the upper sky and background so the fireworks retain their visual impact, while the scene remains bright enough to show every referenced subject naturally.
+
+      ### [Photography Style]
+      * **Keywords:** Realistic cinematic seaside night photography, soft Japanese film still, natural candid snapshot, gentle CCD-like texture, realistic summer atmosphere, soft grain, subtle motion blur, natural lens bloom, realistic depth of field, emotionally warm and nostalgic.
+
+      * **Final Quality:** The image should have a controlled blue-hour night quality with natural haze, gentle film-like contrast, and a calm seaside atmosphere. The overall look should feel softly luminous and photographic, while clearly reading as a real summer night scene with preserved sky depth and strong fireworks presence. The final image should feel like a real captured summer night memory by the sea, with every referenced subject naturally immersed in the fireworks scene, surrounded by a softly glowing blue evening sky and warm fireworks light.
+
+    video_model: v3
+    video_mode: pro
+    video_duration: 5
+    video_ratio: '3:4'
+    video_sound_enabled: true
+    video_prompt: |
+      Both subjects stay in their original standing positions with no location change; the framing, camera angle and composition stay exactly the same as the reference throughout — no reframing, no camera movement, no cut.
+
+      FIRST: as fireworks suddenly burst across the sky, both subjects clearly and distinctly turn their bodies away from the camera to face the fireworks, rotating until their backs are fully toward the camera. They tilt their heads upward and lift their chins, gazing up at the sky where the fireworks bloom. The turn is obvious and pronounced — the whole body rotates. During the turn and while watching, their faces show quiet awe and wonder — calm, absorbed, eyes wide as they take in the sky, no smiling yet. For a moment they stand side by side from behind, backs to camera, heads tilted up in awe.
+
+      FINALLY: they slowly turn their heads and bodies back toward each other and meet each other's eyes. Only now their faces break into warm, delighted smiles — soft affectionate grins lighting up as they lock into a tender mutual gaze, sharing the joy of the moment while looking into each other's eyes.
+
+      Their hair and the loose fabric of their clothing sway softly in the sea breeze throughout. In the background, fireworks keep bursting, shimmering and lighting up the whole sky in color, reflecting brightly on the water.
+    video_negative_prompt: |
+      static, frozen expression, no movement, stiff posture, minimal head movement, subtle turn, barely turning, not turning to fireworks, skipping the fireworks moment, no eye contact at the end, looking away from each other at the end, backs still to camera at the end, looking down, looking at the ground, raising arm, lifting hand, pointing gesture, waving, hand raised, arm up, distorted face, deformed hands, extra fingers, extra limbs, adding new objects, changing held item, morphing objects, warping, flickering, camera movement, zoom, pan, reframing, cut, shot change, change of composition, blurry, low quality, artifacts, duplicate subjects, merged bodies
+
+    concurrent_requests: 3
+
+  - style_name: '拍貼系列-Style1:1995'
+    folder: 'Media Files/I2I2V/0724 9 Styles/0724 拍貼系列-Style1:1995'
+    image_service: nano_banana
+    image_model: gemini-3-pro-image
+    image_resolution: '1K'
+    image_aspect_ratio: '3:4'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
+    image_prompt: |
+      Use all uploaded photos as the only subjects. Their faces, facial features, identities, hairstyles, expressions, poses, and clothing must remain exactly the same as in the uploaded photos. Do not redraw, replace, or re-generate the people in any way. Adding any other person, duplicating a person, or merging identities is strictly prohibited. This is a photographic filter application, not an illustration or redraw.
+
+      Create a playful SINGLE-FRAME photo-booth image styled like an early-2000s Japanese Heisei-era purikura (プリクラ) photo booth. The image should feel as if it were generated directly inside an authentic early-2000s purikura machine, with a bright, cute, crowded, and slightly chaotic atmosphere that closely matches real purikura samples from that era rather than a clean or modern graphic design.
+
+      All uploaded subjects must appear together within ONE single frame at all times. Their relative scale, distance, proportions, and framing must remain consistent with the original photos. The image should capture one clear, intimate purikura interaction moment (such as peace signs close to face, close shoulders, cheek-touch, or friendly posing), rather than a collage or sequence. The composition must feel like a single purikura print, not divided or segmented in any way.
+
+      The visual structure must be a SINGLE FULL-FRAME IMAGE.
+      There must be absolutely NO grid, NO four-frame layout, NO borders, NO white edges, NO outlines, NO separators, NO margins, and NO panel divisions of any kind. The output must appear as one uninterrupted purikura photo.No photos should show white borders in other scenes, be held by the subject, or be framed.
+
+      Apply classic Heisei-era purikura aesthetics throughout the entire image.
+      The background must be a SINGLE, FLAT, SOLID COLOR ONLY — no mixing, no patchwork, no multi-color blobs, no layered shapes, and no overlapping color fields.
+      Strongly favor one pure background color per image, such as:
+      pure bright yellow, vivid purple, candy pink, sky blue, or solid pastel tones.
+      DO NOT combine multiple background colors in the same image.
+      DO NOT create mixed-color, camouflage, or collage-style backgrounds.
+
+      Lighting should be high-key, flat, and evenly distributed, with minimal shadow depth and no directional or cinematic lighting. Skin smoothing must be extremely light and natural, just enough to resemble early purikura airbrushing, avoiding any modern beauty filters, plastic textures, or artificial perfection. Eye enlargement, if present, must be subtle and natural, consistent with early-2000s purikura machines and never exaggerated or anime-like. The overall color balance should feel cheerful, warm, busy, and saturated, not modern, moody, or editorial.
+
+      Decorative elements must be layered on top of the photo in a way that resembles real purikura sticker placement. Pixel-style hearts and symbols may appear as accents, but the majority of decorations should be flat, pure-color, hand-drawn graffiti-style doodles. Handwritten elements must look like simple marker or pen drawings with solid fills, thick strokes, and imperfect hand-drawn lines. Avoid neon glow, halos, light streaks, gradients, or luminous effects. Include simple 2D doodle illustrations such as hearts, stars, bows, ribbons, teddy bears, animals, clouds, or cute icons, all rendered in a flat sticker-like style. All decorations must clearly float on top of the image and must never blend into faces or skin.
+
+      Add the fixed text exactly as written: “めっちゃ 仲仔♡”.
+      The text must appear in a colorful, lively, handwritten-style font typical of early-2000s purikura booths, using solid colors with playful outlines or thick strokes. Avoid neon glow, lighting effects, gradients, or modern typography. Supporting sticker text such as 一生仲仔、最強仲仔、仲仔、宝物、最強、最高、ぶちあげ、アゲ、我等友情永久不滅、Best Friend、FOREVER FRIEND、心友、信友、ずっ友 may appear scattered around the frame in a casual, hand-placed manner, but should not overcrowd the image.
+
+      The overall mood must feel joyful, intimate, energetic, and nostalgic, capturing the feeling of a real Heisei-era purikura memory that is colorful, playful, slightly over-decorated, and emotionally warm. Identity preservation is critical: faces must remain exactly the same as in the uploaded photos, with no face replacement, no illu
+
+    video_model: v3
+    video_mode: pro
+    video_duration: 5
+    video_ratio: '3:4'
+    video_sound_enabled: true
+    video_prompt: |
+      A single vertical portrait video in Y2K Japanese purikura poster style, one full-frame shot (not split), of two people posing close together against a solid pastel candy-colored backdrop (bright pink or sky blue). Bright even beauty-lighting gives their skin a soft flawless glow, cheerful youthful mood.
+      The two people lean in close side by side, both throwing crisp peace signs beside their faces with bright playful smiles, tilting their heads together. They animate with small lively purikura motions — playful head tilts, quick peace-sign gestures, cute winks, and warm giggles — staying close and cheerful, finally settling cheek to cheek with radiant happy smiles directed at the camera.
+      The colorful kawaii text and stickers decorating the frame stay present the whole time and animate with big bouncy energy — the bubbly outlined lettering, pixel-art hearts, hand-drawn hearts, ribbons, stars, tiny teddy bears, and smiling clouds pop, bounce, wobble, and swing playfully around the frame, some scaling up and down, some spinning slightly, some drifting in wide lively arcs, all staying inside the frame and never disappearing.
+      Bright cheerful purikura atmosphere, glossy skin glow, saturated pastel colors, playful nostalgic 2000s photo-sticker aesthetic, energetic fun feel.
+    video_negative_prompt: |
+      identity change, inconsistent faces, subjects merging together, faces overlapping, distorted faces, deformed hands, malformed fingers, extra limbs, split screen, panel grid, dark shadows, harsh lighting, dull colors, blurry, low quality, watermark, disappearing stickers, decorations leaving the frame
+
+    concurrent_requests: 3
+
+  - style_name: '拍貼系列-Style2:2005-'
+    folder: 'Media Files/I2I2V/0724 9 Styles/0724 拍貼系列-Style2:2005-'
+    image_service: nano_banana
+    image_model: gemini-3-pro-image
+    image_resolution: '1K'
+    image_aspect_ratio: '3:4'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
+    image_prompt: |
+      Use all uploaded photos as the only subjects.
+       Their real identities must remain recognizable and consistent.
+       This is a photographic purikura-style filter application, NOT a realistic portrait and NOT a modern beauty retouch. Do not redraw, replace, or re-generate the people and Adding any other person or repeating the same person is prohibited. The output must appear as one uninterrupted purikura photo.No photos should show white borders in other scenes, be held by the subject, or be framed.
+      Identity preservation rules:
+       – The same people must remain clearly identifiable
+      – Facial structure, face shape, and hairstyle must remain consistent
+       – Purikura-style facial modification is ALLOWED and REQUIRED:
+       • The eyes may be slightly enlarged in a natural early-purikura manner, avoiding exaggerated manga-style proportions
+       • skin may be softly airbrushed
+       • proportions may be slightly exaggerated in a cute, non-realistic way
+       – Do NOT replace faces or turn them into illustrations or anime
+      Create a playful single-frame photo-booth image styled like an early-2000s Japanese Heisei-era purikura (プリクラ) machine.
+      The image must look like it was produced directly by a real purikura booth:
+       – bright
+       – cute
+       – slightly over-processed
+       – energetic
+       – nostalgic
+       – intentionally a little chaotic
+      Layout:
+       – Single unified purikura frame only
+       – NO four-frame or multi-panel layout of any kind
+       – NO borders, margins, dividers, or white lines
+       – One complete purikura output, not a collage and not separated images
+      Subjects:
+       – All subjects must appear together within the same single frame
+       – Relative positions and scale remain consistent
+       – Natural, playful interaction is required within the single image
+       – Classic purikura poses (peace signs, close shoulders, cute expressions)
+      Classic Heisei purikura facial treatment (REQUIRED):
+       – Slightly larger, rounder, clearly defined eyes with restrained enlargement
+       – Soft facial retouching with visible “machine smoothing”
+       – Slight whitening / brightening of skin tone
+       – No realistic skin texture emphasis
+       – No modern beauty, no cinematic realism
+      Overall color & exposure:
+       – Bright, high-key look
+       – Slight overexposure
+       – Warm pink-magenta dominant tone, while dark solid-color backgrounds such as purple or black may also appear for contrast
+       – Soft glow / bloom on highlights
+       – Flat contrast (no deep shadows)
+       – Avoid modern HDR, film grading, or clarity enhancement
+      Decorations & stickers (KEEP MINIMAL, NOT DENSE):
+       – Use ONLY 1–2 sticker elements total (e.g., one small heart + one tiny star OR one simple crown only)
+       – Keep doodles simple and sparse, with lots of clean negative space
+       – No layered clusters, no heavy overlap, no “sticker wall” look
+       – Stickers must float on top of the image, not embedded into faces
+       – Do NOT cover eyes, eyebrows, nose, or mouth
+      Handwritten text style (CRITICAL):
+       – Imperfect strokes, uneven thickness
+       – Cute, bubbly, casual handwriting
+       – White or bright colors with outlines or glow
+      Main text content (choose ONLY ONE, placed once in the single image):
+       「ずーっと心友!!」
+       「ずっとなかよし♡」
+       「ずっ友!!」
+       「だいすき♡」
+      Optional supporting sticker text:
+       Do NOT add supporting text, or at most add ONLY ONE short phrase from the list once, small and unobtrusive:
+       一生仲仔、最強仲仔、仲仔、宝物、最強、最高、ぶちあげ、アゲ、
+       我等友情永久不滅、Best Friend、FOREVER FRIEND、心友、信友
+      Mood & intent:
+       Joyful, intimate, nostalgic friendship energy.
+       The final image must unmistakably look like an authentic early-2000s Japanese purikura print:
+       – bright
+       – cute
+       – over-decorated
+       – handwritten
+       – emotionally warm
+       – unmistakably Heisei-era
+
+    video_model: v3
+    video_mode: pro
+    video_duration: 5
+    video_ratio: '3:4'
+    video_sound_enabled: true
+    video_prompt: |
+      A single vertical portrait video in Y2K Japanese purikura poster style, one full-frame shot (not split), of two people posing close together against a solid pastel candy-colored backdrop (bright pink or sky blue). Bright even beauty-lighting gives their skin a soft flawless glow, cheerful youthful mood.
+
+      The two people lean in close side by side with bright playful smiles, tilting their heads gently toward each other. They animate with small lively purikura motions — playful head tilts, shy giggles, soft cheek-to-cheek touches, cute winks, and warm cheerful glances — staying close and cheerful throughout. Finally, they slowly turn their faces toward each other and lock eyes with big bright happy smiles — beaming at each other with pure joy, eyes sparkling, cheeks lifted, sharing a cheerful radiant moment of eye contact filled with youthful happiness and friendship. This happy face-to-face smiling gaze is the final settled expression of the shot.
+
+      Only the exact stickers, text, and decorations already visible in the original reference image are present in the video. These existing elements stay in place the whole time and animate with big bouncy energy — the original bubbly outlined lettering, pixel-art hearts, hand-drawn hearts, ribbons, stars, tiny teddy bears, and smiling clouds that are already there pop, bounce, wobble, and swing playfully around the frame, some scaling up and down, some spinning slightly, some drifting in wide lively arcs, all staying inside the frame. Absolutely no new stickers, no new text, no new hearts, no new decorations, no new graphic elements of any kind are ever added, introduced, generated, or appear at any point in the video. The set of decorations is strictly locked to what exists in the reference image — nothing more, nothing less. Every sticker, letter, and graphic element visible must be traceable to the original image.
+
+      Bright cheerful purikura atmosphere, glossy skin glow, saturated pastel colors, playful nostalgic 2000s photo-sticker aesthetic, energetic fun feel.
+    video_negative_prompt: |
+      new stickers appearing, additional stickers, extra stickers not in original, generated stickers, new text appearing, new letters, new words, additional text, extra typography, new hearts appearing, extra hearts, additional hearts, new decorations, extra decorations, new graphic elements, new emoji, new icons, new sparkles added, new stars added, new ribbons added, new characters added, new mascots added, new speech bubbles, new tags, new labels, new frames, new borders, new overlays, new doodles, new drawings, stickers materializing, decorations popping into existence, sticker duplication, text duplication, sticker multiplication, hallucinated decorations, invented graphics, unauthorized additions, decoration count increasing, sticker count changing, peace sign, V sign, ya pose, fingers up beside face, hand gestures near face, hands raised, fingers near cheeks, raising hands, lifting hands, showing fingers, hand poses, finger poses, looking at camera at the end, facing camera at the end, front view at the end, turning back to camera at the end, serious face at the end, neutral expression at the end, romantic tension, ambiguous romantic mood, lingering gaze, flushed cheeks, lips parted, noses touching, intimate close-up, kissing, mouths touching, overly sexual, inappropriate contact, identity change, inconsistent faces, subjects merging together, faces overlapping, distorted faces, deformed hands, malformed fingers, extra limbs, split screen, panel grid, dark shadows, harsh lighting, dull colors, blurry, low quality, watermark, disappearing stickers, decorations leaving the frame
+
+    concurrent_requests: 3
 
 comments:
   example: |
@@ -1385,7 +580,7 @@ comments:
       - style_name: 看球賽 (nano)
         folder: Media Files/I2I2V/0520 看球賽 nano
         image_service: nano_banana
-        image_model: gemini-3.1-flash-image-preview
+        image_model: gemini-3.1-flash-image
         image_resolution: '1K'
         image_aspect_ratio: '16:9'
         image_prompt: |
@@ -1402,7 +597,7 @@ comments:
       - style_name: 熱門雙人拍貼-雪洞
         folder: Media Files/I2I2V/0717 11 Styles/0717 熱門雙人拍貼-雪洞
         image_service: nano_banana
-        image_model: gemini-3-pro-image-preview
+        image_model: gemini-3-pro-image
         image_resolution: '1K'
         image_aspect_ratio: '3:4'
         image_prompt: |
@@ -1424,7 +619,7 @@ comments:
       - style_name: <style>
         folder: Media Files/I2I2V/0717 11 Styles/0717 <style>
         image_service: nano_banana
-        image_model: gemini-3-pro-image-preview
+        image_model: gemini-3-pro-image
         image_resolution: '1K'
         image_aspect_ratio: '3:4'
         image_prompt: |
@@ -1526,8 +721,8 @@ comments:
   image_model: |
     nano_banana options:
       - gemini-2.5-flash-image
-      - gemini-3-pro-image-preview
-      - gemini-3.1-flash-image-preview (default for nano_banana)
+      - gemini-3-pro-image
+      - gemini-3.1-flash-image (default for nano_banana)
     openai_image options:
       - gpt-image-1
       - gpt-image-1.5

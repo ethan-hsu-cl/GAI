@@ -16,11 +16,11 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Kling Effects/0717 16 Effects
+base_folder: Media Files/Kling Effects/0724 16 Effects
 
 design_link: https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=1225550147#gid=1225550147
 provider_reference_link: https://app.klingai.com/global/dev/document-api/quickStart/productIntroduction/effectsCenter
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgACZs7EMLuvTZPzAjoJixejATv9oylfk4Q_HvVzNs4eH9A?e=AsSaCu
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgAKaVHTBftsTKWn7TgrqqELAVtDtf-OBpW8OSiSPH_H6p8?e=uhvkT1
 
 # Tasks - each represents a style/effect to apply
 # Effect selection per task:
@@ -29,38 +29,41 @@ source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedri
 # The effect name (custom_effect or effect) is used as the subfolder name in base_folder
 tasks:
   - effect:
-    custom_effect: 'hug_from_past'
+    custom_effect: 'balloon_parade'
   - effect:
-    custom_effect: 'idol_live'
-  - effect:
-    custom_effect: 'pet_burst'
+    custom_effect: 'chubby_fish'
     source_type: pet
   - effect:
-    custom_effect: 'cute_pumpkin_transform'
+    custom_effect: 'surfsurf'
   - effect:
-    custom_effect: 'cute_ghost_transform'
+    custom_effect: 'jazz_jazz'
   - effect:
-    custom_effect: 'halloween_escape'
+    custom_effect: 'wool_curly'
   - effect:
-    custom_effect: 'demon_transform'
+    custom_effect: 'surprise_bouquet'
   - effect:
-    custom_effect: 'gallery_ring'
+    custom_effect: 'pink_pink_wings'
   - effect:
-    custom_effect: '3d_cartoon_2'
+    custom_effect: 'woodland_elf'
   - effect:
-    custom_effect: 'dollar_rain'
+    custom_effect: 'luminous_elf'
   - effect:
-    custom_effect: 'ski_ski'
+    custom_effect: 'throne_of_king'
   - effect:
-    custom_effect: 'disappear'
+    custom_effect: 'j_var_live'
   - effect:
-    custom_effect: 'mythic_style'
+    custom_effect: 'pet_fitness'
+    source_type: pet
   - effect:
-    custom_effect: 'dishwasher'
+    custom_effect: 'disco_paws'
+    source_type: pet
   - effect:
-    custom_effect: 'santa_gifts'
+    custom_effect: 'pet_chef'
+    source_type: pet
   - effect:
-    custom_effect: 'long_hair'
+    custom_effect: 'snatched'
+  - effect:
+    custom_effect: 'polar_bear_hug'
 
 comments:
   base_folder: |
