@@ -2623,6 +2623,7 @@ class UnifiedReportGenerator:
 
                 folders = {
                     'src': folder_path / 'Source',
+                    'add': folder_path / 'Additional',
                     'frames': folder_path / 'Generated_Frames',
                     'vid': folder_path / 'Generated_Video',
                     'meta': folder_path / 'Metadata',
@@ -2635,6 +2636,8 @@ class UnifiedReportGenerator:
                 logger.info(f"Processing i2i2v style: {style_name}")
 
                 source_images, _, _ = self._scan_directory_once(folders['src'])
+                additional_images, _, _ = self._scan_directory_once(folders['add']) \
+                    if folders['add'].exists() else ({}, {}, {})
                 frame_images, _, _ = self._scan_directory_once(folders['frames'])
                 _, videos, _ = self._scan_directory_once(folders['vid'])
                 _, _, metadata_files = self._scan_directory_once(folders['meta'])
@@ -2652,10 +2655,17 @@ class UnifiedReportGenerator:
 
                 # Resolve source filenames (recorded in metadata) back to paths.
                 source_by_name = {p.name: p for p in source_images.values()}
+                additional_by_name = {p.name: p for p in additional_images.values()}
+                # Sorted views mirror the handler's pairing order (name, lowercased),
+                # used to rebuild the pairing for frames that were reused from an
+                # earlier run and therefore have no additional_images_used recorded.
+                sorted_source_names = sorted(source_by_name, key=str.lower)
+                sorted_additional = sorted(additional_by_name.values(),
+                                           key=lambda p: p.name.lower())
 
                 # Pre-compute aspect ratios for stacked-layout sizing.
-                all_media = (list(source_images.values()) + list(frame_images.values())
-                             + list(videos.values()))
+                all_media = (list(source_images.values()) + list(additional_images.values())
+                             + list(frame_images.values()) + list(videos.values()))
                 if all_media:
                     self._compute_aspect_ratios_batch(
                         all_media, are_videos={p: True for p in videos.values()}
@@ -2694,6 +2704,24 @@ class UnifiedReportGenerator:
 
                     source_path = selected_paths[0] if selected_paths else None
                     additional = selected_paths[1:]
+
+                    # Multi-image mode: the image step also fed Additional-folder
+                    # image(s) alongside the source, so the report must show them.
+                    if not additional:
+                        extra_names = metadata.get('additional_images_used') or []
+                        extra = [additional_by_name[n] for n in extra_names
+                                 if n in additional_by_name]
+                        # Frames reused from a previous run carry no
+                        # additional_images_used; rebuild the handler's sequential
+                        # pairing (source's sorted index into the sorted pool).
+                        if (not extra and not extra_names and sorted_additional
+                                and metadata.get('use_multi_image')
+                                and (metadata.get('multi_image_config') or {}).get('mode', 'sequential')
+                                != 'random_pairing'
+                                and source_path and source_path.name in sorted_source_names):
+                            idx = sorted_source_names.index(source_path.name)
+                            extra = [sorted_additional[idx % len(sorted_additional)]]
+                        additional = extra
 
                     pair = MediaPair(
                         source_file=(source_path.name if source_path else key),

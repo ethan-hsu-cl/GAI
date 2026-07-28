@@ -848,6 +848,14 @@ class I2i2vHandler(BaseAPIHandler):
             # Input info captured when the frame was prefetched (additional /
             # selected images), so reused-frame metadata stays complete.
             prefetch_input = self._prefetch_inputs.pop(str(file_path), {})
+            if not prefetch_input:
+                # Frame is left over from an earlier run (nothing prefetched this
+                # session), so rebuild the image inputs to keep metadata complete.
+                # Sequential pairing is deterministic; random_pairing is not, so
+                # it is left unrecorded rather than guessed.
+                cfg = task_config.get('multi_image_config') or {}
+                if cfg.get('mode', 'sequential') != 'random_pairing':
+                    _, prefetch_input = self._build_image_inputs(file_path, task_config)
             prefetch_time = self._prefetch_times.pop(str(file_path), None)
             if prefetch_time is not None:
                 # Frame was produced ahead of time by the prefetch worker; the
