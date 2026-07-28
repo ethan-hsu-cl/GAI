@@ -1,5 +1,5 @@
-template_path: templates/I2V templates.pptx
-comparison_template_path: templates/I2V Comparison Template.pptx
+template_path: templates/I2V standard 5col.pptx
+comparison_template_path: templates/I2V comparison 5col.pptx
 output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
 comment_output_directory: 'Optional: Global output directory for all generated images. Can be overridden per task. Default
   is current directory.'

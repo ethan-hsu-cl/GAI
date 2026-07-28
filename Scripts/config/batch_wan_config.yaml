@@ -1,6 +1,6 @@
 testbed: http://210.244.31.18:7007/
-template_path: templates/I2V templates.pptx
-comparison_template_path: templates/I2V Comparison Template.pptx
+template_path: templates/I2V standard 5col.pptx
+comparison_template_path: templates/I2V comparison 5col.pptx
 default_params:
   prompt: The person is dancing, realistic video.
   embed: ''

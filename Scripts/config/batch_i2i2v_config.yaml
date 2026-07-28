@@ -11,7 +11,7 @@
 #   ├── Generated_Video/    # final mp4 videos
 #   └── Metadata/
 
-template_path: templates/I2V templates.pptx
+template_path: templates/I2V standard 4col.pptx
 
 output:
   directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report

@@ -1,6 +1,6 @@
 # Pixverse Text-to-Video Configuration
 # Generates videos from text prompts (no input images required)
-template_path: templates/I2V templates.pptx
+template_path: templates/I2V standard 5col.pptx
 # Report Output Directory
 output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
 # Root folder where generated videos will be saved. Metadata folder will be created automatically.

@@ -49,7 +49,7 @@ Create `Scripts/config/batch_{api_name}_config.yaml`.
 **Structure:**
 ```yaml
 # {Platform} Configuration
-template_path: templates/I2V templates.pptx
+template_path: templates/I2V standard 5col.pptx
 output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
 testbed: {endpoint_url}
 design_link: ""
@@ -92,7 +92,7 @@ Add an entry to `Scripts/core/api_definitions.json` under the API name key.
     "config_structure": "task_list",
     "report": {
         "enabled": true,
-        "template_path": "templates/I2V templates.pptx",
+        "template_path": "templates/I2V standard 5col.pptx",
         "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
         "use_comparison": false
     },

@@ -3,7 +3,7 @@
 # Generated videos will be placed in 'Generated_Video' subfolder
 # Metadata will be placed in 'Metadata' subfolder
 
-template_path: templates/I2V templates.pptx
+template_path: templates/I2V standard 5col.pptx
 
 output:
   directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report

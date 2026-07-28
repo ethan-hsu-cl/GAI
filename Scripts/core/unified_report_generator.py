@@ -3012,8 +3012,8 @@ class UnifiedReportGenerator:
         """Set default report definitions"""
         self.report_definitions = {
             "enabled": True,
-            "template_path": "templates/I2V templates.pptx",
-            "comparison_template_path": "templates/I2V Comparison Template.pptx",
+            "template_path": "templates/I2V standard 5col.pptx",
+            "comparison_template_path": "templates/I2V comparison 5col.pptx",
             "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
             "use_comparison": self.api_name in ["kling", "nano_banana", "openai_image", "runway", "wan", "dreamactor", "motion_swap", "kling_motion"]
         }
@@ -3475,7 +3475,7 @@ class UnifiedReportGenerator:
         template_key = 'comparison_template_path' if use_comparison else 'template_path'
         template_path = (self.config.get(template_key) or
                         self.report_definitions.get(template_key,
-                        'templates/I2V Comparison Template.pptx' if use_comparison else 'templates/I2V templates.pptx'))
+                        'templates/I2V comparison 5col.pptx' if use_comparison else 'templates/I2V standard 5col.pptx'))
         
         # Resolve template path - check if it exists, if not try using resource path
         template_path_obj = Path(template_path)

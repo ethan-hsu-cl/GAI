@@ -985,7 +985,7 @@ Defaults: `happyhorse-1.0-video-edit` model, `720P`, `origin` audio, random seed
 
 PowerPoint reports are generated automatically with title slides, side-by-side comparisons, per-slide metadata boxes, and hyperlinks.
 
-- **Templates:** `Scripts/templates/I2V templates.pptx`, `I2V Comparison Template.pptx`
+- **Templates:** `Scripts/templates/` holds four templates, named for the two properties that vary — media layout (`standard` = 2-media, `comparison` = 3-media) and Executive Summary table (`5col` = `Pass符合prompt`/`Pass不合prompt`, `4col` = single `Pass`). Pick via `template_path` and `comparison_template_path`.
 - **Output:** `Report/[MMDD] API Name Task Name.pptx`
 
 Run `python core/runall.py <platform> report` to regenerate the report from existing media (no re-processing).
@@ -1147,9 +1147,10 @@ GAI/
     │   ├── fifa_i2i2v_handler.py
     │   └── i2i2v_handler.py
     ├── templates/                           # PowerPoint templates
-    │   ├── I2V templates.pptx
-    │   ├── I2V templates 3rd party.pptx
-    │   └── I2V Comparison Template.pptx
+    │   ├── I2V standard 5col.pptx           # 2-media layout, split Pass columns
+    │   ├── I2V standard 4col.pptx           # 2-media layout, single Pass column
+    │   ├── I2V comparison 5col.pptx         # 3-media layout, split Pass columns
+    │   └── I2V comparison 4col.pptx         # 3-media layout, single Pass column
     ├── gui_app.py                           # Tk-based GUI
     └── requirements.txt
 ```

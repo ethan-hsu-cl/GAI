@@ -3,7 +3,7 @@
 # Endpoint: /gemini_omni_async_submit. Runs in Async mode (matching the Gradio
 # UI default); the predict() call still blocks until the video is ready, so a
 # single call returns the finished video.
-template_path: templates/I2V templates.pptx
+template_path: templates/I2V standard 5col.pptx
 # Report Output Directory
 output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
 testbed: http://192.168.31.161/external-testbed/google_veo/
