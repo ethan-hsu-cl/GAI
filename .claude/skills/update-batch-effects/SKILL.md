@@ -98,7 +98,7 @@ tasks:
    - `old_string` = the existing `tasks:` block, from the line `tasks:` through the last task entry (do not include the trailing blank line(s) that separate `tasks:` from the next top-level key)
    - `new_string` = the newly formatted block built above
 3. Update `base_folder` (see Step 5).
-4. Clear `source_video_link` — set it to an empty string (`source_video_link: ''`) via a separate `Edit` call. The link is stale after the tasks change; a new one will be produced once the script completes.
+4. Clear `source_video_link` — blank it, leaving a **single space after the colon** (`source_video_link: `), not `''` and not a bare colon with no space. Most editors and the `Edit` tool strip trailing whitespace, so add the space via a small script write rather than an `Edit`. The link is stale after the tasks change; a new one will be produced once the script completes.
 5. Confirm with a one-line summary that includes a clickable file:line link to the new tasks region (e.g. `[batch_pixverse_config.yaml:22-41](Scripts/config/batch_pixverse_config.yaml#L22-L41)`).
 
 ## Step 5 — Always update `base_folder`

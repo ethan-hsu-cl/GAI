@@ -22,8 +22,8 @@ testbed: http://192.168.31.161/external-testbed/image_generation/
 schedule:
   start_time: ''
 
-root_design_link: https://docs.google.com/presentation/d/1xT9a1gE_QG0yiXRDWEhwrci5g-1PjybeMkfZ22yQDTA/edit?slide=id.g3f5a7872589_1_0#slide=id.g3f5a7872589_1_0
-root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDRqmXaBEw1SYYQpiTDYGtZAdiZBLDe2kE4qzo-ZkY28wE?e=T5Acqi
+root_design_link: https://docs.google.com/presentation/d/1WFmn4Ae_oh65eSf26Xn0whtEE0cUa-l4Ww41HLlnCAQ/edit?slide=id.g3f5f513c1e8_0_0#slide=id.g3f5f513c1e8_0_0
+root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgC6xp0IzIjDTKHjB09WVzgqAb7Yld-kCxtYmZyxrA4YdMk?e=LsgdS9
 
 # Reuse original i2i frames (video-only). If a task folder contains a dropped-in
 # original-run folder, the handler stages a subset before processing (applied
@@ -43,95 +43,8 @@ random_seed: 42
 video_resolution: '720p'
 
 tasks:
-  - style_name: '經典電影海報 - 樂來越愛你 La La Land'
-    folder: 'Media Files/I2I2V/0724 9 Styles/0724 經典電影海報 - 樂來越愛你 La La Land'
-    image_service: nano_banana
-    image_model: gemini-3-pro-image
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    use_multi_image: true
-    multi_image_config:
-      mode: sequential
-    image_prompt: |
-      Use the two uploaded people as the only subjects. Their exact identities must be preserved with absolute accuracy. The generated faces must match the uploaded subjects 1:1, and the system is strictly forbidden from generating or resembling any actors from the film La La Land, including Ryan Gosling or Emma Stone. It must never replace the uploaded subjects with celebrity faces or merge their facial structure with those actors. Their faces, facial features, bone structure, hairstyles, expressions, and overall identities must remain unchanged exactly as in the uploaded photos. Do not modify their proportions, makeup style, hair color, jawline, or eyes, and do not apply smoothing, stylization, beautification, aging effects, or add any additional people.
-
-      The clothing must follow the film’s aesthetic faithfully. Any male subject must wear Sebastian’s outfit — a white dress shirt with sleeves rolled up, the top button left unbuttoned, the black slim necktie loosened casually around the collar, black suit trousers, black socks, and black-and-white spectator shoes. If both uploaded people are male, they must both wear Sebastian’s full outfit. Any female subject must wear Mia’s outfit — a yellow square-neck short-sleeve dress with a soft, flowing skirt, and matching black-and-white spectator shoes.
-
-      Create a realistic La La Land–style movie poster in which the two subjects sit on a simple wooden bench with a small distance between them. Their bodies face forward with hands resting naturally on their legs, while their heads turn gently toward each other as if sharing a quiet, cinematic moment together. They must not look at the camera. The camera framing must be pulled back significantly farther than before so that the two subjects occupy only about one-third of the full image composition. This wider framing must emphasize the cinematic environment, creating more atmospheric negative space while keeping the perspective level and eye-level for a natural, grounded feeling.
-
-      Beside the female subject, place a soft, flexible red handbag with noticeably softer material, resting flat on the bench surface. On the ground near her feet, include a pair of blue peep-toe high heels with thin heels and delicate ankle straps, positioned as if casually knocked over and lying on their side.
-
-      The background must depict an elevated overlook of Los Angeles at dusk, with warm pink-orange sunset tones gradually transitioning into deep twilight blue. The city lights should glow atmospherically below, creating a dreamy but realistic dusk ambiance. The lighting and palette must reflect La La Land’s signature aesthetic — a smooth gradient sky, elegant warm-to-cool color transitions, soft edges, and gentle film-like contrast, forming an overall romantic and cinematic mood.
-
-      At the top left of the poster, include the title “L'AMOUR” in the authentic movie font, using tall geometric serif lettering with thin, elegant, art-deco inspired shapes, generous spacing, and clean white coloring. Directly beneath it, left-aligned, add “LOVE HAPPENS BETWEEN DREAMS.” in small, thin, uppercase sans-serif text with subtle spacing. The typography must blend naturally with the composition and must not obstruct the subjects.
-
-      The final poster must appear cinematic, modern, romantic, and visually consistent with an authentic La La Land promotional image. No parody elements, no cartoonish styling, no added people, no incorrect environmental details, and absolutely no substitution of the uploaded subjects with the original film actors. Only the two uploaded subjects in the correct outfits, sitting on the bench overlooking the Los Angeles dusk skyline, captured in a refined, film-accurate aesthetic.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      The camera slowly pulls back (dolly out) in a smooth, steady motion throughout, gradually revealing more of the surroundings while keeping both subjects centered and fully visible head to toe the entire time.
-      The two people slowly turn their heads toward each other and share a soft, lingering gaze. They gently rise to their feet together and join hands, coming into a close dance hold.
-      They begin an expressive, flowing partner dance — one leads the other into a graceful outward spin under their raised joined hands, arms extending wide, then draws them back in close. They sway with bigger, sweeping motions, stepping around a shared center as they turn together in a full, graceful 360-degree circle, staying in the same spot. One gently guides the other into a soft, shallow dip and lifts them back up smoothly. The movements are large but elegant, fluid and romantic, their connection and held hands maintained throughout.
-      They come back together face to face, foreheads lightly meeting, eyes softly closing, both breaking into warm tender smiles, still swaying gently.
-    video_negative_prompt: ''
-
-    concurrent_requests: 3
-
-  - style_name: 'My Silly Human'
-    folder: 'Media Files/I2I2V/0724 9 Styles/0724 My Silly Human'
-    image_service: nano_banana
-    image_model: gemini-3-pro-image
-    image_resolution: '2K'
-    image_aspect_ratio: '4:3'
-    use_multi_image: true
-    multi_image_config:
-      mode: sequential
-    image_prompt: |
-      A highly realistic photograph using the uploaded domestic pet as the main subject.
-      Do not change the pet’s face, markings, body type, or breed from the uploaded photo.
-
-      The pet sits in the foreground, leaning against a wooden sign that it is holding or resting on.
-      The sign must clearly read: “MY SILLY HUMAN”.
-
-      In the background, use the uploaded human photo as the sleeping pet owner.
-      Do not change the human’s face, hairstyle, or identity.
-      The human is sleeping soundly on the living room sofa with mouth slightly open, captured candidly in a natural and humorous moment.
-
-      The scene takes place in a cozy modern living room.
-      Warm soft lighting, shallow depth of field (bokeh), and realistic cinematic atmosphere.
-      50mm lens realism, ultra-realistic lighting, sharp focus on the pet and the sign, detailed fur texture, photographic clarity.
-      Aspect ratio 3:4.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '4:3'
-    video_sound_enabled: true
-    video_prompt: |
-      Use the uploaded image as ground truth for subject count, species, faces, fur/hair, outfits, and scene. Do not add or remove any subject.
-      Static locked camera, warm cozy indoor lighting held throughout.
-
-      Animate by role — every subject filling each role performs its motion independently:
-
-      - Pet(s) beside the wooden "MY SILLY HUMAN" sign: starts with a deadpan stare at camera, slightly unimpressed. Slow blink, ear twitch. Then
-        clearly turns its head toward the sleeping human and holds the gaze for a long moment, watching them with an innocent, wide-eyed "not my fault"
-        expression, ears perking slightly. After a beat, slowly turns its head back to the camera and resumes the same deadpan, done-with-it look.
-        Sign stays upright, steady, and readable throughout.
-
-      - Sleeping human(s) in the background: deeply asleep and restless.
-        Performs a clearly visible full roll — starting from the current position, slowly rolls onto their side with their back turning toward
-        the camera, shoulders and hips fully rotating, one arm flopping over. Holds the side-facing position briefly, then slowly rolls back to face
-        upward again, head settling into the pillow. Throughout, obvious snoring motion with mouth opening on each snore, chest rising
-    video_negative_prompt: ''
-
-    concurrent_requests: 3
-
   - style_name: '羅馬建築前 V3'
-    folder: 'Media Files/I2I2V/0724 9 Styles/0724 羅馬建築前 V3'
+    folder: 'Media Files/I2I2V/0730 3 Styles/0730 羅馬建築前 V3'
     image_service: nano_banana
     image_model: gemini-3.1-flash-image
     image_resolution: '1K'
@@ -140,9 +53,9 @@ tasks:
     multi_image_config:
       mode: sequential
     image_prompt: |
-      Use the uploaded photos as the ONLY references for the human subjects. The uploaded photos may contain 1 to 3 different users. Create the final image with exactly the same number of people as the uploaded photos. Preserve each person’s recognizable identity, facial features, skin tone, hairstyle, body proportions, and natural appearance individually. Each subject must clearly look like the corresponding person from the uploaded photos. Do not merge faces, swap identities, duplicate anyone, heavily stylize, over-beautify, or change identity. No extra main subject may appear.
+      Use the uploaded photos as the ONLY references for the human subjects. The uploaded photos may contain 1 to 4 different users. Create a final image with exactly the same number of people as the uploaded photos. Preserve each person's recognizable identity, facial features, skin tone, hairstyle, body proportions, and natural appearance individually. Each subject must clearly look like the corresponding person from the uploaded photos. Do not merge faces, swap identities, duplicate anyone, heavily stylize, over-beautify, or change identity. No extra main subject may appear.
 
-      Create a realistic, elegant ancient Greek-inspired beauty portrait in front of grand classical Greek architecture with a wide Mediterranean coastal view. Include Greek ruins or temple-like elements such as marble columns, stone steps, or pale stone walls, but do not let stone architecture dominate the background. Most of the background must open into distant ocean, rich blue sea, open sky, or a coastal horizon. The image should feel bright, graceful, luxurious, timeless, and visually striking, like a high-end fashion editorial.
+      Create a realistic, elegant beauty portrait in an ancient Greek setting. Place the subject in front of grand classical Greek architecture with a wide Mediterranean coastal view. Include some Greek ruins or temple-like elements such as tall marble columns, stone steps, or pale stone walls, but do not let the background be dominated by stone architecture. Most of the background should open into distant ocean, clear blue sea, open sky, or a coastal horizon, creating a bright, spacious Mediterranean atmosphere. The image should feel timeless, graceful, luxurious, and visually striking, like a high-end fashion editorial.
 
       Style the subject in elegant ancient Greek fashion. Clothing must be white or ivory, inspired by authentic Greek draped garments, with soft flowing fabric, graceful folds, and refined classical styling. Add gold accessories such as a gold laurel crown or gold leaf headpiece, gold earrings, gold necklace, bracelets, arm cuffs, rings, or an ornate gold waist detail. The styling should feel noble, tasteful, and sophisticated, not theatrical.
 
@@ -150,72 +63,17 @@ tasks:
 
       If the subject is male: dress him in a white or ivory ancient Greek outfit such as a draped chiton, tunic, or himation-style garment, with elegant layered fabric and classical structure. The outfit may include a draped shoulder cloth, wrapped waist detail, gold belt, subtle gold trim, gold arm cuffs, or a gold laurel crown. The styling should feel noble, heroic, and refined, with a clean classical silhouette rather than heavy armor.
 
-      The pose is very important. Avoid stiff straight-standing poses. Each subject should appear relaxed, natural, graceful, and editorial. Use elegant, dynamic poses such as sitting on stone steps, leaning lightly against a marble column, resting one hand on a stone ledge, turning the body in a three-quarter angle, walking slowly through the ruins, looking into the distance, lightly touching jewelry or fabric, or shifting weight naturally. If multiple subjects are present, arrange them as a cohesive group portrait with varied but harmonious poses. Avoid making everyone stand in the same pose.
+      The pose is very important. Avoid a stiff straight-standing pose. The subject should appear relaxed, natural, graceful, and editorial. Use elegant, dynamic poses such as sitting on stone steps, leaning lightly against a marble column, resting one hand on a stone ledge, gently turning the body in a three-quarter angle, walking slowly through the ruins, looking into the distance, lightly touching jewelry or fabric, or shifting weight naturally in a poised fashion pose. The pose should feel alive, refined, and aesthetically composed rather than static or awkward.
 
-      Use flattering golden natural sunlight with a fixed luxury-editorial color treatment. The overall tone must be bright, clean, warm, polished, and professionally color-graded: creamy sunlit marble, ivory-white fabric, soft gold jewelry, rich Mediterranean blue sea, and a clearly visible gradient sky. The sky must have a beautiful, obvious, natural gradient instead of a flat single-color sky. It should transition smoothly from clear pale blue at the upper sky into warm golden peach, soft apricot, blush pink, or subtle lavender near the horizon. The gradient should be visually noticeable, elegant, luminous, and cinematic, like a refined Mediterranean sunset sky. Avoid gray, dull, cold, muddy, greenish, overly orange, flat blue, or phone-photo color.
+      If multiple subjects are present, arrange them as a cohesive group portrait with varied but harmonious poses. Avoid making everyone stand in the same pose. The group should feel balanced, elegant, editorial, and naturally connected.
 
-      The subject / subjects must be clearly under sunlight. Part of the body must be visibly bathed in direct sun, and the face must also be directly touched by sunlight. Do not place the subject entirely in shade. At least part of the forehead, cheeks, nose bridge, and lips must be illuminated by real sunlight, creating a clear balance of sunlit highlights and soft shadows while keeping the facial features readable, recognizable, and naturally defined. Avoid lighting where the face is fully shaded, hidden by architectural shadow, or lit only by weak ambient bounce light.
+      Use flattering natural sunlight with a fixed, consistent luxury-editorial color treatment. The overall tone must be bright, clean, warm, and polished: creamy sunlit marble, ivory-white fabric, soft gold jewelry, clear pale-blue sky, and rich Mediterranean blue sea. Keep the palette refined and stable, with warm golden sunlight, soft beige stone, ivory white, soft gold, and crisp blue coastal tones. Avoid gray, dull, cold, muddy, greenish, overly orange, or flat phone-photo color. The image must feel like a professionally color-graded fashion portrait bathed in golden sunlight.
 
-      Add a subtle gentle breeze. The breeze should softly lift and move the flowing Greek fabric, draped edges, loose hair strands, ribbons, and small garment details in a natural, elegant way. The movement should feel light, graceful, and Mediterranean, adding life and atmosphere without making the pose messy or overly windy.
+      The subject must be clearly under sunlight. Part of the body must be visibly bathed in direct sun, and the face must also be directly lit by sunlight. Do not place the subject entirely in shade. At least part of the forehead, cheeks, nose bridge, and lips must be illuminated by real sunlight, creating a clear balance of sunlit highlights and soft shadows while keeping the facial features readable and naturally defined. The eyes, nose bridge, cheeks, and mouth area must remain clearly visible and recognizable. Avoid lighting where the face is fully shaded, hidden by architectural shadow, or lit only by weak ambient bounce light.
 
-      The composition should feel like a premium high-fashion editorial portrait. Use an eye-level or slightly low-angle camera perspective only. Do not use a high-angle or top-down view. Use a long-lens / telephoto look for elegant compression, clean subject separation, and a refined premium-camera feel. The framing can be half-body, three-quarter body, or full-body depending on the pose, but the subject / subjects must remain visually dominant. Frame them with columns or ruins while keeping most of the background open to sea, sky, or coastal horizon. Avoid a background made entirely of pale stone surfaces.
+      The composition should feel like a premium high-fashion editorial portrait. Use an eye-level or slightly low-angle camera perspective only, to create a more majestic, cinematic, fashion-editorial feeling. Do not use a high-angle or top-down view. Use a long-lens / telephoto look for a polished professional portrait feel, with elegant compression, clean subject separation, and a refined premium-camera look. The framing can be either half-body, three-quarter body, or full-body depending on the pose, but always keep the subject visually dominant. Frame the subject with columns or ruins, while keeping most of the background open to sea, sky, or coastal horizon. Avoid a background made entirely of pale stone surfaces.
 
-      Keep the final image realistic, high-quality, and naturally photographed. Preserve believable anatomy, realistic fabric draping, natural hands, proper interaction with the environment, and clear subject identity. Avoid cartoon style, fantasy exaggeration, modern clothing, modern accessories, messy background, extra people, distorted hands, awkward posture, text, logos, or watermarks. The final result should feel like an elegant ancient Greek-inspired editorial portrait of the uploaded person / people, beautifully posed among classical ruins, wearing mandatory gold accessories, bathed in golden sunlight, with a clear Mediterranean sea backdrop and a vivid gradient sky.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Animate only what is already visible in the reference — do not add or remove anyone. Keep every person's identity, outfit, hairstyle, body
-      proportions, and starting position exactly as in the reference. Both subjects stay locked in their exact world positions and keep their relative
-      scale to each other; nothing about them is re-scaled, warped, morphed, or repositioned by the animation.
-
-      Standing figure: slowly shifts weight onto one leg, one hand slides casually into a pocket or rests at the hip while the other arm hangs relaxed at the side. Chin lifts slightly, shoulders roll back into a confident stance. Head turns slowly toward the camera with a cool, composed
-      expression — a faint, restrained half-smile at most. Feet stay planted, no stepping.
-
-      Seated figure: subtly straightens posture, one hand rests elegantly on the lap or thigh while the other adjusts to a poised position — on the seat edge, on the knee, or brushing a strand of hair back. Legs stay crossed or in their original position. Head tilts slightly and turns toward the camera
-      with a quiet, aloof gaze, chin lifted just enough to read as confident. Body stays seated in place.
-
-      Both movements are small, slow and restrained — quiet grace, not busy motion. No physical contact, no leaning toward each other; each holds their
-      own space with composed independence. Flowing fabric and loose strands of hair drift softly in a gentle breeze throughout.
-
-      Mood & style: cold, refined, high-end elegance — the energy of a high-fashion editorial. Cool desaturated grade with steely blue and slate tones; crisp directional key light with a clean cool rim/hair light separating the subjects from a dim, minimal background; subtle filmic contrast, deep controlled shadows.
-
-      Camera: a slow, sweeping cinematic orbit (circular dolly) arcing boldly around the two subjects — roughly a 180° half-turn — with wide, dramatic parallax as the dim background slides past behind them. It eases in gently, builds momentum through the middle of the arc, then eases out, combined with a very slight crane/boom rising from a low hero angle up to eye level. Both subjects stay centered and fully in frame the entire time. The camera travels through space while the subjects remain locked in place. Anamorphic widescreen feel, shallow depth of field; the cool rim light grazes their silhouettes as the angle changes. Smooth, unhurried, weighty motion —
-      dramatic but controlled. No sudden cuts, no snap zooms, no jitter, no warping, no distortion.
-    video_negative_prompt: ''
-
-    concurrent_requests: 3
-
-  - style_name: 'Mom Doodle (Human)'
-    folder: 'Media Files/I2I2V/0724 9 Styles/0724 Mom Doodle (Human)'
-    image_service: nano_banana
-    image_model: gemini-3.1-flash-image
-    image_resolution: '2K'
-    image_aspect_ratio: '3:4'
-    use_multi_image: true
-    multi_image_config:
-      mode: sequential
-    image_prompt: |
-      CRITICAL FACE ID LOCK — PRIORITY 1 (EXTREME): Use the uploaded photo(s) as the ONLY and ABSOLUTE source of each SUBJECT’s face. The generated faces must be the SAME REAL SUBJECTS as in the input photos, copied directly from the input, NOT reconstructed, NOT reinterpreted. Do NOT beautify, optimize, stylize, idealize, or normalize the faces in any way. Do NOT adjust facial proportions, features, symmetry, skin texture, or age. Do NOT change ethnicity, race, or regional facial characteristics. If any face does not immediately look identical to the corresponding input SUBJECT, the result is INVALID and must be regenerated. The faces must remain structurally and texturally identical to the input photos.
-
-      SUBJECT & SOURCE IMAGE RULES: Use the uploaded user photos as the ONLY visual sources for all SUBJECTS. The number of SUBJECTS in the final image must EXACTLY match the number of uploaded photos (1–4 only). No extra SUBJECTS. No duplicated faces. No merged identities. No face swapping. All facial features must come ONLY from the input photos.
-
-      Realistic studio photography with a clean, light gray background and diffused lighting. Subjects are seated on the floor, positioned in close, intimate physical proximity. Prioritize placing the adult female subject (mother) in the central position among the grouping. If multiple subjects are present, they display warm, happy interactions with a deep sense of family connection, including gentle leaning, soft touches, and shared gazes. Facial expressions must clearly convey happiness and emotional warmth with soft, happy smiles. One subject casually holds a paintbrush. Soft, bright studio lighting evenly illuminates the scene with a clean and airy feel. The light is gently diffused while maintaining subtle highlights on the subjects, creating a luminous and warm appearance without strong directional shadows. The entire image remains consistently sharp and in focus, with no depth-of-field blur.
-
-      Foreground effect: Hand-painted acrylic illustrations appear directly integrated within the scene, as if freely drawn in the air around the subjects. These elements do not belong to any visible surface or physical medium, and no transparent panel, glass, or material is present. Hand-painted acrylic illustrations are placed sparingly (6-8 elements total) and must be related to Mother's Day themes, including: flowers, gift boxes, greeting cards, hearts, and ribbons. Elements vary in size (a mix of small, medium, and slightly larger accents) and are distributed in a naturally scattered, irregular manner, with loose spacing and non-uniform placement, creating a light, unstructured, and organic arrangement.These elements show translucency and visible brush strokes. Color palette includes moderately saturated warm tones (pink, coral, sunflower yellow, fresh green). These elements are rendered as clean, simple, stylized icons with limited internal detail, maintaining high transparency, luminous quality, and an airy feel. They reveal the subjects behind.
-
-      Placement: Illustrations are anchored in the lower portion of the composition, forming a clear visual base beneath the subjects. The majority of elements remain below the subjects’ seated position, with only minimal upward variation. Elements are distributed horizontally with slight irregularity, maintaining a grounded and stable composition. The upper area of the frame remains open and largely free of decorative elements, preserving visual focus on the subjects and heart line.
-
-      Primary graphic:  A clearly pink/ coral visible hand-painted heart line flows dynamically, encircling all subjects present as a cohesive group. This continuous heart line must physically intertwine with the subjects, creating explicit layered depth. Different segments are precisely rendered to pass in front of specific body parts (e.g., an arm or shoulder) and behind others (e.g., a subject's back), defining a clear, defined 3D woven pattern around the group.  The thin stroke remains painterly with visible acrylic texture and slight organic irregularity.
-
-      Styling: Female subjects wear white, cream, or pale yellow tulle dresses. Male subjects wear simple white shirt and beige pants. Overall styling is elegant and whimsical.
-
-      Color palette: moderately saturated tones with a soft, warm, and gentle appearance. Colors should feel slightly muted and blended rather than sharp or highly contrasted.
-
-      Composition: Medium shot, centered framing. Subjects occupy 80% of the frame. Color palette includes moderately saturated warm red, coral pink, sunflower yellow, and fresh green with a soft matte finish. Edges of painted elements are softly diffused, creating a warm and tender atmosphere. No text, logos, or furniture.
+      Keep the final image realistic, high-quality, and naturally photographed. Preserve believable anatomy, realistic fabric draping, natural hands, and proper interaction with the environment. Avoid cartoon style, fantasy exaggeration, modern clothing, modern accessories, messy background, extra people, distorted hands, awkward posture, text, logos, or watermarks. The final result should feel like an elegant ancient Greek-inspired editorial portrait of the uploaded person, beautifully posed among classical Greek ruins and columns, bathed in golden sunlight, with a clear Mediterranean sea-and-sky backdrop.
 
     video_model: v3
     video_mode: pro
@@ -223,210 +81,20 @@ tasks:
     video_ratio: '3:4'
     video_sound_enabled: true
     video_prompt: |
-      The two subjects stay in their seated hug; one gently rubs the other's back and gives a light squeeze, the other nuzzles in and tilts her head to rest cheek to cheek. They both giggle, blink, then slowly turn to look toward the front with warm bright smiles. Small natural movements only — shoulders, hands, head and expressions. The wide full-body framing stays fixed and unchanged, no zoom, no push-in, no crop. All painted hearts, flowers, gift and ribbon remain fully visible and unchanged.
-    video_negative_prompt: ''
+      Two people side by side, staying in place throughout: on the left a woman with long dark wavy hair, floral crown, cream Grecian gown; on the right a man in a white Grecian tunic. Both remain solid, opaque and fully visible head to feet in every frame — the man never fades, dissolves, or blends into the sky or columns.
 
-    concurrent_requests: 3
+      The colonnade keeps the same fluted pale-stone columns from the reference — no new columns, no roof, no beams appear. Existing columns may pass out of frame naturally; nothing is built to replace them.
 
-  - style_name: 'Mom Doodle (Pet)'
-    folder: 'Media Files/I2I2V/0724 9 Styles/0724 Mom Doodle (Pet)'
-    image_service: nano_banana
-    image_model: gemini-3.1-flash-image
-    image_resolution: '2K'
-    image_aspect_ratio: '3:4'
-    use_multi_image: true
-    multi_image_config:
-      mode: sequential
-    image_prompt: |
-      CRITICAL FACE ID LOCK — PRIORITY 1 (EXTREME): Use the uploaded photo(s) as the ONLY and ABSOLUTE source of each SUBJECT’s face. The generated faces must be the SAME REAL SUBJECTS as in the input photos, copied directly from the input, NOT reconstructed, NOT reinterpreted. Do NOT beautify, optimize, stylize, idealize, or normalize the faces in any way. Do NOT adjust facial proportions, features, symmetry, skin texture, or age. Do NOT change ethnicity, race, or regional facial characteristics. If any face does not immediately look identical to the corresponding input SUBJECT, the result is INVALID and must be regenerated. The faces must remain structurally and texturally identical to the input photos.
+      Small restrained movements: she straightens posture, one hand at her hip, turns slowly toward camera with a quiet composed expression. He shifts weight onto one leg, shoulders roll back, turns slowly toward camera. Feet planted. Fabric and loose hair drift softly in a breeze.
 
-      SUBJECT & SOURCE IMAGE RULES: Use the uploaded user photos as the ONLY visual sources for all SUBJECTS. The number of SUBJECTS in the final image must EXACTLY match the number of uploaded photos (1–4 only). No extra SUBJECTS. No duplicated faces. No merged identities. No face swapping. All facial features must come ONLY from the input photos.
-
-      Realistic studio photography with a clean, light gray background and diffused lighting. Subjects are seated on the floor, positioned in close, intimate physical proximity. Prioritize placing the adult female subject (mother) in the central position among the grouping. If multiple subjects are present, they display warm, happy interactions with a deep sense of family connection, including gentle leaning, soft touches, and shared gazes. Facial expressions must clearly convey happiness and emotional warmth with soft, happy smiles. One subject casually holds a paintbrush. Soft, bright studio lighting evenly illuminates the scene with a clean and airy feel. The light is gently diffused while maintaining subtle highlights on the subjects, creating a luminous and warm appearance without strong directional shadows. The entire image remains consistently sharp and in focus, with no depth-of-field blur.
-
-      Foreground effect: Hand-painted acrylic illustrations appear directly integrated within the scene, as if freely drawn in the air around the subjects. These elements do not belong to any visible surface or physical medium, and no transparent panel, glass, or material is present. Hand-painted acrylic illustrations are placed sparingly (6-8 elements total) and must be related to Mother's Day themes, including: flowers, gift boxes, greeting cards, hearts, and ribbons. Elements vary in size (a mix of small, medium, and slightly larger accents) and are distributed in a naturally scattered, irregular manner, with loose spacing and non-uniform placement, creating a light, unstructured, and organic arrangement.These elements show translucency and visible brush strokes. Color palette includes moderately saturated warm tones (pink, coral, sunflower yellow, fresh green). These elements are rendered as clean, simple, stylized icons with limited internal detail, maintaining high transparency, luminous quality, and an airy feel. They reveal the subjects behind.
-
-      Placement: Illustrations are anchored in the lower portion of the composition, forming a clear visual base beneath the subjects. The majority of elements remain below the subjects’ seated position, with only minimal upward variation. Elements are distributed horizontally with slight irregularity, maintaining a grounded and stable composition. The upper area of the frame remains open and largely free of decorative elements, preserving visual focus on the subjects and heart line.
-
-      Primary graphic:  A clearly pink/ coral visible hand-painted heart line flows dynamically, encircling all subjects present as a cohesive group. This continuous heart line must physically intertwine with the subjects, creating explicit layered depth. Different segments are precisely rendered to pass in front of specific body parts (e.g., an arm or shoulder) and behind others (e.g., a subject's back), defining a clear, defined 3D woven pattern around the group.  The thin stroke remains painterly with visible acrylic texture and slight organic irregularity.
-
-      Styling: Female subjects wear white, cream, or pale yellow tulle dresses. Male subjects wear simple white shirt and beige pants. Overall styling is elegant and whimsical.
-
-      Color palette: moderately saturated tones with a soft, warm, and gentle appearance. Colors should feel slightly muted and blended rather than sharp or highly contrasted.
-
-      Composition: Medium shot, centered framing. Subjects occupy 80% of the frame. Color palette includes moderately saturated warm red, coral pink, sunflower yellow, and fresh green with a soft matte finish. Edges of painted elements are softly diffused, creating a warm and tender atmosphere. No text, logos, or furniture.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      The person gently wraps an arm around the pet and pulls it a little closer, softly pats its back, strokes its head and scratches behind its ear; the pet leans into the touch, nuzzles against the person's hand, its ears flick and it looks up affectionately. They share a warm look with a soft laugh from the person, then both slowly turn to face the front with bright relaxed smiles. Movement stays within the upper body — arms, hands, head and expressions only. The wide full-body framing stays fixed, no zoom or crop. All painted hearts, flowers, gift and ribbon stay fully visible and unchanged.
-    video_negative_prompt: ''
-
-    concurrent_requests: 3
-
-  - style_name: '棒球風網美照 V3'
-    folder: 'Media Files/I2I2V/0724 9 Styles/0724 棒球風網美照 V3'
-    image_service: nano_banana
-    image_model: gemini-3-pro-image
-    image_resolution: '2K'
-    image_aspect_ratio: '3:4'
-    use_multi_image: true
-    multi_image_config:
-      mode: sequential
-    image_prompt: |
-      CRITICAL FACE ID LOCK — PRIORITY 1 (EXTREME) :
-      Use the uploaded photo(s) as the ONLY and ABSOLUTE source of the SUBJECT’s face. The generated face must be the SAME REAL SUBJECT as in the input photo, copied directly from the input, NOT reconstructed, NOT reinterpreted. Do NOT beautify, optimize, stylize, idealize, or normalize the face in any way.
-      If the face does not immediately look identical to the input SUBJECT, the result is INVALID and must be regenerated. The face must be directly copied from the input photo at the pixel-structure level, not re-generated or averaged.
-
-      SUBJECT & SOURCE IMAGE RULES:
-      Use the uploaded user photos as the ONLY visual sources for all SUBJECTS.
-      - The number of SUBJECTS in the final image must EXACTLY match the number of uploaded photos (1–4 only)
-      - No extra SUBJECTS
-      - No duplicated faces
-
-      MANDATORY STYLING ADJUSTMENT:
-      Refine and blend SUBJECT outfits into a mix of retro varsity aesthetic, 90s preppy style, and city-girl streetwear.
-
-      Tight, symmetrical cinematic fashion photography as a high-fashion magazine cover, with no text, no typography, no logos, and no graphic overlays.
-      The camera is positioned slightly above eye level with a gently tilted wide-angle view, creating mild downward compression and strong vertical depth; avoid fully side-on or pure profile viewpoints. The camera remains precisely aligned with the stadium seating lines, forming strong leading lines toward a clear vanishing point.
-
-      Subjects are casually dispersed across nearby rows of forest-green, American vintage-style stadium seats. While the seats themselves remain uniformly oriented in the same forward-facing direction with no variation or rotation—appearing clean and well-maintained—the subjects break this linear rigidity with dynamic, high-fashion poses, such as leaning asymmetrically on armrests or subtly tilting their torsos. Limbs must respect the physical structure of the stadium seats; no legs, feet, or bodies may pass through gaps, armrests, or solid seat components. No subject may appear suspended, floating, or unsupported by the stadium seating or ground.
-
-      All subject poses must be physically plausible and grounded in real-world body mechanics, with clear points of contact and weight support. Each subject must have at least one clear physical support point (feet on steps, seated contact, or leaning against a solid surface).
-      Limbs must respect the physical structure of the stadium seats; no legs, feet, or bodies may pass through gaps, armrests, or solid seat components.
-
-      Complementing this posture, most subjects are not looking directly at the camera, captured in candid, off-guard moments to enhance a natural, lived-in fashion atmosphere, while maintaining cool, detached, confident high-fashion editorial expressions.
-
-      Subjects may hold casual stadium snacks or cheering props in vintage packaging, featuring controlled red and yellow accents that add visual highlights without overpowering the overall color palette. No flags.
-
-      The background is minimalist and tightly cropped, showing only geometric forest-green plastic seats and the stadium’s metal roof structure features clean, revealing a clear blue sky with natural, realistic cloud formations. Ensure the roof follows a logical geometric grid with smooth, finished edges, avoiding any fragmented or jagged appearances.
-
-      Soft, diffused lighting creates a timeless editorial atmosphere with gentle contrast, restrained saturation, and subtle fine-grain texture, evoking an established fashion sensibility without referencing any specific era.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Both subjects stay locked in their original seats with no position change; only the camera moves around them. The camera performs a slow, smooth orbit — a gentle quarter-turn arc gliding around the two subjects, easing in and out, keeping both fully in frame the entire time.
-
-      Both subjects are watching a game happening in front of them. They hold a relaxed, natural pose with calm, pleasant expressions, eyes gently tracking the action in front of them. They maintain their poses steadily, with soft, subtle shifts in expression — a light smile, a calm and content look. Their hair drifts softly in the breeze throughout.
-
-      The rows of green stadium seats, roof structure, railings and fences remain fully static. Only the clouds in the sky drift slowly across the background. Smooth, unhurried motion with a warm, calm, cinematic feel.
-    video_negative_prompt: ''
-
-    concurrent_requests: 3
-
-  - style_name: '夏日煙火-多人'
-    folder: 'Media Files/I2I2V/0724 9 Styles/0724 夏日煙火-多人'
-    image_service: nano_banana
-    image_model: gemini-3.1-flash-image
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    use_multi_image: true
-    multi_image_config:
-      mode: sequential
-    image_prompt: |
-      ### [Highest Priority: Reference Image Usage]
-      * **Identity & Likeness Preservation:** Use the user-provided reference image only to preserve the exact identity, facial features, facial structure, face shape, eyes, nose, mouth, skin texture, natural likeness, body proportions, age impression, and overall facial consistency of each referenced subject as accurately as possible. Fully integrate these preserved identity traits into the new composition, styling, lighting, and scene described below.
-
-      * **Subject Count Control:** Use exactly the same subject count as shown in the reference image. Every referenced subject must appear clearly in the final image as an individual visible person. Only the referenced subject or referenced subjects may appear in the final image, and the same subject count must be preserved throughout the entire image.
-
-      * **Individual Subject Mapping:** Treat each referenced subject as one fixed individual. If the reference image contains multiple subjects, show every referenced subject clearly in the final image with their own distinct face, body placement, and visual role. Each referenced subject should remain recognizable and should not be replaced by background figures, partial silhouettes, or extra festival crowd elements.
-
-      * **Expression Consistency:** Keep each referenced subject’s expression natural, subtle, and close to the original reference expression. Use restrained facial expressions, gentle smiles, relaxed eyes, and calm facial movement. Preserve each subject’s core facial identity as the highest priority so the face remains stable, recognizable, and strongly consistent with the reference image.
-
-      * **Visibility & Angle Control:** Keep each referenced subject visually identifiable in the final image. Present all referenced subjects in a front-facing, three-quarter, or natural side-profile angle, with at least part of the face and facial features clearly visible.
-
-      ### [Core Scene & Mood]
-      * **Setting:** Create a realistic cinematic Japanese summer night photograph of the referenced subject or referenced subjects by the seaside. The scene takes place near a calm waterfront at night, with a wide open sky and soft sea reflections.
-
-      * **Atmosphere:** A nostalgic summer atmosphere. The overall mood should feel natural, quiet, emotional, and cinematic, like a candid memory from a Japanese summer film.
-
-      ### [Subject Action & Interaction]
-      * **Items & Actions:** Each referenced subject naturally holds one simple summer festival item, such as a clear glass ramune soda bottle with a transparent body and plain label-free surface, a handheld festival fan, or a candied apple held near the body. The item should be held casually as part of the scene, while the subject’s facial expression remains close to the reference image.
-
-      * **Gaze & Face Direction:** Keep each referenced subject in a natural candid moment with an off-camera gaze. Their eyes and face direction should gently turn toward the fireworks, the seaside, the handheld festival item, or another referenced subject. Use relaxed three-quarter or natural side-facing angles so the subjects feel like they are enjoying the scene rather than posing directly for the camera.
-
-      * **Multi-Subject Dynamics:** If the reference image contains multiple subjects, all referenced subjects should appear together and interact in a calm, natural, and lightly warm way. Their interaction should feel relaxed and realistic, with gentle eye contact between the referenced subjects, subtle smiles, and natural body language.
-
-      * **Poses:** Their poses, gestures, body directions, spacing, gaze directions, and depth placement should feel varied, relaxed, and organic while preserving the exact subject count from the reference image. The overall interaction should feel candid and genuine, like a real snapshot captured during a quiet summer night festival outing.
-
-      ### [Composition & Framing]
-      * **Framing:** Use a realistic candid photography composition with all referenced subjects placed naturally within the scene. Show the referenced subject or referenced subjects from a medium distance, allowing both the seaside atmosphere and the fireworks-filled night sky to remain important in the frame. The sky should take up a large portion of the image while every referenced subject remains clearly visible.
-
-      * **Motion:** The composition should feel natural and cinematic, with a soft sense of motion from body posture, handheld festival items, and fireworks light.
-
-      ### [Fireworks & Sky]
-      * **Sky Quality:** The sky should feel like a real summer blue-hour night by the sea, with a medium-deep blue atmosphere, natural nighttime depth, subtle cloud texture, faint smoke, and gentle photographic grain. Keep the sky clearly nighttime with a clean blue mood and realistic atmospheric variation.
-
-      * **Natural Sky Rendering:** Render the sky and seaside with a natural photographic look, including soft uneven haze, subtle smoke layers, realistic tonal variation, and a clear separation between sky, sea, and shoreline. The background should feel like an actual night photograph rather than a smooth digital color wash.
-
-      * **Fireworks Distribution:** The night sky is densely filled with brilliant fireworks spread widely across the entire frame. The fireworks should appear naturally scattered across the sky in a broad, layered, and immersive way, with multiple bursts distributed throughout the upper and surrounding areas rather than concentrated in one single spot. The overall arrangement should feel expansive, irregular, and visually rich.
-
-      * **Fireworks Aesthetics:** Use luminous fireworks with a refined mix of soft champagne gold, warm white, pale lemon yellow, muted mint green, soft cyan-blue, powdery lavender, gentle blush pink, pale coral, and delicate rose-red accents. The colors should feel varied, translucent, and softly layered, like elegant pastel fireworks glowing through light smoke, while staying refined and softly balanced. The fireworks should feature clear radiant lines, delicate sparkling trails, soft bloom, atmospheric haze, and gentle smoke, with subtle color variation between each burst.
-
-      * **Contrast:** Keep enough darker blue space and nighttime depth around the fireworks so their brightness remains visually striking. The sky should feel softly glowing yet still dark enough to support strong fireworks contrast and a clear summer-night atmosphere.
-
-      ### [Background & Depth of Field]
-      * **Depth of Field:** Use a realistic shallow depth of field for the distant background. Keep the sea, distant shoreline, and faraway lights softly atmospheric and out of focus, while all referenced subjects remain clear and recognizable.
-
-      * **Focus & Reflections:** Emphasize the soft reflections of the fireworks across the water rather than any ground detail. Only the fireworks in the sky should retain visible shape and recognizable outlines, while the rest of the distant background remains gently blurred and unobtrusive.
-
-      * **Background Control:** Keep the background as a clean seaside night scene with fireworks, water, shoreline atmosphere, and soft distant lights. The image should show only the referenced subject or referenced subjects, with the background kept clear of festival stalls, booths, extra festival objects, and additional human figures.
-
-      ### [Outfit Styling]
-      * **Yukata Saturated Tones:** The referenced subject or referenced subjects visible in the image wear more saturated summer yukata. The yukata should feel fresh, soft, and understated, with a clean Japanese summer festival style. Use richer, more saturated tones such as vivid rose pink, deep berry pink, cobalt blue, bright azure blue, or deep navy blue, combined with crisp white or lightly tinted floral or botanical patterns.
-
-      * **Gender-Specific Rules:** For female subjects, richer tones may include vivid rose pink, deep berry pink, cobalt blue, bright azure blue, or deep navy blue. For male subjects, prefer cobalt blue, bright azure blue, deep navy blue, muted indigo, slate blue, or other cool-toned saturated colors, while keeping the styling clean and natural.
-
-      * **Style:** Keep the yukata elegant, fresh, and understated, with simple floral or botanical details, balanced contrast, and a natural summer festival feeling.
-
-      ### [Hair & Accessories]
-      * **Female Subjects:** If the subject is female, style the hair naturally for a Japanese summer festival look. For longer hair, create a neat soft updo, low gathered bun, or compact festival bun. For shorter hair, preserve the short hairstyle while adding a delicate floral hair ornament.
-
-      * **Ornaments:** The hair ornament should feature small white or pale ivory flowers with soft translucent petals, subtle pale blue accents, and a refined natural finish, placed beside the bun or near the side of the hair. It should feel delicate, fresh, and understated.
-
-      * **Male/Animal Subjects:** If the subject is male or an animal, keep the original hair or fur identity consistent with the reference image and do not add hair ornaments.
-
-      ### [Lighting & Color]
-      * **Lighting Filter:** Use natural night photography lighting with a clean, luminous Japanese cinematic summer-night filter.
-
-      * **Color Grading:** The overall color grading should feel clean, soft, and photographic, built around a medium blue Japanese evening atmosphere. Use cool blue tones across the night sky, sea surface, and ambient shadows, with soft cyan-blue and muted indigo accents. Keep the image fresh, cinematic, and realistic while preserving clear nighttime depth and contrast.
-
-      * **Illumination:** Each referenced subject should be clearly visible and softly illuminated by reflected fireworks light, soft festival lighting, and gentle seaside ambient glow. The skin tone should remain natural and healthy, balanced between the cool blue seaside atmosphere and the warm golden festival light.
-
-      * **Glow & Exposure:** The fireworks should glow in an elegant, varied pastel palette, including champagne gold, warm white, pale lemon yellow, muted mint green, soft cyan-blue, powdery lavender, gentle blush pink, pale coral, and delicate rose-red accents. Their colors should appear airy, luminous, and softly diffused through subtle smoke, creating a refined multi-colored fireworks atmosphere. Their light should softly bloom into the blue night sky and reflect across the sea, creating a gentle luminous contrast against the cool background. Keep the overall exposure naturally balanced, with clean highlights, readable midtones, and softly airy shadows. Preserve enough darkness in the upper sky and background so the fireworks retain their visual impact, while the scene remains bright enough to show every referenced subject naturally.
-
-      ### [Photography Style]
-      * **Keywords:** Realistic cinematic seaside night photography, soft Japanese film still, natural candid snapshot, gentle CCD-like texture, realistic summer atmosphere, soft grain, subtle motion blur, natural lens bloom, realistic depth of field, emotionally warm and nostalgic.
-
-      * **Final Quality:** The image should have a controlled blue-hour night quality with natural haze, gentle film-like contrast, and a calm seaside atmosphere. The overall look should feel softly luminous and photographic, while clearly reading as a real summer night scene with preserved sky depth and strong fireworks presence. The final image should feel like a real captured summer night memory by the sea, with every referenced subject naturally immersed in the fireworks scene, surrounded by a softly glowing blue evening sky and warm fireworks light.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Both subjects stay in their original standing positions with no location change; the framing, camera angle and composition stay exactly the same as the reference throughout — no reframing, no camera movement, no cut.
-
-      FIRST: as fireworks suddenly burst across the sky, both subjects clearly and distinctly turn their bodies away from the camera to face the fireworks, rotating until their backs are fully toward the camera. They tilt their heads upward and lift their chins, gazing up at the sky where the fireworks bloom. The turn is obvious and pronounced — the whole body rotates. During the turn and while watching, their faces show quiet awe and wonder — calm, absorbed, eyes wide as they take in the sky, no smiling yet. For a moment they stand side by side from behind, backs to camera, heads tilted up in awe.
-
-      FINALLY: they slowly turn their heads and bodies back toward each other and meet each other's eyes. Only now their faces break into warm, delighted smiles — soft affectionate grins lighting up as they lock into a tender mutual gaze, sharing the joy of the moment while looking into each other's eyes.
-
-      Their hair and the loose fabric of their clothing sway softly in the sea breeze throughout. In the background, fireworks keep bursting, shimmering and lighting up the whole sky in color, reflecting brightly on the water.
+      Camera: a slow 180-degree orbit around the pair with a slight rise from low angle to eye level. Both people stay in a wide two-shot head-to-feet the whole time — the camera never pushes in or crops to a close-up.
     video_negative_prompt: |
-      static, frozen expression, no movement, stiff posture, minimal head movement, subtle turn, barely turning, not turning to fireworks, skipping the fireworks moment, no eye contact at the end, looking away from each other at the end, backs still to camera at the end, looking down, looking at the ground, raising arm, lifting hand, pointing gesture, waving, hand raised, arm up, distorted face, deformed hands, extra fingers, extra limbs, adding new objects, changing held item, morphing objects, warping, flickering, camera movement, zoom, pan, reframing, cut, shot change, change of composition, blurry, low quality, artifacts, duplicate subjects, merged bodies
+      fading person, translucent figure, dissolving subject, blending into sky, missing person, close-up, push-in, extra columns, roof appearing, geometry distortion, extra people, face morphing, no columns pass between the camera and the subjects at any point.
 
     concurrent_requests: 3
 
   - style_name: '拍貼系列-Style1:1995'
-    folder: 'Media Files/I2I2V/0724 9 Styles/0724 拍貼系列-Style1:1995'
+    folder: 'Media Files/I2I2V/0730 3 Styles/0730 拍貼系列-Style1:1995'
     image_service: nano_banana
     image_model: gemini-3-pro-image
     image_resolution: '1K'
@@ -466,17 +134,21 @@ tasks:
     video_ratio: '3:4'
     video_sound_enabled: true
     video_prompt: |
-      A single vertical portrait video in Y2K Japanese purikura poster style, one full-frame shot (not split), of two people posing close together against a solid pastel candy-colored backdrop (bright pink or sky blue). Bright even beauty-lighting gives their skin a soft flawless glow, cheerful youthful mood.
-      The two people lean in close side by side, both throwing crisp peace signs beside their faces with bright playful smiles, tilting their heads together. They animate with small lively purikura motions — playful head tilts, quick peace-sign gestures, cute winks, and warm giggles — staying close and cheerful, finally settling cheek to cheek with radiant happy smiles directed at the camera.
-      The colorful kawaii text and stickers decorating the frame stay present the whole time and animate with big bouncy energy — the bubbly outlined lettering, pixel-art hearts, hand-drawn hearts, ribbons, stars, tiny teddy bears, and smiling clouds pop, bounce, wobble, and swing playfully around the frame, some scaling up and down, some spinning slightly, some drifting in wide lively arcs, all staying inside the frame and never disappearing.
-      Bright cheerful purikura atmosphere, glossy skin glow, saturated pastel colors, playful nostalgic 2000s photo-sticker aesthetic, energetic fun feel.
+      Vertical portrait video, Y2K Japanese purikura poster style. One full-frame shot (not split), two people close together against a solid pastel candy backdrop (bright pink or sky blue). Bright even beauty-lighting, flawless skin glow, saturated pastels, nostalgic 2000s photo-sticker look. Static camera.
+
+      ONLY THE TWO PEOPLE MOVE. Every graphic element is completely frozen.
+
+      The two lean in close side by side, throwing crisp peace signs beside their faces with bright playful smiles, heads tilted together. Small lively purikura motions — playful head tilts, quick peace-sign gestures, cute winks, warm giggles — finally settling cheek to cheek with radiant happy smiles directed at the camera.
+
+      GRAPHIC LAYER — 100% IMMOBILE, ZERO AMPLITUDE:
+      The bubbly kawaii lettering, pixel-art hearts, hand-drawn hearts, ribbons, stars, tiny teddy bears and smiling clouds are real physical paper stickers glued flat onto a printed photo — rigid, adhered, permanently stuck, baked into the image itself, NOT animatable elements. Motion amplitude is exactly zero pixels: no movement, scaling, rotation, bounce, rocking, pulse, breathing, jitter, drift, shimmer, or fade. Every letter and sticker is bit-identical in every frame, exactly as in the first frame — same position, size, shape, outline, color and quantity, each with its complete unbroken silhouette, fully inside the frame, never clipped, never covered. Nothing added, nothing removed.
     video_negative_prompt: |
-      identity change, inconsistent faces, subjects merging together, faces overlapping, distorted faces, deformed hands, malformed fingers, extra limbs, split screen, panel grid, dark shadows, harsh lighting, dull colors, blurry, low quality, watermark, disappearing stickers, decorations leaving the frame
+      moving stickers, animated text, sticker motion, subtle sticker drift, micro-movement of decorations, decorations breathing, breathing pulse, bouncing letters, wobbling text, rocking stickers, text scaling, spinning decorations, drifting hearts, pulsing hearts, shimmering decorations, disappearing stickers, text fading, decorations leaving the frame, new stickers, new text, new decorations, deformed stickers, broken shapes, cut-off stickers, broken outline, morphing decorations, gibberish, camera movement, identity change, distorted faces, deformed hands, malformed fingers, extra limbs, blurry, low quality, watermark
 
     concurrent_requests: 3
 
   - style_name: '拍貼系列-Style2:2005-'
-    folder: 'Media Files/I2I2V/0724 9 Styles/0724 拍貼系列-Style2:2005-'
+    folder: 'Media Files/I2I2V/0730 3 Styles/0730 拍貼系列-Style2:2005-'
     image_service: nano_banana
     image_model: gemini-3-pro-image
     image_resolution: '1K'
@@ -562,17 +234,25 @@ tasks:
     video_ratio: '3:4'
     video_sound_enabled: true
     video_prompt: |
-      A single vertical portrait video in Y2K Japanese purikura poster style, one full-frame shot (not split), of two people posing close together against a solid pastel candy-colored backdrop (bright pink or sky blue). Bright even beauty-lighting gives their skin a soft flawless glow, cheerful youthful mood.
+      Vertical portrait video, Y2K Japanese purikura poster style. One full-frame shot (not split), two people posing close together against the exact pastel backdrop from the reference image. Bright beauty-lighting, glossy skin, saturated pastels. Static camera.
 
-      The two people lean in close side by side with bright playful smiles, tilting their heads gently toward each other. They animate with small lively purikura motions — playful head tilts, shy giggles, soft cheek-to-cheek touches, cute winks, and warm cheerful glances — staying close and cheerful throughout. Finally, they slowly turn their faces toward each other and lock eyes with big bright happy smiles — beaming at each other with pure joy, eyes sparkling, cheeks lifted, sharing a cheerful radiant moment of eye contact filled with youthful happiness and friendship. This happy face-to-face smiling gaze is the final settled expression of the shot.
+      ONLY THE TWO PEOPLE MOVE. Everything else is frozen.
 
-      Only the exact stickers, text, and decorations already visible in the original reference image are present in the video. These existing elements stay in place the whole time and animate with big bouncy energy — the original bubbly outlined lettering, pixel-art hearts, hand-drawn hearts, ribbons, stars, tiny teddy bears, and smiling clouds that are already there pop, bounce, wobble, and swing playfully around the frame, some scaling up and down, some spinning slightly, some drifting in wide lively arcs, all staying inside the frame. Absolutely no new stickers, no new text, no new hearts, no new decorations, no new graphic elements of any kind are ever added, introduced, generated, or appear at any point in the video. The set of decorations is strictly locked to what exists in the reference image — nothing more, nothing less. Every sticker, letter, and graphic element visible must be traceable to the original image.
+      The two stay in the reference purikura pose throughout — bodies facing camera, heads tilted inward, close side-by-side. Identity, outfits, hairstyles and framing exactly match the reference.
 
-      Bright cheerful purikura atmosphere, glossy skin glow, saturated pastel colors, playful nostalgic 2000s photo-sticker aesthetic, energetic fun feel.
+      Beat 1: both smile brightly at camera with small micro-motions — soft head tilts, tiny giggles, gentle cheek-to-cheek closeness, sparkling eyes.
+
+      Beat 2: without turning bodies or heads away from camera, they glance sideways at each other for a warm happy eye-contact moment — eyes meeting, cheeks lifted, big smiles.
+
+      Beat 3: both settle back into the exact reference pose, facing camera straight-on with big radiant happy smiles, lifted cheeks. Ends on the reference composition.
+
+      DECORATION LAYER — ABSOLUTELY IMMOBILE, ZERO AMPLITUDE:
+      All stickers, text, letters, hearts, ribbons and graphics are real physical paper stickers glued flat onto a printed photo — rigid, adhered, permanently stuck in place. They are printed into the frame, baked in, part of the image itself, NOT a separate animatable element. Motion amplitude is exactly zero pixels: no movement, scaling, rotation, bounce, wobble, drift, pulse, jitter, breathing, sway, shimmer, fade, flicker, opacity change, warping, or parallax. They do not react to or follow the people. Every decoration is bit-identical in every frame, first to last — same position, size, shape, edges. Nothing added, nothing removed, nothing shifts even a fraction of a pixel.
     video_negative_prompt: |
-      new stickers appearing, additional stickers, extra stickers not in original, generated stickers, new text appearing, new letters, new words, additional text, extra typography, new hearts appearing, extra hearts, additional hearts, new decorations, extra decorations, new graphic elements, new emoji, new icons, new sparkles added, new stars added, new ribbons added, new characters added, new mascots added, new speech bubbles, new tags, new labels, new frames, new borders, new overlays, new doodles, new drawings, stickers materializing, decorations popping into existence, sticker duplication, text duplication, sticker multiplication, hallucinated decorations, invented graphics, unauthorized additions, decoration count increasing, sticker count changing, peace sign, V sign, ya pose, fingers up beside face, hand gestures near face, hands raised, fingers near cheeks, raising hands, lifting hands, showing fingers, hand poses, finger poses, looking at camera at the end, facing camera at the end, front view at the end, turning back to camera at the end, serious face at the end, neutral expression at the end, romantic tension, ambiguous romantic mood, lingering gaze, flushed cheeks, lips parted, noses touching, intimate close-up, kissing, mouths touching, overly sexual, inappropriate contact, identity change, inconsistent faces, subjects merging together, faces overlapping, distorted faces, deformed hands, malformed fingers, extra limbs, split screen, panel grid, dark shadows, harsh lighting, dull colors, blurry, low quality, watermark, disappearing stickers, decorations leaving the frame
+      moving stickers, animated text, sticker motion, subtle sticker drift, micro-movement of decorations, decorations shifting, bouncing letters, wobbling text, jittering decorations, swaying stickers, text scaling, letters resizing, spinning decorations, drifting hearts, floating stickers, pulsing hearts, shimmering decorations, flickering text, sticker parallax, decorations following the subjects, warping text, decorations disappearing, stickers vanishing, text fading, new stickers, new text, new hearts, new decorations, camera movement, turning to profile, showing back of head, rotating away from camera, looking away from camera at end, peace sign, V sign, hands raised, kissing, identity change, distorted faces, blurry, low quality
 
     concurrent_requests: 3
+
 
 comments:
   example: |
@@ -769,3 +449,4 @@ comments:
     Intermediate frame:  {source_name}_image.{ext}   in Generated_Frames/
     Final video:          {source_name}.mp4           in Generated_Video/
     Metadata:             {source_name}_metadata.json in Metadata/
+
