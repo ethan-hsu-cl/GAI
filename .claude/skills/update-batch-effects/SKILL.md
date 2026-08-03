@@ -13,7 +13,7 @@ Replace the `tasks:` block in one of three batch effects config files with a new
 |---|---|---|
 | Kling Effects | `Scripts/config/batch_kling_effects_config.yaml` | `effect:` (empty) + `custom_effect: 'name'`, no blank line between entries |
 | Vidu Effects | `Scripts/config/batch_vidu_effects_config.yaml` | `category: People` + `custom_effect_name: name`, blank line between entries |
-| Pixverse | `Scripts/config/batch_pixverse_config.yaml` | `effect: Name` + `prompt: ''` + `custom_effect_id: 'id'` + `negative_prompt: ''`, blank line between entries |
+| Pixverse | `Scripts/config/batch_pixverse_effect_config.yaml` | `effect: Name` + `prompt: ''` + `custom_effect_id: 'id'` + `negative_prompt: ''`, blank line between entries |
 
 ## Step 1 — Identify the target config
 
@@ -29,6 +29,9 @@ The user supplies a newline-separated list, or a table pasted from a deck/sheet.
 - `effect_name` — name only. Used for Kling and Vidu.
 - `effect_name<TAB>id` or `effect_name<whitespace>id` (id is all digits) — name + numeric ID. Used for Pixverse.
 - If the source is a table with a `Type` column (e.g. `Human`, `Pet`), capture it per row.
+- If the source has a sound column, capture it per row too (see below).
+
+Ignore any other columns — a demo-content / subject column (`口紅`, `香水`, `機械產品`…) documents what the vendor demoed the template on; it is **not** a `source_type` and must not be written into the tasks. Source images are supplied per batch, not per effect.
 
 For Pixverse, every entry must have an ID. If any entry is missing one, stop and ask the user.
 
@@ -37,6 +40,12 @@ For Vidu, default `category` to `People` unless the user specifies otherwise.
 ### Type column → `source_type`
 
 If the table has a `Type` column, add `source_type: <value>` (lowercased) to each task whose type is not the default `human` (e.g. `pet`). Omit the field entirely for `human`/default rows — don't write `source_type: human`. This field drives auto-copying of images into each effect's Source folder from `Media Files/Sources` at run time (see `folder_structure` comment in the config for details); it isn't something this skill acts on directly.
+
+A batch whose images are all one kind (e.g. an all-product batch) needs no `source_type` at all — the images go in a flat `base_folder/Source/`, which every task picks up.
+
+### Sound column → `sound_effect_switch`
+
+Pixverse only. If the table has a sound column, a row marked `off` / `no` / `false` gets `sound_effect_switch: false` as the last line of its task entry. Rows that are blank or marked on get nothing — the config's `default_settings.sound_effect_switch` (true) applies. Kling and Vidu effects have no such field; ignore the column for them.
 
 ## Step 3 — Format the new `tasks:` block
 
@@ -84,12 +93,14 @@ tasks:
     custom_effect_id: 'ID_2'
     negative_prompt: ''
     source_type: pet
+    sound_effect_switch: false
 ```
 - 2-space indent for list items
 - `effect` value unquoted; `custom_effect_id` quoted with single quotes
 - `prompt` and `negative_prompt` always empty strings
 - One blank line between entries
-- `source_type` (if present) is the last line of the entry, unquoted, only for non-`human` rows
+- `source_type` (if present) comes after `negative_prompt`, unquoted, only for non-`human` rows
+- `sound_effect_switch: false` (if present) is the last line of the entry, only for rows the source marks sound-off
 
 ## Step 4 — Apply the edit
 
@@ -121,7 +132,7 @@ Every time the `tasks:` block is replaced, also rewrite `base_folder` to reflect
 Keep the path prefix (everything before the last segment) exactly as it appears in the file — only the final segment changes. Edit the `base_folder:` line via a separate `Edit` call so the tasks-block edit stays self-contained.
 
 Examples:
-- Pixverse with 7 entries on 2026-05-22 → `Media Files/Pixverse/0522 7 Styles`
+- Pixverse with 7 entries on 2026-05-22 → `Media Files/Pixverse Effects/0522 7 Styles`
 - Vidu with 1 entry on 2026-05-22 → `Media Files/Vidu/0522 1 Effect`
 - Kling with 2 entries on 2026-05-22 → `Media Files/Kling Effects/0522 2 Effects`
 

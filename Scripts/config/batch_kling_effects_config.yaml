@@ -16,11 +16,11 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Kling Effects/0724 16 Effects
+base_folder: Media Files/Kling Effects/0731 14 Effects
 
 design_link: https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=1225550147#gid=1225550147
 provider_reference_link: https://app.klingai.com/global/dev/document-api/quickStart/productIntroduction/effectsCenter
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgAKaVHTBftsTKWn7TgrqqELAVtDtf-OBpW8OSiSPH_H6p8?e=uhvkT1
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCQ3kcKWqLJToRsgMoUoyGrAbaIrS9FccZMXqgb2T9FBhc?e=8b35Ct
 
 # Tasks - each represents a style/effect to apply
 # Effect selection per task:
@@ -29,41 +29,39 @@ source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedri
 # The effect name (custom_effect or effect) is used as the subfolder name in base_folder
 tasks:
   - effect:
-    custom_effect: 'balloon_parade'
-  - effect:
-    custom_effect: 'chubby_fish'
+    custom_effect: 'dj_pet'
     source_type: pet
   - effect:
-    custom_effect: 'surfsurf'
-  - effect:
-    custom_effect: 'jazz_jazz'
-  - effect:
-    custom_effect: 'wool_curly'
-  - effect:
-    custom_effect: 'surprise_bouquet'
-  - effect:
-    custom_effect: 'pink_pink_wings'
-  - effect:
-    custom_effect: 'woodland_elf'
-  - effect:
-    custom_effect: 'luminous_elf'
-  - effect:
-    custom_effect: 'throne_of_king'
-  - effect:
-    custom_effect: 'j_var_live'
-  - effect:
-    custom_effect: 'pet_fitness'
+    custom_effect: 'pet_diving'
     source_type: pet
   - effect:
-    custom_effect: 'disco_paws'
+    custom_effect: 'firework'
+  - effect:
+    custom_effect: 'heart_gesture_1'
+  - effect:
+    custom_effect: 'make_it_rain'
+  - effect:
+    custom_effect: 'wealth_drive'
+  - effect:
+    custom_effect: 'running'
+  - effect:
+    custom_effect: 'food_splash'
+  - effect:
+    custom_effect: 'trampoline'
+  - effect:
+    custom_effect: 'trampoline_night'
     source_type: pet
   - effect:
-    custom_effect: 'pet_chef'
+    custom_effect: 'feed_mooncake'
+  - effect:
+    custom_effect: 'critter_paste'
     source_type: pet
   - effect:
-    custom_effect: 'snatched'
+    custom_effect: 'wiggle_faces_pets'
+    source_type: pet
   - effect:
-    custom_effect: 'polar_bear_hug'
+    custom_effect: 'paw_headbang'
+    source_type: pet
 
 comments:
   base_folder: |

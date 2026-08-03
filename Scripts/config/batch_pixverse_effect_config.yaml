@@ -20,94 +20,135 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Pixverse Effects/0703 16 Styles
+base_folder: Media Files/Pixverse Effects/0731 20 Styles
 template_path: templates/I2V standard 4col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1441759153#gid=1441759153
 provider_reference_link: https://aisphere.feishu.cn/wiki/GKwywQM3oixt4EkOM1IceWw8n5f?table=tblfxIxbTQwb57kk&view=vewTVy4A0p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCMoDbsa3lgRa4bZ_b3VBTwAT92KnDWNP7uhUjTE0OneQQ?e=3IxgBO
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgA6--4C4zTFS7zUbCpdybCmAVkIBkw_qzxm0JcXWiUnxjY?e=FHx48D
 
 tasks:
-  - effect: GOALS Rush
+  - effect: 毛绒工厂
     prompt: ''
-    custom_effect_id: '406218913317312'
+    custom_effect_id: '407473438360320'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Feeling Good
+  - effect: 夏日明信片
     prompt: ''
-    custom_effect_id: '389908394208832'
+    custom_effect_id: '407658863287616'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Apex Aesthetic
+  - effect: 逐浪夏日
     prompt: ''
-    custom_effect_id: '399815460334400'
+    custom_effect_id: '407467702283008'
     negative_prompt: ''
+    source_type: product
+    sound_effect_switch: false
 
-  - effect: Helicopter Show
+  - effect: 吸入产品宇宙
     prompt: ''
-    custom_effect_id: '402681598491648'
+    custom_effect_id: '407474361215744'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Little Dino Ride
+  - effect: 滑雪乐
     prompt: ''
-    custom_effect_id: '396331605587904'
+    custom_effect_id: '406411724685760'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Fatal Ace
+  - effect: 猫咪小铺
     prompt: ''
-    custom_effect_id: '394754123468736'
+    custom_effect_id: '406428904874432'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Palm Decode
+  - effect: 悬浮雨林
     prompt: ''
-    custom_effect_id: '400223288594880'
+    custom_effect_id: '397748775352256'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Gloom to Bloom
+  - effect: 花果点缀
     prompt: ''
-    custom_effect_id: '392392566261184'
+    custom_effect_id: '397749924120512'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Divine Mode Activated
+  - effect: 渐入花境
     prompt: ''
-    custom_effect_id: '395286837630912'
+    custom_effect_id: '397573198544832'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Full Throttle
+  - effect: 广告导演
     prompt: ''
-    custom_effect_id: '396493410627520'
+    custom_effect_id: '396498191605696'
     negative_prompt: ''
+    source_type: product
 
-  - effect: 'The Tiny Nom Nom: LIVE'
+  - effect: 中国风卷轴
     prompt: ''
-    custom_effect_id: '393969466697664'
+    custom_effect_id: '374023083075072'
     negative_prompt: ''
+    source_type: product
 
-  - effect: The Private Press
+  - effect: 产品特写（6s）
     prompt: ''
-    custom_effect_id: '394709589270464'
+    custom_effect_id: '368492855374272'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Skyfall Vanguard
+  - effect: 机械装配
     prompt: ''
-    custom_effect_id: '394577285404032'
+    custom_effect_id: '369281788356224'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Moonlit Eid
+  - effect: 沙滩广告
     prompt: ''
-    custom_effect_id: '392968539895680'
+    custom_effect_id: '368492376619456'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Alien Sand Plains
+  - effect: 降落伞派送
     prompt: ''
-    custom_effect_id: '392596845600576'
+    custom_effect_id: '366951270155072'
     negative_prompt: ''
+    source_type: product
 
-  - effect: Hawak mo ang beat
+  - effect: 光影广告
     prompt: ''
-    custom_effect_id: '392415610586560'
+    custom_effect_id: '366951955215168'
     negative_prompt: ''
+    source_type: product
+
+  - effect: 梦幻云端
+    prompt: ''
+    custom_effect_id: '366950737546048'
+    negative_prompt: ''
+    source_type: product
+
+  - effect: 海洋环境广告
+    prompt: ''
+    custom_effect_id: '364649375312640'
+    negative_prompt: ''
+    source_type: product
+
+  - effect: 超市货架
+    prompt: ''
+    custom_effect_id: '365192361458432'
+    negative_prompt: ''
+    source_type: product
+
+  - effect: 动态海报（b端定制）
+    prompt: ''
+    custom_effect_id: '361429166535744'
+    negative_prompt: ''
+    source_type: product
 
 comments:
   base_folder: |
