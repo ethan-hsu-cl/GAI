@@ -1,0 +1,86 @@
+# Wan V3 Endframe Configuration
+# Generates videos from pairs of start/end frame images on the /wan_v3 route.
+template_path: templates/I2V standard 5col.pptx
+comparison_template_path: templates/I2V comparison 5col.pptx
+
+output:
+  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  group_tasks_by: 0
+
+testbed: http://192.168.31.161/external-testbed/video_effect/
+design_link: ""
+source_video_link:
+generation_count: 1
+
+schedule:
+  start_time: ''
+
+default_settings:
+  resolution: 1080P
+  ratio: adaptive
+  duration: 5
+  duration_auto: false
+  audio_out: true
+  thinking: false
+
+tasks:
+  - folder: Media Files/Wan V3 Endframe/0806 1 Style/Iron Raptor
+    prompt: |
+      The bird ignites, its feathers consumed by flame and reforged into gleaming metal plating. It raises its head as the fire peaks, wings spreading in a slow, deliberate arc, then settles as the flames cool into polished steel.
+    pairing_mode: ab_naming
+    ratio: adaptive
+    design_link: ''
+    source_video_link: ''
+    reference_folder: ''
+    use_comparison_template: false
+
+comments:
+  endpoint: |
+    All four wan_v3 platforms share the /wan_v3 route on the video_effect testbed.
+    This one sends the prompt plus the A image as first_frame and the paired B image
+    as last_frame — the reference galleries, audio, document, and web page URL are
+    left empty.
+  folder: |
+    Task folder containing the 'Source' subfolder with the image pairs.
+    Generated_Video and Metadata subfolders are created automatically.
+  pairing_mode: |
+    How Source images are paired into start/end frames.
+    Options:
+      'ab_naming'  - default; pairs 'Name_A 1024x1024.jpg' with 'Name_B 1024x1024.jpg'
+      'sequential' - pairs by sorted filename; first half are start frames, second
+                     half end frames (6 images → pairs (1,4), (2,5), (3,6))
+  generation_count: |
+    Videos generated per image pair. Global here, overridable per task.
+    With more than 1, outputs are named {name}_generated_{n}.mp4.
+  default_settings: |
+    Global default settings applied to all tasks. Any of these keys can also be set
+    per task to override the global value.
+  resolution: |
+    Output video resolution.
+    Options: '480P', '720P', '1080P'
+    Default: '1080P'
+  ratio: |
+    Video aspect ratio. 'adaptive' follows the frame images.
+    Options: '16:9', '9:16', '1:1', '4:3', '3:4', 'adaptive'
+    Default: 'adaptive'
+  duration: |
+    Video duration in seconds. Ignored when duration_auto is true.
+    Default: 5
+  duration_auto: |
+    Let the model pick the duration instead of using the duration value.
+    Default: false
+  audio_out: |
+    Generate an audio track with the video.
+    Default: true
+  thinking: |
+    Enable the endpoint's prompt reasoning pass before generating.
+    Default: false
+  prompt: |
+    Text prompt describing the transition from the start frame to the end frame.
+  expected_folder_structure: |
+    TaskFolder/
+    ├── Source/
+    │   ├── Iron Raptor_A 1024x1024.png
+    │   └── Iron Raptor_B 1024x1024.png
+    ├── Generated_Video/   # {name}_A_generated.mp4 (auto-created)
+    └── Metadata/          # auto-created

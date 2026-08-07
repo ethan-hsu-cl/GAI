@@ -16,11 +16,11 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Kling Effects/0804 5 Effects
+base_folder: Media Files/Kling Effects/0806 3 Effects
 
 design_link: https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=1225550147#gid=1225550147
 provider_reference_link: https://app.klingai.com/global/dev/document-api/quickStart/productIntroduction/effectsCenter
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDCJpgTddLIRr-3HyyC9ip1AUQq5ayVcgFinwnjhhkP_HE?e=0IiiWy
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDBDHbsRaSVRrFyDsgX3od5AdSfF1KnFtZ2pLoIQbeOv4Y?e=tfhQcM
 
 # Tasks - each represents a style/effect to apply
 # Effect selection per task:
@@ -29,16 +29,11 @@ source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedri
 # The effect name (custom_effect or effect) is used as the subfolder name in base_folder
 tasks:
   - effect:
-    custom_effect: 'summer_fireworks'
+    custom_effect: 'birthday_dress_up'
   - effect:
-    custom_effect: 'birthday_board'
+    custom_effect: 'wave_rider'
   - effect:
-    custom_effect: 'net_the_fish'
-  - effect:
-    custom_effect: 'furry_birthday'
-    source_type: pet
-  - effect:
-    custom_effect: 'window_down_blow'
+    custom_effect: 'sunbathing'
 
 comments:
   base_folder: |

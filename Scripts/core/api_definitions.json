@@ -1879,5 +1879,276 @@
       "Async（背景輪詢）",
       "Sync（等待結果）"
     ]
+  },
+  "wan_v3_ttv": {
+    "endpoint": "http://192.168.31.161/external-testbed/video_effect/",
+    "api_name": "/wan_v3",
+    "file_types": [],
+    "validation": {},
+    "folders": {
+      "output": "Generated_Video",
+      "metadata": "Metadata"
+    },
+    "rate_limit": 3,
+    "task_delay": 10,
+    "max_retries": 3,
+    "special_handling": "text_to_video",
+    "config_structure": "task_list",
+    "report": {
+      "enabled": true,
+      "template_path": "templates/I2V standard 5col.pptx",
+      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "use_comparison": false
+    },
+    "task_fields": [
+      "prompt",
+      "resolution",
+      "ratio",
+      "duration",
+      "duration_auto",
+      "audio_out",
+      "thinking",
+      "generation_count"
+    ],
+    "api_params": {
+      "prompt": "",
+      "resolution": "1080P",
+      "ratio": "adaptive",
+      "duration": 5,
+      "duration_auto": false,
+      "audio_out": true,
+      "thinking": false
+    },
+    "resolution_options": [
+      "480P",
+      "720P",
+      "1080P"
+    ],
+    "ratio_options": [
+      "16:9",
+      "9:16",
+      "1:1",
+      "4:3",
+      "3:4",
+      "adaptive"
+    ]
+  },
+  "wan_v3_i2v": {
+    "endpoint": "http://192.168.31.161/external-testbed/video_effect/",
+    "api_name": "/wan_v3",
+    "file_types": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".webp"
+    ],
+    "validation": {
+      "max_size_mb": 30,
+      "min_dimension": 300,
+      "aspect_ratio": [
+        0.25,
+        4.0
+      ]
+    },
+    "folders": {
+      "input": "Source",
+      "output": "Generated_Video",
+      "metadata": "Metadata"
+    },
+    "rate_limit": 3,
+    "task_delay": 10,
+    "max_retries": 3,
+    "special_handling": "image_to_video",
+    "config_structure": "base_folder",
+    "structure_type": "base_folder",
+    "report": {
+      "enabled": true,
+      "template_path": "templates/I2V standard 5col.pptx",
+      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "use_comparison": false
+    },
+    "task_fields": [
+      "folder",
+      "style_name",
+      "prompt",
+      "resolution",
+      "ratio",
+      "duration",
+      "duration_auto",
+      "audio_out",
+      "thinking",
+      "generation_count"
+    ],
+    "api_params": {
+      "prompt": "",
+      "resolution": "1080P",
+      "ratio": "adaptive",
+      "duration": 5,
+      "duration_auto": false,
+      "audio_out": true,
+      "thinking": false
+    },
+    "resolution_options": [
+      "480P",
+      "720P",
+      "1080P"
+    ],
+    "ratio_options": [
+      "16:9",
+      "9:16",
+      "1:1",
+      "4:3",
+      "3:4",
+      "adaptive"
+    ]
+  },
+  "wan_v3_endframe": {
+    "endpoint": "http://192.168.31.161/external-testbed/video_effect/",
+    "api_name": "/wan_v3",
+    "file_types": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".webp"
+    ],
+    "validation": {
+      "max_size_mb": 30,
+      "min_dimension": 300,
+      "aspect_ratio": [
+        0.25,
+        4.0
+      ]
+    },
+    "folders": {
+      "input": "Source",
+      "output": "Generated_Video",
+      "metadata": "Metadata"
+    },
+    "rate_limit": 3,
+    "task_delay": 10,
+    "max_retries": 3,
+    "special_handling": "image_pairs",
+    "config_structure": "task_folders",
+    "report": {
+      "enabled": true,
+      "template_path": "templates/I2V standard 5col.pptx",
+      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "use_comparison": false,
+      "comparison_template_path": "templates/I2V comparison 5col.pptx"
+    },
+    "task_fields": [
+      "folder",
+      "pairing_mode",
+      "prompt",
+      "resolution",
+      "ratio",
+      "duration",
+      "duration_auto",
+      "audio_out",
+      "thinking",
+      "generation_count"
+    ],
+    "api_params": {
+      "prompt": "",
+      "resolution": "1080P",
+      "ratio": "adaptive",
+      "duration": 5,
+      "duration_auto": false,
+      "audio_out": true,
+      "thinking": false
+    },
+    "pairing_mode_options": [
+      "ab_naming",
+      "sequential"
+    ],
+    "resolution_options": [
+      "480P",
+      "720P",
+      "1080P"
+    ],
+    "ratio_options": [
+      "16:9",
+      "9:16",
+      "1:1",
+      "4:3",
+      "3:4",
+      "adaptive"
+    ]
+  },
+  "wan_v3_reference": {
+    "endpoint": "http://192.168.31.161/external-testbed/video_effect/",
+    "api_name": "/wan_v3",
+    "file_types": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".webp"
+    ],
+    "validation": {
+      "max_size_mb": 30,
+      "min_dimension": 300,
+      "aspect_ratio": [
+        0.25,
+        4.0
+      ]
+    },
+    "folders": {
+      "input": "Source",
+      "reference": "Reference",
+      "output": "Generated_Video",
+      "metadata": "Metadata"
+    },
+    "rate_limit": 3,
+    "task_delay": 10,
+    "max_retries": 3,
+    "special_handling": "multi_image_reference",
+    "max_references": 9,
+    "aspect_ratios": [
+      "9:16",
+      "16:9",
+      "1:1"
+    ],
+    "config_structure": "base_folder",
+    "structure_type": "base_folder",
+    "report": {
+      "enabled": true,
+      "template_path": "templates/I2V standard 5col.pptx",
+      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "use_comparison": false
+    },
+    "task_fields": [
+      "effect",
+      "prompt",
+      "resolution",
+      "ratio",
+      "duration",
+      "duration_auto",
+      "audio_out",
+      "thinking"
+    ],
+    "api_params": {
+      "prompt": "",
+      "resolution": "1080P",
+      "ratio": "adaptive",
+      "duration": 5,
+      "duration_auto": false,
+      "audio_out": true,
+      "thinking": false
+    },
+    "resolution_options": [
+      "480P",
+      "720P",
+      "1080P"
+    ],
+    "ratio_options": [
+      "16:9",
+      "9:16",
+      "1:1",
+      "4:3",
+      "3:4",
+      "adaptive"
+    ]
   }
 }

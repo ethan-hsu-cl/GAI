@@ -1,6 +1,6 @@
 # Automated Processing & Reporting Automation Suite
 
-A Python automation framework for batch processing images/videos through 23 AI APIs with automated PowerPoint report generation.
+A Python automation framework for batch processing images/videos through 30 AI APIs with automated PowerPoint report generation.
 
 ## Contents
 
@@ -129,6 +129,10 @@ python core/runall.py kling auto
 | `genvideo` | GenVideo | I2I | Gashapon-style image transformation |
 | `runway` | Runway Gen4 | V2V | Face swap / motion, `one_to_one` or `all_combinations` pairing |
 | `wan` | Wan 2.2 | I+V | Auto-cropping, video × image cross-match |
+| `wan_v3_ttv` (`wanv3ttv`) | Wan V3 TTV | T2V | `/wan_v3`, prompt only |
+| `wan_v3_i2v` (`wanv3i2v`) | Wan V3 I2V | I2V | `/wan_v3`, source image as first frame |
+| `wan_v3_endframe` (`wanv3endframe`) | Wan V3 Endframe | I2V | `/wan_v3`, A→B first/last frame pairs |
+| `wan_v3_reference` (`wanv3ref`) | Wan V3 Reference | I2V | `/wan_v3`, source + up to 9 references in one gallery |
 | `dreamactor` | DreamActor | I+V | Face reenactment via image × video cross-match |
 | `motion_swap` | Motion Swap | I+V | Motion transfer via subject image × motion video cross-match |
 | `happyhorse_vedit` | HappyHorse Video Edit | V2V | Prompt-driven video edit with up to 5 reference images (append or cross-match) |
@@ -150,6 +154,8 @@ python core/runall.py kling auto
 | Vidu Reference | 50 MB | 128 px / — | JPG, PNG, WebP |
 | Seedance I2V | 30 MB | 300 px / — | JPG, PNG, WebP |
 | Veo ITV | 30 MB | 300 px / — | JPG, PNG, WebP |
+| Wan V3 I2V / Endframe | 30 MB | 300 px / — | JPG, PNG, BMP, WebP |
+| Wan V3 Reference | 30 MB | 300 px / — | JPG, PNG, WebP |
 | Nano Banana | 32 MB | 300 px / — | JPG, PNG, WebP |
 | OpenAI Image | 32 MB | 100 px / — | JPG, PNG, WebP |
 | GenVideo | 50 MB | 128 px / — | JPG, PNG, WebP |
@@ -160,7 +166,7 @@ python core/runall.py kling auto
 | HappyHorse Video Edit | image 10 MB / video 100 MB | image ≥ 300 px; video shorter ≥ 320 px, longer ≤ 2160 px, 3–60 s, AR 1:2.5–2.5:1 | image: JPG, PNG, WebP; video: MP4, MOV |
 | FIFA I2I2V / I2I2V | 30 MB | 256 px / — | JPG, PNG, WebP |
 
-(Text-to-video APIs — Kling TTV, Pixverse TTV, Seedance TTV, Veo, Gemini Omni TTV — take no source files.)
+(Text-to-video APIs — Kling TTV, Pixverse TTV, Seedance TTV, Veo, Gemini Omni TTV, Wan V3 TTV — take no source files.)
 
 ### Output filenames
 
@@ -169,7 +175,7 @@ python core/runall.py kling auto
 | Kling | `{filename}_generated.mp4` |
 | Kling Effects / Pixverse I2V / Vidu | `{filename}_{effect}_effect.mp4` |
 | Kling Endframe | `{filename}_generated_{n}.mp4` |
-| Kling TTV / Pixverse TTV / Seedance TTV / Gemini Omni TTV | `{style}-{n}_generated.mp4` |
+| Kling TTV / Pixverse TTV / Seedance TTV / Gemini Omni TTV / Wan V3 TTV | `{style}-{n}_generated.mp4` |
 | Kling Motion | `{video}_{image}_motion.mp4` |
 | Veo / Veo ITV | `{style}-{n}_generated.mp4` / `{source_image}_{n}.mp4` |
 | Pixverse Multi | `iter{NNN}_{img1_stem}_{img2_stem}_..._{Effect}_effect.mp4` |
@@ -181,6 +187,9 @@ python core/runall.py kling auto
 | OpenAI Image | `{filename}_image_{n}.{ext}` |
 | GenVideo | `{filename}_generated.{ext}` |
 | Seedance I2V | `{source_image}_{n}.mp4` |
+| Wan V3 I2V | `{source_image}_{n}.mp4` |
+| Wan V3 Endframe | `{filename}_generated.mp4` (multi-gen: `{filename}_generated_{n}.mp4`) |
+| Wan V3 Reference | `{filename}_{effect}.mp4` |
 | FIFA I2I2V | video `{source_image}_{n}.mp4`, frames `{source_image}_{n}_{start\|end}.png` |
 | I2I2V | video `{source_image}_{n}.mp4`, frames `{source_image}_{n}.{ext}` |
 
@@ -212,7 +221,7 @@ API-specific input layouts:
 - OpenAI Image → same as Nano Banana
 - Runway → `Source/` (videos) + `Reference/` (images)
 - HappyHorse Video Edit → `Source/` (videos) + optional `Reference/` (up to 5 images, append or cross-match)
-- Vidu Reference → `Source/` + `Reference/`
+- Vidu Reference / Wan V3 Reference → `Source/` + `Reference/`
 - Pixverse Effects → `Source/` (Source pool is consumed in chunks of `image_count`)
 - FIFA I2I2V / I2I2V → `Source/` (frames in `Generated_Frames/`, videos in `Generated_Video/`)
 
@@ -924,6 +933,85 @@ tasks:
 ```
 
 **Cross-matching:** all videos × all images (e.g., 5 videos × 4 images = 20 outputs). Requires `Source Image/` and `Source Video/` folders.
+
+#### Wan V3 (four platforms, one endpoint)
+
+The `/wan_v3` route on the `video_effect` testbed takes a prompt plus a reference-image gallery (max 10), a reference-video gallery, reference audio, first/last frame images, a document, and a web page URL. Four platforms drive that one route, each filling a different subset of the inputs and leaving the rest empty:
+
+| Platform | Config | Inputs sent |
+| --- | --- | --- |
+| `wan_v3_ttv` | `config/batch_wan_v3_ttv_config.yaml` | prompt only |
+| `wan_v3_i2v` | `config/batch_wan_v3_i2v_config.yaml` | prompt + source image as `first_frame` |
+| `wan_v3_endframe` | `config/batch_wan_v3_endframe_config.yaml` | prompt + `first_frame` (A) + `last_frame` (B) |
+| `wan_v3_reference` | `config/batch_wan_v3_reference_config.yaml` | prompt + source and reference images in the `images` gallery |
+
+All four share the same `default_settings` block, and every key in it can be overridden per task:
+
+```yaml
+testbed: http://192.168.31.161/external-testbed/video_effect/
+
+default_settings:
+  resolution: 1080P      # 480P / 720P / 1080P
+  ratio: adaptive        # 16:9 / 9:16 / 1:1 / 4:3 / 3:4 / adaptive
+  duration: 5            # seconds; ignored when duration_auto is true
+  duration_auto: false
+  audio_out: true
+  thinking: false
+```
+
+**Wan V3 TTV** — prompt-only; all generations share one root `output_folder`.
+
+```yaml
+output_folder: Media Files/Wan V3 TTV/0806 21 Styles
+generation_count: 1
+
+tasks:
+  - style_name: Dog_Run_To_Owner
+    prompt: |
+      A dog is happily running toward its owner with excitement
+    ratio: "16:9"
+```
+
+**Wan V3 I2V** — one folder per style, each with a `Source/` subfolder.
+
+```yaml
+root_folder: Media Files/Wan V3 I2V
+generation_count: 1   # videos per source image
+
+tasks:
+  - style_name: Dog_Run_To_Owner
+    folder: Media Files/Wan V3 I2V/0806 21 Styles/Dog_Run_To_Owner
+    prompt: |
+      A dog is happily running toward its owner with excitement
+    ratio: adaptive
+```
+
+**Wan V3 Endframe** — A/B image pairs in `Source/`, same pairing modes as Kling Endframe.
+
+```yaml
+generation_count: 1
+
+tasks:
+  - folder: Media Files/Wan V3 Endframe/0806 1 Style/Iron Raptor
+    prompt: |
+      The bird ignites, its feathers reforged into gleaming metal plating.
+    pairing_mode: ab_naming   # or 'sequential'
+    ratio: adaptive
+```
+
+**Wan V3 Reference** — `base_folder/<effect>/{Source,Reference}`; the source image plus up to 9 references go into the gallery together, addressable in the prompt as `image1`, `image2`, ….
+
+```yaml
+base_folder: Media Files/Wan V3 Reference/0806 1 Style
+
+tasks:
+  - effect: New Year - Japan Style
+    prompt: |
+      The woman from image1 wears the kimono from image2, framed from the waist up.
+    ratio: adaptive
+```
+
+**Defaults:** 1080P, adaptive ratio, 5 s, auto-duration off, audio on, thinking off. Outputs are `{style}-{n}_generated.mp4` (TTV), `{source_image}_{n}.mp4` (I2V), `{name}_A_generated.mp4` (Endframe), and `{source}_{Effect}.mp4` (Reference).
 
 #### DreamActor (`config/batch_dreamactor_config.yaml`)
 
