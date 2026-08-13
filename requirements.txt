@@ -1,0 +1,27 @@
+# AI Video Suite — Python dependencies
+# Install:  pip install -r requirements.txt
+# Requires Python 3.10+ with tkinter (stdlib, ships with python.org / Homebrew python-tk)
+
+# API clients
+gradio_client>=1.11.1
+requests>=2.32.0
+browser-cookie3>=0.19.1
+
+# Config parsing
+PyYAML>=6.0.2
+ruamel.yaml>=0.18.0
+
+# Image / video processing
+pillow>=10.0.0
+pillow-heif>=1.1.0
+opencv-python>=4.12.0
+
+# Reporting
+python-pptx>=1.0.0
+
+# CLI / runtime utilities
+tqdm>=4.67.0
+wakepy>=0.10.2
+
+# Build only — uncomment to package the desktop app (see build_executable.md)
+# pyinstaller>=6.18.0

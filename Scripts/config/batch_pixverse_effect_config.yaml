@@ -20,135 +20,96 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Pixverse Effects/0731 20 Styles
+base_folder: Media Files/Pixverse Effects/0807 16 Styles
 template_path: templates/I2V standard 4col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1441759153#gid=1441759153
 provider_reference_link: https://aisphere.feishu.cn/wiki/GKwywQM3oixt4EkOM1IceWw8n5f?table=tblfxIxbTQwb57kk&view=vewTVy4A0p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgA6--4C4zTFS7zUbCpdybCmAVkIBkw_qzxm0JcXWiUnxjY?e=FHx48D
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgB5KzyqL6AmRZRstx_aY4VBASYK0NQID-JcoE3rHGH7R1Q?e=O9r5go
 
 tasks:
-  - effect: 毛绒工厂
+  - effect: Poke My Tiny Friend
     prompt: ''
-    custom_effect_id: '407473438360320'
+    custom_effect_id: '410999246341952'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 夏日明信片
+  - effect: Crowd Cam Crush
     prompt: ''
-    custom_effect_id: '407658863287616'
+    custom_effect_id: '411174903569216'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 逐浪夏日
+  - effect: Pocket Stadium
     prompt: ''
-    custom_effect_id: '407467702283008'
+    custom_effect_id: '408897485909952'
     negative_prompt: ''
-    source_type: product
-    sound_effect_switch: false
+    source_type: building
 
-  - effect: 吸入产品宇宙
+  - effect: Cavalona dance
     prompt: ''
-    custom_effect_id: '407474361215744'
+    custom_effect_id: '391002072757312'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 滑雪乐
+  - effect: Cat Studio Director
     prompt: ''
-    custom_effect_id: '406411724685760'
+    custom_effect_id: '412424848725056'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 猫咪小铺
+  - effect: Oriental Phonk
     prompt: ''
-    custom_effect_id: '406428904874432'
+    custom_effect_id: '384097020511808'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 悬浮雨林
+  - effect: The Hidden Billionaire Reveal
     prompt: ''
-    custom_effect_id: '397748775352256'
+    custom_effect_id: '413643803983232'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 花果点缀
+  - effect: COLD STOP
     prompt: ''
-    custom_effect_id: '397749924120512'
+    custom_effect_id: '389058793983040'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 渐入花境
+  - effect: Slick-Back Style
     prompt: ''
-    custom_effect_id: '397573198544832'
+    custom_effect_id: '379687567643648'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 广告导演
+  - effect: Ctrl+C, Ctrl+V But Make It Real
     prompt: ''
-    custom_effect_id: '396498191605696'
+    custom_effect_id: '415922986066112'
     negative_prompt: ''
-    source_type: product
+    source_type: pet
 
-  - effect: 中国风卷轴
+  - effect: MJ Dance
     prompt: ''
-    custom_effect_id: '374023083075072'
+    custom_effect_id: '415265487980480'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 产品特写（6s）
+  - effect: After the Fall
     prompt: ''
-    custom_effect_id: '368492855374272'
+    custom_effect_id: '415087977937920'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 机械装配
+  - effect: Mini Me Unboxed
     prompt: ''
-    custom_effect_id: '369281788356224'
+    custom_effect_id: '414714760096768'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 沙滩广告
+  - effect: Seaside Runway
     prompt: ''
-    custom_effect_id: '368492376619456'
+    custom_effect_id: '402512411653184'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 降落伞派送
+  - effect: Mini Squeeze Toy
     prompt: ''
-    custom_effect_id: '366951270155072'
+    custom_effect_id: '416190154083840'
     negative_prompt: ''
-    source_type: product
 
-  - effect: 光影广告
+  - effect: Mini Me Makeover
     prompt: ''
-    custom_effect_id: '366951955215168'
+    custom_effect_id: '416808623273536'
     negative_prompt: ''
-    source_type: product
-
-  - effect: 梦幻云端
-    prompt: ''
-    custom_effect_id: '366950737546048'
-    negative_prompt: ''
-    source_type: product
-
-  - effect: 海洋环境广告
-    prompt: ''
-    custom_effect_id: '364649375312640'
-    negative_prompt: ''
-    source_type: product
-
-  - effect: 超市货架
-    prompt: ''
-    custom_effect_id: '365192361458432'
-    negative_prompt: ''
-    source_type: product
-
-  - effect: 动态海报（b端定制）
-    prompt: ''
-    custom_effect_id: '361429166535744'
-    negative_prompt: ''
-    source_type: product
 
 comments:
   base_folder: |
