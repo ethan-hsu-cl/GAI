@@ -3,7 +3,7 @@ template_path: templates/I2V standard 4col.pptx
 prompt: ''
 
 output:
-  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 9
 
 schedule:
@@ -12,7 +12,7 @@ schedule:
 model_version: viduq2-pro
 
 base_folder: Media Files/Vidu/0608 4 Effects
-output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1441759153#gid=1441759153
 provider_reference_link: https://platform.vidu.com/docs/templates

@@ -30,7 +30,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -195,7 +195,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -246,7 +246,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -311,7 +311,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -396,7 +396,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -457,7 +457,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -532,7 +532,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 4col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -586,7 +586,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -655,7 +655,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -715,7 +715,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -776,7 +776,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -832,7 +832,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 4col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -889,7 +889,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -992,7 +992,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -1036,7 +1036,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -1121,7 +1121,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -1230,7 +1230,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -1298,7 +1298,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -1327,7 +1327,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -1421,7 +1421,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -1474,7 +1474,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -1536,7 +1536,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": true
     },
     "task_fields": [
@@ -1606,7 +1606,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 4col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -1685,7 +1685,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 4col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -1814,7 +1814,7 @@
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
       "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -1864,7 +1864,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -1897,7 +1897,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -1965,7 +1965,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [
@@ -2034,7 +2034,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false,
       "comparison_template_path": "templates/I2V comparison 5col.pptx"
     },
@@ -2115,7 +2115,7 @@
     "report": {
       "enabled": true,
       "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
       "use_comparison": false
     },
     "task_fields": [

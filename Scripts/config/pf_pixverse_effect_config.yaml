@@ -1,5 +1,5 @@
 output:
-  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 8
 default_settings:
   model: v6

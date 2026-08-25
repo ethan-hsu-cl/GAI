@@ -12,7 +12,7 @@ movement: auto
 audio: true
 
 output:
-  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 3
 
 schedule:
@@ -20,7 +20,7 @@ schedule:
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
 base_folder: Media Files/Vidu I2V/0518 3 Styles
-output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1601579607#gid=1601579607
 source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCjqsNsah3BQ4XY0sAeiXFuAUjNBVQ4pISdKbGd200pFzU?e=iXOJVo

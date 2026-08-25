@@ -6,7 +6,7 @@
 template_path: templates/I2V standard 5col.pptx
 
 output:
-  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   # Group N tasks into one combined report. Set to 0 or omit for individual reports.
   # Example: with 5 tasks and group_tasks_by=5, creates 1 report with all 5 styles.
   # The report filename and title will include all style names.

@@ -1,5 +1,5 @@
 output:
-  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 4
 default_settings:
   model: v6
@@ -20,95 +20,75 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Pixverse Effects/0807 16 Styles
+base_folder: Media Files/Pixverse Effects/0824 12 Styles
 template_path: templates/I2V standard 4col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1441759153#gid=1441759153
 provider_reference_link: https://aisphere.feishu.cn/wiki/GKwywQM3oixt4EkOM1IceWw8n5f?table=tblfxIxbTQwb57kk&view=vewTVy4A0p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgB5KzyqL6AmRZRstx_aY4VBASYK0NQID-JcoE3rHGH7R1Q?e=O9r5go
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgA3rAYOzTqNT6wzVZwuBQbPAZ60wkVha4U_LQkjwkGiHFE?e=CQiXii
 
 tasks:
-  - effect: Poke My Tiny Friend
+  - effect: My Little Perler Charm
     prompt: ''
-    custom_effect_id: '410999246341952'
+    custom_effect_id: '418815439392256'
     negative_prompt: ''
 
-  - effect: Crowd Cam Crush
+  - effect: Where did this cobweb come from?
     prompt: ''
-    custom_effect_id: '411174903569216'
+    custom_effect_id: '418800954072576'
     negative_prompt: ''
 
-  - effect: Pocket Stadium
+  - effect: Holy Beast Summoning Technique
     prompt: ''
-    custom_effect_id: '408897485909952'
-    negative_prompt: ''
-    source_type: building
-
-  - effect: Cavalona dance
-    prompt: ''
-    custom_effect_id: '391002072757312'
+    custom_effect_id: '418801639489024'
     negative_prompt: ''
 
-  - effect: Cat Studio Director
+  - effect: Pet Editorial
     prompt: ''
-    custom_effect_id: '412424848725056'
-    negative_prompt: ''
-
-  - effect: Oriental Phonk
-    prompt: ''
-    custom_effect_id: '384097020511808'
-    negative_prompt: ''
-
-  - effect: The Hidden Billionaire Reveal
-    prompt: ''
-    custom_effect_id: '413643803983232'
-    negative_prompt: ''
-
-  - effect: COLD STOP
-    prompt: ''
-    custom_effect_id: '389058793983040'
-    negative_prompt: ''
-
-  - effect: Slick-Back Style
-    prompt: ''
-    custom_effect_id: '379687567643648'
-    negative_prompt: ''
-
-  - effect: Ctrl+C, Ctrl+V But Make It Real
-    prompt: ''
-    custom_effect_id: '415922986066112'
+    custom_effect_id: '419113983637696'
     negative_prompt: ''
     source_type: pet
 
-  - effect: MJ Dance
+  - effect: IT'S THE FIRST OF THE MONTH
     prompt: ''
-    custom_effect_id: '415265487980480'
+    custom_effect_id: '418798312359424'
     negative_prompt: ''
 
-  - effect: After the Fall
+  - effect: Power Flex
     prompt: ''
-    custom_effect_id: '415087977937920'
+    custom_effect_id: '419843399118144'
     negative_prompt: ''
 
-  - effect: Mini Me Unboxed
+  - effect: Mama! Blast Off
     prompt: ''
-    custom_effect_id: '414714760096768'
+    custom_effect_id: '419684700427584'
+    negative_prompt: ''
+    source_type: pet
+
+  - effect: Three lifetime bond
+    prompt: ''
+    custom_effect_id: '418934356626944'
     negative_prompt: ''
 
-  - effect: Seaside Runway
+  - effect: Birthday on Fire
     prompt: ''
-    custom_effect_id: '402512411653184'
+    custom_effect_id: '418401353385024'
     negative_prompt: ''
 
-  - effect: Mini Squeeze Toy
+  - effect: Born To Shine On Stage
     prompt: ''
-    custom_effect_id: '416190154083840'
+    custom_effect_id: '418456472466368'
     negative_prompt: ''
 
-  - effect: Mini Me Makeover
+  - effect: Reveal the Face in the Haunted Portrait
     prompt: ''
-    custom_effect_id: '416808623273536'
+    custom_effect_id: '418463513877440'
+    negative_prompt: ''
+
+  - effect: The stars on stage
+    prompt: ''
+    custom_effect_id: '418457177152448'
     negative_prompt: ''
 
 comments:

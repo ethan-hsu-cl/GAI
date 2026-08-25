@@ -55,7 +55,7 @@ Create `Scripts/config/batch_{api_name}_config.yaml`.
 ```yaml
 # {Platform} Configuration
 template_path: templates/I2V standard 5col.pptx
-output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 testbed: {endpoint_url}
 design_link: ""
 source_video_link: ""
@@ -98,7 +98,7 @@ Add an entry to `Scripts/core/api_definitions.json` under the API name key.
     "report": {
         "enabled": true,
         "template_path": "templates/I2V standard 5col.pptx",
-        "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+        "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
         "use_comparison": false
     },
     "task_fields": ["prompt", ...],

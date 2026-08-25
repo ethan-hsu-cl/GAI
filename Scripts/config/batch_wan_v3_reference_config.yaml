@@ -2,13 +2,13 @@
 # Sends a source image plus its reference images together in the /wan_v3
 # reference-image gallery (10 images max, so up to 9 references per source).
 base_folder: Media Files/Wan V3 Reference/0806 1 Style
-output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 template_path: templates/I2V standard 5col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 default_prompt: ''
 
 output:
-  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 0
 
 schedule:

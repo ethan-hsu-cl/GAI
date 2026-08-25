@@ -3055,7 +3055,7 @@ class UnifiedReportGenerator:
             "enabled": True,
             "template_path": "templates/I2V standard 5col.pptx",
             "comparison_template_path": "templates/I2V comparison 5col.pptx",
-            "output_directory": "/Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report",
+            "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
             "use_comparison": self.api_name in ["kling", "nano_banana", "openai_image", "runway", "wan", "dreamactor", "motion_swap", "kling_motion"]
         }
     

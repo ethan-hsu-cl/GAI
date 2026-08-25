@@ -1,7 +1,7 @@
 # Wan V3 Text-to-Video Configuration
 # Generates videos from text prompts (no input images required)
 template_path: templates/I2V standard 5col.pptx
-output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 testbed: http://192.168.31.161/external-testbed/video_effect/
 design_link: ""
 source_video_link:

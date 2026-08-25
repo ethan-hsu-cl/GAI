@@ -312,7 +312,7 @@ model_version: v2.1
 generation_count: 1
 
 output:
-  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 3
 
 tasks:
@@ -758,7 +758,7 @@ Image generation using OpenAI's `gpt-image-N` family — same multi-image / rand
 testbed: http://192.168.31.161/external-testbed/image_generation/
 
 output:
-  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 1
 
 tasks:
@@ -859,7 +859,7 @@ Generic two-step pipeline: **image generation** (Nano Banana **or** OpenAI Image
 testbed: http://192.168.31.161/external-testbed/image_generation/
 
 output:
-  directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 2
 
 tasks:

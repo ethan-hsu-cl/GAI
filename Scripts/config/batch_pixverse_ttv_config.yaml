@@ -2,7 +2,7 @@
 # Generates videos from text prompts (no input images required)
 template_path: templates/I2V standard 5col.pptx
 # Report Output Directory
-output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 # Root folder where generated videos will be saved. Metadata folder will be created automatically.
 testbed: http://192.168.31.161/external-testbed/video_effect/
 design_link: https://platform.pixverse.ai/

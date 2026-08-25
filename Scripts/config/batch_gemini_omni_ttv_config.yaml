@@ -5,7 +5,7 @@
 # single call returns the finished video.
 template_path: templates/I2V standard 5col.pptx
 # Report Output Directory
-output_directory: /Users/ethanhsu/Desktop/EthanHsu-cl/GAI/Report
+output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 testbed: http://192.168.31.161/external-testbed/google_veo/
 design_link: ""
 source_video_link: ""
