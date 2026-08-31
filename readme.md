@@ -265,6 +265,8 @@ tasks:
 
 **Options:** Model (`v1.6` / `v2.1` / `v2.5-turbo` / `v3`), Mode (`std` / `pro`), Duration (`5` / `10`), CFG (`0.0` – `1.0`).
 
+`model_version` can also be set **per task**, overriding the root value — useful when one batch mixes prompts that each ship on a different model version. See [Model A/B comparison](#model-ab-comparison).
+
 #### Kling Effects (`config/batch_kling_effects_config.yaml`)
 
 Applies premade video effects to images. Supports both preset effects and custom effect names.
@@ -1103,6 +1105,42 @@ Rules:
 - **Text-to-video layout.** For text-to-video comparisons the prompt is parked off-slide (kept in the file but outside the viewable area) so the generated videos fill the full slide width.
 - **Reviewer boxes.** The "Rank / comments:" box under each video is a PowerPoint placeholder — single-click to type, and the greyed prompt text disappears as you type (no double-click needed).
 - Currently supported families for rendering: **image+video**, **image-to-video**, and **text-to-video**.
+
+### Model A/B comparison
+
+Run the same prompts and the same source images on two model versions and review them side by side. The pair `config/batch_kling_v3ab_baseline_config.yaml` (control) and `config/batch_kling_v3ab_config.yaml` (test) is a worked example — 10 prompts on their current model version vs. Kling v3.
+
+1. **Two folder trees, identical sources.** Each prompt gets a task folder per side, e.g. `Media Files/Kling 2.1/0827 Example_109_Soft-Flick` and `Media Files/Kling 3.0/0827 Example_109_Soft-Flick`. Drop the source images into the test side, then mirror them:
+
+   ```bash
+   for d in "Media Files/Kling 3.0/0827 Example_"*; do
+     n=$(basename "$d")
+     base="Media Files/Kling 2.1/$n"; [ -d "$base" ] || base="Media Files/Kling 1.6/$n"
+     rsync -a --delete "$d/Source/" "$base/Source/"
+   done
+   ```
+
+   The report matches the two sides by source-image filename, so the images must be the same files.
+
+2. **Hold everything else constant.** `mode`, `duration`, `resolution` and the prompt/negative-prompt text must be identical in both configs — the model version is the only variable.
+
+3. **Run the control side, process only.** Per-task `model_version` lets one run cover a mixed baseline (e.g. 7 prompts on `v2.1`, 3 on `v1.6`):
+
+   ```bash
+   python core/runall.py kling process --config config/batch_kling_v3ab_baseline_config.yaml
+   ```
+
+4. **Run the test side with its report.** Each test task sets `use_comparison_template: true` and points `reference_folder` at its control folder, so the deck uses the 3-media comparison template — source image plus both videos on one slide:
+
+   ```bash
+   python core/runall.py kling auto --config config/batch_kling_v3ab_config.yaml
+   ```
+
+On each comparison slide the columns are **Source | Video 1 = test output | Video 2 = control output** (Kling's comparison layout renders the generated result before the reference), the metadata box under the source describes the test run — including the `Model:` line — and each video gets its own "Rank / comments" box.
+
+`group_tasks_by` decides how the deck is split — `10` puts all ten comparisons in one file, `4` or `5` produces a set of smaller decks. The 5col template's Executive Summary (`Pass符合prompt` / `Pass不合prompt`) and the per-slide "Rank / comments" boxes are filled in by the reviewer.
+
+Re-running only the test side later (`report` action) rebuilds the deck from existing media without regenerating anything.
 
 ## 🖥️ Desktop GUI
 

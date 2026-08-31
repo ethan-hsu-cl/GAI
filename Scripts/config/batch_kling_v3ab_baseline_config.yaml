@@ -1,0 +1,175 @@
+# Kling v3 A/B Benchmark — BASELINE (control) side
+# 10 prompts on the model version each one currently ships with (7x v2.1, 3x v1.6).
+# Run 'process' only; the deck comes from batch_kling_v3ab_config.yaml.
+template_path: templates/I2V standard 5col.pptx
+comparison_template_path: templates/I2V comparison 5col.pptx
+output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
+testbed: http://192.168.31.161/external-testbed/kling/
+model_version: v2.1
+schedule:
+  start_time: ''
+group_tasks_by: 10
+tasks:
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 2.1/0827 Example_109_Soft-Flick
+  prompt: |
+    女性微微歪头，双手缓缓拨起头发聚于脑后，一手抓发、一手轻抚脖颈，展露锁骨线条。她回望镜头，眼神慵懒撩人。镜头稳定推近，细腻捕捉她整理发丝与微妙表情，营造出自然而性感的氛围。
+  negative_prompt: |
+    动作过快、不自然的节奏、缺乏唇部细节、表情僵硬、眼神无交流、未完整整理头发、绑发动作中断、不连贯、发丝杂乱、身体姿势僵硬、动作静止缺乏流动感、情绪表现不足、构图混乱、不稳定、缺乏特写镜头、颈部与手部细节模糊、画面缺少性感氛围、脸部表情冷淡、眼神空洞、视线偏离镜头、嘴部模糊、动作层次不明确
+  concurrent_requests: 3
+  model_version: v2.1
+  reference_folder: ''
+  use_comparison_template: false
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 2.1/0827 Example_107_Body-Roll
+  prompt: |
+    一个女生站起來第一秒自然舞动，双臂插腰在大腿两侧，双膝微微蹲下再馬上站直，同时开始臀部左右摇摆，在原地扭动屁股，动作转换自然流畅，镜头后退缓慢移动。 像舞台表演一样充满吸引力，气氛暧昧舞者神韵性感，看向镜头。
+  negative_prompt: |
+    no hip twisting,no idle pose,incomplete actions,deformed hands, bad hands,disappearing hands, blurred hands,deformed hands,no rapid hand movement,imperfect ending,third-party hands appearing,back view at the end,back facing the camera,no dissolve,broken pose,elegant motion only,Squat,poor anatomy,stiff hips,unfinished motion,unsmooth movement, no walking away,robotic motion, no rhythm,abrupt transitions, cropped limbs, no deep squats, hands moving too fast and disappearing suddenly, raised hands, feet together, swaying like a dragon, hand swinging, finger dance, body spin,no idle pose,no idle poseOther guy.
+  concurrent_requests: 3
+  model_version: v2.1
+  reference_folder: ''
+  use_comparison_template: false
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 2.1/0827 Example_118_Honey-Spin-Pop
+  prompt: |
+    The character stands at a slight angle, facing the camera with a confident, playful smile. She starts with a sharp, complete pivot-spin—turning to one side and rotating back to front in one smooth, continuous motion performed at a brisk, rhythm-matched pace. The spin is mandatory and must not be skipped or shortened. Her feet stay close together, stepping lightly to maintain rhythm and balance. As she turns, her hips sway side to side with fluid, seductive motion. Only one arm lifts high overhead, drawing a full circular swirl with clear motion and relaxed wrist. Her other hand stays at her waist or brushes her thigh. After the swirl, the raised arm performs a slow vertical sweep, then lowers smoothly onto her hip. The other hand joins at her waist. With both hands in place, she pops her hips confidently, then sways them side to side in rhythm. This hip sway is a required ending motion and must be fully shown. Her gaze stays locked on the camera with a flirty smile. All actions are complete, rhythmic, and expressive—nothing skipped.
+  negative_prompt: |
+    sitting, kneeling, crouching, idle or static poses, change characters, no full turn, incomplete motion, skipped steps, missing pose transitions, t-pose, frozen or robotic movements, unnatural or stiff arms, limp fingers, missing knuckle detail, hand glitches, unclear hand placement, hands covering face, arm crossing, hand placement behind body, grabbing or pulling hair, emotionless face, dull or flat expression, weak eye contact, stiff hips, oversized or awkward motion, cartoon swirl effects, dissolve effect, distracting accessories, visual clutter, wardrobe that hides body shape, back view, missing motion, low-resolution edges, alpha blending, blurry silhouette, soft boundary merge, shadow-light mismatch, light leak, ghosting, double edges, subject-background fusion, background fusion, character merging with background, visual overlay, background blocking body, visual obstruction, depth mismatch, lighting conflict, transparency error, poor cutout, edge bleed, softened figure outline,open legs,change scene,rotating head without body alignment
+  concurrent_requests: 3
+  model_version: v2.1
+  reference_folder: ''
+  use_comparison_template: false
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 1.6/0827 Example_008_Elegance
+  prompt: |
+    Gracefully moves a hand to gently brush through the hair
+  negative_prompt: ''
+  concurrent_requests: 3
+  model_version: v1.6
+  reference_folder: ''
+  use_comparison_template: false
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 2.1/0827 Example_108_Heart-Dance
+  prompt: |
+    主角站起來跳舞，她雙手在胸前比出愛心手勢，一邊跳一段性感、有魅力的舞蹈。臀部隨著音樂輕微擺動，強調身體曲線。她的目光直視鏡頭。鏡頭緩緩推近，優雅地捕捉每一個動作。
+  negative_prompt: |
+    sitting, sit, pinky raised, holding hair, strong light, overpower, keep walking forward, waving her arms, spinning around, robotic movement, no motion, overexposure, oversaturated colors, broken pose, poor anatomy, stiff hips, blurry, low-res, stiff animation, hands weirdly deformed, limbs deformed, broken fingers, deformed finger, extra limbs, disfigured hand gestures, bad anatomy, unnatural motion, awkward transitions, low detail, glitch, out of frame, unstable camera, awkward hand pose, waving hands, hand swinging, excessive arm motion, shaking arms, cropped limbs
+  concurrent_requests: 3
+  model_version: v2.1
+  reference_folder: ''
+  use_comparison_template: false
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 2.1/0827 Example_131_Super-Fly
+  prompt: |
+    人物猛然躍起，擺出超人飛行的姿勢，隨著氣流翻飛，鏡頭從側面跟拍，捕捉他從城市上空快速飛掠而過的身影，他身形筆直，動作果斷，自如地穿梭在高樓林立的城市之間。
+  negative_prompt: ''
+  concurrent_requests: 3
+  model_version: v2.1
+  reference_folder: ''
+  use_comparison_template: false
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 2.1/0827 Example_121_Burger-Bite
+  prompt: |
+    A cute animal suddenly reaches in from off-screen and grabs a big juicy hamburger. It brings the burger to its mouth with both paws, happily takes a big bite, then closes its mouth and starts chewing. The animal shows a satisfied expression. The movements are exaggerated and silly, the art style is cartoonish and humorous, and the overall atmosphere is cheerful.
+  negative_prompt: |
+    realistic style, human hand, stiff animation, low energy, sad atmosphere, creepy smile, blurry, glitch, low resolution, bad anatomy, boring background, dark lighting
+  concurrent_requests: 3
+  model_version: v2.1
+  reference_folder: ''
+  use_comparison_template: false
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 2.1/0827 Example_111_Superman
+  prompt: |
+    A semi-transparent burst of white vapor erupts from the man's body, forming a shockwave that surrounds him as he stands confidently in midair. As the vapor fully envelops him, his outfit instantly transforms into a blue skintight suit. His face remains naturally visible and completely unobstructed. A V-shaped emblem appears on his chest, and a metallic belt wraps around his waist. A red cape materializes and flows behind him, adding dramatic flair. Once the transformation is complete, his determined expression is clearly visible. He launches into the sky in a powerful and stylish flying pose — both arms raised high above his head with fists clenched, legs straight, and body streamlined. He glides smoothly through the clouds, bathed in warm sunlight. The camera follows the hero in motion, capturing him, the glowing chest emblem, and the flowing cape. Sunlight pierces the sky, creating a dramatic and inspirational atmosphere.
+  negative_prompt: |
+    helmet, headgear, hood, mask, visor, face covering, hidden face, eye mask, goggles, robotic helmet, sci-fi headgear, bald head, blue face, smoke, steam, fire, sparks, face transformed, cartoon style, no motion, not change costume, changing character, character jump out of the frame, multi people, blurry, out of focus, deformed face, distorted face, bad anatomy, glitch, low resolution, duplicate limbs, flickering, background crowd, dirty clouds, unnatural lighting, hard cuts, broken transition, bent arms, arms to side, open hands, arms behind, weak flying pose, slouched posture, bent knees, legs apart, wrong costume color, red pants, white pants, mismatched clothing, hairstyle change, shoes, Cloth shoes, Blue hair
+  concurrent_requests: 3
+  model_version: v2.1
+  reference_folder: ''
+  use_comparison_template: false
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 1.6/0827 Example_004_High-Five
+  prompt: |
+    Two people smoothly turn toward each other with excited smiles as they perform a high-energy single-hand high five, their palms meeting perfectly with seamless motion and impeccable timing, followed by a slight, natural recoil that settles effortlessly, radiating pure joy
+  negative_prompt: ''
+  concurrent_requests: 3
+  model_version: v1.6
+  reference_folder: ''
+  use_comparison_template: false
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  resolution: 720p
+  folder: Media Files/Kling 1.6/0827 Example_011_Fighting
+  prompt: |
+    The two individuals engage in an intense and immediate fight, in a chaotic brawl, displaying aggressive movements and fierce expressions
+  negative_prompt: ''
+  concurrent_requests: 3
+  model_version: v1.6
+  reference_folder: ''
+  use_comparison_template: false
+comments:
+  model_version: |
+    Model version to use for video generation.
+    Options: 'v1.6', 'v1.5', 'v2.0-master', 'v2.1', 'v2.1-master', 'v2.5-turbo', 'v2.6', 'v3'
+    Set globally at the root, or per-task to override the root value — the per-task
+    override is what lets one baseline run mix v2.1 and v1.6 prompts.
+  mode: |
+    Generation mode: 'std' (faster) or 'pro' (higher quality).
+    Must match between the baseline and v3 configs — the model version is
+    the only variable this benchmark is meant to change.
+  duration: |
+    Video duration in seconds: 5 or 10. Keep identical across both configs.
+  cfg: |
+    CFG scale, 0.0 - 1.0. Note: the Kling handler currently sends a fixed 0.5,
+    so this field is recorded in metadata but does not change the request.
+  resolution: |
+    Output resolution, e.g. '720p' or '1080p'. Keep identical across both configs.
+  prompt: |
+    Positive prompt — the text before #CL_PROMPT_BOUNDARY# in the source prompt sheet.
+  negative_prompt: |
+    Negative prompt — the text after #CL_PROMPT_BOUNDARY# in the source prompt
+    sheet. Empty for prompts that ship without a boundary marker.
+  folder: |
+    Task folder holding 'Source', 'Generated_Video' and 'Metadata'.
+    Source images must be byte-identical between the baseline folder and the
+    v3 folder — the report matches the two sides by source-image filename.
+  purpose: |
+    Baseline (control) side of the Kling v3 A/B benchmark: the 10 prompts run on
+    the model version each one currently ships with. Run this with the 'process'
+    action only — the deck is produced by batch_kling_v3ab_config.yaml, which
+    points its reference_folder at these output folders.
+
+      python core/runall.py kling process --config config/batch_kling_v3ab_baseline_config.yaml
+  usage: |
+    Root model_version is v2.1; the three v1.6 prompts (Example_008_Elegance,
+    Example_004_High-Five, Example_011_Fighting) carry a per-task model_version
+    override, so all 10 baselines finish in a single run.

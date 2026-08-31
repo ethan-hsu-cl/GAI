@@ -71,6 +71,15 @@ class KlingHandler(BaseAPIHandler):
         except Exception as e:
             return False, f"Error: {str(e)}"
 
+    def _resolve_model(self, task_config):
+        """Model version for a task: per-task value, else the config-wide one.
+
+        The per-task override lets one batch mix model versions — e.g. an A/B
+        baseline where each prompt runs on the version it currently ships with.
+        """
+        return task_config.get('model_version',
+                               self.config.get('model_version', 'v2.1'))
+
     def _make_api_call(self, file_path, task_config, attempt):
         """Make Kling API call."""
         return predict_image_to_video(
@@ -80,7 +89,7 @@ class KlingHandler(BaseAPIHandler):
             mode=task_config.get('mode', 'std'),
             duration=task_config.get('duration', 5),
             cfg=0.5,
-            model=self.config.get('model_version', 'v2.1'),
+            model=self._resolve_model(task_config),
             negative_prompt=task_config.get('negative_prompt', ''),
             sound_enabled=task_config.get('sound_enabled', False),
             multishot_type=task_config.get('multishot_type', 'none'),
@@ -103,6 +112,7 @@ class KlingHandler(BaseAPIHandler):
             self.logger.info(f" ❌ API Error: {error}")
             metadata = {
                 'video_id': video_id, 'task_id': task_id, 'error': error,
+                'model': self._resolve_model(task_config),
                 'attempts': attempt + 1, 'success': False,
                 'processing_time_seconds': round(processing_time, 1)
             }
@@ -129,6 +139,7 @@ class KlingHandler(BaseAPIHandler):
         metadata = {
             'output_url': url, 'video_id': video_id, 'task_id': task_id,
             'generated_video': output_path.name if video_saved else None,
+            'model': self._resolve_model(task_config),
             'attempts': attempt + 1, 'success': video_saved,
             'processing_time_seconds': round(processing_time, 1)
         }

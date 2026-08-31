@@ -20,76 +20,76 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Pixverse Effects/0824 12 Styles
+base_folder: Media Files/Pixverse Effects/0828 12 Styles
 template_path: templates/I2V standard 4col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1441759153#gid=1441759153
 provider_reference_link: https://aisphere.feishu.cn/wiki/GKwywQM3oixt4EkOM1IceWw8n5f?table=tblfxIxbTQwb57kk&view=vewTVy4A0p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgA3rAYOzTqNT6wzVZwuBQbPAZ60wkVha4U_LQkjwkGiHFE?e=CQiXii
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgBObjbpMiwNTb6j8NsrvPVRAeFU7-_yd_x2HT41Pd-qUug?e=g3h8UU
 
 tasks:
-  - effect: My Little Perler Charm
+  - effect: Dimension Leap
     prompt: ''
-    custom_effect_id: '418815439392256'
+    custom_effect_id: '398581173031104'
     negative_prompt: ''
 
-  - effect: Where did this cobweb come from?
+  - effect: Umbrella Transition
     prompt: ''
-    custom_effect_id: '418800954072576'
+    custom_effect_id: '390316533698112'
     negative_prompt: ''
 
-  - effect: Holy Beast Summoning Technique
+  - effect: Leviathan's Wake
     prompt: ''
-    custom_effect_id: '418801639489024'
+    custom_effect_id: '398580320577728'
     negative_prompt: ''
 
-  - effect: Pet Editorial
+  - effect: Escape Work
     prompt: ''
-    custom_effect_id: '419113983637696'
+    custom_effect_id: '416101082038464'
+    negative_prompt: ''
+
+  - effect: Same Wish, Different Years
+    prompt: ''
+    custom_effect_id: '419845927775552'
+    negative_prompt: ''
+
+  - effect: Celebrating a birthday with a lion
+    prompt: ''
+    custom_effect_id: '419846533483840'
+    negative_prompt: ''
+
+  - effect: Upload Your Hero to a Ghost Army Charge
+    prompt: ''
+    custom_effect_id: '419831334571328'
+    negative_prompt: ''
+
+  - effect: Dark Bio-Armor Transformation
+    prompt: ''
+    custom_effect_id: '419841266734400'
+    negative_prompt: ''
+
+  - effect: Skyfall Mecha Assembly
+    prompt: ''
+    custom_effect_id: '419842893321536'
+    negative_prompt: ''
+
+  - effect: Don't take the kitten's phone, it will throw a tantrum.
+    prompt: ''
+    custom_effect_id: '420009187179840'
     negative_prompt: ''
     source_type: pet
 
-  - effect: IT'S THE FIRST OF THE MONTH
+  - effect: Eating and drinking in slow motion
     prompt: ''
-    custom_effect_id: '418798312359424'
+    custom_effect_id: '420012679619904'
     negative_prompt: ''
 
-  - effect: Power Flex
+  - effect: Kitten Pranks
     prompt: ''
-    custom_effect_id: '419843399118144'
-    negative_prompt: ''
-
-  - effect: Mama! Blast Off
-    prompt: ''
-    custom_effect_id: '419684700427584'
+    custom_effect_id: '420170363000256'
     negative_prompt: ''
     source_type: pet
-
-  - effect: Three lifetime bond
-    prompt: ''
-    custom_effect_id: '418934356626944'
-    negative_prompt: ''
-
-  - effect: Birthday on Fire
-    prompt: ''
-    custom_effect_id: '418401353385024'
-    negative_prompt: ''
-
-  - effect: Born To Shine On Stage
-    prompt: ''
-    custom_effect_id: '418456472466368'
-    negative_prompt: ''
-
-  - effect: Reveal the Face in the Haunted Portrait
-    prompt: ''
-    custom_effect_id: '418463513877440'
-    negative_prompt: ''
-
-  - effect: The stars on stage
-    prompt: ''
-    custom_effect_id: '418457177152448'
-    negative_prompt: ''
 
 comments:
   base_folder: |

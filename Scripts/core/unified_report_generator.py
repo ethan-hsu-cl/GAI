@@ -553,8 +553,29 @@ class UnifiedReportGenerator:
                 'metadata_fields': ['source_image', 'style_name', 'image_service', 'image_model', 'video_model', 'video_mode', 'video_duration', 'processing_time_seconds', 'success'],
             }
         }
-        return configs.get(self.api_name, configs['kling'])
-    
+        cfg = configs.get(self.api_name, configs['kling'])
+        return self._apply_reference_first(cfg)
+
+    def _apply_reference_first(self, slide_config):
+        """Honor the config's `reference_first` flag on comparison layouts.
+
+        By default a comparison slide reads Source | generated (test) | reference.
+        With `reference_first: true` the two videos swap, so an A/B benchmark reads
+        Source | baseline | new model left to right (e.g. Source | v2.1 | v3).
+
+        Stacked layouts are left alone: their media_labels and positions are bound
+        to specific slots, and their 'reference' slot isn't a model comparison.
+        """
+        if not self.config.get('reference_first') or slide_config.get('override_positions'):
+            return slide_config
+        mt = list(slide_config.get('media_types', []))
+        if 'generated' in mt and 'reference' in mt:
+            g, r = mt.index('generated'), mt.index('reference')
+            mt[g], mt[r] = mt[r], mt[g]
+            return {**slide_config, 'media_types': mt}
+        return slide_config
+
+
     # ================== UNIFIED SLIDE CREATION ENGINE ==================
     
     def create_slides(self, ppt, pairs, template_loaded, use_comparison=False):
@@ -590,6 +611,7 @@ class UnifiedReportGenerator:
                 slide_config = slide_config.copy()
                 slide_config['media_types'] = ['source', 'generated', 'reference']
                 slide_config['positions'] = self.LAYOUT_3_MEDIA['positions']
+                slide_config = self._apply_reference_first(slide_config)
             elif pair.additional_source_paths:
                 # Check if any additional source is a video
                 has_video_source = any(
@@ -3095,9 +3117,16 @@ class UnifiedReportGenerator:
             return joined[:60].rstrip(', ') + '...'
         return joined
 
-    def get_cmp_filename(self, folder1: str, folder2: str, model: str = '', effect_names1=None, effect_names2=None) -> tuple:
+    def get_cmp_filename(self, folder1: str, folder2: str, model: str = '', effect_names1=None,
+                         effect_names2=None, truncate: bool = True) -> tuple:
         """Generate comparison filename using API name and effect names.
-        
+
+        Args:
+            truncate: Cap the style list at ~60 chars, as get_filename does. Keep it
+                on for filenames — a grouped comparison of many tasks otherwise
+                produces a path too long for the filesystem and the save fails.
+                Pass False for the title slide, which has room for the full list.
+
         Returns:
             tuple: (api_line, styles_line) where api_line contains date and model,
                    and styles_line contains the effect names comparison.
@@ -3106,8 +3135,12 @@ class UnifiedReportGenerator:
         
         # Use model (API name) as the primary identifier
         # Effect names are the actual content description
-        effect_str1 = ', '.join(effect_names1) if effect_names1 else 'Test'
-        effect_str2 = ', '.join(effect_names2) if effect_names2 else 'Reference'
+        if truncate:
+            effect_str1 = self._format_effect_str(effect_names1, 'Test')
+            effect_str2 = self._format_effect_str(effect_names2, 'Reference')
+        else:
+            effect_str1 = ', '.join(effect_names1) if effect_names1 else 'Test'
+            effect_str2 = ', '.join(effect_names2) if effect_names2 else 'Reference'
         
         # Build API line (date + model)
         api_parts = [f"[{d}]"]
@@ -3634,7 +3667,8 @@ class UnifiedReportGenerator:
         # Generate title (now returns tuple of api_line, styles_line)
         if use_comparison and task.get('reference_folder'):
             ref_name = Path(task['reference_folder']).name
-            api_line, styles_line = self.get_cmp_filename(folder_name, ref_name, api_display, effect_names1=effect_names)
+            api_line, styles_line = self.get_cmp_filename(folder_name, ref_name, api_display,
+                                                          effect_names1=effect_names, truncate=False)
         else:
             api_line, styles_line = self.get_filename(folder_name, api_display, effect_names=effect_names)
 
