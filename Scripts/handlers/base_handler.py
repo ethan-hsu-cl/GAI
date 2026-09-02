@@ -534,13 +534,9 @@ class BaseAPIHandler:
         self.logger.info(f"✓ Task {task_num}: {successful}/{len(files)} successful ({skipped} skipped)")
     
     def _get_output_folder(self, folder):
-        """Get output folder name based on API type."""
-        if self.api_name == "genvideo":
-            return folder / "Generated_Image"
-        elif self.api_name in ("nano_banana", "openai_image"):
-            return folder / "Generated_Output"
-        else:
-            return folder / "Generated_Video"
+        """Get the output folder for this API, named by its api_definitions entry."""
+        output_name = self.api_defs.get('folders', {}).get('output', 'Generated_Video')
+        return folder / output_name
     
     def _get_task_files(self, task, source_folder):
         """Get files for this task. Override for special handling."""

@@ -471,8 +471,8 @@ class UnifiedAPIProcessor:
         try:
             endpoint = self.api_definitions.get('endpoint', '')
 
-            # Handle testbed URL override for nano_banana / openai_image
-            if self.api_name in ("nano_banana", "openai_image") and self.config.get('testbed'):
+            # Handle testbed URL override for the image-generation endpoints
+            if self.api_name in ("nano_banana", "openai_image", "seedream_image") and self.config.get('testbed'):
                 endpoint = self.config['testbed']
 
             # Build optional headers (cookie for authenticated testbed access)
@@ -686,7 +686,7 @@ class UnifiedAPIProcessor:
         # Determine source field name based on API
         if self.api_name == "runway":
             source_field = "source_video"
-        elif self.api_name in ["kling", "nano_banana", "vidu_effects", "vidu_i2v", "vidu_reference", "genvideo", "openai_image", "pixverse_i2v", "pixverse_effect"]:
+        elif self.api_name in ["kling", "nano_banana", "vidu_effects", "vidu_i2v", "vidu_reference", "genvideo", "openai_image", "seedream_image", "pixverse_i2v", "pixverse_effect"]:
             source_field = "source_image"
         else:
             source_field = "source_file"

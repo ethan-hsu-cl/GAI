@@ -66,6 +66,9 @@ API_MAPPING = {
     'openaiimage': 'openai_image',
     'gptimage': 'openai_image',
     'gpt_image': 'openai_image',
+    'seedream_image': 'seedream_image',
+    'seedreamimage': 'seedream_image',
+    'seedream': 'seedream_image',
     'fifa_i2i2v': 'fifa_i2i2v',
     'fifa': 'fifa_i2i2v',
     'i2i2v': 'i2i2v',
@@ -106,6 +109,7 @@ CONFIG_MAPPING = {
     'motion_swap': 'config/batch_motion_swap_config.yaml',
     'happyhorse_vedit': 'config/batch_happyhorse_vedit_config.yaml',
     'openai_image': 'config/batch_openai_image_config.yaml',
+    'seedream_image': 'config/batch_seedream_image_config.yaml',
     'fifa_i2i2v': 'config/batch_fifa_i2i2v_config.yaml',
     'i2i2v': 'config/batch_i2i2v_config.yaml',
     'gemini_omni_ttv': 'config/batch_gemini_omni_ttv_config.yaml',
@@ -547,6 +551,7 @@ def show_usage():
     print("  runway - Runway face swap processing")
     print("  genvideo - GenVideo image generation processing")
     print("  openai_image - OpenAI Image (gpt-image-N) generation")
+    print("  seedream_image - Seedream Image (dola-seedream-N) generation")
     print("  pixverse_i2v - Pixverse Image-to-Video processing (/submit_3)")
     print("  pixverse_effect - Pixverse Effects/templates, 1-4 image inputs + sound (/submit_5)")
     print("  pixverse_ttv - Pixverse Text-to-Video processing")
@@ -602,6 +607,7 @@ def show_usage():
     print("  python runall.py all auto --parallel")
     print("  python runall.py runway process --config custom_runway_config.json")
     print("  python runall.py genvideo process")
+    print("  python runall.py seedream_image auto")
 
 def parse_arguments():
     """Parse command line arguments"""

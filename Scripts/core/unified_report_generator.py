@@ -130,7 +130,7 @@ class UnifiedReportGenerator:
         'image_video': ['wan', 'dreamactor', 'motion_swap', 'kling_motion'],
         'image_to_video': ['veo_itv', 'seedance_i2v', 'kling', 'vidu_i2v', 'wan_v3_i2v'],
         'text_to_video': ['veo', 'kling_ttv', 'pixverse_ttv', 'seedance_ttv', 'gemini_omni_ttv', 'wan_v3_ttv'],
-        'image_to_image': ['nano_banana', 'openai_image', 'genvideo'],
+        'image_to_image': ['nano_banana', 'openai_image', 'seedream_image', 'genvideo'],
         'effects': ['kling_effects', 'pixverse_i2v', 'pixverse_effect', 'vidu_effects'],
     }
 
@@ -213,6 +213,7 @@ class UnifiedReportGenerator:
             self.config_file = config_file
         self.config = {}
         self.report_definitions = {}
+        self.api_folders = {}
         
         # Caches for performance
         self._ar_cache = {}
@@ -240,6 +241,7 @@ class UnifiedReportGenerator:
             'vidu_i2v': 'Vidu I2V',
             'genvideo': 'GenVideo',
             'openai_image': 'OpenAI Image',
+            'seedream_image': 'Seedream Image',
             'pixverse_i2v': 'Pixverse I2V',
             'pixverse_effect': 'Pixverse Effects',
             'wan': 'Wan 2.2',
@@ -336,6 +338,21 @@ class UnifiedReportGenerator:
                 'title_format': '❌ GENERATION FAILED',
                 'title_show_only_if_failed': True,
                 'metadata_fields': ['model', 'quality', 'resolution', 'aspect_ratio',
+                                    'additional_images_used', 'reference_images_used',
+                                    'generation_index', 'success', 'attempts',
+                                    'processing_time_seconds'],
+                'use_comparison': False,
+                'supports_multi_image': True,
+                'media_types_3': ['source', 'additional_source', 'generated'],
+                'positions_3': self.LAYOUT_3_MEDIA['positions'],
+            },
+            'seedream_image': {
+                **base_config,
+                'media_types': ['source', 'generated'],
+                **self.LAYOUT_2_MEDIA,
+                'title_format': '❌ GENERATION FAILED',
+                'title_show_only_if_failed': True,
+                'metadata_fields': ['model', 'resolution', 'aspect_ratio', 'output_format',
                                     'additional_images_used', 'reference_images_used',
                                     'generation_index', 'success', 'attempts',
                                     'processing_time_seconds'],
@@ -599,7 +616,7 @@ class UnifiedReportGenerator:
                               use_comparison, slide_config):
         """Create a single slide for any API using configuration"""
         # Adjust media types for nano_banana / openai_image based on multi-image mode
-        if self.api_name in ('nano_banana', 'openai_image'):
+        if self.api_name in ('nano_banana', 'openai_image', 'seedream_image'):
             if pair.metadata.get('text_to_image'):
                 # No source — show the prompt text box beside the generated image.
                 slide_config = slide_config.copy()
@@ -851,7 +868,7 @@ class UnifiedReportGenerator:
         # vidu_reference: source + reference images from Reference folder
         # pixverse_effect: all source images used in a single /submit_5 iteration
         if (media_type == 'source' and
-            self.api_name in ('nano_banana', 'openai_image', 'vidu_reference', 'wan_v3_reference', 'pixverse_effect', 'i2i2v') and
+            self.api_name in ('nano_banana', 'openai_image', 'seedream_image', 'vidu_reference', 'wan_v3_reference', 'pixverse_effect', 'i2i2v') and
             pair.additional_source_paths):
             # Check if all additional sources are images (not videos)
             all_images = all(
@@ -947,7 +964,7 @@ class UnifiedReportGenerator:
             return pairs
 
         # Check if this is nano_banana / openai_image iteration mode (random_source_selection)
-        if self.api_name in ('nano_banana', 'openai_image'):
+        if self.api_name in ('nano_banana', 'openai_image', 'seedream_image'):
             # Cross-match: group by reference (same flag together) then source,
             # rather than by source. Takes precedence so random+cross-match also
             # groups by reference.
@@ -1478,7 +1495,7 @@ class UnifiedReportGenerator:
             self._add_metadata_field(field, pair, meta_lines)
         
         # Add source file name for some APIs
-        if self.api_name in ['nano_banana', 'genvideo', 'openai_image', 'pixverse_i2v', 'pixverse_effect', 'kling_endframe', 'wan_v3_endframe']:
+        if self.api_name in ['nano_banana', 'genvideo', 'openai_image', 'seedream_image', 'pixverse_i2v', 'pixverse_effect', 'kling_endframe', 'wan_v3_endframe']:
             meta_lines.insert(0, f"File: {pair.source_file}")
         
         if not meta_lines:
@@ -1571,10 +1588,10 @@ class UnifiedReportGenerator:
         pairs = []
         
         # Define folder structure based on API
-        if self.api_name in ('nano_banana', 'openai_image'):
+        if self.api_name in ('nano_banana', 'openai_image', 'seedream_image'):
             folders = {
                 'source': folder / 'Source',
-                'generated': folder / 'Generated_Output',
+                'generated': folder / self._generated_folder_name(),
                 'metadata': folder / 'Metadata'
             }
             file_pattern = 'image'
@@ -1587,7 +1604,7 @@ class UnifiedReportGenerator:
             file_pattern = 'generated'
 
         # Text-to-image: no Source folder — build generated-only pairs from metadata.
-        if self.api_name in ('nano_banana', 'openai_image') and task.get('text_to_image', False):
+        if self.api_name in ('nano_banana', 'openai_image', 'seedream_image') and task.get('text_to_image', False):
             return self._create_text_to_image_pairs(folder, folders, task)
 
         if not folders['source'].exists():
@@ -1600,7 +1617,7 @@ class UnifiedReportGenerator:
         # Check if this is nano_banana/openai_image iteration mode (random_source_selection)
         # or reference cross-match. In both, generated/metadata names carry suffixes that
         # won't match bare source stems, so iterate over metadata files, not source files.
-        is_iteration_mode = (self.api_name in ('nano_banana', 'openai_image') and
+        is_iteration_mode = (self.api_name in ('nano_banana', 'openai_image', 'seedream_image') and
                             any(md.get('random_source_selection') or md.get('reference_cross_match')
                                 for md in metadata_cache.values()))
 
@@ -1620,7 +1637,7 @@ class UnifiedReportGenerator:
         # Get generated files with single scan
         out = {}
         if folders['generated'].exists():
-            if self.api_name in ('nano_banana', 'openai_image'):
+            if self.api_name in ('nano_banana', 'openai_image', 'seedream_image'):
                 gen_imgs, _, _ = self._scan_directory_once(folders['generated'])
                 for key, f in gen_imgs.items():
                     if file_pattern in f.name:
@@ -1644,10 +1661,10 @@ class UnifiedReportGenerator:
         ref_files = {}
         ref_metadata_cache = {}
         if use_comparison and ref_folder:
-            ref_generated_folder = ref_folder / ('Generated_Output' if self.api_name in ('nano_banana', 'openai_image') else 'Generated_Video')
+            ref_generated_folder = ref_folder / self._generated_folder_name()
             if ref_generated_folder.exists():
                 for f in ref_generated_folder.iterdir():
-                    if self.api_name in ('nano_banana', 'openai_image'):
+                    if self.api_name in ('nano_banana', 'openai_image', 'seedream_image'):
                         if f.suffix.lower() in {'.jpg', '.jpeg', '.png', '.webp'} and 'image' in f.name:
                             # Split on 'image' and remove trailing underscore
                             basename = f.name.split('image')[0].rstrip('_')
@@ -1742,7 +1759,7 @@ class UnifiedReportGenerator:
                 md = metadata_cache.get(b, {})
                 
                 # For Nano Banana / OpenAI Image: resolve source images from metadata
-                if self.api_name in ('nano_banana', 'openai_image'):
+                if self.api_name in ('nano_banana', 'openai_image', 'seedream_image'):
                     source_folder = folder / 'Source'
                     
                     # Check for random_source_selection mode (all_images_used in metadata)
@@ -3045,7 +3062,9 @@ class UnifiedReportGenerator:
             try:
                 with open(api_def_path, 'r', encoding='utf-8') as f:
                     all_definitions = json.load(f)
-                self.report_definitions = all_definitions.get(self.api_name, {}).get('report', {})
+                api_definition = all_definitions.get(self.api_name, {})
+                self.report_definitions = api_definition.get('report', {})
+                self.api_folders = api_definition.get('folders', {})
                 logger.info(f"✓ API definitions loaded from: {api_def_path}")
                 return
             except Exception as e:
@@ -3062,7 +3081,9 @@ class UnifiedReportGenerator:
             try:
                 with open(def_path, 'r', encoding='utf-8') as f:
                     all_definitions = json.load(f)
-                self.report_definitions = all_definitions.get(self.api_name, {}).get('report', {})
+                api_definition = all_definitions.get(self.api_name, {})
+                self.report_definitions = api_definition.get('report', {})
+                self.api_folders = api_definition.get('folders', {})
                 logger.info(f"✓ API definitions loaded from: {def_path}")
                 return
             except Exception:
@@ -3078,7 +3099,7 @@ class UnifiedReportGenerator:
             "template_path": "templates/I2V standard 5col.pptx",
             "comparison_template_path": "templates/I2V comparison 5col.pptx",
             "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-            "use_comparison": self.api_name in ["kling", "nano_banana", "openai_image", "runway", "wan", "dreamactor", "motion_swap", "kling_motion"]
+            "use_comparison": self.api_name in ["kling", "nano_banana", "openai_image", "seedream_image", "runway", "wan", "dreamactor", "motion_swap", "kling_motion"]
         }
     
     def _extract_date_from_folder(self, folder):
@@ -3087,6 +3108,17 @@ class UnifiedReportGenerator:
         m = re.match(r'(\d{4})\s*(.+)', folder_name)
         return m.group(1) if m else datetime.now().strftime("%m%d")
     
+    def _generated_folder_name(self) -> str:
+        """Name of the folder holding generated media for this API.
+
+        Read from the API's api_definitions entry (``folders.output``) so it
+        stays in step with what the handler actually writes — image APIs use
+        'Generated_Image' or 'Generated_Output', video APIs 'Generated_Video'.
+        """
+        default = 'Generated_Output' if self.api_name in (
+            'nano_banana', 'openai_image', 'seedream_image') else 'Generated_Video'
+        return self.api_folders.get('output', default)
+
     def _is_text_to_video_api(self) -> bool:
         """True for text-to-video APIs (veo, kling_ttv, pixverse_ttv, seedance_ttv,
         gemini_omni_ttv, wan_v3_ttv) — their titles/covers summarize as a style count rather
@@ -4582,7 +4614,7 @@ class UnifiedReportGenerator:
 
 def create_report_generator(api_name, config_file=None):
     """Factory function to create report generator"""
-    supported_apis = ['kling', 'kling_effects', 'kling_endframe', 'kling_ttv', 'kling_motion', 'nano_banana', 'vidu_effects', 'vidu_i2v', 'vidu_reference', 'runway', 'genvideo', 'openai_image', 'pixverse_i2v', 'pixverse_effect', 'pixverse_ttv', 'seedance_ttv', 'seedance_i2v', 'wan', 'dreamactor', 'motion_swap', 'happyhorse_vedit', 'veo', 'veo_itv', 'fifa_i2i2v', 'i2i2v', 'gemini_omni_ttv', 'wan_v3_ttv', 'wan_v3_i2v', 'wan_v3_endframe', 'wan_v3_reference']
+    supported_apis = ['kling', 'kling_effects', 'kling_endframe', 'kling_ttv', 'kling_motion', 'nano_banana', 'vidu_effects', 'vidu_i2v', 'vidu_reference', 'runway', 'genvideo', 'openai_image', 'seedream_image', 'pixverse_i2v', 'pixverse_effect', 'pixverse_ttv', 'seedance_ttv', 'seedance_i2v', 'wan', 'dreamactor', 'motion_swap', 'happyhorse_vedit', 'veo', 'veo_itv', 'fifa_i2i2v', 'i2i2v', 'gemini_omni_ttv', 'wan_v3_ttv', 'wan_v3_i2v', 'wan_v3_endframe', 'wan_v3_reference']
     if api_name not in supported_apis:
         raise ValueError(f"Unsupported API: {api_name}. Supported: {supported_apis}")
     return UnifiedReportGenerator(api_name, config_file)
@@ -4591,7 +4623,7 @@ def create_report_generator(api_name, config_file=None):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Generate PowerPoint reports from API processing results')
-    parser.add_argument('api_name', choices=['kling', 'kling_effects', 'kling_endframe', 'kling_ttv', 'kling_motion', 'nano_banana', 'vidu_effects', 'vidu_i2v', 'vidu_reference', 'runway', 'genvideo', 'openai_image', 'pixverse_i2v', 'pixverse_effect', 'pixverse_ttv', 'seedance_ttv', 'seedance_i2v', 'wan', 'dreamactor', 'motion_swap', 'happyhorse_vedit', 'veo', 'veo_itv', 'fifa_i2i2v', 'i2i2v', 'gemini_omni_ttv', 'wan_v3_ttv', 'wan_v3_i2v', 'wan_v3_endframe', 'wan_v3_reference'],
+    parser.add_argument('api_name', choices=['kling', 'kling_effects', 'kling_endframe', 'kling_ttv', 'kling_motion', 'nano_banana', 'vidu_effects', 'vidu_i2v', 'vidu_reference', 'runway', 'genvideo', 'openai_image', 'seedream_image', 'pixverse_i2v', 'pixverse_effect', 'pixverse_ttv', 'seedance_ttv', 'seedance_i2v', 'wan', 'dreamactor', 'motion_swap', 'happyhorse_vedit', 'veo', 'veo_itv', 'fifa_i2i2v', 'i2i2v', 'gemini_omni_ttv', 'wan_v3_ttv', 'wan_v3_i2v', 'wan_v3_endframe', 'wan_v3_reference'],
                        help='API type to generate report for')
     parser.add_argument('--config', '-c', help='Config file path (optional)')
     

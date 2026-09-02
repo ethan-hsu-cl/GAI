@@ -366,6 +366,108 @@
       "testbed_url_override": true
     }
   },
+  "seedream_image": {
+    "endpoint": "http://192.168.31.161/external-testbed/image_generation/",
+    "api_name": "/seedream_image",
+    "file_types": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".tiff",
+      ".webp"
+    ],
+    "validation": {
+      "max_size_mb": 32,
+      "min_dimension": 100
+    },
+    "folders": {
+      "input": "Source",
+      "output": "Generated_Image",
+      "metadata": "Metadata"
+    },
+    "rate_limit": 12,
+    "task_delay": 10,
+    "max_retries": 1,
+    "max_retries_error429": 3,
+    "max_retries_timeout": 3,
+    "config_structure": "task_folders",
+    "report": {
+      "enabled": true,
+      "template_path": "templates/I2V standard 5col.pptx",
+      "comparison_template_path": "templates/I2V comparison 5col.pptx",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
+      "use_comparison": true
+    },
+    "task_fields": [
+      "folder",
+      "prompt",
+      "model",
+      "resolution",
+      "aspect_ratio",
+      "output_format",
+      "layer_decomposition",
+      "background",
+      "optimize_prompt_mode",
+      "sequential_enabled",
+      "sequential_max_images",
+      "design_link",
+      "source_video_link",
+      "reference_folder",
+      "use_comparison_template",
+      "text_to_image",
+      "num_iterations"
+    ],
+    "api_params": {
+      "model": "dola-seedream-5-0-pro-260628",
+      "resolution": "1K",
+      "aspect_ratio": "auto",
+      "output_format": "jpeg",
+      "layer_decomposition": false,
+      "background": "opaque",
+      "optimize_prompt_mode": "standard",
+      "sequential_enabled": false,
+      "sequential_max_images": 1
+    },
+    "model_options": [
+      "dola-seedream-5-0-pro-260628"
+    ],
+    "resolution_options": [
+      "1K",
+      "2K",
+      "4K"
+    ],
+    "aspect_ratio_options": [
+      "auto",
+      "1:1",
+      "2:3",
+      "3:2",
+      "3:4",
+      "4:3",
+      "4:5",
+      "5:4",
+      "9:16",
+      "16:9",
+      "21:9"
+    ],
+    "output_format_options": [
+      "jpeg",
+      "png"
+    ],
+    "background_options": [
+      "opaque",
+      "transparent"
+    ],
+    "optimize_prompt_mode_options": [
+      "standard",
+      "off",
+      "aggressive"
+    ],
+    "additional_features": {
+      "additional_images": true,
+      "testbed_url_override": true
+    }
+  },
   "nano_banana": {
     "endpoint": "http://192.168.31.161/external-testbed/image_generation/",
     "api_name": "/nano_banana",

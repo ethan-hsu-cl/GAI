@@ -1,0 +1,231 @@
+template_path: templates/I2V standard 5col.pptx
+comparison_template_path: templates/I2V comparison 5col.pptx
+testbed: http://192.168.31.161/external-testbed/image_generation/
+
+output:
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
+  group_tasks_by: 4
+
+# Number of API requests to run in parallel (1 = sequential, max = 10).
+# Supported by all APIs. Per-task `concurrent_requests` overrides this default.
+concurrent_requests: 1
+
+schedule:
+  start_time: ""
+  comment: "Time format: HH:MM (24-hour format). Leave empty to start immediately"
+
+root_source_video_link:
+root_design_link:
+
+tasks:
+  - folder: Media Files/Seedream Image/0902 Snow Forest
+    model: dola-seedream-5-0-pro-260628
+    resolution: "1K"
+    aspect_ratio: "auto"
+    output_format: jpeg
+    background: opaque
+    optimize_prompt_mode: standard
+    layer_decomposition: false
+    sequential_enabled: false
+    sequential_max_images: 1
+    prompt: |
+      Clear photo, a highly detailed and realistic photograph of a dense winter forest filled with snow-covered trees. The scene features a tightly packed arrangement of trunks — including both coniferous and leafless trees — standing vertically with heavy snow resting on branches and the forest floor. The composition is frontal and evenly framed, without visible paths, roads, or foot tracks. The ground is smooth and covered in pristine, undisturbed snow. No sky or horizon line is visible; trees fill the entire vertical frame. The vanishing point or perspective lines should remain outside the image frame, avoiding any sense of central depth or linear convergence. The background should feel natural, immersive, and softly atmospheric, emphasizing surface texture and the stillness of a snow-filled woodland.
+    concurrent_requests: 3
+
+  - folder: Media Files/Seedream Image/0902 Beach Aruba
+    model: dola-seedream-5-0-pro-260628
+    resolution: "1K"
+    aspect_ratio: "auto"
+    output_format: jpeg
+    background: opaque
+    optimize_prompt_mode: standard
+    layer_decomposition: false
+    sequential_enabled: false
+    sequential_max_images: 1
+    prompt: |
+      on Renaissance Island, Aruba, a clean beach with pure sand, a tall palm tree, and a clear sea in the background. The image should be of the best quality, ultra-high definition, and minimalist, capturing a professional photographic style with a soft, ethereal atmosphere.
+    concurrent_requests: 3
+
+  - folder: Media Files/Seedream Image/0902 Street European
+    model: dola-seedream-5-0-pro-260628
+    resolution: "1K"
+    aspect_ratio: "auto"
+    output_format: jpeg
+    background: opaque
+    optimize_prompt_mode: standard
+    layer_decomposition: false
+    sequential_enabled: false
+    sequential_max_images: 1
+    prompt: |
+      Clear photo, a London street view captured in a cool gray palette, featuring a soft and tranquil atmosphere.
+    concurrent_requests: 3
+
+  - folder: Media Files/Seedream Image/0902 Christmas Market
+    model: dola-seedream-5-0-pro-260628
+    resolution: "1K"
+    aspect_ratio: "auto"
+    output_format: jpeg
+    background: opaque
+    optimize_prompt_mode: standard
+    layer_decomposition: false
+    sequential_enabled: false
+    sequential_max_images: 1
+    prompt: |
+      A lively yet cozy European Christmas market at night, set outdoors under a deep blue winter sky. The entire scene is blanketed in fresh snow, softly glowing under warm orange-gold lights. Rows of wooden stalls line both sides of the snow-covered street, their roofs layered with snow and trimmed with pine garlands, red ribbons, and strings of golden fairy lights. Each stall emits a gentle, inviting glow, illuminating handmade crafts, ornaments, and festive treats displayed within. The street is alive with soft motion — people strolling slowly between the stalls, their breath visible in the cold air, surrounded by the warm hum of Christmas cheer.The market square is dotted with snow-covered Christmas trees adorned with glowing ornaments and fairy lights. A large Christmas tree stands prominently near the center, glowing warmly with amber light against the cool, indigo-tinted night sky. Decorative lights hang between the wooden booths, forming a shimmering canopy that fills the scene with soft golden reflections.Snow falls steadily through the cold night air, softly illuminated by the lamplight — some flakes glowing in gold, others reflecting hints of silver and white as they drift down. The gentle, continuous snowfall adds motion and magic, enveloping the market in a calm, dreamlike winter atmosphere.The lighting creates a perfect contrast: warm orange and golden tones from the stalls and lamps reflecting off the snow, blending beautifully with the cool blue shadows of the evening sky. The atmosphere feels cinematic, festive, and serene — a balance of warmth and cold, light and shadow, life and calm. The scene is viewed from a flat, 45-degree angle, revealing the glowing depth of the market street and the lively symmetry of its decorations. Ultra-detailed, photorealistic, 8K quality, soft exposure, steady visible snowfall, orange-gold lighting against deep blue tones, cinematic depth of field, vibrant festive ambiance, perfect balance of warmth and winter coolness.
+    concurrent_requests: 3
+
+# Configuration Reference
+comments:
+  style_prompts: |
+    The four tasks are a smoke-test slice of the style library at
+    /Users/ethanhsu/Downloads/Style (62 JSONs, 17 categories). Each task's
+    prompt is the `content.prompt` value copied verbatim — no background-
+    replacement wrapper — from:
+      0902 Snow Forest       <- Style_002_Snow_Forest.json
+      0902 Beach Aruba       <- Style_003_Beach_Aruba.json
+      0902 Street European   <- Style_010_Street_European.json
+      0902 Christmas Market  <- Style_016_Christmas_Market.json
+    Style_000_Custom is an empty "#CL#embed!" placeholder and the four
+    Style_001_Simple-Color_* entries are `<color:RnnnGnnnBnnn>` tokens rather
+    than prose, so none of them are usable as API prompts as-is.
+  style_sources: |
+    Each task's Source/ holds the same 5 images sampled from
+    /Users/ethanhsu/Downloads/people background source 0820 (100 PNGs), spanning
+    the three body crops: Src_Full(103), Src_Full(104), Src_Half(12),
+    Src_Quarter(100), Src_Quarter(15). Total run = 4 styles x 5 sources = 20
+    generations. To scale up, copy more of that folder into each Source/ or
+    switch the tasks to use_random_source_selection with num_iterations.
+  example: |
+    Image-to-image task. Put input images in <folder>/Source/.
+      - folder: Media Files/Seedream Image/0902 Product Restyle
+        model: dola-seedream-5-0-pro-260628
+        resolution: "1K"
+        aspect_ratio: "auto"
+        output_format: png
+        background: transparent
+        prompt: |
+          Restyle the uploaded product photo as a clean studio packshot on a
+          transparent background, soft even lighting, sharp focus.
+        concurrent_requests: 3
+
+  text_to_image:
+    description: "Generate images purely from the prompt — no Source folder or input images required."
+    usage: |
+      Set text_to_image: true on a task to switch it into text-to-image mode.
+      - No 'Source' subfolder is needed; source-folder validation is skipped.
+      - num_iterations controls how many images are generated (defaults to 1).
+      - generations_per_source still works (total = num_iterations × generations_per_source).
+      - use_reference_images is optional; if true, Reference/ images are sent to guide generation.
+      - concurrent_requests and all API parameters below apply as normal.
+      - Output naming: iter000_image_1.jpg, iter001_image_1.jpg, ...
+      - Reports render the prompt text beside each generated image.
+    default: "false (image-to-image mode — Source folder required)"
+    example: |
+      - folder: Media Files/Seedream Image/0902 Text to Image
+        text_to_image: true
+        model: dola-seedream-5-0-pro-260628
+        resolution: "1K"
+        aspect_ratio: "1:1"
+        prompt: "A serene mountain lake at sunrise, photorealistic, 4K"
+        num_iterations: 10
+        concurrent_requests: 5
+
+  model: |
+    Seedream image generation model.
+    Options: 'dola-seedream-5-0-pro-260628'
+    Default: 'dola-seedream-5-0-pro-260628'
+  resolution: |
+    Output resolution. Options: '1K' (default), '2K', '4K'.
+  aspect_ratio: |
+    Output aspect ratio. Valid options:
+      'auto', '1:1', '2:3', '3:2', '3:4', '4:3', '4:5', '5:4',
+      '9:16', '16:9', '21:9'.
+    Default: 'auto' — let the API pick the best ratio.
+  output_format: |
+    File format of the generated images. Options: 'jpeg' (default), 'png'.
+    Use 'png' when background: transparent, since JPEG has no alpha channel.
+  layer_decomposition: |
+    true returns the generation split into separate layers instead of one
+    flattened image. Default: false.
+  background: |
+    Background treatment. Options: 'opaque' (default), 'transparent'.
+    Pair 'transparent' with output_format: png.
+  optimize_prompt_mode: |
+    How aggressively the endpoint rewrites the prompt before generating.
+    Options: 'standard' (default), 'off', 'aggressive'.
+    Use 'off' when benchmarking the prompt text exactly as written.
+  sequential_enabled: |
+    true lets one call return a sequence of related images (e.g. a storyboard
+    or a set of consistent variations) instead of a single image.
+    Default: false.
+  sequential_max_images: |
+    Upper bound on how many images one sequential call may return.
+    Only meaningful when sequential_enabled: true. Default: 1.
+  prompt: |
+    Text prompt describing the desired image. Reference the input via
+    phrases like "the uploaded photo" or "the reference image".
+  folder: |
+    Path to the task folder. Must contain a 'Source' subfolder with input images
+    (not needed when text_to_image: true).
+    For multi-image mode, may also contain an 'Additional' subfolder.
+    For reference mode, may also contain a 'Reference' subfolder.
+    Output is written to 'Generated_Image/' and metadata to 'Metadata/'
+    (both auto-created).
+  reference_folder: |
+    Optional folder containing reference images for comparison reports.
+  use_comparison_template: |
+    true uses comparison_template_path (3-media slides);
+    false uses template_path (2-media slides). Default: false.
+  output_group_tasks_by: "Set to 0 (or omit) to create individual reports per task. Set to N to group N tasks into one report."
+
+  concurrent_requests:
+    description: "Number of API requests to send in parallel for a task (1-10)"
+    default: "1 (sequential, preserves existing behavior)"
+    upper_limit: "10 (hard cap enforced in BaseAPIHandler.MAX_CONCURRENT_REQUESTS)"
+    resolution_order: "per-task `concurrent_requests` → root-level `concurrent_requests` → 1"
+    behavior: |
+      - Applies to both random source selection mode and standard (Source-folder) mode
+      - In random source mode, parallelizes across (iteration × generation) calls
+      - In standard mode, parallelizes across source files
+      - Inter-request `rate_limit` sleep is SKIPPED when concurrent_requests > 1
+        (concurrency itself is the throttle); per-thread connection-retry backoff
+        and timeout retry waits still apply
+
+  random_source_selection:
+    description: "Mode for selecting N images from Source folder per API call (NO REPEATS until pool exhausted)"
+    use_random_source_selection: "Set to true to enable random source selection mode"
+    min_images: "Minimum images per API call (default: 1)"
+    max_images: "Maximum images per API call (default: 10)"
+    num_iterations: "Number of API calls. Defaults to number of source files if 0."
+    optimal_formula: "sources_needed = num_iterations × (min + max) / 2"
+    use_deterministic_random: |
+      true  -> shuffles source pool with a deterministic seed (reproducible randomness)
+      false -> sequential alphabetical order
+    random_seed: |
+      Optional integer seed. If omitted, seed is auto-derived from folder path.
+
+  reference_images:
+    description: "Prepend images from a 'Reference' subfolder to every API call"
+    use_reference_images: |
+      true: prepends every image from <folder>/Reference/ to the images list.
+            Reference images do NOT count toward min_images / max_images.
+    folder_structure: "Place reference images in <task_folder>/Reference/ (sibling of Source/). Auto-created when enabled."
+
+  generations_per_source:
+    description: "Number of times each iteration's source group is sent to the API"
+    default: 1
+    note: "Total API calls = num_iterations × generations_per_source. Output files get '_gen00', '_gen01' suffixes when > 1."
+
+  retries:
+    max_retries: "1 attempt per file (set in api_definitions.json)"
+    max_retries_error429: "3 extra retries for 429 / Resource Exhausted responses"
+    max_retries_timeout: "3 extra retries when the server reports a timeout"
+
+  folder_structure: |
+    Expected layout per task:
+      task_folder/
+      ├── Source/                 # input images (omit for text_to_image)
+      ├── Reference/              # optional, prepended to every call
+      ├── Additional/             # optional, paired in multi-image mode
+      ├── Generated_Image/        # auto-created
+      └── Metadata/               # auto-created

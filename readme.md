@@ -15,7 +15,7 @@ A Python automation framework for batch processing images/videos through 30 AI A
   - [Vidu family](#vidu-family)
   - [Seedance family](#seedance-family)
   - [Google Veo family](#google-veo-family)
-  - [Image generation (Nano Banana, OpenAI Image, GenVideo)](#image-generation-nano-banana-openai-image-genvideo)
+  - [Image generation (Nano Banana, OpenAI Image, Seedream Image, GenVideo)](#image-generation-nano-banana-openai-image-seedream-image-genvideo)
   - [Pipelines (FIFA I2I2V, I2I2V)](#pipelines-fifa-i2i2v-i2i2v)
   - [Other (Runway, Wan 2.2, DreamActor)](#other-runway-wan-22-dreamactor)
 - [Report Generation](#-report-generation)
@@ -126,6 +126,7 @@ python core/runall.py kling auto
 | `gemini_omni_ttv` (`omni`) | Gemini Omni TTV | T2V | `/gemini_omni_async_submit`, Async mode (blocking), prompt-only |
 | `nano` | Nano Banana | I2I | Multi-image (up to 14), random source selection |
 | `openai_image` | OpenAI Image | I2I | `gpt-image-1` / `gpt-image-2`, multi-image, reference images |
+| `seedream_image` (`seedream`) | Seedream Image | I2I | `dola-seedream-5-0-pro`, transparent background, layer decomposition, sequential images |
 | `genvideo` | GenVideo | I2I | Gashapon-style image transformation |
 | `runway` | Runway Gen4 | V2V | Face swap / motion, `one_to_one` or `all_combinations` pairing |
 | `wan` | Wan 2.2 | I+V | Auto-cropping, video × image cross-match |
@@ -158,6 +159,7 @@ python core/runall.py kling auto
 | Wan V3 Reference | 30 MB | 300 px / — | JPG, PNG, WebP |
 | Nano Banana | 32 MB | 300 px / — | JPG, PNG, WebP |
 | OpenAI Image | 32 MB | 100 px / — | JPG, PNG, WebP |
+| Seedream Image | 32 MB | 100 px / — | JPG, PNG, WebP |
 | GenVideo | 50 MB | 128 px / — | JPG, PNG, WebP |
 | Runway | image 500 MB / video 500 MB | 320 px / — | image: JPG, PNG, BMP; video: MP4, MOV, AVI, MKV, WebM |
 | Wan 2.2 | image 50 MB / video 500 MB | 128 px / — | image: JPG, PNG, WebP; video: MP4, MOV, AVI, MKV, WebM |
@@ -185,6 +187,7 @@ python core/runall.py kling auto
 | HappyHorse Video Edit | `{video}_generated.mp4` (cross-match: `{video}_ref{NN}_{refname}_generated.mp4`) |
 | Nano Banana | `{filename}_image_{n}.{ext}` |
 | OpenAI Image | `{filename}_image_{n}.{ext}` |
+| Seedream Image | `{filename}_image_{n}.{ext}` (in `Generated_Image/`) |
 | GenVideo | `{filename}_generated.{ext}` |
 | Seedance I2V | `{source_image}_{n}.mp4` |
 | Wan V3 I2V | `{source_image}_{n}.mp4` |
@@ -204,11 +207,11 @@ TaskFolder/
 ├── Source/              # Input images / videos (most APIs)
 ├── Source Image/        # Wan 2.2, DreamActor, Motion Swap, Kling Motion: source images
 ├── Source Video/        # Wan 2.2, DreamActor, Motion Swap, Kling Motion: source videos
-├── Additional/          # Nano Banana / OpenAI Image: extra images for multi-image mode
-├── Reference/           # Runway, Vidu Reference, Nano Banana, OpenAI Image: reference images
+├── Additional/          # Nano Banana / OpenAI Image / Seedream Image: extra images for multi-image mode
+├── Reference/           # Runway, Vidu Reference, Nano Banana, OpenAI Image, Seedream Image: reference images
 ├── Generated_Video/     # Auto-created video outputs (video APIs)
 ├── Generated_Output/    # Auto-created outputs (Nano Banana, OpenAI Image)
-├── Generated_Image/     # Auto-created outputs (GenVideo)
+├── Generated_Image/     # Auto-created outputs (Seedream Image, GenVideo)
 ├── Generated_Frames/    # Auto-created intermediate frames (FIFA I2I2V, I2I2V)
 └── Metadata/            # Auto-created metadata JSONs
 ```
@@ -219,6 +222,7 @@ API-specific input layouts:
 - Wan 2.2 / DreamActor / Motion Swap / Kling Motion → `Source Image/` + `Source Video/` (cross-matched)
 - Nano Banana multi-image → `Source/` + `Additional/` (or `Source/` only with random selection) + optional `Reference/`
 - OpenAI Image → same as Nano Banana
+- Seedream Image → same as Nano Banana, but outputs land in `Generated_Image/`
 - Runway → `Source/` (videos) + `Reference/` (images)
 - HappyHorse Video Edit → `Source/` (videos) + optional `Reference/` (up to 5 images, append or cross-match)
 - Vidu Reference / Wan V3 Reference → `Source/` + `Reference/`
@@ -686,7 +690,7 @@ reference images are left empty). Videos save to
 
 ---
 
-### Image generation (Nano Banana, OpenAI Image, GenVideo)
+### Image generation (Nano Banana, OpenAI Image, Seedream Image, GenVideo)
 
 #### Nano Banana (`config/batch_nano_banana_config.yaml`)
 
@@ -788,6 +792,50 @@ Options:
 - **Resolution:** `1K` / `2K`
 - **Aspect ratio:** `auto`, `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`
 - Reuses the **Random Source Selection** and **Reference Images** behavior from Nano Banana.
+
+#### Seedream Image (`config/batch_seedream_image_config.yaml`)
+
+Image generation on the `dola-seedream-N` models — same multi-image / random-source / reference-image / text-to-image features as Nano Banana and OpenAI Image, plus Seedream's own output controls.
+
+```yaml
+testbed: http://192.168.31.161/external-testbed/image_generation/
+
+output:
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
+  group_tasks_by: 1
+
+tasks:
+  - folder: Media Files/Seedream Image/0902 Sample
+    model: dola-seedream-5-0-pro-260628
+    resolution: "1K"
+    aspect_ratio: "auto"
+    output_format: jpeg          # jpeg / png
+    background: opaque           # opaque / transparent (pair with png)
+    optimize_prompt_mode: standard   # standard / off / aggressive
+    layer_decomposition: false
+    sequential_enabled: false
+    sequential_max_images: 1
+    prompt: |
+      Photorealistic broadcast-style portrait...
+    use_random_source_selection: false
+    num_iterations: 0
+    generations_per_source: 1
+    use_reference_images: false
+```
+
+Options:
+
+- **Models:** `dola-seedream-5-0-pro-260628`
+- **Resolution:** `1K` / `2K` / `4K`
+- **Aspect ratio:** `auto`, `1:1`, `2:3`, `3:2`, `3:4`, `4:3`, `4:5`, `5:4`, `9:16`, `16:9`, `21:9`
+- **Output format:** `jpeg` / `png` — use `png` with `background: transparent`
+- **Background:** `opaque` / `transparent`
+- **Prompt optimization:** `optimize_prompt_mode` — `standard` (default), `off` (benchmark the prompt verbatim), `aggressive`
+- **Layer decomposition:** `layer_decomposition: true` returns the generation split into layers instead of one flattened image
+- **Sequential images:** `sequential_enabled: true` plus `sequential_max_images: N` lets one call return a set of related images
+- Reuses the **Random Source Selection**, **Reference Images** and **text-to-image** behavior from Nano Banana / OpenAI Image.
+
+Defaults (from `api_definitions.json`): model `dola-seedream-5-0-pro-260628`, `1K`, aspect ratio `auto`, `jpeg`, opaque background, `standard` prompt optimization, sequential off; 1 attempt per file with 3 extra retries each for 429 and timeout responses.
 
 #### GenVideo (`config/batch_genvideo_config.yaml`)
 
@@ -1235,6 +1283,7 @@ GAI/
     │   ├── batch_veo_itv_config.yaml
     │   ├── batch_nano_banana_config.yaml
     │   ├── batch_openai_image_config.yaml
+    │   ├── batch_seedream_image_config.yaml
     │   ├── batch_genvideo_config.yaml
     │   ├── batch_runway_config.yaml
     │   ├── batch_wan_config.yaml
@@ -1266,6 +1315,7 @@ GAI/
     │   ├── veo_itv_handler.py
     │   ├── nano_banana_handler.py
     │   ├── openai_image_handler.py
+    │   ├── seedream_image_handler.py
     │   ├── genvideo_handler.py
     │   ├── runway_handler.py
     │   ├── wan_handler.py
