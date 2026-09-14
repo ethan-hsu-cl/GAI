@@ -16,11 +16,11 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Kling Effects/0806 3 Effects
+base_folder: Media Files/Kling Effects/0914 11 Effects
 
 design_link: https://docs.google.com/spreadsheets/d/18pNGtPzinObrhQt4aiLkyCRLTULZwQDHk7wlobe8FKI/edit?gid=1225550147#gid=1225550147
 provider_reference_link: https://app.klingai.com/global/dev/document-api/quickStart/productIntroduction/effectsCenter
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDBDHbsRaSVRrFyDsgX3od5AdSfF1KnFtZ2pLoIQbeOv4Y?e=tfhQcM
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDVMeHZ5EiKS4TmDxAjU3PgAVPbQePYcW9_yP7iMHCWsQ0?e=6NBQlG
 
 # Tasks - each represents a style/effect to apply
 # Effect selection per task:
@@ -29,11 +29,33 @@ source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedri
 # The effect name (custom_effect or effect) is used as the subfolder name in base_folder
 tasks:
   - effect:
-    custom_effect: 'birthday_dress_up'
+    custom_effect: 'magic_world_vlog_9_16'
   - effect:
-    custom_effect: 'wave_rider'
+    custom_effect: 'hair_dressup'
+    source_type: pet
   - effect:
-    custom_effect: 'sunbathing'
+    custom_effect: 'makeup_style'
+    source_type: pet
+  - effect:
+    custom_effect: 'barbie_transform'
+  - effect:
+    custom_effect: 'pet_working_daily'
+    source_type: pet
+  - effect:
+    custom_effect: 'pet_roll_window'
+    source_type: pet
+  - effect:
+    custom_effect: 'pet_crash_earth'
+    source_type: pet
+  - effect:
+    custom_effect: 'swing_swing'
+  - effect:
+    custom_effect: 'dirt_rush'
+  - effect:
+    custom_effect: 'sparkler_wand'
+  - effect:
+    custom_effect: 'martial_meow'
+    source_type: pet
 
 comments:
   base_folder: |

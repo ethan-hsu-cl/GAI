@@ -20,76 +20,76 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Pixverse Effects/0828 12 Styles
+base_folder: Media Files/Pixverse Effects/0904 12 Styles
 template_path: templates/I2V standard 4col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1441759153#gid=1441759153
 provider_reference_link: https://aisphere.feishu.cn/wiki/GKwywQM3oixt4EkOM1IceWw8n5f?table=tblfxIxbTQwb57kk&view=vewTVy4A0p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgBObjbpMiwNTb6j8NsrvPVRAeFU7-_yd_x2HT41Pd-qUug?e=g3h8UU
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCbU9FzStw5SJZJ481YmdOhAQMHYZYMfWl0rgknJC6AKNY?e=WcGplL
 
 tasks:
-  - effect: Dimension Leap
+  - effect: Calorie Quest
     prompt: ''
-    custom_effect_id: '398581173031104'
+    custom_effect_id: '397217578616192'
     negative_prompt: ''
 
-  - effect: Umbrella Transition
+  - effect: Music!
     prompt: ''
-    custom_effect_id: '390316533698112'
+    custom_effect_id: '418085532933248'
     negative_prompt: ''
 
-  - effect: Leviathan's Wake
+  - effect: Street Art Awakening
     prompt: ''
-    custom_effect_id: '398580320577728'
+    custom_effect_id: '417033902416768'
     negative_prompt: ''
 
-  - effect: Escape Work
+  - effect: move like animal
     prompt: ''
-    custom_effect_id: '416101082038464'
+    custom_effect_id: '417209344089216'
     negative_prompt: ''
 
-  - effect: Same Wish, Different Years
+  - effect: Little Warrior Fights the Giant Toy Monster
     prompt: ''
-    custom_effect_id: '419845927775552'
+    custom_effect_id: '421099323861504'
     negative_prompt: ''
 
-  - effect: Celebrating a birthday with a lion
+  - effect: The Spark Rise
     prompt: ''
-    custom_effect_id: '419846533483840'
+    custom_effect_id: '421454546889664'
     negative_prompt: ''
 
-  - effect: Upload Your Hero to a Ghost Army Charge
+  - effect: Squished-out Kitten
     prompt: ''
-    custom_effect_id: '419831334571328'
-    negative_prompt: ''
-
-  - effect: Dark Bio-Armor Transformation
-    prompt: ''
-    custom_effect_id: '419841266734400'
-    negative_prompt: ''
-
-  - effect: Skyfall Mecha Assembly
-    prompt: ''
-    custom_effect_id: '419842893321536'
-    negative_prompt: ''
-
-  - effect: Don't take the kitten's phone, it will throw a tantrum.
-    prompt: ''
-    custom_effect_id: '420009187179840'
+    custom_effect_id: '420170990423488'
     negative_prompt: ''
     source_type: pet
 
-  - effect: Eating and drinking in slow motion
+  - effect: Blue‑Hole Skydiving on the Island
     prompt: ''
-    custom_effect_id: '420012679619904'
+    custom_effect_id: '420700646501824'
     negative_prompt: ''
 
-  - effect: Kitten Pranks
+  - effect: Hidden Kitties ！
     prompt: ''
-    custom_effect_id: '420170363000256'
+    custom_effect_id: '421935296492736'
     negative_prompt: ''
     source_type: pet
+
+  - effect: Winged Wardrobe!
+    prompt: ''
+    custom_effect_id: '421936569539776'
+    negative_prompt: ''
+
+  - effect: 3D Figurine Factory!
+    prompt: ''
+    custom_effect_id: '421940938280256'
+    negative_prompt: ''
+
+  - effect: Tiny Darling
+    prompt: ''
+    custom_effect_id: '421430734041408'
+    negative_prompt: ''
 
 comments:
   base_folder: |

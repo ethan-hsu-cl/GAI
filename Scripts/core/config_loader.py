@@ -534,7 +534,7 @@ def save_testbed_cookie(cookie: str) -> Path:
     return env_path
 
 
-SUPPORTED_BROWSERS = ['brave', 'chrome', 'edge', 'safari', 'firefox', 'chromium', 'arc', 'opera', 'vivaldi']
+SUPPORTED_BROWSERS = ['chrome', 'brave', 'edge', 'safari', 'firefox', 'chromium', 'arc', 'opera', 'vivaldi']
 
 
 def load_browser_preference() -> str:
@@ -543,10 +543,10 @@ def load_browser_preference() -> str:
     Change the browser preference by setting TESTBED_BROWSER in the .env file or by changing the browser name in the following code to one of the supported browsers.
 
     Returns:
-        Browser name string, or 'brave' if not set.
+        Browser name string, or 'chrome' if not set.
     """
     load_env_file()
-    return os.environ.get('TESTBED_BROWSER', 'brave')
+    return os.environ.get('TESTBED_BROWSER', 'chrome')
 
 
 def save_browser_preference(browser: str) -> None:
@@ -554,7 +554,7 @@ def save_browser_preference(browser: str) -> None:
     Save the preferred browser name to the .env file.
 
     Args:
-        browser: Browser name to save (e.g. 'brave', 'chrome').
+        browser: Browser name to save (e.g. 'chrome', 'brave').
     """
     env_path = get_env_file_path()
     lines: list[str] = []
@@ -580,7 +580,7 @@ def save_browser_preference(browser: str) -> None:
 
 def fetch_cookie_from_browser(
     domain: str = '192.168.31.18',
-    browser: str = 'brave',
+    browser: str = 'chrome',
 ) -> str:
     """
     Fetch cookies for a given domain directly from the specified browser profile.
@@ -591,8 +591,8 @@ def fetch_cookie_from_browser(
 
     Args:
         domain: Hostname (or IP) to match against stored cookies.
-        browser: Browser name supported by browser-cookie3 (e.g. 'brave',
-            'chrome', 'edge', 'safari', 'firefox'). Defaults to 'brave'.
+        browser: Browser name supported by browser-cookie3 (e.g. 'chrome',
+            'brave', 'edge', 'safari', 'firefox'). Defaults to 'chrome'.
 
     Returns:
         Cookie header string (e.g. "name1=val1; name2=val2"), or empty string
@@ -635,9 +635,9 @@ def get_testbed_cookie(auto_fetch: bool = True, browser: Optional[str] = None) -
     Args:
         auto_fetch: If True, try reading cookies from the browser first before
             falling back to the environment or .env file.
-        browser: Browser to read cookies from (e.g. 'brave', 'chrome', 'edge',
+        browser: Browser to read cookies from (e.g. 'chrome', 'brave', 'edge',
             'safari', 'firefox'). If None, reads from TESTBED_BROWSER in .env
-            or defaults to 'brave'.
+            or defaults to 'chrome'.
 
     Returns:
         The cookie string, or empty string if not found anywhere.
