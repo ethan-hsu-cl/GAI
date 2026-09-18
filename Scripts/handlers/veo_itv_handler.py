@@ -213,6 +213,18 @@ class VeoItvHandler(BaseAPIHandler):
         
         return video_saved
     
+    def failure_base_name(self, file_path, task_config):
+        """Name failure records per generation, as _handle_result does.
+
+        Results are saved as "{base_name}_{gen_num}" and both the resume check
+        and the report generator look them up that way, so a failure recorded
+        under the bare source name is never read back.
+        """
+        base_name = super().failure_base_name(file_path, task_config)
+        if file_path is None:
+            return base_name
+        return f"{base_name}_{task_config.get('generation_number', 1)}"
+
     def _get_generation_status(self, base_name, gen_num, metadata_folder):
         """
         Get detailed processing status for a specific generation.

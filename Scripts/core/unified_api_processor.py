@@ -646,8 +646,14 @@ class UnifiedAPIProcessor:
                 return str(obj)
 
     def save_failure_metadata(self, file_path, task_config, metadata_folder, error, attempts):
-        """Enhanced failure metadata saving"""
-        base_name = Path(file_path).stem
+        """Enhanced failure metadata saving.
+
+        Runs after the handler's own _save_failure and overwrites it, so it has
+        to name the file the same way: via the handler's failure_base_name(),
+        which per-generation APIs override.
+        """
+        handler = HandlerRegistry.get_handler(self.api_name, self)
+        base_name = handler.failure_base_name(file_path, task_config)
         metadata = {
             "source_file": Path(file_path).name,
             "error": error,
@@ -657,9 +663,13 @@ class UnifiedAPIProcessor:
             "api_name": self.api_name
         }
 
+        # Also record the source under the field the handler uses on success, so
+        # a failed slide's metadata panel names the image instead of showing N/A.
+        metadata[handler._get_source_field()] = Path(file_path).name
+
         # Add API-specific fields (excluding bulk data like image_sets)
         exclude_keys = {'image_sets', 'folder_path', 'source_dir', 'generated_dir', 'metadata_dir', 'all_images'}
-        for key in ['prompt', 'effect', 'model', 'duration', 'resolution', 'aspect_ratio', 'movement', 'category']:
+        for key in ['prompt', 'effect', 'model', 'duration', 'resolution', 'ratio', 'aspect_ratio', 'movement', 'category']:
             if key in task_config and key not in exclude_keys:
                 metadata[key] = task_config[key]
         

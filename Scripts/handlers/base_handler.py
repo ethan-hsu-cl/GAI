@@ -446,22 +446,39 @@ class BaseAPIHandler:
         """Override this to handle API-specific result format."""
         raise NotImplementedError(f"{self.__class__.__name__} must implement _handle_result()")
     
+    def failure_base_name(self, file_path, task_config):
+        """Metadata base name to record a failure for this call under.
+
+        A failure record is only useful where the success would have been
+        written: both the resume check and the report generator look a result
+        up by that name, so a record filed anywhere else is never read. The
+        default names it after the source file; handlers that save results per
+        generation override this to keep the two in step.
+
+        Args:
+            file_path: Path to the source file, or None for text-to-video.
+            task_config: Task configuration dictionary.
+
+        Returns:
+            str: Base name for the failure metadata file.
+        """
+        if file_path is not None:
+            return task_config.get('_base_name') or Path(file_path).stem
+
+        # For text-to-video, use style name or fallback
+        style_name = task_config.get('style_name', 'unknown')
+        gen_num = task_config.get('generation_number', 1)
+        safe_style = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in style_name)
+        safe_style = safe_style.strip().replace(' ', '_')
+        return f"{safe_style}-{gen_num}"
+
     def _save_failure(self, file_path, task_config, metadata_folder, error, attempt, start_time,
                       timeout_retries=None):
         """Save failure metadata - common for all APIs."""
         # Handle text-to-video cases where file_path might be None
-        if file_path is not None:
-            base_name = task_config.get('_base_name') or Path(file_path).stem
-            file_name = Path(file_path).name
-        else:
-            # For text-to-video, use style name or fallback
-            style_name = task_config.get('style_name', 'unknown')
-            gen_num = task_config.get('generation_number', 1)
-            safe_style = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in style_name)
-            safe_style = safe_style.strip().replace(' ', '_')
-            base_name = f"{safe_style}-{gen_num}"
-            file_name = None
-        
+        base_name = self.failure_base_name(file_path, task_config)
+        file_name = Path(file_path).name if file_path is not None else None
+
         processing_time = time.time() - start_time
         
         metadata = {
@@ -481,7 +498,7 @@ class BaseAPIHandler:
             metadata[self._get_source_field()] = file_name
 
         # Add task-specific fields
-        for key in ['prompt', 'effect', 'model']:
+        for key in ['prompt', 'effect', 'model', 'resolution', 'ratio', 'duration']:
             if key in task_config:
                 metadata[key] = task_config[key]
         

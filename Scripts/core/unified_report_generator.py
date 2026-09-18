@@ -2646,40 +2646,50 @@ class UnifiedReportGenerator:
                 if all_media:
                     self._compute_aspect_ratios_batch(all_media, are_videos={p: True for p in raw_videos.values()})
                 
+                task_gen_count = task_config.get('generation_count')
+                if task_gen_count is None:
+                    task_gen_count = self.config.get('generation_count', 1)
+                try:
+                    gen_count = max(int(task_gen_count), 1)
+                except (TypeError, ValueError):
+                    gen_count = 1
+
                 # Create pairs for each source image and its generated videos
                 for key, img in images.items():
                     source_videos = videos_by_source.get(key, {})
-                    
-                    if source_videos:
-                        # Create a pair for each generated video
-                        for gen_num, vid in sorted(source_videos.items()):
-                            meta_key = f"{key}_{gen_num}"
-                            metadata = metadata_cache.get(meta_key, {})
-                            
-                            pair = MediaPair(
-                                source_file=img.name,
-                                source_path=img,
-                                api_type=self.api_name,
-                                generated_paths=[vid],
-                                reference_paths=[],
-                                effect_name=style_name,
-                                category="ITV",
-                                metadata=metadata,
-                                failed=not metadata.get('success', False)
-                            )
-                            pairs.append(pair)
-                    else:
-                        # No videos generated yet
+
+                    # Report every generation that left a trace: a video, or only
+                    # a metadata record (a failed generation writes one but no
+                    # video). Generations with neither are skipped so a later bump
+                    # to generation_count can't invent slides for a run that never
+                    # attempted them.
+                    gen_nums = set(source_videos)
+                    gen_nums |= {g for g in range(1, gen_count + 1)
+                                 if f"{key}_{g}" in metadata_cache}
+                    if not gen_nums:
+                        gen_nums = {1}
+
+                    for gen_num in sorted(gen_nums):
+                        vid = source_videos.get(gen_num)
+                        metadata = metadata_cache.get(f"{key}_{gen_num}")
+                        if metadata is None and vid is None and gen_num == 1:
+                            # Runs from before failures were named per generation
+                            # left one un-suffixed record per source image; it
+                            # carries the error text this slide should show.
+                            metadata = metadata_cache.get(key)
+
+                        metadata = metadata or {}
+
                         pair = MediaPair(
                             source_file=img.name,
                             source_path=img,
                             api_type=self.api_name,
-                            generated_paths=[],
+                            generated_paths=[vid] if vid else [],
                             reference_paths=[],
                             effect_name=style_name,
                             category="ITV",
-                            metadata={},
-                            failed=True
+                            metadata=metadata,
+                            failed=not vid or not metadata.get('success', False)
                         )
                         pairs.append(pair)
 

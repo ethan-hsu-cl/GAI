@@ -276,6 +276,19 @@ class WanV3EndframeHandler(WanV3BaseHandler):
             last_frame=handle_file(str(end_image_path))
         )
 
+    def failure_base_name(self, file_path, task_config):
+        """Name failure records per generation, as _handle_result does.
+
+        Results only carry the "_generated_{gen_num}" suffix once more than one
+        generation is requested; a failure has to follow the same rule or the
+        resume check and the report generator look it up under a name that
+        isn't there.
+        """
+        base_name = super().failure_base_name(file_path, task_config)
+        if file_path is None or task_config.get('total_generations', 1) <= 1:
+            return base_name
+        return f"{base_name}_generated_{task_config.get('generation_number', 1)}"
+
     def _handle_result(self, result, file_path, task_config, output_folder,
                        metadata_folder, base_name, file_name, start_time, attempt):
         """Handle Wan V3 Endframe API result.
