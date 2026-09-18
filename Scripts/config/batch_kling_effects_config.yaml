@@ -10,7 +10,7 @@ concurrent_requests: 3
 
 output:
   directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
-  group_tasks_by: 3
+  group_tasks_by: 4
 
 schedule:
   start_time: ''

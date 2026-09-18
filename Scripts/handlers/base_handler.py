@@ -27,11 +27,18 @@ class BaseAPIHandler:
     # responses (Bad Gateway / Service Unavailable / Gateway Timeout) — both
     # represent "server temporarily unreachable" and benefit from the same
     # exponential-backoff retry.
+    #
+    # Matched against _error_text(), i.e. the exception's class name *and* its
+    # message: several transport failures (httpx.RemoteProtocolError, and the
+    # CancelledError gradio_client raises when its SSE stream dies mid-job)
+    # carry an empty str(), so message-only matching misses them entirely.
     CONNECTION_ERROR_PATTERNS = [
         'Connection refused',
         'ConnectionRefusedError',
         'ConnectionResetError',
         'ConnectionError',
+        'ConnectError',
+        'ConnectTimeout',
         'Errno 61',   # Connection refused (macOS)
         'Errno 111',  # Connection refused (Linux)
         'Errno 10061',  # Connection refused (Windows)
@@ -40,12 +47,23 @@ class BaseAPIHandler:
         'BrokenPipeError',
         'Server disconnected',
         'Connection reset by peer',
+        'peer closed connection',
         '502 Bad Gateway',
         '503 Service Unavailable',
         '504 Gateway Timeout',
         'Bad Gateway',
         'Service Unavailable',
         'Gateway Timeout',
+        # gradio_client / httpx transport failures raised when the testbed
+        # restarts underneath an in-flight job
+        'RemoteProtocolError',
+        'ReadError',
+        'WriteError',
+        'PoolTimeout',
+        'CancelledError',   # SSE stream dropped; carries no message
+        'Server stopped',
+        'QueueError',
+        'Queue is full',
     ]
     
     # Type keywords that steer effect Source-folder auto-population toward a
@@ -202,10 +220,56 @@ class BaseAPIHandler:
             f"✓ Task {task_num}: {successful}/{len(files)} successful ({skipped} skipped)"
         )
 
+    @staticmethod
+    def _error_text(error):
+        """Render an exception for classification and logging.
+
+        Returns ``"ClassName: message"`` so classification can key off the
+        exception type as well as its text. This matters for the Gradio
+        transport failures a restarting testbed produces — ``RemoteProtocolError``
+        and the ``CancelledError`` raised when the SSE stream is dropped both
+        have an empty ``str()``, and would otherwise look like an unclassifiable
+        error and abort the connection backoff loop on the spot.
+
+        Args:
+            error: An exception, or anything else describing a failure.
+
+        Returns:
+            str: Text to match against the error pattern lists.
+        """
+        if isinstance(error, BaseException):
+            message = str(error)
+            name = type(error).__name__
+            return f"{name}: {message}" if message else name
+        return str(error)
+
     def _is_connection_error(self, error_str):
         """Check if an error is a connection-related error."""
-        error_lower = error_str.lower()
+        error_lower = self._error_text(error_str).lower()
         return any(p.lower() in error_lower for p in self.CONNECTION_ERROR_PATTERNS)
+
+    def _reconnect_client(self):
+        """Rebuild the Gradio client before retrying after a connection failure.
+
+        A dropped connection almost always means the testbed restarted, and the
+        old ``Client`` does not survive that: it holds a dead SSE stream thread,
+        a stale ``session_hash``, and event ids that will never complete. Reusing
+        it makes every subsequent call fail instantly, which is how one 502
+        cascades into a whole batch of failures. Waiting for the server to come
+        back is only half the recovery — the client has to be rebuilt too.
+
+        Returns:
+            bool: True if a fresh client was created.
+        """
+        try:
+            if self.processor.initialize_client():
+                # Handlers cache processor.client at construction, so refresh
+                # the local reference for the rest of this retry loop.
+                self.client = self.processor.client
+                return True
+        except Exception as e:
+            self.logger.warning(f" ⚠️ Client reconnect failed: {self._error_text(e)}")
+        return False
 
     def _is_timeout_error(self, error_str):
         """Check if an error is a server-side generation timeout."""
@@ -249,11 +313,14 @@ class BaseAPIHandler:
         connection_retry_count = 0
         last_exception = None
         
-        while total_wait_time < self.CONNECTION_RETRY_MAX_DURATION:
+        # Loops until the wait budget is spent *and then* tries once more, so the
+        # last slice of the budget is actually used to make a request rather than
+        # being slept away and abandoned.
+        while True:
             try:
                 return self._make_api_call(file_path, task_config, attempt)
             except Exception as e:
-                error_str = str(e)
+                error_str = self._error_text(e)
                 
                 # Only retry for connection errors
                 if not self._is_connection_error(error_str):
@@ -280,6 +347,11 @@ class BaseAPIHandler:
                 
                 time.sleep(actual_wait)
                 total_wait_time += actual_wait
+
+                # The server we just waited for has almost certainly restarted,
+                # which leaves the existing Gradio client unusable. Rebuild it
+                # so the next attempt talks to a live session.
+                self._reconnect_client()
                 
                 # Apply exponential backoff for next iteration
                 current_wait = min(current_wait * self.CONNECTION_RETRY_BACKOFF, 
@@ -318,20 +390,28 @@ class BaseAPIHandler:
             return success
 
         except Exception as e:
-            error_str = str(e)
+            error_str = self._error_text(e)
 
             # Connection/server errors take priority over every other
             # classification: a 5xx / dropped connection means the server failed,
             # not that anything is wrong with the generation request. These have
             # already exhausted the exponential-backoff loop in
             # _make_api_call_with_connection_retry by the time they reach here, so
-            # record and propagate without consuming any other retry budget.
+            # propagate without consuming any other retry budget.
             # (Checked before the timeout branch because '504 Gateway Timeout' /
             # 'Gateway Timeout' would otherwise be misread as a generation timeout.)
+            #
+            # Deliberately no _save_failure() here: an unreachable server tells us
+            # nothing about this file. Writing a failure record would let the
+            # resume logic count it against max_retries — and with max_retries: 1
+            # (every wan_v3_* API) a single outage would permanently mark every
+            # remaining file 'failed - max retries reached' on re-run. Leaving no
+            # record means a re-run simply picks the file up again.
             if self._is_connection_error(error_str):
                 self.logger.error(f" ❌ Server/connection error: {error_str}")
-                self._save_failure(file_path, task_config, metadata_folder, error_str,
-                                   attempt, start_time)
+                self.logger.info(
+                    " ↻ Not recorded as a failure — re-run will retry this file"
+                )
                 raise e
 
             is_timeout = self._is_timeout_error(error_str)

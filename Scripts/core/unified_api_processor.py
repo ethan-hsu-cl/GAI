@@ -548,11 +548,12 @@ class UnifiedAPIProcessor:
                 return result
                 
             except Exception as e:
-                error_str = str(e)
+                error_str = handler._error_text(e)
                 # Surface the reason for every failed attempt instead of silently
                 # retrying. Connection/server errors are flagged distinctly so a
                 # transient backend outage isn't mistaken for a bad request.
-                if handler._is_connection_error(error_str):
+                is_connection_error = handler._is_connection_error(error_str)
+                if is_connection_error:
                     self.logger.warning(
                         f" ⚠️ Server/connection error on attempt {attempt + 1}/{max_retries}: {error_str}"
                     )
@@ -561,7 +562,11 @@ class UnifiedAPIProcessor:
                         f" ⚠️ Attempt {attempt + 1}/{max_retries} failed: {error_str}"
                     )
                 if attempt == max_retries - 1:
-                    self.save_failure_metadata(file_path, task_config, metadata_folder, error_str, attempt + 1)
+                    # An unreachable server says nothing about this file, so don't
+                    # write a failure record that the resume logic would count
+                    # against max_retries (see BaseAPIHandler.process).
+                    if not is_connection_error:
+                        self.save_failure_metadata(file_path, task_config, metadata_folder, error_str, attempt + 1)
                     return False
                 continue
         
@@ -749,23 +754,62 @@ class UnifiedAPIProcessor:
         handler = HandlerRegistry.get_handler(self.api_name, self)
         handler.process_task(task, task_num, total_tasks)
 
-    def download_file(self, url, path):
-        """Standard file download method"""
-        try:
-            headers = {}
-            cookie = self.config.get('testbed_cookie') or self._testbed_cookie
-            if cookie:
-                headers['Cookie'] = cookie
+    # HTTP statuses that mean "try again", not "this file is unavailable".
+    # The testbed sits behind a proxy that serves these while the app restarts.
+    TRANSIENT_HTTP_STATUS = {429, 500, 502, 503, 504}
+    DOWNLOAD_MAX_ATTEMPTS = 4
+    DOWNLOAD_INITIAL_WAIT = 5
 
-            with requests.get(url, stream=True, timeout=30, headers=headers or None) as r:
-                r.raise_for_status()
-                with open(path, 'wb') as f:
-                    for chunk in r.iter_content(chunk_size=16384):
-                        f.write(chunk)
-            return True
-        except Exception as e:
-            self.logger.error(f"Download failed: {e}")
-            return False
+    def download_file(self, url, path, max_attempts=None):
+        """Download a generated file, retrying transient server failures.
+
+        A 502 while fetching the result says nothing about the generation — the
+        video exists, the proxy is just bouncing. Without a retry here the caller
+        sees an empty download and reports "No video returned by the API",
+        discarding a video that was successfully generated.
+
+        Args:
+            url: Source URL.
+            path: Destination path.
+            max_attempts: Attempt count override (default DOWNLOAD_MAX_ATTEMPTS).
+
+        Returns:
+            bool: True if the file was downloaded.
+        """
+        max_attempts = max_attempts or self.DOWNLOAD_MAX_ATTEMPTS
+        headers = {}
+        cookie = self.config.get('testbed_cookie') or self._testbed_cookie
+        if cookie:
+            headers['Cookie'] = cookie
+
+        wait = self.DOWNLOAD_INITIAL_WAIT
+        for attempt in range(1, max_attempts + 1):
+            try:
+                with requests.get(url, stream=True, timeout=30, headers=headers or None) as r:
+                    r.raise_for_status()
+                    with open(path, 'wb') as f:
+                        for chunk in r.iter_content(chunk_size=16384):
+                            f.write(chunk)
+                return True
+            except Exception as e:
+                # A partial write would otherwise be mistaken for a real download
+                Path(path).unlink(missing_ok=True)
+
+                status = getattr(getattr(e, 'response', None), 'status_code', None)
+                retriable = status is None or status in self.TRANSIENT_HTTP_STATUS
+                if not retriable or attempt >= max_attempts:
+                    self.logger.error(
+                        f"Download failed after {attempt} attempt(s): {e}"
+                    )
+                    return False
+
+                self.logger.warning(
+                    f"⚠️ Download attempt {attempt}/{max_attempts} failed ({e}); "
+                    f"retrying in {wait}s"
+                )
+                time.sleep(wait)
+                wait *= 2
+        return False
 
     def run(self):
         """

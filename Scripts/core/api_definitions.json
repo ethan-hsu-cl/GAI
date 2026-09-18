@@ -1993,7 +1993,7 @@
     },
     "rate_limit": 3,
     "task_delay": 10,
-    "max_retries": 3,
+    "max_retries": 1,
     "special_handling": "text_to_video",
     "config_structure": "task_list",
     "report": {
@@ -2060,7 +2060,7 @@
     },
     "rate_limit": 3,
     "task_delay": 10,
-    "max_retries": 3,
+    "max_retries": 1,
     "special_handling": "image_to_video",
     "config_structure": "base_folder",
     "structure_type": "base_folder",
@@ -2130,7 +2130,7 @@
     },
     "rate_limit": 3,
     "task_delay": 10,
-    "max_retries": 3,
+    "max_retries": 1,
     "special_handling": "image_pairs",
     "config_structure": "task_folders",
     "report": {
@@ -2204,7 +2204,7 @@
     },
     "rate_limit": 3,
     "task_delay": 10,
-    "max_retries": 3,
+    "max_retries": 1,
     "special_handling": "multi_image_reference",
     "max_references": 9,
     "aspect_ratios": [

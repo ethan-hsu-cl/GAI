@@ -1,6 +1,6 @@
 ---
 name: i2i2v-from-deck
-description: Convert a "GAI Template" text export of a Google Slides group-shot deck into the full tasks list of Scripts/config/batch_i2i2v_config.yaml. Use when the user provides a .txt (or pasted text) exported from a GAI/group-shot Slides deck — with per-style image prompts, video prompts, negative prompts, and Gemini/resolution/aspect metadata — and wants it turned into i2i2v batch tasks. Also updates root_design_link to the deck URL and clears root_source_video_link. For the generic per-field paste flow across other APIs, use update-batch-prompts instead.
+description: Convert a "GAI Template" Google Slides group-shot deck into the full tasks list of Scripts/config/batch_i2i2v_config.yaml. Use when the user provides a GAI/group-shot Slides deck as a URL (fetched via the no-auth export/txt endpoint), a .txt export, or pasted text — with per-style image prompts, video prompts, negative prompts, and Gemini/resolution/aspect metadata — and wants it turned into i2i2v batch tasks. Also updates root_design_link to the deck URL and clears root_source_video_link. For the generic per-field paste flow across other APIs, use update-batch-prompts instead.
 ---
 
 # i2i2v-from-deck
@@ -23,15 +23,31 @@ in place / append only on explicit instruction.
 
 You need two things:
 
-1. **The deck text** — a `.txt` file path, an attached document, or pasted text.
-   The `.pptx` itself is usually too large to attach; a `.txt` export is normal.
-2. **The deck link** — the Google Slides URL. Goes into `root_design_link`. If the
+1. **The deck link** — the Google Slides URL. Goes into `root_design_link`. If the
    user pasted it in an earlier turn (e.g. when they first asked to update the
    config), reuse that; don't re-ask.
+2. **The deck text** — normally fetched from that link (below). Falls back to a
+   `.txt` file path, an attached document, or pasted text. The `.pptx` itself is
+   usually too large to attach.
 
-The Google Drive connector generally can't be read in a non-interactive session,
-and Slides isn't WebFetch-able, so **work from the supplied text** — do not try to
-fetch the deck.
+**Fetch from the URL first — a link-shared deck exports without any credentials.**
+Google Slides serves a plain-text export that needs no auth and no Drive
+connector when the deck is shared by link (the normal case for these decks):
+
+```bash
+curl -sSL "https://docs.google.com/presentation/d/<DECK_ID>/export/txt" -o deck.txt
+```
+
+`<DECK_ID>` is the path segment after `/presentation/d/`. A private deck redirects
+to a login page instead — check the response is `text/plain` and the body isn't
+HTML before trusting it. Only if that fails do you need a `.txt` export or pasted
+text from the user. **Do not tell the user the deck is unreachable without
+testing that URL** — the Drive connector being unauthorized says nothing about
+whether the deck is link-shared.
+
+The export is **clean UTF-8**. Read it as UTF-8 (`open(p, encoding="utf-8")`); do
+not inspect it with `cat -v`, which renders CJK as false mojibake and will send
+you chasing an encoding problem that isn't there.
 
 ## Step 2 — Understand the deck anatomy
 
@@ -95,12 +111,14 @@ materially changes output and you can't infer it**:
   prompts labeled `(Human)` and `(Pet)`, emit **two tasks** sharing the same image
   prompt, with `style_name` suffixed ` (Human)` / ` (Pet)`. This raises the task
   count `N`.
-- **Mojibake (garbled CJK).** A downloaded `.txt` frequently arrives with Chinese /
-  Japanese mangled (UTF-8 misread as Latin-1: `ç¶å¸…`, `ãã£ã¡`), while English
+- **Mojibake (garbled CJK).** The `export/txt` endpoint returns clean UTF-8, so this
+  only affects a `.txt` the user downloaded and re-saved, where Chinese / Japanese
+  can arrive mangled (UTF-8 misread as Latin-1: `ç¶å¸…`, `ãã£ã¡`) while English
   survives. Reconstruct the `style_name` and any **on-image text the prompt tells the
   model to render** (e.g. purikura sticker phrases) into clean CJK. Never ship
   mojibake into a prompt. If a string can't be recovered confidently, ask the user
-  to confirm that specific text.
+  to confirm that specific text. Before assuming mojibake, confirm you didn't just
+  view clean UTF-8 through `cat -v`.
 - **Task count vs. expectation.** Count the distinct styles you actually found (after
   Human/Pet splits). If it differs from what the user expected, say so plainly and
   list what you extracted rather than inventing missing styles — the `.txt` export may
