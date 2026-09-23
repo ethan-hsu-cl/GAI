@@ -76,7 +76,7 @@ You need:
 
 1. **The deck text** — fetched from the deck URL (see below), or a `.txt`
    export, an attached document, or pasted text.
-2. **The deck link** — the Google Slides URL, for `design_link`. Reuse one the
+2. **The deck link** — the Google Slides URL, for `root_design_link`. Reuse one the
    user pasted in an earlier turn; don't re-ask.
 3. **The source videos** — see Step 7. Unlike the image flows there is **no
    shared sample video set in the repo**, so this is something the user supplies.
@@ -272,13 +272,15 @@ docs live only in the trailing `comments:` block, which you preserve untouched.
 
 ## Step 6 — Update the top-level links
 
-In `batch_wan_v3_v2v_config.yaml` these keys are **not** `root_`-prefixed:
+These keys **are** `root_`-prefixed — the report generator only reads the
+`root_` form for folder-based APIs like this one, so a bare `design_link:` or
+`source_video_link:` is silently ignored and the title slide loses the link:
 
-- **`design_link`** ← the deck's Google Slides URL, written bare and unquoted:
-  `design_link: <url>`.
-- **`source_video_link`** ← leave empty (`source_video_link:`). The previous
-  batch's link is stale once the tasks change; a new one is produced after the
-  script runs.
+- **`root_design_link`** ← the deck's Google Slides URL, written bare and
+  unquoted: `root_design_link: <url>`.
+- **`root_source_video_link`** ← leave empty (`root_source_video_link:`). The
+  previous batch's link is stale once the tasks change; a new one is produced
+  after the script runs.
 
 Do not touch any other top-level key (`template_path`, `output`,
 `generation_count`, `root_folder`, `testbed`, `schedule`, `default_settings`,
@@ -456,7 +458,7 @@ Report:
 
 - Don't touch `comments`, `template_path`, `output`, `testbed`, `schedule`,
   `generation_count`, `root_folder`, `default_settings`, or any top-level key
-  outside `tasks:`, `design_link`, and `source_video_link`.
+  outside `tasks:`, `root_design_link`, and `root_source_video_link`.
 - Don't reorder or rename task fields; clone the existing shape exactly.
 - Don't add a `negative_prompt` field, and don't fold negative-prompt text into
   the prompt.

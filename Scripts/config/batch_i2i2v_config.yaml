@@ -22,7 +22,7 @@ testbed: http://192.168.31.161/external-testbed/image_generation/
 schedule:
   start_time: ''
 
-root_design_link: https://docs.google.com/presentation/d/1WFmn4Ae_oh65eSf26Xn0whtEE0cUa-l4Ww41HLlnCAQ/edit?slide=id.p#slide=id.p
+root_design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g409e32ca999_190_95#slide=id.g409e32ca999_190_95
 root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDHqK8Cv01FSq-RCqs1bNt5AfYzhFMOdHYEAPEt5aU8zBM?e=SyDJtO
 
 # Reuse original i2i frames (video-only). If a task folder contains a dropped-in

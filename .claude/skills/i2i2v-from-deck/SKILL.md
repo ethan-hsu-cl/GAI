@@ -126,13 +126,13 @@ field values come from the deck as follows:
 | Config field | Source in deck | Notes |
 |---|---|---|
 | `style_name` | Chinese title | single-quote it; keep the ` V3` suffix; clean mojibake (Step 4) |
-| `folder` | derived | `'Media Files/I2I2V/<MMDD> <N> Styles/<MMDD> <style_name>'` (Step 5) |
+| `folder` | derived | `'Media Files/I2I2V/<MMDD> <N> Styles/<style_name>'` (Step 5) |
 **Shared by both deck shapes:**
 
 | Config field | Source in deck | Notes |
 |---|---|---|
 | `style_name` | title | group-shot: the Chinese title, single-quoted, keep the ` V3` suffix. Paired: the title stem minus the ` I2I`/` I2V` marker — derive a short English `Underscore_Title_Case` name when the stem is Chinese, and list the mapping in Step 7 |
-| `folder` | derived | `'Media Files/I2I2V/<MMDD> <N> Styles/<MMDD> <style_name>'` (Step 5) |
+| `folder` | derived | `'Media Files/I2I2V/<MMDD> <N> Styles/<style_name>'` (Step 5) |
 | `image_resolution` | `Resolution:` / `Reolution:` | `'1K'` or `'2K'`; a deck's lowercase `1k` becomes `'1K'` |
 | `image_aspect_ratio` | `Aspect Ratio:` / `Ratio:` | the metadata value wins over any aspect mentioned inside the prompt text |
 | `image_prompt` | the finalized image prompt | block scalar `|` (Step 4 picks the variant) |
@@ -236,8 +236,9 @@ materially changes output and you can't infer it**:
 - **N** = final task count (after Human/Pet splits). **`<MMDD>`** = today's date
   (`currentDate`), zero-padded, unless the user specifies otherwise — writing the config
   starts a new batch. Every task's `folder` embeds the same group segment:
-  `Media Files/I2I2V/<MMDD> <N> Styles/<MMDD> <style_name>`. Use `Styles` (plural) for
-  N ≥ 2, `Style` for N = 1.
+  `Media Files/I2I2V/<MMDD> <N> Styles/<style_name>`. Use `Styles` (plural) for
+  N ≥ 2, `Style` for N = 1. The date belongs on the group segment only — the report
+  generator reads it from there (`PARENT_FOLDER_DATE_APIS`), not from the style leaf.
 - The new `tasks:` block is large (thousands of lines). Write it **programmatically** to
   guarantee exact indentation — do not hand-assemble a giant `Edit`. Read the file,
   keep everything before the top-level `tasks:` line and everything from the top-level

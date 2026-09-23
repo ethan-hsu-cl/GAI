@@ -13,8 +13,8 @@ generation_count: 1
 root_folder: Media Files/Wan V3 I2V
 
 testbed: http://192.168.31.161/external-testbed/video_effect/
-design_link: https://docs.google.com/presentation/d/1WFmn4Ae_oh65eSf26Xn0whtEE0cUa-l4Ww41HLlnCAQ/edit?slide=id.p#slide=id.p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgAo4RvdEBacQ4f24H-hT1hgAdlfnx9H33IKaqD9J1MFI1Y?e=YS2RXm
+root_design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g409e32ca999_190_95#slide=id.g409e32ca999_190_95
+root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgAo4RvdEBacQ4f24H-hT1hgAdlfnx9H33IKaqD9J1MFI1Y?e=YS2RXm
 
 schedule:
   start_time: ''

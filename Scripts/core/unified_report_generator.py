@@ -187,6 +187,11 @@ class UnifiedReportGenerator:
         },
     }
 
+    # APIs whose task folders sit under a dated group segment, e.g.
+    # 'Media Files/Wan V3 I2V/0921 2 Styles/Pink_Skeleton' — the report date comes
+    # from that parent, not from the per-style leaf.
+    PARENT_FOLDER_DATE_APIS = ("veo_itv", "wan_v3_i2v", "wan_v3_v2v", "fifa_i2i2v", "i2i2v")
+
     # Slide canvas dimensions (cm) — 16:9 widescreen
     SLIDE_W_CM = 33.87
     SLIDE_H_CM = 19.05
@@ -3262,9 +3267,8 @@ class UnifiedReportGenerator:
             folder_names = grouped_task.get('_folder_names', [])
             
             # Extract date from first folder (prioritize folder date over current date)
-            # For veo_itv / wan_v3_i2v / fifa_i2i2v, use parent folder name (contains date like "0130 6 Styles")
-            # i2i2v has the date on the task folder itself, so it falls through to the default branch
-            if self.api_name in ("veo_itv", "wan_v3_i2v", "wan_v3_v2v", "fifa_i2i2v"):
+            # For PARENT_FOLDER_DATE_APIS, use parent folder name (contains date like "0130 6 Styles")
+            if self.api_name in self.PARENT_FOLDER_DATE_APIS:
                 parent_folder = grouped_task.get('_parent_folder_name', '')
                 d = self._extract_date_from_folder(parent_folder) if parent_folder else datetime.now().strftime("%m%d")
             else:
@@ -3707,16 +3711,12 @@ class UnifiedReportGenerator:
             folder_name = task
         elif self.api_name in ["vidu_effects", "vidu_i2v", "vidu_reference", "wan_v3_reference", "pixverse_i2v", "pixverse_effect"]:
             folder_name = Path(self.config.get('base_folder', '')).name
-        elif self.api_name in ("veo_itv", "wan_v3_i2v", "wan_v3_v2v", "fifa_i2i2v"):
-            # For veo_itv / wan_v3_i2v / fifa_i2i2v, get parent folder (e.g., "0130 6 Styles" from "0130 6 Styles/Street Rap")
+        elif self.api_name in self.PARENT_FOLDER_DATE_APIS:
+            # Get parent folder (e.g., "0130 6 Styles" from "0130 6 Styles/Street Rap")
             # since the date prefix is in the parent, not the style folder.
-            folder = task.get('folder') or (self.config.get('tasks') or [{}])[0].get('folder', '')
-            folder_name = Path(folder).parent.name
-        elif self.api_name == "i2i2v":
-            # i2i2v has the date on the task folder itself (e.g., "0520 看球賽").
             # Non-grouped runs call create_title_slide with task={}, so fall back to the first config task's folder.
             folder = task.get('folder') or (self.config.get('tasks') or [{}])[0].get('folder', '')
-            folder_name = Path(folder).name
+            folder_name = Path(folder).parent.name
         else:
             folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
             if isinstance(folder_name, str):
@@ -3895,21 +3895,14 @@ class UnifiedReportGenerator:
             # Generate filename
             if self.api_name in ["vidu_effects", "vidu_i2v", "vidu_reference", "wan_v3_reference", "pixverse_i2v", "pixverse_effect", "kling_effects"]:
                 folder_name = Path(self.config.get('base_folder', '')).name
-            elif self.api_name in ("veo_itv", "wan_v3_i2v", "wan_v3_v2v", "fifa_i2i2v"):
-                # For veo_itv / wan_v3_i2v / fifa_i2i2v, use parent folder (contains date like "0130 6 Styles").
-                if task.get('_is_grouped'):
-                    folder_name = task
-                else:
-                    folder = task.get('folder') or (self.config.get('tasks') or [{}])[0].get('folder', '')
-                    folder_name = Path(folder).parent.name
-            elif self.api_name == "i2i2v":
-                # i2i2v has the date on the task folder itself.
+            elif self.api_name in self.PARENT_FOLDER_DATE_APIS:
+                # Use parent folder (contains date like "0130 6 Styles").
                 # Non-grouped runs pass task={}, so fall back to the first config task's folder.
                 if task.get('_is_grouped'):
                     folder_name = task
                 else:
                     folder = task.get('folder') or (self.config.get('tasks') or [{}])[0].get('folder', '')
-                    folder_name = Path(folder).name
+                    folder_name = Path(folder).parent.name
             else:
                 # Handle grouped tasks
                 if task.get('_is_grouped'):
@@ -4613,15 +4606,14 @@ class UnifiedReportGenerator:
             # Folder-based API (nano_banana, kling, runway, genvideo, veo_itv, fifa_i2i2v)
             # Extract folder names for the combined title
             folder_names = []
-            parent_folder_name = None  # For veo_itv / fifa_i2i2v, store parent folder for date extraction
+            parent_folder_name = None  # For PARENT_FOLDER_DATE_APIS, store parent folder for date extraction
             for task in tasks:
                 folder = task.get('folder', '')
                 if isinstance(folder, str):
                     folder_path = Path(folder)
                     folder_name = folder_path.name
-                    # For veo_itv / wan_v3_i2v / fifa_i2i2v, capture parent folder name (contains date like "0130 6 Styles").
-                    # i2i2v has the date on the task folder itself, so no parent capture is needed.
-                    if self.api_name in ("veo_itv", "wan_v3_i2v", "wan_v3_v2v", "fifa_i2i2v") and parent_folder_name is None:
+                    # For PARENT_FOLDER_DATE_APIS, capture parent folder name (contains date like "0130 6 Styles").
+                    if self.api_name in self.PARENT_FOLDER_DATE_APIS and parent_folder_name is None:
                         parent_folder_name = folder_path.parent.name
                 else:
                     folder_name = folder.name if hasattr(folder, 'name') else str(folder)
