@@ -201,6 +201,88 @@ class UnifiedAPIProcessor:
         except Exception:
             return None
 
+    def _trim_overlong_video(self, video_path, max_duration, max_attempts=3):
+        """Trim a source video that runs past the API's duration cap.
+
+        The video counterpart of _resize_oversized_image: an over-long source is
+        fixed in place before anything is uploaded, so it still contributes its
+        first `max_duration` seconds instead of being reported invalid and
+        skipped. Nothing else validation checks (too short, too small) can be
+        repaired this way, so those files are left alone for the caller to
+        report as before.
+
+        Re-encodes rather than stream-copying: -c copy cuts on the nearest
+        keyframe, which overshoots the cap often enough that the trimmed file
+        fails the very validation the trim was meant to satisfy.
+
+        Args:
+            video_path: Path object to the source video.
+            max_duration: Maximum duration in seconds the API accepts.
+            max_attempts: How many progressively shorter targets to try.
+
+        Returns:
+            Path object to the trimmed file (the original path when no trim was
+            needed, a .mp4 sibling when the source used another container, or
+            the untouched original if trimming failed).
+        """
+        info = self._get_video_info(video_path)
+        if not info or info['duration'] <= max_duration:
+            return video_path
+
+        original_duration = info['duration']
+        # Encode to MP4/H.264 regardless of the source container: every API that
+        # declares a video duration cap accepts .mp4, and libx264/aac is not a
+        # valid payload for .avi/.mkv/.webm.
+        final_path = video_path if video_path.suffix.lower() == '.mp4' else video_path.with_suffix('.mp4')
+        # Never clobber a different source that already owns the .mp4 name
+        if final_path != video_path and final_path.exists():
+            final_path = video_path.with_name(f"{video_path.stem}_trimmed.mp4")
+        temp_path = video_path.with_name(f"{video_path.stem}_trim_tmp.mp4")
+
+        for attempt in range(max_attempts):
+            # Encoders land a frame or two past the requested cut, so step the
+            # target back on each retry until the result verifies under the cap.
+            target = max_duration - (0.1 * attempt)
+            try:
+                result = subprocess.run([
+                    'ffmpeg', '-y', '-v', 'error',
+                    '-i', str(video_path),
+                    '-t', f"{target:.3f}",
+                    '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18',
+                    '-pix_fmt', 'yuv420p', '-c:a', 'aac',
+                    '-movflags', '+faststart',
+                    str(temp_path)
+                ], capture_output=True, text=True)
+
+                if result.returncode != 0 or not temp_path.exists():
+                    self.logger.warning(
+                        f" ⚠️ Trim failed for {video_path.name}: {result.stderr.strip()[:200]}"
+                    )
+                    break
+
+                trimmed = self._get_video_info(temp_path)
+                if not trimmed or trimmed['duration'] > max_duration:
+                    got = f"{trimmed['duration']:.1f}s" if trimmed else "unreadable"
+                    self.logger.warning(f" ⚠️ Trim verification failed ({got}), retrying...")
+                    continue
+
+                temp_path.replace(final_path)
+                if final_path != video_path and video_path.exists():
+                    video_path.unlink()
+
+                self.logger.info(
+                    f" ✂️ Trimmed {original_duration:.1f}s → {trimmed['duration']:.1f}s "
+                    f"(cap {max_duration}s): {final_path.name}"
+                )
+                return final_path
+            except Exception as e:
+                self.logger.warning(f" ⚠️ Trim error for {video_path.name}: {e}")
+                break
+
+        if temp_path.exists():
+            temp_path.unlink()
+        return video_path
+
     def _resize_oversized_image(self, image_path, max_dimension=4000, max_attempts=3):
         """
         Resize images that exceed the maximum dimension limit.
@@ -386,10 +468,20 @@ class UnifiedAPIProcessor:
             return processed_files
         else:
             # Video files - combine filtering and sorting in one pass
-            return sorted(
+            files = sorted(
                 (f for f in folder_path.iterdir() if f.is_file() and f.suffix.lower() in file_exts),
                 key=lambda x: x.name.lower()
             )
+
+            # Trim over-long sources up front, the way oversized images are
+            # resized above, so the batch runs on them instead of skipping them
+            max_duration = (self.api_definitions.get('validation', {})
+                            .get('video', {})
+                            .get('duration', [None, None])[1])
+            if max_duration is None:
+                return files
+
+            return [self._trim_overlong_video(f, max_duration) for f in files]
 
     def validate_file(self, file_path, file_type='image'):
         """Delegate file validation to the appropriate handler.

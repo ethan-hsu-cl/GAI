@@ -14,7 +14,7 @@ root_folder: Media Files/Wan V3 I2V
 
 testbed: http://192.168.31.161/external-testbed/video_effect/
 design_link: https://docs.google.com/presentation/d/1WFmn4Ae_oh65eSf26Xn0whtEE0cUa-l4Ww41HLlnCAQ/edit?slide=id.p#slide=id.p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgB6t5T2uKsZTJ3X5tpJTSIIAcwAzGVF0uk9MLzw9H5Gbto?e=xr7Ie1
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgAo4RvdEBacQ4f24H-hT1hgAdlfnx9H33IKaqD9J1MFI1Y?e=YS2RXm
 
 schedule:
   start_time: ''
@@ -28,132 +28,101 @@ default_settings:
   thinking: false
 
 tasks:
-  - style_name: Zombie_Transformation
-    folder: Media Files/Wan V3 I2V/0917 4 Styles/Zombie_Transformation
+  - style_name: Pink_Skeleton
+    folder: Media Files/Wan V3 I2V/0921 2 Styles/Pink_Skeleton
     prompt: |
-      An 8-second continuous shot using the uploaded photo as the reference image and first frame — the person, their pose, their clothing, and the entire environment stay exactly as shown in the reference, with no new objects, people, or set elements added anywhere in the shot. Over the full 8 seconds, the person slowly and gradually turns into a zombie while remaining in the same spot. From 0 to 1.5 seconds, their skin very slowly starts losing color, turning faintly pale at the face while the eyes begin to glaze over. From 1.5 to 3 seconds, the neck slowly bends to one side at an unnaturally sharp angle, well past a normal range of motion, with a slight cracking motion as it settles. From 3 to 4.5 seconds, one shoulder rotates slowly inward and downward at a wrong angle while the wrist on that side bends backward past its natural limit, fingers curling stiffly, the whole posture turning asymmetric and stiff. From 4.5 to 5.5 seconds, the neck bends a second time in the opposite direction into another unnatural angle, while grey-green discoloration and dark veining spread slowly from the neck up to the jaw. From 5.5 to 6.5 seconds, the mouth slowly falls open wider than normal and thick saliva pools at the corners of the mouth, stretching into long drooping strands that drip slowly off the chin one drop at a time. From 6.5 to 7 seconds, the existing clothing slowly tears at the shoulder seam and sleeve from the strain of the twisted joints, revealing scraped skin beneath, without changing the clothing's original color or style. From 7 to 8 seconds, the fully transformed zombie suddenly snaps upright and lunges directly toward the camera in a stiff, shambling run, neck still held at its unnatural bent angle, arms reaching forward, saliva flying loose with the motion. Camera stays locked at eye level, static, matching the framing of the reference photo, from 0 to 7 seconds, holding steady so every slow change is clearly visible; starting at 7 seconds the camera whips into a handheld first-person retreat, backing away quickly as if the viewer is fleeing, the frame shaking slightly, the zombie growing larger and nearly filling the frame by 8 seconds. Audio: slow, low guttural breathing building gradually through the transformation, a soft cracking sound at each neck and joint bend, a wet dripping sound as saliva falls, a sharp inhale and rasping growl at 7 seconds as the zombie lunges, footsteps and heavy breathing of the retreating camera in the final second. No on-screen text, no subtitles, no music.
-    resolution: 720P
-    ratio: "1:1"
-    duration: 8
-    audio_out: true
+      LOCKED: Continue the exact scene of the input image. Same person, same face, same hairstyle, same clothing, same location, same camera framing. The camera stays completely still. One continuous uncut take of 7 seconds. This is a stylized neon light-art photography effect.
 
-  - style_name: Nonono_Hysteria
-    folder: Media Files/Wan V3 I2V/0917 4 Styles/Nonono_Hysteria
-    prompt: |
-      LOCKED: Continue the exact scene of the input image. Same person, same face, same hairstyle, same clothing, same background, same camera framing. The subject's gender and appearance follow the input image exactly. The camera stays completely still. One continuous unbroken take of 10 seconds.
+      THE EYES GLOW PINK: both eyes glow the same hot pink as the bones, lit from within, so the eye sockets read as two soft pink lights in the face. The glow fills the whole eye area with a gentle bloom spreading onto the surrounding skin. The eyes stay glowing pink from the moment the light comes up until the final frame and never go dark, never return to normal eyes and never change color.
 
-      THE STAYS, THE LIGHT CHANGES: the stays exactly as it is in the input image. Nothing is added, removed or rearranged. Only the lighting and the color change. The light drains away until the room is dim and murky, lit only by a weak warm amber glow. The background and the walls from the input image are still there but fall away into heavy warm brown darkness and can barely be made out. The image sits several stops under, with rich amber and sickly yellow tones, deep brown shadows rather than pure black, and no cool or blue light anywhere. The remaining warm light rakes across one side of the face, picking out the eyes, the teeth, the edge of the cheek and the strands of hair, and falls off quickly into shadow across the shoulders and body. It reads like the same room at night, lit by almost nothing.
+      THE MOVEMENT: the person walks slowly forward toward the camera for most of the shot, then comes to a stop and settles into a final pose. The walk is unhurried and heavy — loose-limbed, slightly languid, the weight dropping into each step, the arms hanging slack and swinging only a little, the head carried slightly low. It reads as tired and drained, almost undead, but it is still a smooth walk and never an exaggerated stagger or a lurch.
 
-      FILM LOOK: shot on 35mm film. Natural filmic contrast with soft rolled-off highlights and warm halation blooming gently around the brightest edges. Heavy organic film grain, visible in the shadows. A soft lens vignette darkening the corners. Shallow depth of field, the background falling soft behind the face. Slightly soft, unsharpened image with no digital crispness. Muted amber, ochre and deep brown palette.
+      THE FINAL POSE: they come to rest standing in a slouched contrapposto — the weight dropped fully onto one leg with that hip pushed out to the side, the other leg loose and slightly forward with the knee soft, the shoulders slumped and uneven, one shoulder lower than the other, the head tilted slightly to one side with the chin a little down, the arms hanging heavy and limp at the sides. It is a languid, drained, undead-looking stance that still reads as a deliberate fashion pose. They hold it without moving, their glowing pink eyes facing the camera.
 
-      THEIR EXPRESSION: a wide, fixed, unnatural open-mouthed grin with the teeth clearly showing, held without changing for the whole shot. The eyes are wide, unblinking and locked straight into the lens, catching the light. The head is tilted slightly forward and down so they look up into the camera from under the brow. The hair hangs forward around the face. The expression never softens and never becomes a normal friendly smile.
+      THE SCENE DIMS: the ambient light in the scene gradually falls away until the surroundings are dim and shadowy, like late dusk, so that the glow inside the body becomes the brightest thing in the frame. The location itself stays exactly the same — the same place, the same background, nothing added or removed — only darker and cooler. The person stays clearly visible throughout.
+
+      THE GLOW IS INSIDE THE BODY: a glowing hot-pink neon light drawing of the bones appears inside the person's body, seen through the skin and through the clothing as if the body were lit from within. The glowing bones are anatomically correct and perfectly aligned with the body's actual pose at every single frame — the spine follows the curve of the back, the ribcage sits inside the chest, the pelvis sits at the hips, the arm and leg bones run inside the limbs, the finger bones inside the hands. As the body walks, every bone bends, swings and shifts exactly with the limb it belongs to, staying locked inside the body at all times. It never slides, never lags behind the body, never drifts out of alignment, is never pasted on top of the body, never floats beside it and never sits in front of the clothing as a flat shape.
+
+      COLOR AND LOOK: the bones glow a saturated hot pink and magenta, like bright neon tubing, with a soft pink bloom spreading a short distance into the surrounding skin and fabric. The skin becomes pale, cool and porcelain-like, desaturated almost to white, while staying natural human skin with visible texture. The clothing keeps its own shape and material but takes on a soft pink cast where the light passes through it. The pink light spills faintly onto the ground and the nearest surroundings, as a real light source would, and that spill moves with them as they walk.
+
+      THE GLOW APPEARS GRADUALLY: it does not switch on suddenly and is never absent in one frame and present in the next. It begins as the faintest warm pink flush deep inside the chest, then spreads outward along the spine, into the ribs, down into the pelvis and out through the arms and legs, and the eyes come up at the same time, brightening smoothly and evenly frame by frame until the whole skeleton and both eyes are fully lit.
+
+      WHAT STAYS THE SAME: the person's face, hairstyle, body proportions and clothing stay exactly as they are in the input image. The background, the location and the camera framing never change. The frame contains only this one person.
 
       TIMELINE:
 
-      [0-2s] The person is already facing the camera from the very first frame, in the room from the input image. The light drains out of that room and settles into a dim warm amber glow, the space sinking into brown darkness while staying the same room. The face pulls into the wide open-mouthed grin, the teeth appearing, the eyes widening and locking onto the lens.
+      [0-1.5s] The person is alive and moving from the very first frame. They take their first slow, heavy steps forward toward the camera, the weight dropping into each step, arms hanging loose. Everything still looks completely ordinary. The ambient light begins to fall away and the scene starts to dim.
 
-      [2-4.5s] The head begins turning slowly and fully to one side, then slowly all the way back to the other, a long deliberate "no" motion. The mouth opens wide and shapes one single word at a time with clear pauses between them — "no... no... no..." — calm, slow, almost patient, each word spoken deliberately while the grin never leaves the face. The unnatural stillness of the body under this slow motion is what feels wrong.
+      [1.5-4.5s] The scene settles into dim dusk light. They keep walking slowly forward at the same unhurried pace, growing larger in the frame as they approach. Inside the chest a faint pink glow appears, then spreads outward along the spine, into the ribcage, down into the pelvis and out through the arms and legs, brightening steadily and evenly with every frame. At the same time both eyes begin to glow the same hot pink, faint at first and strengthening with the bones. The bones swing and bend with the walking limbs, staying locked inside the body. The skin cools and pales as the glow strengthens.
 
-      [4.5-7s] The rhythm begins to accelerate. The head turns faster and the arc gets shorter, the pauses between the words closing up, the voice tightening, the words coming quicker and quicker — "no no no no" — the grin stretching wider, the eyes fixed and beginning to bulge.
+      [4.5-5.5s] They slow down and come to a stop, settling into the slouched contrapposto pose — weight dropping onto one leg, that hip pushing out, the other knee soft, the shoulders slumping unevenly, the head tilting slightly with the chin down, the arms hanging heavy. At the same moment the glowing skeleton reaches its full brightness — saturated hot pink neon bones clearly readable inside the body from head to feet, both eyes glowing bright pink in the face, a soft pink bloom on the skin and fabric and faint pink light spilling onto the ground around them.
 
-      [7-10s] The action tips over into full hysteria without ever stopping: the head whipping side to side fast and hard, the hair flying with it, the mouth opening wider on every word, the repetitions running into each other faster and faster, the eyes wide and still locked on the lens. The shoulders, arms and hands stay completely still — all of the frenzy is in the head and the face. The shot ends mid-rhythm at full intensity.
-
-      AUDIO: the person's own voice. It begins slow, low and deliberate — single flat words with silence between them, unnervingly calm. Over the shot the tempo builds steadily: the pauses close, the pitch climbs, the voice tightens and starts to crack and fray, breath catching and gasping between repetitions, until the words are tumbling over each other, raw, unhinged and desperate, right at the edge of a scream without becoming one. Recorded close and dry with no reverb, uncomfortably intimate. Underneath it, a very quiet low room tone with a faint tape-like hiss. No music.
-
-      SUBTITLE: the words "no no no no no no" appear as a single clean line of plain white sans-serif subtitle text, centered along the bottom of the frame, on screen for the whole shot.
+      [5.5-7s] They hold the pose completely, only breathing, the fabric and hair settling. The skeleton stays fully lit at the same brightness and both eyes stay glowing pink, pulsing only very faintly with the breathing. The glow never fades out and never disappears. The shot ends with them standing in the pose, the skeleton lit and the eyes still glowing pink.
 
       THROUGHOUT THE ENTIRE SHOT:
-      The person's face, hairstyle, clothing and identity stay identical to the input image, and the frame contains only this one person.
-      The room and the background stay the same as the input image for the whole shot — nothing is added, removed or rearranged, and only the lighting and color change.
-      The mouth stays open with the teeth visible for the whole shot and never closes into a gentle smile.
-      The eyes stay wide and fixed on the camera for the whole shot.
-      The body stays still from the shoulders down — only the head and face move.
-      The tempo of the head movement and the words only ever increases, never slows down and never pauses once it has started.
-      The room stays dim and warm from 2s to the end, with only the face catching the light.
-      The camera framing stays as it is in the input image, and the camera never moves.
-      Everything runs at normal speed in one continuous unbroken take, with no interruptions of any kind.
-
-      Style: photorealistic 35mm film, heavy organic grain, warm tungsten low-key lighting, amber and deep brown palette, soft halation, lens vignette, shallow depth of field, restrained static camera, deeply unsettling mood, seventies horror cinematography.
-    resolution: 720P
-    ratio: "1:1"
-    duration: 10
-    audio_out: true
-
-  - style_name: Soul_Leaving_Body
-    folder: Media Files/Wan V3 I2V/0917 4 Styles/Soul_Leaving_Body
-    prompt: |
-      LOCKED: Continue the exact scene of the input image. Same person, same face, same hairstyle, same clothing, same room, same lighting, same camera framing. The camera stays completely still. One continuous uncut take of 7 seconds.
-
-      THE PHYSICAL PERSON'S EYES STAY CLOSED: the physical person's eyes stay closed for the entire shot, from the first frame to the last, and never open at any moment. Only the translucent figure ever opens its eyes. The physical person never opens hers, never looks up and never looks at the camera.
-
-      THE PHYSICAL PERSON'S POSTURE: she does not simply tuck her chin while standing straight. Her whole upper body slumps forward — her back curves over, her shoulders roll forward and downward, she leans forward from the waist, and her head hangs down loosely so that her face points at the floor. Her arms hang limp. It reads like someone drifting off to sleep on their feet and folding forward where they stand. This forward slump is clearly visible in her silhouette, not just in her head.
-
-      THE PALE FIGURE ONLY MOVES STRAIGHT UP: it emerges directly behind the physical person and rises vertically, staying on the same vertical center line as them for the whole shot. It never moves left or right, never drifts sideways and never shifts off center. The two heads are separated only by height — the pale figure's head sits directly above the physical person's hanging head — never by any sideways offset.
-
-      THE AIR STAYS CLEAR: the air in the room stays completely clear and empty for the whole shot. Nothing floats, curls, coils, swirls or drifts anywhere in the frame. The translucent figure has no trailing shapes, no ribbons and no decorative patterns around it — the frame contains only the two figures and the unchanged room.
-
-      THE PHYSICAL PERSON KEEPS THEIR ORIGINAL COLORS AT ALL TIMES: their clothing stays its original color, their skin stays its original tone, and their hair stays its original color and darkness for the whole shot.
-
-      CLOTHING: the translucent figure wears exactly the same garments as the person in the input image — the same type of clothing, the same cut, the same collar, the same sleeve length, the same layers and the same silhouette, matching them piece for piece. Only the color is bleached pale and the fabric is made half-transparent. The design of the garments never changes and is never replaced with any different clothing.
-
-      SCALE AND ALIGNMENT: the translucent figure is the same person at the same scale — the same body size, the same head size and the same facial proportions as the physical person. It is never larger, never taller, and never has a bigger head. It stands directly behind the physical person, centered on the same vertical line, its torso over their torso, so it clearly comes out of the body. Its head sits higher, in the space the slumped body has left open above.
-
-      THE KEY DIFFERENCE: the physical person is slumped forward with her head hanging and her face pointing toward the floor, while the translucent figure stands fully upright with its head raised and its face turned toward the camera. One is folded forward, one is standing straight — the two postures are completely different at all times.
-
-      TEXTURE OF THE TRANSLUCENT FIGURE: its face is the most solid part of it — the facial features stay clearly defined and keep the same proportions and faint traces of natural color in the lips and eyebrows, the expression calm and still, so the face reads as a real face and not as a white mask. Its hair is pale silver-white, hanging naturally in the same style as the person's hair, drifting very slowly as if suspended, the ends softening and fading gently into the air rather than ending in a sharp line. Its garments keep the same seams, folds, collar and fabric weave as the original clothing, only bleached pale and half-transparent. The opacity falls off gradually from the face outward: the face is the clearest, the shoulders and torso are half-transparent with the room visible through them, and the lower body and the outer edges dissolve completely into soft haze. There is no hard outline anywhere. The whole figure carries a soft diffuse inner glow, slightly brighter than the room, and takes on the color temperature of the room's light — cool blue-white in cool light, warm cream-white in warm light.
-
-      TIMELINE:
-
-      [0-1.5s] The person is already alive and moving from the very first frame, eyes closed — slow natural breathing, faint hair movement, subtle fabric shifting. Her whole upper body then slumps forward: her back curves over, her shoulders roll forward and down, she leans forward from the waist, her head hangs loosely so her face points at the floor, and her arms hang limp. By 1.5s this forward slump is complete and she holds it. She stays in the same spot with her eyes closed. The air stays clear.
-
-      [1.5-4.5s] A translucent figure of the same person slowly separates out of her slumped body, its form lifting free and settling into a fully upright standing posture at the same scale, wearing the same garments. It rises straight up directly behind her, staying on the same vertical center line and never moving sideways, its torso over her torso, while its head rises into the open space her hanging head has left and turns to face the camera. Its head ends up directly above her hanging head. Its lower half fades out softly and stays merged into the person below. Its eyes stay closed during this rise. She stays slumped forward, solid and unchanged, with her eyes closed. The air stays clear.
-
-      [4.5-5.2s] Only the translucent figure's eyes open. Its eyelids lift gently until its eyes are fully open and looking toward the camera, and its expression stays calm and still. It stays directly behind her and does not move sideways. The physical person's eyes stay closed and her head stays hanging — nothing about her changes. The air stays clear.
-
-      [5.2-7s] The translucent figure stays exactly where it is, holding its upright position directly behind her with its eyes open and its face toward the camera for the rest of the shot. It never sinks back, never fades away, never disappears and never drifts to either side. Only its pale hair and its soft outer edges drift almost imperceptibly. She stays exactly as she was at 1.5s — slumped forward, head hanging, face down, eyes closed, solid and in her original colors, breathing faintly. The air stays clear. The shot ends with both of them still there.
-
-      THROUGHOUT THE ENTIRE SHOT:
-      The physical person's eyes stay closed for all seven seconds and never open at any moment.
-      Only the translucent figure ever opens its eyes; the physical person never does.
-      The physical person stays slumped forward with her upper body folded over from 1.5s to the final frame, and never straightens up and never stands upright again.
-      The translucent figure stays fully upright the whole time, and the contrast between her folded posture and its straight posture is clearly visible.
-      The translucent figure stays centered on the same vertical line as her at every moment and never moves left or right.
-      The separation between the two heads is vertical only, with the pale head directly above the hanging head.
-      The air in the room stays clear and empty, and nothing floats, curls or drifts anywhere in the frame at any moment.
-      The translucent figure's clothing matches her clothing piece for piece at every moment — same garments, same cut, same silhouette, only bleached and half-transparent.
-      The translucent figure stays the same size and the same body proportions as her for the whole shot.
-      Exactly one solid figure is present at every moment, and the translucent figure stays semi-transparent from the moment it appears to the final frame.
-      The translucent figure keeps a clear human shape with a recognizable, naturally detailed face and visible arms at every moment.
-      Once the translucent figure's eyes have opened they stay open for the rest of the shot.
-      She keeps her head hanging for the whole shot and never looks up.
-      The room, the furniture, the lighting and the background stay exactly as they are in the input image, and the frame contains only this one person.
-      All motion is slow, smooth and continuous, in a single unbroken take.
+      Both eyes glow hot pink from the moment the light comes up to the final frame, and never go dark and never return to normal eyes.
+      The glowing bones stay inside the body at all times, anatomically aligned with the body at every frame, and move with every step, swing and shift of the limbs.
+      The glow appears as one smooth continuous build with no sudden switch-on.
+      The person's face, hair and clothing stay identical to the input image.
+      The walk stays slow, smooth and heavy, and never becomes an exaggerated stagger, a lurch or a run.
+      The person stays alive and breathing the whole time and never freezes into a still image.
+      The camera is completely static — no pan, no tilt, no zoom and no drift. Only the person moves, growing larger in frame as they approach.
+      The background and the location stay exactly the same, only dimmer, with nothing added or removed.
+      The glow stays hot pink and magenta throughout and never changes to another color.
+      Once the skeleton and the eyes are fully lit they stay fully lit to the final frame.
       The image stays clean, with no text, captions, subtitles or watermark anywhere.
 
-      Style: photorealistic, cinematic, poetic, dreamlike, soft artistic double exposure, gentle atmosphere, subtle film grain.
+      Style: photorealistic fashion editorial photography, neon light art, saturated hot pink and magenta glow, pale cool skin, dim dusk surroundings, soft bloom, shallow depth of field, cinematic, subtle film grain.
     resolution: 720P
     ratio: "1:1"
     duration: 7
     audio_out: true
 
-  - style_name: Fall_Into_Backrooms
-    folder: Media Files/Wan V3 I2V/0917 4 Styles/Fall_Into_Backrooms
+  - style_name: Crawl_Out_Of_TV
+    folder: Media Files/Wan V3 I2V/0921 2 Styles/Crawl_Out_Of_TV
     prompt: |
+      LOCKED: Continue the exact scene of the input image. Single continuous take, camera locked in the exact framing of the reference image, completely static — no zoom, no pan, no shake, no cuts. The room, the floor, the furniture, the curtains, the sliding door and the TV stand stay exactly as in the reference throughout. Total duration 10 seconds.
+
+      NO RING AND NO GLOWING EDGE: where the body crosses the screen plane there is no ring, no halo, no glowing outline, no bright rim, no circle of light and no arc of light of any kind. The crossing point is completely invisible — the body simply continues from inside the screen to outside it with nothing drawn at the boundary at all. No bright shape ever appears around the person.
+
+      THE SCREEN KEEPS ITS SHAPE: the television screen stays its normal rectangular shape with its normal slightly rounded CRT corners for the entire shot. It never becomes a circle, never becomes an oval, never opens into a hole and never changes shape or size. Its brightness stays even across the whole screen and never concentrates into a bright shape or a bright edge.
+
+      NO MEMBRANE, NO STRETCHING: the screen surface never bulges, never stretches, never deforms and never behaves like a thin plastic film, cling film or rubber sheet. The glass stays perfectly flat and rigid at all times. The body passes straight through the flat plane of the screen as if the glass simply were not there. Nothing ever clings to the body, wraps around it or is pulled outward with it.
+
+      THE ROOM STAYS DARK: the room stays exactly as dark as in the reference image for the whole shot. The ceiling light stays off, the curtains stay drawn, and the television screen remains the only real light source in the room. The corners, the ceiling and the open sliding door stay in deep shadow. The room never brightens, and no daylight and no new light source ever appears.
+
+      LIGHTING ON THE PERSON: the parts of them still inside the screen stay lit as a television image. The parts that have come out into the room are lit only by the soft glow of the screen itself, spilling onto their arms, face and shoulders from below and behind, with the dark room falling away around them. They stay clearly visible and readable at all times.
+
       TIMELINE:
 
-      [0-1.2s] The person is already alive and moving from the very first frame, in the same pose and place as the input image. Ordinary casual movement — natural breathing, a shift of weight, the head and gaze turning, hair and clothing responding, the background drifting slightly with the handheld motion. Calm, ordinary and completely uneventful.
+      [0-1.5s] The person stays inside the television screen, palms pressed flat against the glass, looking out at the camera. The screen's faint static flickers normally. Nothing else in the room moves.
 
-      [1.2-1.5s] In a single instant the ground beneath them breaks and they fall through it at the same moment, with no warning and no reaction. The body drops with full dead weight, sinking straight down fast, the head and shoulders disappearing below the surface almost immediately, limbs compact and close to the torso, heavy motion blur smearing across the body. The camera lurches down with them in the same instant.
+      [1.5-3s] They press harder and their hands begin to pass through the flat plane of the screen. The glass itself stays completely flat, rectangular and rigid and does not move at all. Nothing lights up at the point where their hands cross.
 
-      [1.5-2.1s] The bright world above shrinks away and the frame fills with darkness, tumbling camera movement and heavy rushing motion blur. Nothing can be read in the frame.
+      [3-5.5s] Their hands come fully out into the room, followed by their forearms, and they grip the outer edges of the television frame from outside. The screen behind them keeps its normal rectangular shape and its normal even brightness.
 
-      [2.1-2.6s] The fall ends abruptly. The person hits a damp carpeted floor hard and clumsily inside a long Backrooms corridor, landing flat on their chest, shoulder and hip, the body crumpling flat on contact, the camera jolting with the impact and settling.
+      [5.5-8s] Their head and shoulders push out through the screen plane into the room. They are now leaning out of the television from the waist up, hands braced on the TV frame, their upper body softly lit by the screen glow while their lower half is still inside the screen image. They pause, look slowly around the dark room, then look straight at the camera.
 
-      [2.6-5s] The person stays lying face-down flat on the carpet in exactly the position they landed in, in the same spot, for the rest of the shot. Their chest, stomach, hips and legs stay pressed against the floor. Only the head, shoulders and hands move. They slowly lift their head and look around, quietly disoriented — blank, dazed and uncomprehending, lips slightly parted, breathing shallow and uneven, eyes unfocused and drifting. They turn their head slowly to one side, then weakly look back over their shoulder down the corridor. The shot ends with them still lying there, small and stranded in the endless hallway.
+      [8-10s] Still leaning half out of the screen, they smile and raise one hand off the TV frame in a friendly wave toward the camera, holding it until the final frame.
+
+      THROUGHOUT THE WHOLE SHOT:
+      No ring, halo, glowing outline or bright rim ever appears anywhere around the person or around the screen.
+      The screen stays rectangular with its normal even brightness at every moment and never becomes a circle, an oval or an opening.
+      The screen glass stays flat and rigid at every moment and never deforms in any way.
+      The person's face, hair, clothing and every physical detail stay exactly as they appear in the reference image at all times — the same individual throughout, with no change to their features, hairstyle or outfit as they emerge, and never replaced with a different person.
+      They stay calm, healthy and unthreatening — natural skin tone, normal eyes, a relaxed expression. All of the eeriness comes from the dark room, never from the person.
+      They do not climb all the way out — they stay half in, half out of the television for the whole shot.
+      Movements are natural, relaxed and unhurried, like someone leaning out of a window.
+      The room stays dark for the whole shot and the television stays the only light source.
+      The camera never moves and there are no cuts.
+      The image stays clean, with no text, captions, subtitles or watermark anywhere.
+
+      Style: photorealistic, cinematic, desaturated cool palette of grey, faint green and cold blue, deep crushed shadows, the screen as the only light accent, quiet Japanese horror atmosphere with a warm friendly beat at the end, visible film grain.
     resolution: 720P
     ratio: "1:1"
-    duration: 5
+    duration: 10
     audio_out: true
+
 
 comments:
   endpoint: |

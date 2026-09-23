@@ -10,6 +10,7 @@ subset of those inputs so the endpoint behaves as one specific mode:
     wan_v3_i2v        prompt + first_frame
     wan_v3_endframe   prompt + first_frame + last_frame
     wan_v3_reference  prompt + images gallery (source + references)
+    wan_v3_v2v        prompt + videos gallery (source video)
 
 Everything a mode doesn't use is sent empty. Generation settings (resolution,
 ratio, duration, duration_auto, audio_out, thinking) are shared by all four and
@@ -28,6 +29,7 @@ class WanV3BaseHandler(BaseAPIHandler):
 
     # Gallery caps enforced by the Gradio components
     MAX_GALLERY_IMAGES = 10
+    MAX_GALLERY_VIDEOS = 5
 
     # Settings shared by every wan_v3 mode, with their endpoint defaults
     SETTING_DEFAULTS = {
@@ -80,12 +82,31 @@ class WanV3BaseHandler(BaseAPIHandler):
             for p in list(image_paths)[:self.MAX_GALLERY_IMAGES]
         ]
 
-    def _predict_wan_v3(self, task_config, images=None, first_frame=None, last_frame=None):
+    def _video_gallery(self, video_paths):
+        """Wrap video paths as Gradio Gallery entries, capped at the component max.
+
+        The Reference Videos gallery takes the same entry shape as the image
+        gallery but keyed on 'video' rather than 'image'.
+
+        Args:
+            video_paths: Iterable of video paths (str or Path).
+
+        Returns:
+            list: Gallery entries in {'video': FileData, 'caption': None} form.
+        """
+        return [
+            {'video': handle_file(str(p)), 'caption': None}
+            for p in list(video_paths)[:self.MAX_GALLERY_VIDEOS]
+        ]
+
+    def _predict_wan_v3(self, task_config, images=None, videos=None,
+                        first_frame=None, last_frame=None):
         """Call /wan_v3 with the inputs this mode uses; everything else empty.
 
         Args:
             task_config: Task configuration dictionary (supplies prompt + overrides).
             images: Optional list of Gallery entries for the reference-image input.
+            videos: Optional list of Gallery entries for the reference-video input.
             first_frame: Optional first-frame FileData handle.
             last_frame: Optional last-frame FileData handle.
 
@@ -97,7 +118,7 @@ class WanV3BaseHandler(BaseAPIHandler):
         return self.client.predict(
             prompt=task_config.get('prompt', ''),
             images=images or [],
-            videos=[],
+            videos=videos or [],
             audios=[],
             first_frame=first_frame,
             last_frame=last_frame,

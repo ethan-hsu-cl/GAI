@@ -78,6 +78,8 @@ API_MAPPING = {
     'wanv3ttv': 'wan_v3_ttv',
     'wan_v3_i2v': 'wan_v3_i2v',
     'wanv3i2v': 'wan_v3_i2v',
+    'wan_v3_v2v': 'wan_v3_v2v',
+    'wanv3v2v': 'wan_v3_v2v',
     'wan_v3_endframe': 'wan_v3_endframe',
     'wanv3endframe': 'wan_v3_endframe',
     'wan_v3_reference': 'wan_v3_reference',
@@ -115,6 +117,7 @@ CONFIG_MAPPING = {
     'gemini_omni_ttv': 'config/batch_gemini_omni_ttv_config.yaml',
     'wan_v3_ttv': 'config/batch_wan_v3_ttv_config.yaml',
     'wan_v3_i2v': 'config/batch_wan_v3_i2v_config.yaml',
+    'wan_v3_v2v': 'config/batch_wan_v3_v2v_config.yaml',
     'wan_v3_endframe': 'config/batch_wan_v3_endframe_config.yaml',
     'wan_v3_reference': 'config/batch_wan_v3_reference_config.yaml'
 }
@@ -560,6 +563,7 @@ def show_usage():
     print("  wan - Wan 2.2 image-video animation processing")
     print("  wan_v3_ttv - Wan V3 text-to-video (/wan_v3, prompt only)")
     print("  wan_v3_i2v - Wan V3 image-to-video (/wan_v3, source image as first frame)")
+    print("  wan_v3_v2v - Wan V3 video-to-video (/wan_v3, source video as reference video)")
     print("  wan_v3_endframe - Wan V3 endframe (/wan_v3, first + last frame pairs)")
     print("  wan_v3_reference - Wan V3 reference images (/wan_v3, source + up to 9 references)")
     print("  motion_swap - Motion Swap image-video motion transfer processing")
@@ -597,6 +601,7 @@ def show_usage():
     print("  python runall.py wan auto")
     print("  python runall.py wan_v3_ttv auto")
     print("  python runall.py wan_v3_i2v auto")
+    print("  python runall.py wan_v3_v2v auto")
     print("  python runall.py wan_v3_endframe auto")
     print("  python runall.py wan_v3_reference auto")
     print("  python runall.py motion_swap auto")

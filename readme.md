@@ -132,13 +132,14 @@ python core/runall.py kling auto
 | `wan` | Wan 2.2 | I+V | Auto-cropping, video × image cross-match |
 | `wan_v3_ttv` (`wanv3ttv`) | Wan V3 TTV | T2V | `/wan_v3`, prompt only |
 | `wan_v3_i2v` (`wanv3i2v`) | Wan V3 I2V | I2V | `/wan_v3`, source image as first frame |
+| `wan_v3_v2v` (`wanv3v2v`) | Wan V3 V2V | V2V | `/wan_v3`, source video in the reference-video gallery |
 | `wan_v3_endframe` (`wanv3endframe`) | Wan V3 Endframe | I2V | `/wan_v3`, A→B first/last frame pairs |
 | `wan_v3_reference` (`wanv3ref`) | Wan V3 Reference | I2V | `/wan_v3`, source + up to 9 references in one gallery |
 | `dreamactor` | DreamActor | I+V | Face reenactment via image × video cross-match |
 | `motion_swap` | Motion Swap | I+V | Motion transfer via subject image × motion video cross-match |
 | `happyhorse_vedit` | HappyHorse Video Edit | V2V | Prompt-driven video edit with up to 5 reference images (append or cross-match) |
 | `fifa` | FIFA I2I2V | I2I2V | Per-image start/end-frame generation → video |
-| `i2i2v` | I2I2V | I2I2V | Generic image → image → video pipeline (Nano Banana / OpenAI Image + Kling) |
+| `i2i2v` | I2I2V | I2I2V | Generic image → image → video pipeline (Nano Banana / OpenAI Image + Kling / Wan V3) |
 | `all` | All Platforms | — | Run every API in sequence (or `--parallel`) |
 
 ### File limits
@@ -157,6 +158,7 @@ python core/runall.py kling auto
 | Veo ITV | 30 MB | 300 px / — | JPG, PNG, WebP |
 | Wan V3 I2V / Endframe | 30 MB | 300 px / — | JPG, PNG, BMP, WebP |
 | Wan V3 Reference | 30 MB | 300 px / — | JPG, PNG, WebP |
+| Wan V3 V2V | 500 MB | 320 px / — | MP4, MOV, AVI, MKV, WebM (**1–15 s**) |
 | Nano Banana | 32 MB | 300 px / — | JPG, PNG, WebP |
 | OpenAI Image | 32 MB | 100 px / — | JPG, PNG, WebP |
 | Seedream Image | 32 MB | 100 px / — | JPG, PNG, WebP |
@@ -191,6 +193,7 @@ python core/runall.py kling auto
 | GenVideo | `{filename}_generated.{ext}` |
 | Seedance I2V | `{source_image}_{n}.mp4` |
 | Wan V3 I2V | `{source_image}_{n}.mp4` |
+| Wan V3 V2V | `{source_video}_{n}.mp4` |
 | Wan V3 Endframe | `{filename}_generated.mp4` (multi-gen: `{filename}_generated_{n}.mp4`) |
 | Wan V3 Reference | `{filename}_{effect}.mp4` |
 | FIFA I2I2V | video `{source_image}_{n}.mp4`, frames `{source_image}_{n}_{start\|end}.png` |
@@ -903,7 +906,7 @@ root_folder/
 
 #### I2I2V (`config/batch_i2i2v_config.yaml`)
 
-Generic two-step pipeline: **image generation** (Nano Banana **or** OpenAI Image) **→ video generation** (Kling). Each task chooses its image service and video model.
+Generic two-step pipeline: **image generation** (Nano Banana **or** OpenAI Image) **→ video generation** (Kling **or** Wan V3). Each task picks its image service with `image_service` and its video service with `video_service`.
 
 ```yaml
 testbed: http://192.168.31.161/external-testbed/image_generation/
@@ -923,7 +926,8 @@ tasks:
     image_aspect_ratio: '9:16'
     image_prompt: |
       ...
-    # ---- Video generation step (Kling) ----
+    # ---- Video generation step ----
+    video_service: kling                   # 'kling' (default) or 'wan_v3'
     video_model: v3
     video_mode: pro
     video_duration: 5
@@ -936,9 +940,31 @@ tasks:
 Image-step models:
 
 - `nano_banana`: `gemini-3.1-flash-image-preview`, `gemini-3-pro-image-preview`, `gemini-2.5-flash-image`
-- `openai_image`: `gpt-image-1`, `gpt-image-2`
+- `openai_image`: `gpt-image-1`, `gpt-image-1-mini`, `gpt-image-1.5`, `gpt-image-2`, `gpt-image-2.5-flare`, `gpt-image-2.5-sunburst`
 
-**Video-step models:** Kling `v1.6`, `v1.5`, `v2.0-master`, `v2.1`, `v2.1-master`, `v2.5-turbo`, `v2.6`, `v3`.
+**Video step — two services.** The generated frame is the input either way, but the
+parameters differ; a field belonging to the other service is ignored, so check
+`video_service` first when a setting seems to have no effect.
+
+| | `kling` (default) | `wan_v3` |
+| --- | --- | --- |
+| Route | Kling testbed `/Image2Video` | video_effect testbed `/wan_v3` (frame sent as `first_frame`) |
+| Models | `v1.6`, `v1.5`, `v2.0-master`, `v2.1`, `v2.1-master`, `v2.5-turbo`, `v2.6`, `v3` | n/a — the route is the model |
+| Service-only fields | `video_model`, `video_mode`, `video_negative_prompt`, `video_sound_enabled` | `video_ratio`, `video_audio_out`, `video_duration_auto`, `video_thinking` |
+| Shared fields | `video_prompt`, `video_duration`, `video_resolution` | same |
+| Negative prompt | supported | **not supported** — one set on a `wan_v3` task is logged and dropped, never folded into the positive prompt |
+
+A `wan_v3` video step looks like this:
+
+```yaml
+    video_service: wan_v3
+    video_resolution: '720P'               # 480P / 720P / 1080P
+    video_ratio: '1:1'                     # or 'adaptive' to follow the frame
+    video_duration: 10
+    video_audio_out: true
+    video_prompt: |
+      ...
+```
 
 Folder layout:
 
@@ -986,16 +1012,17 @@ tasks:
 
 #### Wan V3 (four platforms, one endpoint)
 
-The `/wan_v3` route on the `video_effect` testbed takes a prompt plus a reference-image gallery (max 10), a reference-video gallery, reference audio, first/last frame images, a document, and a web page URL. Four platforms drive that one route, each filling a different subset of the inputs and leaving the rest empty:
+The `/wan_v3` route on the `video_effect` testbed takes a prompt plus a reference-image gallery (max 10), a reference-video gallery, reference audio, first/last frame images, a document, and a web page URL. Five platforms drive that one route, each filling a different subset of the inputs and leaving the rest empty:
 
 | Platform | Config | Inputs sent |
 | --- | --- | --- |
 | `wan_v3_ttv` | `config/batch_wan_v3_ttv_config.yaml` | prompt only |
 | `wan_v3_i2v` | `config/batch_wan_v3_i2v_config.yaml` | prompt + source image as `first_frame` |
+| `wan_v3_v2v` | `config/batch_wan_v3_v2v_config.yaml` | prompt + source video in the `videos` gallery |
 | `wan_v3_endframe` | `config/batch_wan_v3_endframe_config.yaml` | prompt + `first_frame` (A) + `last_frame` (B) |
 | `wan_v3_reference` | `config/batch_wan_v3_reference_config.yaml` | prompt + source and reference images in the `images` gallery |
 
-All four share the same `default_settings` block, and every key in it can be overridden per task:
+All five share the same `default_settings` block, and every key in it can be overridden per task:
 
 ```yaml
 testbed: http://192.168.31.161/external-testbed/video_effect/
@@ -1035,6 +1062,32 @@ tasks:
       A dog is happily running toward its owner with excitement
     ratio: adaptive
 ```
+
+**Wan V3 V2V** — one folder per style, each with a `Source/` subfolder holding videos. Each source video is sent on its own call as the single entry of the reference-video gallery (the component holds up to 5), so one video in means one video out.
+
+```yaml
+root_folder: Media Files/Wan V3 V2V
+generation_count: 1   # videos per source video
+
+tasks:
+  - style_name: Pumpkin_Head_Transform
+    folder: Media Files/Wan V3 V2V/0921 2 Styles/Pumpkin_Head_Transform
+    prompt: |
+      PRESERVE FROM THE SOURCE VIDEO: keep the original motion, timing and pacing.
+    resolution: 720P
+    ratio: "1:1"
+    duration: 5
+    audio_out: true
+```
+
+Defaults: `resolution 720P`, `ratio adaptive`, `duration 5`, `duration_auto false`, `audio_out true`, `thinking false`.
+
+**The source video must be 15 seconds or shorter.** The backend rejects a longer
+one with `InvalidParameter - … duration should be at most 15s`, and only after the
+whole file has uploaded — so the handler validates duration locally and skips
+over-long sources before the call. Trim footage to ≤ 15 s to include it in a run.
+This cap is on the *input*; the `duration` setting is the output length and is
+independent of it.
 
 **Wan V3 Endframe** — A/B image pairs in `Source/`, same pairing modes as Kling Endframe.
 

@@ -22,8 +22,8 @@ testbed: http://192.168.31.161/external-testbed/image_generation/
 schedule:
   start_time: ''
 
-root_design_link: https://docs.google.com/presentation/d/1WFmn4Ae_oh65eSf26Xn0whtEE0cUa-l4Ww41HLlnCAQ/edit?slide=id.g3f5f513c1e8_0_0#slide=id.g3f5f513c1e8_0_0
-root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgC6xp0IzIjDTKHjB09WVzgqAb7Yld-kCxtYmZyxrA4YdMk?e=LsgdS9
+root_design_link: https://docs.google.com/presentation/d/1WFmn4Ae_oh65eSf26Xn0whtEE0cUa-l4Ww41HLlnCAQ/edit?slide=id.p#slide=id.p
+root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDHqK8Cv01FSq-RCqs1bNt5AfYzhFMOdHYEAPEt5aU8zBM?e=SyDJtO
 
 # Reuse original i2i frames (video-only). If a task folder contains a dropped-in
 # original-run folder, the handler stages a subset before processing (applied
@@ -43,215 +43,75 @@ random_seed: 42
 video_resolution: '720p'
 
 tasks:
-  - style_name: '羅馬建築前 V3'
-    folder: 'Media Files/I2I2V/0730 3 Styles/0730 羅馬建築前 V3'
-    image_service: nano_banana
-    image_model: gemini-3.1-flash-image
+  - style_name: Crawl_Out_Of_TV
+    folder: Media Files/I2I2V/0921 1 Style/Crawl_Out_Of_TV
+    image_service: openai_image
+    image_model: gpt-image-2.5-sunburst
+    image_quality: auto
     image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    use_multi_image: true
-    multi_image_config:
-      mode: sequential
+    image_aspect_ratio: '1:1'
     image_prompt: |
-      Use the uploaded photos as the ONLY references for the human subjects. The uploaded photos may contain 1 to 4 different users. Create a final image with exactly the same number of people as the uploaded photos. Preserve each person's recognizable identity, facial features, skin tone, hairstyle, body proportions, and natural appearance individually. Each subject must clearly look like the corresponding person from the uploaded photos. Do not merge faces, swap identities, duplicate anyone, heavily stylize, over-beautify, or change identity. No extra main subject may appear.
+      Use the uploaded photo as the reference for one specific real person.
 
-      Create a realistic, elegant beauty portrait in an ancient Greek setting. Place the subject in front of grand classical Greek architecture with a wide Mediterranean coastal view. Include some Greek ruins or temple-like elements such as tall marble columns, stone steps, or pale stone walls, but do not let the background be dominated by stone architecture. Most of the background should open into distant ocean, clear blue sea, open sky, or a coastal horizon, creating a bright, spacious Mediterranean atmosphere. The image should feel timeless, graceful, luxurious, and visually striking, like a high-end fashion editorial.
+      MOST IMPORTANT RULE: the person appearing on the television screen must be the exact same person as in the uploaded photo — identical face, facial structure, eyes, eyebrows, nose, mouth, skin tone, hairstyle, hair length and color, and the same clothing they are wearing in the photo. Do not change their gender, age, ethnicity, hairstyle, glasses, accessories or outfit. Do not invent a different person. Their face must be immediately recognizable as the same person when compared side by side with the uploaded photo.
 
-      Style the subject in elegant ancient Greek fashion. Clothing must be white or ivory, inspired by authentic Greek draped garments, with soft flowing fabric, graceful folds, and refined classical styling. Add gold accessories such as a gold laurel crown or gold leaf headpiece, gold earrings, gold necklace, bracelets, arm cuffs, rings, or an ornate gold waist detail. The styling should feel noble, tasteful, and sophisticated, not theatrical.
+      Generate a new square 1:1 photograph of an ordinary Japanese living room late at night. The room is dim, still and heavy with shadow. The ceiling light is switched off and its pull cord hangs motionless. Thin curtains are drawn over a window on the left, letting in only a faint cold blue-grey wash from outside. The television is the only real light source in the room. Deep shadow swallows the corners and the ceiling.
 
-      If the subject is female: dress her in a beautiful white or ivory ancient Greek gown such as a draped chiton, peplos, or Grecian one-shoulder / softly wrapped dress. Include refined gold details such as a gold belt, decorative shoulder clasp, gold trim, or a gold waist ornament. Add feminine gold jewelry and a delicate gold laurel crown or headpiece. Her hairstyle may be softly waved, braided, partially pinned up, or arranged in an elegant Greco-inspired updo, while still preserving her real hairstyle naturally. The overall look should feel graceful, regal, and goddess-like, but still realistic and tasteful.
+      The room feels quiet and slightly abandoned: worn cream-coloured walls with faint stains near the ceiling, a sliding paper screen door standing half open onto a black hallway, low wooden furniture, a fabric sofa at one edge with a folded blanket, a potted plant drooping slightly at the other edge, a few unlabeled VHS tapes stacked on the stand. Everything is tidy but lifeless, as if nobody has been in the room for a long time. No other people anywhere in the room.
 
-      If the subject is male: dress him in a white or ivory ancient Greek outfit such as a draped chiton, tunic, or himation-style garment, with elegant layered fabric and classical structure. The outfit may include a draped shoulder cloth, wrapped waist detail, gold belt, subtle gold trim, gold arm cuffs, or a gold laurel crown. The styling should feel noble, heroic, and refined, with a clean classical silhouette rather than heavy armor.
+      An old boxy CRT television with a deep body sits on a low wooden TV stand against the wall, centered and dominating the frame, the screen filling about 70% of the image width, facing the camera perfectly straight on. The bottom quarter of the frame is empty wooden floor with a patterned rug between the camera and the TV.
 
-      The pose is very important. Avoid a stiff straight-standing pose. The subject should appear relaxed, natural, graceful, and editorial. Use elegant, dynamic poses such as sitting on stone steps, leaning lightly against a marble column, resting one hand on a stone ledge, gently turning the body in a three-quarter angle, walking slowly through the ruins, looking into the distance, lightly touching jewelry or fabric, or shifting weight naturally in a poised fashion pose. The pose should feel alive, refined, and aesthetically composed rather than static or awkward.
+      The television is switched on. On the screen, the person from the uploaded photo appears from the waist up, facing the camera directly and filling most of the screen. They are pressed up close against the inside of the glass: both palms flat against the screen surface at shoulder height, fingers spread, leaning slightly forward, looking straight out at the camera with a calm, natural expression.
 
-      If multiple subjects are present, arrange them as a cohesive group portrait with varied but harmonious poses. Avoid making everyone stand in the same pose. The group should feel balanced, elegant, editorial, and naturally connected.
+      THE PERSON ON SCREEN STAYS NORMAL AND UNTHREATENING: render them clearly and sharply in full natural color, with correct even exposure on the face, healthy natural skin tone and normal eyes, so every feature stays recognizable and they look like an ordinary living person. Their expression is calm and neutral. They are not pale, not grey, not distorted, not wounded, not hollow-eyed and not frightening in any way. Apply only a very light CRT look to them: faint horizontal scanlines and a subtle glow. Grainy static appears only in the background area around and behind them on the screen, never across their face or body. All of the eeriness comes from the dark room around the television, never from the person themselves.
 
-      Use flattering natural sunlight with a fixed, consistent luxury-editorial color treatment. The overall tone must be bright, clean, warm, and polished: creamy sunlit marble, ivory-white fabric, soft gold jewelry, clear pale-blue sky, and rich Mediterranean blue sea. Keep the palette refined and stable, with warm golden sunlight, soft beige stone, ivory white, soft gold, and crisp blue coastal tones. Avoid gray, dull, cold, muddy, greenish, overly orange, or flat phone-photo color. The image must feel like a professionally color-graded fashion portrait bathed in golden sunlight.
+      The lit screen is the strongest light in the frame and casts a cold blue-white glow forward across the wooden floor and the rug, throwing long soft shadows out toward the camera and lighting the nearest edges of the furniture while everything beyond it falls into darkness.
 
-      The subject must be clearly under sunlight. Part of the body must be visibly bathed in direct sun, and the face must also be directly lit by sunlight. Do not place the subject entirely in shade. At least part of the forehead, cheeks, nose bridge, and lips must be illuminated by real sunlight, creating a clear balance of sunlit highlights and soft shadows while keeping the facial features readable and naturally defined. The eyes, nose bridge, cheeks, and mouth area must remain clearly visible and recognizable. Avoid lighting where the face is fully shaded, hidden by architectural shadow, or lit only by weak ambient bounce light.
+      Camera low, about knee height, static and straight on. Photorealistic, desaturated cool palette of grey, faint green and cold blue, deep crushed shadows, underexposed room with the bright screen as the only accent, quiet Japanese horror atmosphere, visible film grain, no text, no watermark.
 
-      The composition should feel like a premium high-fashion editorial portrait. Use an eye-level or slightly low-angle camera perspective only, to create a more majestic, cinematic, fashion-editorial feeling. Do not use a high-angle or top-down view. Use a long-lens / telephoto look for a polished professional portrait feel, with elegant compression, clean subject separation, and a refined premium-camera look. The framing can be either half-body, three-quarter body, or full-body depending on the pose, but always keep the subject visually dominant. Frame the subject with columns or ruins, while keeping most of the background open to sea, sky, or coastal horizon. Avoid a background made entirely of pale stone surfaces.
-
-      Keep the final image realistic, high-quality, and naturally photographed. Preserve believable anatomy, realistic fabric draping, natural hands, and proper interaction with the environment. Avoid cartoon style, fantasy exaggeration, modern clothing, modern accessories, messy background, extra people, distorted hands, awkward posture, text, logos, or watermarks. The final result should feel like an elegant ancient Greek-inspired editorial portrait of the uploaded person, beautifully posed among classical Greek ruins and columns, bathed in golden sunlight, with a clear Mediterranean sea-and-sky backdrop.
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
+    video_service: wan_v3
+    video_resolution: '720P'
+    video_ratio: '1:1'
+    video_duration: 10
+    video_audio_out: true
     video_prompt: |
-      Two people side by side, staying in place throughout: on the left a woman with long dark wavy hair, floral crown, cream Grecian gown; on the right a man in a white Grecian tunic. Both remain solid, opaque and fully visible head to feet in every frame — the man never fades, dissolves, or blends into the sky or columns.
+      LOCKED: Continue the exact scene of the input image. Single continuous take, camera locked in the exact framing of the reference image, completely static — no zoom, no pan, no shake, no cuts. The room, the floor, the furniture, the curtains, the sliding door and the TV stand stay exactly as in the reference throughout. Total duration 10 seconds.
 
-      The colonnade keeps the same fluted pale-stone columns from the reference — no new columns, no roof, no beams appear. Existing columns may pass out of frame naturally; nothing is built to replace them.
+      NO RING AND NO GLOWING EDGE: where the body crosses the screen plane there is no ring, no halo, no glowing outline, no bright rim, no circle of light and no arc of light of any kind. The crossing point is completely invisible — the body simply continues from inside the screen to outside it with nothing drawn at the boundary at all. No bright shape ever appears around the person.
 
-      Small restrained movements: she straightens posture, one hand at her hip, turns slowly toward camera with a quiet composed expression. He shifts weight onto one leg, shoulders roll back, turns slowly toward camera. Feet planted. Fabric and loose hair drift softly in a breeze.
+      THE SCREEN KEEPS ITS SHAPE: the television screen stays its normal rectangular shape with its normal slightly rounded CRT corners for the entire shot. It never becomes a circle, never becomes an oval, never opens into a hole and never changes shape or size. Its brightness stays even across the whole screen and never concentrates into a bright shape or a bright edge.
 
-      Camera: a slow 180-degree orbit around the pair with a slight rise from low angle to eye level. Both people stay in a wide two-shot head-to-feet the whole time — the camera never pushes in or crops to a close-up.
-    video_negative_prompt: |
-      fading person, translucent figure, dissolving subject, blending into sky, missing person, close-up, push-in, extra columns, roof appearing, geometry distortion, extra people, face morphing, no columns pass between the camera and the subjects at any point.
+      NO MEMBRANE, NO STRETCHING: the screen surface never bulges, never stretches, never deforms and never behaves like a thin plastic film, cling film or rubber sheet. The glass stays perfectly flat and rigid at all times. The body passes straight through the flat plane of the screen as if the glass simply were not there. Nothing ever clings to the body, wraps around it or is pulled outward with it.
 
-    concurrent_requests: 3
+      THE ROOM STAYS DARK: the room stays exactly as dark as in the reference image for the whole shot. The ceiling light stays off, the curtains stay drawn, and the television screen remains the only real light source in the room. The corners, the ceiling and the open sliding door stay in deep shadow. The room never brightens, and no daylight and no new light source ever appears.
 
-  - style_name: '拍貼系列-Style1:1995'
-    folder: 'Media Files/I2I2V/0730 3 Styles/0730 拍貼系列-Style1:1995'
-    image_service: nano_banana
-    image_model: gemini-3-pro-image
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    use_multi_image: true
-    multi_image_config:
-      mode: sequential
-    image_prompt: |
-      Use all uploaded photos as the only subjects. Their faces, facial features, identities, hairstyles, expressions, poses, and clothing must remain exactly the same as in the uploaded photos. Do not redraw, replace, or re-generate the people in any way. Adding any other person, duplicating a person, or merging identities is strictly prohibited. This is a photographic filter application, not an illustration or redraw.
+      LIGHTING ON THE PERSON: the parts of them still inside the screen stay lit as a television image. The parts that have come out into the room are lit only by the soft glow of the screen itself, spilling onto their arms, face and shoulders from below and behind, with the dark room falling away around them. They stay clearly visible and readable at all times.
 
-      Create a playful SINGLE-FRAME photo-booth image styled like an early-2000s Japanese Heisei-era purikura (プリクラ) photo booth. The image should feel as if it were generated directly inside an authentic early-2000s purikura machine, with a bright, cute, crowded, and slightly chaotic atmosphere that closely matches real purikura samples from that era rather than a clean or modern graphic design.
+      TIMELINE:
 
-      All uploaded subjects must appear together within ONE single frame at all times. Their relative scale, distance, proportions, and framing must remain consistent with the original photos. The image should capture one clear, intimate purikura interaction moment (such as peace signs close to face, close shoulders, cheek-touch, or friendly posing), rather than a collage or sequence. The composition must feel like a single purikura print, not divided or segmented in any way.
+      [0-1.5s] The person stays inside the television screen, palms pressed flat against the glass, looking out at the camera. The screen's faint static flickers normally. Nothing else in the room moves.
 
-      The visual structure must be a SINGLE FULL-FRAME IMAGE.
-      There must be absolutely NO grid, NO four-frame layout, NO borders, NO white edges, NO outlines, NO separators, NO margins, and NO panel divisions of any kind. The output must appear as one uninterrupted purikura photo.No photos should show white borders in other scenes, be held by the subject, or be framed.
+      [1.5-3s] They press harder and their hands begin to pass through the flat plane of the screen. The glass itself stays completely flat, rectangular and rigid and does not move at all. Nothing lights up at the point where their hands cross.
 
-      Apply classic Heisei-era purikura aesthetics throughout the entire image.
-      The background must be a SINGLE, FLAT, SOLID COLOR ONLY — no mixing, no patchwork, no multi-color blobs, no layered shapes, and no overlapping color fields.
-      Strongly favor one pure background color per image, such as:
-      pure bright yellow, vivid purple, candy pink, sky blue, or solid pastel tones.
-      DO NOT combine multiple background colors in the same image.
-      DO NOT create mixed-color, camouflage, or collage-style backgrounds.
+      [3-5.5s] Their hands come fully out into the room, followed by their forearms, and they grip the outer edges of the television frame from outside. The screen behind them keeps its normal rectangular shape and its normal even brightness.
 
-      Lighting should be high-key, flat, and evenly distributed, with minimal shadow depth and no directional or cinematic lighting. Skin smoothing must be extremely light and natural, just enough to resemble early purikura airbrushing, avoiding any modern beauty filters, plastic textures, or artificial perfection. Eye enlargement, if present, must be subtle and natural, consistent with early-2000s purikura machines and never exaggerated or anime-like. The overall color balance should feel cheerful, warm, busy, and saturated, not modern, moody, or editorial.
+      [5.5-8s] Their head and shoulders push out through the screen plane into the room. They are now leaning out of the television from the waist up, hands braced on the TV frame, their upper body softly lit by the screen glow while their lower half is still inside the screen image. They pause, look slowly around the dark room, then look straight at the camera.
 
-      Decorative elements must be layered on top of the photo in a way that resembles real purikura sticker placement. Pixel-style hearts and symbols may appear as accents, but the majority of decorations should be flat, pure-color, hand-drawn graffiti-style doodles. Handwritten elements must look like simple marker or pen drawings with solid fills, thick strokes, and imperfect hand-drawn lines. Avoid neon glow, halos, light streaks, gradients, or luminous effects. Include simple 2D doodle illustrations such as hearts, stars, bows, ribbons, teddy bears, animals, clouds, or cute icons, all rendered in a flat sticker-like style. All decorations must clearly float on top of the image and must never blend into faces or skin.
+      [8-10s] Still leaning half out of the screen, they smile and raise one hand off the TV frame in a friendly wave toward the camera, holding it until the final frame.
 
-      Add the fixed text exactly as written: “めっちゃ 仲仔♡”.
-      The text must appear in a colorful, lively, handwritten-style font typical of early-2000s purikura booths, using solid colors with playful outlines or thick strokes. Avoid neon glow, lighting effects, gradients, or modern typography. Supporting sticker text such as 一生仲仔、最強仲仔、仲仔、宝物、最強、最高、ぶちあげ、アゲ、我等友情永久不滅、Best Friend、FOREVER FRIEND、心友、信友、ずっ友 may appear scattered around the frame in a casual, hand-placed manner, but should not overcrowd the image.
+      THROUGHOUT THE WHOLE SHOT:
+      No ring, halo, glowing outline or bright rim ever appears anywhere around the person or around the screen.
+      The screen stays rectangular with its normal even brightness at every moment and never becomes a circle, an oval or an opening.
+      The screen glass stays flat and rigid at every moment and never deforms in any way.
+      The person's face, hair, clothing and every physical detail stay exactly as they appear in the reference image at all times — the same individual throughout, with no change to their features, hairstyle or outfit as they emerge, and never replaced with a different person.
+      They stay calm, healthy and unthreatening — natural skin tone, normal eyes, a relaxed expression. All of the eeriness comes from the dark room, never from the person.
+      They do not climb all the way out — they stay half in, half out of the television for the whole shot.
+      Movements are natural, relaxed and unhurried, like someone leaning out of a window.
+      The room stays dark for the whole shot and the television stays the only light source.
+      The camera never moves and there are no cuts.
+      The image stays clean, with no text, captions, subtitles or watermark anywhere.
 
-      The overall mood must feel joyful, intimate, energetic, and nostalgic, capturing the feeling of a real Heisei-era purikura memory that is colorful, playful, slightly over-decorated, and emotionally warm. Identity preservation is critical: faces must remain exactly the same as in the uploaded photos, with no face replacement, no illu
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Vertical portrait video, Y2K Japanese purikura poster style. One full-frame shot (not split), two people close together against a solid pastel candy backdrop (bright pink or sky blue). Bright even beauty-lighting, flawless skin glow, saturated pastels, nostalgic 2000s photo-sticker look. Static camera.
-
-      ONLY THE TWO PEOPLE MOVE. Every graphic element is completely frozen.
-
-      The two lean in close side by side, throwing crisp peace signs beside their faces with bright playful smiles, heads tilted together. Small lively purikura motions — playful head tilts, quick peace-sign gestures, cute winks, warm giggles — finally settling cheek to cheek with radiant happy smiles directed at the camera.
-
-      GRAPHIC LAYER — 100% IMMOBILE, ZERO AMPLITUDE:
-      The bubbly kawaii lettering, pixel-art hearts, hand-drawn hearts, ribbons, stars, tiny teddy bears and smiling clouds are real physical paper stickers glued flat onto a printed photo — rigid, adhered, permanently stuck, baked into the image itself, NOT animatable elements. Motion amplitude is exactly zero pixels: no movement, scaling, rotation, bounce, rocking, pulse, breathing, jitter, drift, shimmer, or fade. Every letter and sticker is bit-identical in every frame, exactly as in the first frame — same position, size, shape, outline, color and quantity, each with its complete unbroken silhouette, fully inside the frame, never clipped, never covered. Nothing added, nothing removed.
-    video_negative_prompt: |
-      moving stickers, animated text, sticker motion, subtle sticker drift, micro-movement of decorations, decorations breathing, breathing pulse, bouncing letters, wobbling text, rocking stickers, text scaling, spinning decorations, drifting hearts, pulsing hearts, shimmering decorations, disappearing stickers, text fading, decorations leaving the frame, new stickers, new text, new decorations, deformed stickers, broken shapes, cut-off stickers, broken outline, morphing decorations, gibberish, camera movement, identity change, distorted faces, deformed hands, malformed fingers, extra limbs, blurry, low quality, watermark
-
-    concurrent_requests: 3
-
-  - style_name: '拍貼系列-Style2:2005-'
-    folder: 'Media Files/I2I2V/0730 3 Styles/0730 拍貼系列-Style2:2005-'
-    image_service: nano_banana
-    image_model: gemini-3-pro-image
-    image_resolution: '1K'
-    image_aspect_ratio: '3:4'
-    use_multi_image: true
-    multi_image_config:
-      mode: sequential
-    image_prompt: |
-      Use all uploaded photos as the only subjects.
-       Their real identities must remain recognizable and consistent.
-       This is a photographic purikura-style filter application, NOT a realistic portrait and NOT a modern beauty retouch. Do not redraw, replace, or re-generate the people and Adding any other person or repeating the same person is prohibited. The output must appear as one uninterrupted purikura photo.No photos should show white borders in other scenes, be held by the subject, or be framed.
-      Identity preservation rules:
-       – The same people must remain clearly identifiable
-      – Facial structure, face shape, and hairstyle must remain consistent
-       – Purikura-style facial modification is ALLOWED and REQUIRED:
-       • The eyes may be slightly enlarged in a natural early-purikura manner, avoiding exaggerated manga-style proportions
-       • skin may be softly airbrushed
-       • proportions may be slightly exaggerated in a cute, non-realistic way
-       – Do NOT replace faces or turn them into illustrations or anime
-      Create a playful single-frame photo-booth image styled like an early-2000s Japanese Heisei-era purikura (プリクラ) machine.
-      The image must look like it was produced directly by a real purikura booth:
-       – bright
-       – cute
-       – slightly over-processed
-       – energetic
-       – nostalgic
-       – intentionally a little chaotic
-      Layout:
-       – Single unified purikura frame only
-       – NO four-frame or multi-panel layout of any kind
-       – NO borders, margins, dividers, or white lines
-       – One complete purikura output, not a collage and not separated images
-      Subjects:
-       – All subjects must appear together within the same single frame
-       – Relative positions and scale remain consistent
-       – Natural, playful interaction is required within the single image
-       – Classic purikura poses (peace signs, close shoulders, cute expressions)
-      Classic Heisei purikura facial treatment (REQUIRED):
-       – Slightly larger, rounder, clearly defined eyes with restrained enlargement
-       – Soft facial retouching with visible “machine smoothing”
-       – Slight whitening / brightening of skin tone
-       – No realistic skin texture emphasis
-       – No modern beauty, no cinematic realism
-      Overall color & exposure:
-       – Bright, high-key look
-       – Slight overexposure
-       – Warm pink-magenta dominant tone, while dark solid-color backgrounds such as purple or black may also appear for contrast
-       – Soft glow / bloom on highlights
-       – Flat contrast (no deep shadows)
-       – Avoid modern HDR, film grading, or clarity enhancement
-      Decorations & stickers (KEEP MINIMAL, NOT DENSE):
-       – Use ONLY 1–2 sticker elements total (e.g., one small heart + one tiny star OR one simple crown only)
-       – Keep doodles simple and sparse, with lots of clean negative space
-       – No layered clusters, no heavy overlap, no “sticker wall” look
-       – Stickers must float on top of the image, not embedded into faces
-       – Do NOT cover eyes, eyebrows, nose, or mouth
-      Handwritten text style (CRITICAL):
-       – Imperfect strokes, uneven thickness
-       – Cute, bubbly, casual handwriting
-       – White or bright colors with outlines or glow
-      Main text content (choose ONLY ONE, placed once in the single image):
-       「ずーっと心友!!」
-       「ずっとなかよし♡」
-       「ずっ友!!」
-       「だいすき♡」
-      Optional supporting sticker text:
-       Do NOT add supporting text, or at most add ONLY ONE short phrase from the list once, small and unobtrusive:
-       一生仲仔、最強仲仔、仲仔、宝物、最強、最高、ぶちあげ、アゲ、
-       我等友情永久不滅、Best Friend、FOREVER FRIEND、心友、信友
-      Mood & intent:
-       Joyful, intimate, nostalgic friendship energy.
-       The final image must unmistakably look like an authentic early-2000s Japanese purikura print:
-       – bright
-       – cute
-       – over-decorated
-       – handwritten
-       – emotionally warm
-       – unmistakably Heisei-era
-
-    video_model: v3
-    video_mode: pro
-    video_duration: 5
-    video_ratio: '3:4'
-    video_sound_enabled: true
-    video_prompt: |
-      Vertical portrait video, Y2K Japanese purikura poster style. One full-frame shot (not split), two people posing close together against the exact pastel backdrop from the reference image. Bright beauty-lighting, glossy skin, saturated pastels. Static camera.
-
-      ONLY THE TWO PEOPLE MOVE. Everything else is frozen.
-
-      The two stay in the reference purikura pose throughout — bodies facing camera, heads tilted inward, close side-by-side. Identity, outfits, hairstyles and framing exactly match the reference.
-
-      Beat 1: both smile brightly at camera with small micro-motions — soft head tilts, tiny giggles, gentle cheek-to-cheek closeness, sparkling eyes.
-
-      Beat 2: without turning bodies or heads away from camera, they glance sideways at each other for a warm happy eye-contact moment — eyes meeting, cheeks lifted, big smiles.
-
-      Beat 3: both settle back into the exact reference pose, facing camera straight-on with big radiant happy smiles, lifted cheeks. Ends on the reference composition.
-
-      DECORATION LAYER — ABSOLUTELY IMMOBILE, ZERO AMPLITUDE:
-      All stickers, text, letters, hearts, ribbons and graphics are real physical paper stickers glued flat onto a printed photo — rigid, adhered, permanently stuck in place. They are printed into the frame, baked in, part of the image itself, NOT a separate animatable element. Motion amplitude is exactly zero pixels: no movement, scaling, rotation, bounce, wobble, drift, pulse, jitter, breathing, sway, shimmer, fade, flicker, opacity change, warping, or parallax. They do not react to or follow the people. Every decoration is bit-identical in every frame, first to last — same position, size, shape, edges. Nothing added, nothing removed, nothing shifts even a fraction of a pixel.
-    video_negative_prompt: |
-      moving stickers, animated text, sticker motion, subtle sticker drift, micro-movement of decorations, decorations shifting, bouncing letters, wobbling text, jittering decorations, swaying stickers, text scaling, letters resizing, spinning decorations, drifting hearts, floating stickers, pulsing hearts, shimmering decorations, flickering text, sticker parallax, decorations following the subjects, warping text, decorations disappearing, stickers vanishing, text fading, new stickers, new text, new hearts, new decorations, camera movement, turning to profile, showing back of head, rotating away from camera, looking away from camera at end, peace sign, V sign, hands raised, kissing, identity change, distorted faces, blurry, low quality
-
-    concurrent_requests: 3
+      Style: photorealistic, cinematic, desaturated cool palette of grey, faint green and cold blue, deep crushed shadows, the screen as the only light accent, quiet Japanese horror atmosphere with a warm friendly beat at the end, visible film grain.
 
 
 comments:
@@ -322,12 +182,16 @@ comments:
     Per source image, the handler runs two API calls:
       1. Image generation via the testbed at `testbed` (default: image_generation),
          using either /nano_banana or /openai_image based on `image_service`.
-      2. Video generation via the Kling testbed (kling_endpoint in api_definitions.json),
-         using /Image2Video with the freshly generated image.
+      2. Video generation with the freshly generated image, via whichever
+         backend `video_service` selects:
+           - kling  → the Kling testbed (kling_endpoint), /Image2Video
+           - wan_v3 → the video_effect testbed (wan_endpoint), /wan_v3 with the
+                      generated image sent as first_frame
 
   resume_behaviour: |
     If `Generated_Frames/{source_name}_image.{ext}` exists from a prior run,
-    the image step is skipped and the existing image is fed to Kling directly.
+    the image step is skipped and the existing image is fed to the video
+    service directly.
     Delete the frame to force a re-generation.
 
     Video-only reuse: to run Kling on i2i frames from an earlier run (e.g.
@@ -396,7 +260,7 @@ comments:
     Per-task selection of which image API to use.
     Options:
       - nano_banana   → Google Gemini Flash / Pro image models
-      - openai_image  → OpenAI gpt-image-1 / gpt-image-2
+      - openai_image  → OpenAI gpt-image-* models
 
   image_model: |
     nano_banana options:
@@ -405,8 +269,11 @@ comments:
       - gemini-3.1-flash-image (default for nano_banana)
     openai_image options:
       - gpt-image-1
+      - gpt-image-1-mini
       - gpt-image-1.5
       - gpt-image-2 (default for openai_image)
+      - gpt-image-2.5-flare
+      - gpt-image-2.5-sunburst
 
   image_quality: |
     openai_image only.  Options: auto | low | medium | high.  Ignored for nano_banana.
@@ -414,19 +281,55 @@ comments:
   image_aspect_ratio: |
     Valid options: auto, 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9.
 
+  video_service: |
+    Which backend renders the video from the generated frame.
+    Options: kling (default) | wan_v3.
+    The two take different parameters — a field belonging to the other service
+    is ignored, so check this first when a setting seems to have no effect.
+      kling  : video_model, video_mode, video_negative_prompt, video_sound_enabled
+      wan_v3 : video_ratio, video_audio_out, video_duration_auto, video_thinking
+      both   : video_prompt, video_duration, video_resolution
+
   video_model: |
-    Kling model. Options: v1.6, v1.5, v2.0-master, v2.1, v2.1-master,
-    v2.5-turbo, v2.6, v3 (default).
+    kling only. Options: v1.6, v1.5, v2.0-master, v2.1, v2.1-master,
+    v2.5-turbo, v2.6, v3 (default). Ignored when video_service is wan_v3.
 
   video_mode: |
-    Kling generation mode. Options: std | pro (default).
+    kling only. Generation mode. Options: std | pro (default).
 
   video_duration: |
-    Video duration in seconds. Options: 5, 10.  Default: 5.
+    Video duration in seconds.
+    kling options: 5, 10 (default 5). wan_v3 takes any integer duration.
+
+  video_resolution: |
+    Output resolution. kling options: 720p | 1080p (default 720p).
+    wan_v3 options: 480P | 720P | 1080P (default 720P); the value is
+    upper-cased before it is sent, so '720p' works for either service.
+
+  video_ratio: |
+    wan_v3 only. Output aspect ratio; 'adaptive' follows the generated frame.
+    Options: 16:9, 9:16, 1:1, 4:3, 3:4, adaptive (default).
+    Ignored when video_service is kling.
+
+  video_negative_prompt: |
+    kling only. /wan_v3 accepts no negative prompt — if one is set on a wan_v3
+    task the handler logs a warning and drops it rather than folding it into
+    the positive prompt.
 
   video_sound_enabled: |
-    Whether Kling generates sound for the video. Options: true | false.
-    Default: true. Set per task, or root-level for all tasks.
+    kling only. Whether Kling generates sound for the video.
+    Options: true | false. Default: true.
+
+  video_audio_out: |
+    wan_v3 only. Generate an audio track with the video. Default: true.
+
+  video_duration_auto: |
+    wan_v3 only. Let the model pick the duration instead of using
+    video_duration. Default: false.
+
+  video_thinking: |
+    wan_v3 only. Enable the endpoint's prompt reasoning pass before
+    generating. Default: false.
 
   concurrent_requests: |
     Shared parallelism cap for both stages (per task, or root-level for all

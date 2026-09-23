@@ -336,7 +336,11 @@
     },
     "model_options": [
       "gpt-image-1",
-      "gpt-image-2"
+      "gpt-image-1-mini",
+      "gpt-image-1.5",
+      "gpt-image-2",
+      "gpt-image-2.5-flare",
+      "gpt-image-2.5-sunburst"
     ],
     "quality_options": [
       "auto",
@@ -1696,6 +1700,8 @@
     },
     "kling_endpoint": "http://192.168.31.161/external-testbed/kling/",
     "kling_api_name": "/Image2Video",
+    "wan_endpoint": "http://192.168.31.161/external-testbed/video_effect/",
+    "wan_api_name": "/wan_v3",
     "image_api_names": {
       "nano_banana": "/nano_banana",
       "openai_image": "/openai_image"
@@ -1723,7 +1729,12 @@
       "video_mode",
       "video_duration",
       "video_prompt",
-      "video_negative_prompt"
+      "video_negative_prompt",
+      "video_service",
+      "video_ratio",
+      "video_audio_out",
+      "video_duration_auto",
+      "video_thinking"
     ],
     "api_params": {
       "image_service": "nano_banana",
@@ -1733,7 +1744,12 @@
       "image_aspect_ratio": "16:9",
       "video_model": "v3",
       "video_mode": "pro",
-      "video_duration": 5
+      "video_duration": 5,
+      "video_service": "kling",
+      "video_ratio": "adaptive",
+      "video_audio_out": true,
+      "video_duration_auto": false,
+      "video_thinking": false
     },
     "image_service_options": [
       "nano_banana",
@@ -1746,7 +1762,11 @@
     ],
     "openai_image_model_options": [
       "gpt-image-1",
-      "gpt-image-2"
+      "gpt-image-1-mini",
+      "gpt-image-1.5",
+      "gpt-image-2",
+      "gpt-image-2.5-flare",
+      "gpt-image-2.5-sunburst"
     ],
     "video_model_options": [
       "v1.6",
@@ -1757,6 +1777,23 @@
       "v2.5-turbo",
       "v2.6",
       "v3"
+    ],
+    "video_service_options": [
+      "kling",
+      "wan_v3"
+    ],
+    "wan_resolution_options": [
+      "480P",
+      "720P",
+      "1080P"
+    ],
+    "wan_ratio_options": [
+      "16:9",
+      "9:16",
+      "1:1",
+      "4:3",
+      "3:4",
+      "adaptive"
     ]
   },
   "fifa_i2i2v": {
@@ -2085,6 +2122,80 @@
     "api_params": {
       "prompt": "",
       "resolution": "1080P",
+      "ratio": "adaptive",
+      "duration": 5,
+      "duration_auto": false,
+      "audio_out": true,
+      "thinking": false
+    },
+    "resolution_options": [
+      "480P",
+      "720P",
+      "1080P"
+    ],
+    "ratio_options": [
+      "16:9",
+      "9:16",
+      "1:1",
+      "4:3",
+      "3:4",
+      "adaptive"
+    ]
+  },
+  "wan_v3_v2v": {
+    "endpoint": "http://192.168.31.161/external-testbed/video_effect/",
+    "api_name": "/wan_v3",
+    "file_types": {
+      "video": [
+        ".mp4",
+        ".mov",
+        ".avi",
+        ".mkv",
+        ".webm"
+      ]
+    },
+    "validation": {
+      "video": {
+        "max_size_mb": 500,
+        "min_dimension": 320,
+        "duration": [
+          1,
+          15
+        ]
+      }
+    },
+    "folders": {
+      "input": "Source",
+      "output": "Generated_Video",
+      "metadata": "Metadata"
+    },
+    "rate_limit": 3,
+    "task_delay": 10,
+    "max_retries": 1,
+    "special_handling": "video_to_video",
+    "config_structure": "base_folder",
+    "structure_type": "base_folder",
+    "report": {
+      "enabled": true,
+      "template_path": "templates/I2V standard 5col.pptx",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
+      "use_comparison": false
+    },
+    "task_fields": [
+      "folder",
+      "style_name",
+      "prompt",
+      "resolution",
+      "ratio",
+      "duration",
+      "duration_auto",
+      "audio_out",
+      "thinking",
+      "generation_count"
+    ],
+    "api_params": {
+      "prompt": "",
+      "resolution": "720P",
       "ratio": "adaptive",
       "duration": 5,
       "duration_auto": false,

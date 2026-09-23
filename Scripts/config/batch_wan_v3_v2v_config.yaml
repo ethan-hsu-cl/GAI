@@ -1,0 +1,142 @@
+# Wan V3 Video-to-Video (V2V) Batch Configuration
+# Each style folder should contain a 'Source' subfolder with source videos.
+# Generated videos land in 'Generated_Video', metadata in 'Metadata'.
+
+template_path: templates/I2V standard 5col.pptx
+
+output:
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
+  group_tasks_by: 2
+
+generation_count: 1
+
+root_folder: Media Files/Wan V3 V2V
+
+testbed: http://192.168.31.161/external-testbed/video_effect/
+design_link: https://docs.google.com/presentation/d/1WFmn4Ae_oh65eSf26Xn0whtEE0cUa-l4Ww41HLlnCAQ/edit?slide=id.p#slide=id.p
+source_video_link:
+
+schedule:
+  start_time: ''
+
+default_settings:
+  resolution: 720P
+  ratio: adaptive
+  duration: 5
+  duration_auto: false
+  audio_out: true
+  thinking: false
+
+tasks:
+  - style_name: Poltergeist_Haunting
+    folder: Media Files/Wan V3 V2V/0921 2 Styles/Poltergeist_Haunting
+    prompt: |
+      Same video, but three things happen that are NOT in the source: the lights fail, one object floats, and the person reacts with growing fear. Keep the person's identity, hair, clothing, the room and the camera framing as in the source. For the first 3 seconds, keep the person's expression and movements exactly as in the source; after that, their performance is defined below and takes priority over the source.
+
+      THE PERSON'S PERFORMANCE — the fear must be caused by what happens, never before it:
+      0–3s: completely normal. They continue exactly what they are doing in the source, relaxed, unaware. No hint of worry, no glancing around, no tension. Nothing has happened yet.
+      3–5s: as the lights start to fail, they notice. They pause mid-action and look up toward the light, slightly puzzled, then glance around the room — mild confusion, not fear yet. Their hands slowly stop moving.
+      5–7s: when the object begins to lift, they see it. They freeze completely. Eyes widen, lips part, breathing turns quick and shallow, gaze locked on the object. They straighten up slowly and lean back a few centimeters.
+      7–10s: the fear peaks. They slowly raise one hand toward their mouth, shoulders rising, and stay frozen and rigid, staring at the floating object until the end. Keep it realistic and restrained: no screaming, no running, no big gestures, hands never touch the object. The face must remain clearly the same person as the source throughout.
+
+      THE FLOATING OBJECT: the most prominent small object resting on the floor, a shelf, a step or any surface nearest the camera that nobody is touching or holding. Only this one object moves. From 0 to 5s it sits still, untouched. Starting exactly at 5s it slowly rises straight up off the surface, as if pulled by an invisible string, clearly leaving the surface, and hovers about 15–20 cm above where it sat, tilting and drifting gently, with a soft shadow beneath it and the surface under it empty. It stays in the air until the final frame. No steam, smoke, glow or duplicate. Nothing else moves.
+
+      THE LIGHTS:
+      0–3s: identical to the source. Normal lighting, exposure and colors. Change nothing.
+      3–5s: starting exactly at 3s, the building loses electricity. Over two seconds all room light and daylight drain away, windows go dark, and by 5s the room is at about 40% of its original brightness. The single practical light nearest the person — a lamp or fixture already in the scene — is the only light left, warm tungsten yellow, with everything else in shadow. Faces and nearby objects remain visible inside its light.
+      5–10s: that light blinks on and off for the entire five seconds, never steady. It blinks once or twice per second, 8 to 10 times total, at uneven intervals. Each blink is an instant switch: light off, frame goes dark; light on, full brightness again. Not a fade, not a glow. The blinking must be obvious and continue to the final frame.
+
+      Realistic, mysterious, suspenseful, static camera, no shake, no cuts, no zoom, no new people or objects.
+    resolution: 720P
+    ratio: "1:1"
+    duration: 10
+    audio_out: true
+
+  - style_name: Pumpkin_Head_Transform
+    folder: Media Files/Wan V3 V2V/0921 2 Styles/Pumpkin_Head_Transform
+    prompt: |
+      PRESERVE FROM THE SOURCE VIDEO: keep the original motion, timing and pacing exactly as they are. Keep every person's body movement, posture, gestures, hands and walking frame for frame. Keep their clothing, their build and their position in the scene unchanged. Keep the camera movement, the framing, the background, the location and the lighting exactly as in the source. Keep the shot length and the number of people unchanged.
+
+      TRANSFORM: replace every person's head with a real carved jack-o'-lantern pumpkin. Each pumpkin sits directly on the shoulders where the head was, fully covering it, so that no face, no hair, no ears and no neck skin are visible at any moment. Everything below the shoulders stays exactly as it is in the source.
+
+      THE PUMPKIN: a real orange field pumpkin, slightly wider than tall, with natural vertical ridges, a matte lightly mottled rind with small blemishes, and a short curved dry stem on top. The carved face has two triangular eyes, a small triangular nose and a wide jagged grinning mouth cut through the shell. The cut edges are clean and slightly thick, and the hollow inside the pumpkin is dark. It is a solid physical object with real weight, not a mask overlay, not a transparent layer and not a painted-on graphic.
+
+      SCALE AND FIT: each pumpkin is noticeably larger than a human head, roughly one and a half times the size, resting heavily on the shoulders with no gap between the pumpkin and the collar. Its size stays exactly the same for the whole shot and never grows or shrinks.
+
+      HEAD MOTION: each pumpkin moves exactly as that person's head moved in the source video. When they turn, tilt, nod, lean or look around, the pumpkin turns and tilts with them by the same amount at the same moment, rotating naturally as a solid object on the shoulders. The carved face rotates with it, so the eyes and mouth face wherever the head was facing. The pumpkin never slides, never lags behind, never drifts off the shoulders and never floats.
+
+      LIGHTING: each pumpkin is lit by the light already in the scene, from the same direction and in the same color as the light falling on that person's body, with matching shadows and highlights on its ridges. The dark carved openings stay dark. There is no glow and no light coming from inside the pumpkin.
+
+      EVERY PERSON: every person visible in the frame gets a pumpkin head, each one carved with its own slightly different face, and each one keeps that same carved face for the entire shot without changing expression or re-carving itself.
+
+      THROUGHOUT THE ENTIRE SHOT:
+      Every person's body, clothing, hands and movement stay exactly as they are in the source video.
+      The background, the location, the camera and the lighting stay exactly as they are in the source video.
+      Each pumpkin stays firmly on its person's shoulders and follows that person's original head motion at every moment.
+      Each pumpkin keeps the same size, the same shape and the same carved face from the first frame to the last.
+      No human face and no hair is visible at any point.
+      The timing and pacing are identical to the source, with no speed change and no cuts.
+      The image stays clean, with no text, captions, subtitles or watermark anywhere.
+
+      Style: photorealistic, natural available light, real carved pumpkin texture, casual candid footage, subtle film grain.
+    resolution: 720P
+    ratio: "1:1"
+    duration: 5
+    audio_out: true
+
+comments:
+  endpoint: |
+    All five wan_v3 platforms share the /wan_v3 route on the video_effect testbed.
+    This one sends the prompt plus the source video as the single entry of the
+    'Reference Videos (max 5)' gallery — the reference image gallery, audio,
+    first_frame, last_frame, document, and web page URL are all left empty.
+  root_folder: |
+    Root folder holding the dated style subfolders. Informational only — each task
+    points at its own folder.
+  folder: |
+    Task folder containing the 'Source' subfolder with source videos.
+    Generated_Video and Metadata subfolders are created automatically.
+  generation_count: |
+    Videos generated per source video. Global here, overridable per task.
+  default_settings: |
+    Global default settings applied to all tasks. Any of these keys can also be set
+    per task to override the global value.
+  resolution: |
+    Output video resolution.
+    Options: '480P', '720P', '1080P'
+    Default: '720P'
+  ratio: |
+    Video aspect ratio. 'adaptive' follows the source video.
+    Options: '16:9', '9:16', '1:1', '4:3', '3:4', 'adaptive'
+    Default: 'adaptive'
+  duration: |
+    Video duration in seconds. Ignored when duration_auto is true.
+    Default: 5
+  duration_auto: |
+    Let the model pick the duration instead of using the duration value.
+    Default: false
+  audio_out: |
+    Generate an audio track with the video.
+    Default: true
+  thinking: |
+    Enable the endpoint's prompt reasoning pass before generating.
+    Default: false
+  prompt: |
+    Text prompt describing how the source video should be transformed.
+  input_limits: |
+    Source videos: MP4 / MOV / AVI / MKV / WEBM, 1-15 s, shorter side >= 320 px,
+    <= 500 MB. Up to 5 videos fit the gallery, but this handler sends one per call
+    so each source video gets its own generation.
+    The 15 s cap is enforced by the backend, which rejects a longer video only
+    after the whole file has uploaded ('InvalidParameter - ... duration should be
+    at most 15s'), so the handler checks duration locally and skips over-long
+    sources before calling. Trim footage to 15 s or less to include it.
+    This cap is on the INPUT video; `duration` below is the OUTPUT length and is
+    independent of how long the source runs.
+  expected_folder_structure: |
+    root_folder/
+    └── 0921 2 Styles/
+        └── Poltergeist_Haunting/
+            ├── Source/            # input videos
+            ├── Generated_Video/   # {video_name}_{n}.mp4 (auto-created)
+            └── Metadata/          # auto-created

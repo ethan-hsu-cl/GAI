@@ -3,11 +3,19 @@
 Two-step pipeline per source image:
   1. Image generation via either /nano_banana or /openai_image
      (chosen per-task with `image_service`)
-  2. Video generation via Kling /Image2Video using the generated image
+  2. Video generation from the generated image via either Kling /Image2Video
+     or Wan V3 /wan_v3 (chosen per-task with `video_service`)
 
 Both steps run against separate Gradio testbeds, so this handler manages
-two clients (one for image_generation, one for kling) instead of relying
-on the single `processor.client` that other handlers share.
+a second client for whichever video service a task selects (kling, or the
+video_effect testbed for wan_v3) instead of relying on the single
+`processor.client` that other handlers share.
+
+The two video services take different parameters. Kling uses video_model /
+video_mode / video_negative_prompt / video_sound_enabled; Wan V3 uses
+video_ratio / video_audio_out / video_duration_auto / video_thinking and
+accepts no negative prompt. Shared: video_prompt, video_duration,
+video_resolution.
 
 The intermediate image is saved to Generated_Frames/ and reused on resume
 if present — only the failed step (video) is retried.
@@ -259,7 +267,10 @@ class I2i2vHandler(BaseAPIHandler):
         'gemini-3.1-flash-image-preview': 14,
         'gpt-image-1': 10,
         'gpt-image-1.5': 10,
+        'gpt-image-1-mini': 10,
         'gpt-image-2': 10,
+        'gpt-image-2.5-flare': 10,
+        'gpt-image-2.5-sunburst': 10,
     }
     DEFAULT_MODEL_MAX_IMAGES = 3
 
@@ -281,6 +292,9 @@ class I2i2vHandler(BaseAPIHandler):
         # Guards the lazy Kling-client init so concurrent workers don't each
         # race to create a separate client on first use.
         self._kling_client_lock = threading.Lock()
+        # Same, for the Wan V3 video testbed (used when video_service=wan_v3).
+        self._wan_client = None
+        self._wan_client_lock = threading.Lock()
         # Bounds concurrent image-gen calls on the shared image testbed client.
         # A permit count of 1 (default) preserves the serial-pipeline behaviour;
         # the two-phase concurrent path swaps in a wider semaphore sized by
@@ -318,6 +332,46 @@ class I2i2vHandler(BaseAPIHandler):
                     self._kling_client = Client(endpoint, headers=headers or None)
                     self.logger.info(f"✓ Kling client initialized: {endpoint}")
         return self._kling_client
+
+    def _get_wan_client(self):
+        """Lazily create the Wan V3 Gradio client (video_effect testbed).
+
+        Double-checked locking keeps concurrent-mode workers from each building
+        their own client on first use, as with the Kling client.
+        """
+        if self._wan_client is None:
+            with self._wan_client_lock:
+                if self._wan_client is None:
+                    endpoint = self.api_defs.get(
+                        'wan_endpoint',
+                        'http://192.168.31.161/external-testbed/video_effect/',
+                    )
+                    headers = {}
+                    cookie = self.config.get('testbed_cookie') or self.processor._testbed_cookie
+                    if cookie:
+                        headers['Cookie'] = cookie
+                    self._wan_client = Client(endpoint, headers=headers or None)
+                    self.logger.info(f"✓ Wan V3 client initialized: {endpoint}")
+        return self._wan_client
+
+    def _resolve_video_service(self, task_config):
+        """Resolve which video backend this task uses.
+
+        Lookup order: per-task ``video_service`` → ``api_params`` →
+        ``'kling'``. Raises on an unknown value rather than silently
+        falling back, so a typo fails the task instead of quietly
+        generating with the wrong model.
+        """
+        api_params = self.api_defs.get('api_params', {})
+        service = str(
+            task_config.get('video_service') or api_params.get('video_service', 'kling')
+        ).strip().lower()
+        valid = self.api_defs.get('video_service_options', ['kling', 'wan_v3'])
+        if service not in valid:
+            raise ValueError(
+                f"video_service must be one of {valid} (got {service!r})"
+            )
+        return service
 
     def _get_stage_concurrency(self, task, key):
         """Resolve a per-stage concurrency cap.
@@ -830,6 +884,122 @@ class I2i2vHandler(BaseAPIHandler):
         )
         return result
 
+    WAN_RATIOS = ('16:9', '9:16', '1:1', '4:3', '3:4', 'adaptive')
+    WAN_RESOLUTIONS = ('480P', '720P', '1080P')
+
+    @staticmethod
+    def _as_bool(raw, default):
+        """Coerce a YAML-ish value to bool, falling back to `default` on None."""
+        if raw is None:
+            return default
+        if isinstance(raw, bool):
+            return raw
+        return str(raw).strip().lower() not in ('false', '0', 'no', 'off', '')
+
+    def _call_wan_v3_api(self, image_path, task_config):
+        """Generate a video from `image_path` via Wan V3 /wan_v3 (first-frame mode).
+
+        Sends the generated frame as ``first_frame``; the reference galleries,
+        audio, last_frame, document and web page URL are all left empty, which
+        is exactly what the standalone wan_v3_i2v handler does.
+
+        The /wan_v3 response is ``(video_dict, task_id)``, so it is normalised
+        here into the same 5-tuple Kling returns — (url, video_dict, video_id,
+        task_id, error) — and `_handle_result` stays service-agnostic.
+
+        Returns:
+            tuple: (url, video_dict, video_id, task_id, error_msg)
+        """
+        api_params = self.api_defs.get('api_params', {})
+        client = self._get_wan_client()
+
+        prompt = task_config.get('video_prompt', '')
+        duration = int(task_config.get('video_duration') or api_params.get('video_duration', 5))
+
+        resolution = str(
+            task_config.get('video_resolution')
+            or api_params.get('video_resolution', '720P')
+        ).upper()
+        if resolution not in self.WAN_RESOLUTIONS:
+            self.logger.warning(
+                f" ⚠️ Unsupported video_resolution={resolution!r} for wan_v3; using '720P'"
+            )
+            resolution = '720P'
+
+        ratio = str(task_config.get('video_ratio') or api_params.get('video_ratio', 'adaptive'))
+        if ratio not in self.WAN_RATIOS:
+            self.logger.warning(
+                f" ⚠️ Unsupported video_ratio={ratio!r} for wan_v3; using 'adaptive'"
+            )
+            ratio = 'adaptive'
+
+        audio_out = self._as_bool(
+            task_config.get('video_audio_out'), api_params.get('video_audio_out', True))
+        duration_auto = self._as_bool(
+            task_config.get('video_duration_auto'), api_params.get('video_duration_auto', False))
+        thinking = self._as_bool(
+            task_config.get('video_thinking'), api_params.get('video_thinking', False))
+
+        # /wan_v3 takes no negative prompt. Dropping one silently would ship a
+        # generation that quietly ignores half the slide, so say so loudly.
+        if task_config.get('video_negative_prompt'):
+            self.logger.warning(
+                "   ⚠️ [VID] wan_v3 accepts no negative prompt — "
+                f"video_negative_prompt is being ignored for style "
+                f"{task_config.get('style_name', '?')!r}"
+            )
+
+        self.logger.info(
+            f"   🎬 [VID] wan_v3: resolution={resolution}, ratio={ratio}, "
+            f"duration={duration}, audio_out={audio_out}, thinking={thinking}"
+        )
+
+        try:
+            result = client.predict(
+                prompt=prompt,
+                images=[],
+                videos=[],
+                audios=[],
+                first_frame=handle_file(str(image_path)),
+                last_frame=None,
+                document=None,
+                link='',
+                resolution=resolution,
+                ratio=ratio,
+                duration=duration,
+                duration_auto=duration_auto,
+                audio_out=audio_out,
+                thinking=thinking,
+                api_name=self.api_defs.get('wan_api_name', '/wan_v3'),
+            )
+        except Exception as exc:
+            return None, None, None, None, str(exc)
+
+        video_dict = result[0] if isinstance(result, (list, tuple)) and result else result
+        task_id = result[1] if isinstance(result, (list, tuple)) and len(result) > 1 else None
+
+        # Unwrap the Video component's payload: the inner value is a plain path
+        # or a FileData dict depending on the gradio_client version.
+        candidates = []
+        if isinstance(video_dict, str):
+            candidates.append(video_dict)
+        elif isinstance(video_dict, dict):
+            candidates.append(video_dict.get('url'))
+            inner = video_dict.get('video')
+            if isinstance(inner, dict):
+                candidates.extend([inner.get('url'), inner.get('path')])
+            elif inner:
+                candidates.append(inner)
+        candidates = [c for c in candidates if c]
+
+        url = next((c for c in candidates if str(c).startswith(('http://', 'https://'))), None)
+        local = next((c for c in candidates
+                      if not str(c).startswith(('http://', 'https://')) and Path(c).exists()), None)
+
+        if not url and not local:
+            return None, None, None, task_id, 'wan_v3 returned no video'
+        return url, ({'video': str(local)} if local else None), None, task_id, None
+
     def _make_api_call(self, file_path, task_config, attempt):
         """Run image-gen → video-gen for a single source image.
 
@@ -877,12 +1047,17 @@ class I2i2vHandler(BaseAPIHandler):
             self.logger.info(f"   🖼️ [IMG] saved: {generated_image_path.name} ({image_time:.1f}s)")
 
         # Step 2 — video gen
+        video_service = self._resolve_video_service(task_config)
         video_start = time.time()
-        video_result = self._call_kling_api(generated_image_path, task_config)
+        if video_service == 'wan_v3':
+            video_result = self._call_wan_v3_api(generated_image_path, task_config)
+        else:
+            video_result = self._call_kling_api(generated_image_path, task_config)
         video_time = time.time() - video_start
 
         return {
             'video_result': video_result,
+            'video_service': video_service,
             'generated_image_path': generated_image_path,
             'image_debug': image_debug,
             'image_time': image_time,
@@ -895,21 +1070,23 @@ class I2i2vHandler(BaseAPIHandler):
         video_result = result['video_result']
         generated_image_path = result['generated_image_path']
 
-        # Kling returns (url, video_dict, video_id, task_id, error)
+        # Both video services return (url, video_dict, video_id, task_id, error)
+        # — _call_wan_v3_api normalises /wan_v3's 2-tuple into Kling's shape.
+        video_service = result.get('video_service', 'kling')
         if isinstance(video_result, (list, tuple)):
             url = video_result[0] if len(video_result) > 0 else None
             video_dict = video_result[1] if len(video_result) > 1 else None
             video_id = video_result[2] if len(video_result) > 2 else None
             task_id = video_result[3] if len(video_result) > 3 else None
-            kling_error = video_result[4] if len(video_result) > 4 else None
+            video_error = video_result[4] if len(video_result) > 4 else None
         else:
-            url, video_dict, video_id, task_id, kling_error = None, video_result, None, None, None
+            url, video_dict, video_id, task_id, video_error = None, video_result, None, None, None
 
         processing_time = time.time() - start_time
         output_path = Path(output_folder) / f"{base_name}.mp4"
         video_saved = False
 
-        if not kling_error:
+        if not video_error:
             if url:
                 video_saved = self.processor.download_file(url, output_path)
             if not video_saved and video_dict and isinstance(video_dict, dict) and 'video' in video_dict:
@@ -934,21 +1111,44 @@ class I2i2vHandler(BaseAPIHandler):
             'additional_images_used': result['image_debug'].get('additional_images_used'),
             'selected_source_images': result['image_debug'].get('selected_source_images'),
             'image_processing_time': round(result['image_time'], 1),
-            'video_model': task_config.get('video_model', 'v3'),
-            'video_mode': task_config.get('video_mode', 'pro'),
+            'video_service': video_service,
             'video_duration': task_config.get('video_duration', 5),
             'video_resolution': task_config.get('video_resolution', '720p'),
             'video_prompt': task_config.get('video_prompt', ''),
-            'video_negative_prompt': task_config.get('video_negative_prompt', ''),
-            'video_sound_enabled': self._resolve_sound_enabled(
-                task_config, self.api_defs.get('api_params', {})
+            **(
+                {
+                    # /wan_v3 takes no negative prompt, model or mode.
+                    'video_model': 'wan_v3',
+                    'video_mode': None,
+                    'video_ratio': task_config.get('video_ratio', 'adaptive'),
+                    'video_audio_out': self._as_bool(
+                        task_config.get('video_audio_out'),
+                        self.api_defs.get('api_params', {}).get('video_audio_out', True)),
+                    'video_duration_auto': self._as_bool(
+                        task_config.get('video_duration_auto'),
+                        self.api_defs.get('api_params', {}).get('video_duration_auto', False)),
+                    'video_thinking': self._as_bool(
+                        task_config.get('video_thinking'),
+                        self.api_defs.get('api_params', {}).get('video_thinking', False)),
+                }
+                if video_service == 'wan_v3' else
+                {
+                    'video_model': task_config.get('video_model', 'v3'),
+                    'video_mode': task_config.get('video_mode', 'pro'),
+                    'video_negative_prompt': task_config.get('video_negative_prompt', ''),
+                    'video_sound_enabled': self._resolve_sound_enabled(
+                        task_config, self.api_defs.get('api_params', {})
+                    ),
+                }
             ),
             'video_id': video_id,
             'task_id': task_id,
             'output_url': url,
             'video_processing_time': round(result['video_time'], 1),
             'generated_video': output_path.name if video_saved else None,
-            'kling_error': kling_error or None,
+            'video_error': video_error or None,
+            'kling_error': video_error if video_service == 'kling' else None,
+            'error': video_error or None,
             'processing_time_seconds': round(processing_time, 1),
             'processing_timestamp': datetime.now().isoformat(),
             'attempts': attempt + 1,
@@ -961,8 +1161,8 @@ class I2i2vHandler(BaseAPIHandler):
 
         if video_saved:
             self.logger.info(f"   🎬 [VID] generated ✓ {output_path.name}")
-        elif kling_error:
-            self.logger.warning(f"   🎬 [VID] error ✗ {kling_error}")
+        elif video_error:
+            self.logger.warning(f"   🎬 [VID] {video_service} error ✗ {video_error}")
 
         return video_saved
 

@@ -20,75 +20,76 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Pixverse Effects/0904 12 Styles
+base_folder: Media Files/Pixverse Effects/0921 12 Styles
 template_path: templates/I2V standard 4col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1441759153#gid=1441759153
 provider_reference_link: https://aisphere.feishu.cn/wiki/GKwywQM3oixt4EkOM1IceWw8n5f?table=tblfxIxbTQwb57kk&view=vewTVy4A0p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCbU9FzStw5SJZJ481YmdOhAQMHYZYMfWl0rgknJC6AKNY?e=WcGplL
+source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgBTbJ2WGxgST5NT4TE57tjqAf8LxSlOdpIeL310CsNlC0g?e=u1M7Gg
 
 tasks:
-  - effect: Calorie Quest
+  - effect: Happy Chunk
     prompt: ''
-    custom_effect_id: '397217578616192'
+    custom_effect_id: '366944830718784'
     negative_prompt: ''
 
-  - effect: Music!
+  - effect: Twist Hip Dance
     prompt: ''
-    custom_effect_id: '418085532933248'
+    custom_effect_id: '423225362742400'
     negative_prompt: ''
 
-  - effect: Street Art Awakening
+  - effect: Fashion Street Dance
     prompt: ''
-    custom_effect_id: '417033902416768'
-    negative_prompt: ''
-
-  - effect: move like animal
-    prompt: ''
-    custom_effect_id: '417209344089216'
-    negative_prompt: ''
-
-  - effect: Little Warrior Fights the Giant Toy Monster
-    prompt: ''
-    custom_effect_id: '421099323861504'
-    negative_prompt: ''
-
-  - effect: The Spark Rise
-    prompt: ''
-    custom_effect_id: '421454546889664'
-    negative_prompt: ''
-
-  - effect: Squished-out Kitten
-    prompt: ''
-    custom_effect_id: '420170990423488'
+    custom_effect_id: '423224392010880'
     negative_prompt: ''
     source_type: pet
 
-  - effect: Blue‑Hole Skydiving on the Island
+  - effect: Jump while walking
     prompt: ''
-    custom_effect_id: '420700646501824'
+    custom_effect_id: '423223054707840'
     negative_prompt: ''
 
-  - effect: Hidden Kitties ！
+  - effect: Dance that can keep fit
     prompt: ''
-    custom_effect_id: '421935296492736'
+    custom_effect_id: '423224652002432'
     negative_prompt: ''
     source_type: pet
 
-  - effect: Winged Wardrobe!
+  - effect: Invincible whirlwind kick
     prompt: ''
-    custom_effect_id: '421936569539776'
+    custom_effect_id: '423207027596416'
     negative_prompt: ''
 
-  - effect: 3D Figurine Factory!
+  - effect: Thomas Roundabout
     prompt: ''
-    custom_effect_id: '421940938280256'
+    custom_effect_id: '423201031806656'
     negative_prompt: ''
 
-  - effect: Tiny Darling
+  - effect: A very spicy dance
     prompt: ''
-    custom_effect_id: '421430734041408'
+    custom_effect_id: '423205029154496'
+    negative_prompt: ''
+
+  - effect: Moonlight Broom Ride
+    prompt: ''
+    custom_effect_id: '423030808985472'
+    negative_prompt: ''
+    source_type: pet
+
+  - effect: I get to school on time with my skills!
+    prompt: ''
+    custom_effect_id: '423882029371008'
+    negative_prompt: ''
+
+  - effect: I’m late! I’m speeding full‑ahead!
+    prompt: ''
+    custom_effect_id: '423886618670720'
+    negative_prompt: ''
+
+  - effect: Ninja Clone Jutsu!
+    prompt: ''
+    custom_effect_id: '423908109442688'
     negative_prompt: ''
 
 comments:
