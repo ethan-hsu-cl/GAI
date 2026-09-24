@@ -22,8 +22,8 @@ testbed: http://192.168.31.161/external-testbed/image_generation/
 schedule:
   start_time: ''
 
-root_design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g409e32ca999_190_95#slide=id.g409e32ca999_190_95
-root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDHqK8Cv01FSq-RCqs1bNt5AfYzhFMOdHYEAPEt5aU8zBM?e=SyDJtO
+root_design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g409fa84b21c_3_228#slide=id.g409fa84b21c_3_228
+root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDdbUjmtMNITJXTtTzVsLFhATIWnHJMn6ufhiHCtS-Ft_o?e=6BACnc
 
 # Reuse original i2i frames (video-only). If a task folder contains a dropped-in
 # original-run folder, the handler stages a subset before processing (applied
@@ -43,31 +43,30 @@ random_seed: 42
 video_resolution: '720p'
 
 tasks:
-  - style_name: Crawl_Out_Of_TV
-    folder: Media Files/I2I2V/0921 1 Style/Crawl_Out_Of_TV
+  - style_name: '閨密殺人魔'
+    folder: 'Media Files/I2I2V/0923 1 Style/閨密殺人魔'
     image_service: openai_image
     image_model: gpt-image-2.5-sunburst
     image_quality: auto
     image_resolution: '1K'
     image_aspect_ratio: '1:1'
+    use_multi_image: true
+    multi_image_config:
+      mode: sequential
     image_prompt: |
-      Use the uploaded photo as the reference for one specific real person.
+      Keep the person’s face, hairstyle, identity, glasses, and expression exactly as in the input photo. Restage the same person into a new scene. The person is lying on their front on a neatly made bed in a dim bedroom at night, propped up on their forearms, facing the camera. A red vintage rotary telephone sits on the bed in front of them, and they hold its red handset to their ear with one hand. A large bowl of popcorn sits beside them, and a few magazines lie scattered on the blanket. They look relaxed and casual, completely unaware of anything behind them.
 
-      MOST IMPORTANT RULE: the person appearing on the television screen must be the exact same person as in the uploaded photo — identical face, facial structure, eyes, eyebrows, nose, mouth, skin tone, hairstyle, hair length and color, and the same clothing they are wearing in the photo. Do not change their gender, age, ethnicity, hairstyle, glasses, accessories or outfit. Do not invent a different person. Their face must be immediately recognizable as the same person when compared side by side with the uploaded photo.
+      Their sleepwear should match the attached reference image in material quality and texture: a well-made pale blue-grey pyjama set in fine cotton with subtle self-stripes woven into the fabric, a soft refined sheen, a tailored fit, a notched lapel collar, crisp white contrast piping along the collar, front placket, cuffs, and chest pocket, and small white buttons. The overall fabric texture, drape, and premium feel should closely follow the attached image reference.
 
-      Generate a new square 1:1 photograph of an ordinary Japanese living room late at night. The room is dim, still and heavy with shadow. The ceiling light is switched off and its pull cord hangs motionless. Thin curtains are drawn over a window on the left, letting in only a faint cold blue-grey wash from outside. The television is the only real light source in the room. Deep shadow swallows the corners and the ceiling.
+      Standing in the open doorway at the back of the room is a tall, ominous grim-reaper-like figure in a long black hooded cloak and layered black clothing. The figure has a skull-like face rather than a smooth mask: an original pale bone-colored skull face with deep dark eye sockets, a hollow nasal cavity, subtle cheekbone structure, and a slightly open toothy jaw. The skull face should look stylized but photoreal, clean and readable in the shadows, with a solemn eerie expression rather than an exaggerated horror scream. The hood falls deeply around the skull, partially shadowing the forehead and sides of the face.
 
-      The room feels quiet and slightly abandoned: worn cream-coloured walls with faint stains near the ceiling, a sliding paper screen door standing half open onto a black hallway, low wooden furniture, a fabric sofa at one edge with a folded blanket, a potted plant drooping slightly at the other edge, a few unlabeled VHS tapes stacked on the stand. Everything is tidy but lifeless, as if nobody has been in the room for a long time. No other people anywhere in the room.
+      The grim-reaper figure must feel original and not based on any specific copyrighted horror or fantasy character. It should not resemble Ghostface or any recognizable movie mask. It should not carry a scythe, sickle, blade, staff, or any weapon of any kind. Only the hooded black-cloaked figure with the pale skull face is visible. The figure stands completely still and silent, mostly in shadow, watching the person; the person has not noticed it.
 
-      An old boxy CRT television with a deep body sits on a low wooden TV stand against the wall, centered and dominating the frame, the screen filling about 70% of the image width, facing the camera perfectly straight on. The bottom quarter of the frame is empty wooden floor with a patterned rug between the camera and the TV.
+      The bedroom is dim and cool, with deep blue-grey walls, framed posters on the wall, and a dark hallway visible through the open doorway. A single warm table lamp glows softly on the left, providing almost all the light in the room and leaving the corners and doorway in heavy shadow.
 
-      The television is switched on. On the screen, the person from the uploaded photo appears from the waist up, facing the camera directly and filling most of the screen. They are pressed up close against the inside of the glass: both palms flat against the screen surface at shoulder height, fingers spread, leaning slightly forward, looking straight out at the camera with a calm, natural expression.
+      Frame the shot from a low angle at bed height, square 1:1 composition, with the person’s upper body filling the middle of the frame, the bed and props across the lower third, and the doorway with the standing grim-reaper figure clearly visible behind them over one shoulder.
 
-      THE PERSON ON SCREEN STAYS NORMAL AND UNTHREATENING: render them clearly and sharply in full natural color, with correct even exposure on the face, healthy natural skin tone and normal eyes, so every feature stays recognizable and they look like an ordinary living person. Their expression is calm and neutral. They are not pale, not grey, not distorted, not wounded, not hollow-eyed and not frightening in any way. Apply only a very light CRT look to them: faint horizontal scanlines and a subtle glow. Grainy static appears only in the background area around and behind them on the screen, never across their face or body. All of the eeriness comes from the dark room around the television, never from the person themselves.
-
-      The lit screen is the strongest light in the frame and casts a cold blue-white glow forward across the wooden floor and the rug, throwing long soft shadows out toward the camera and lighting the nearest edges of the furniture while everything beyond it falls into darkness.
-
-      Camera low, about knee height, static and straight on. Photorealistic, desaturated cool palette of grey, faint green and cold blue, deep crushed shadows, underexposed room with the bright screen as the only accent, quiet Japanese horror atmosphere, visible film grain, no text, no watermark.
+      Photorealistic, cinematic, cool blue night grade with a warm lamp accent, shallow depth of field, soft film grain, no text, no watermark.
 
     video_service: wan_v3
     video_resolution: '720P'
@@ -75,43 +74,501 @@ tasks:
     video_duration: 10
     video_audio_out: true
     video_prompt: |
-      LOCKED: Continue the exact scene of the input image. Single continuous take, camera locked in the exact framing of the reference image, completely static — no zoom, no pan, no shake, no cuts. The room, the floor, the furniture, the curtains, the sliding door and the TV stand stay exactly as in the reference throughout. Total duration 10 seconds.
+      LOCKED: Continue the exact scene of the input image as the opening frame of the sequence. Use the person in the uploaded input image as the sole identity reference. Preserve the exact same person, facial identity, face shape, facial proportions, hairstyle, hair length, hair color, glasses if present, age appearance, gender presentation and body proportions throughout the entire video.
 
-      NO RING AND NO GLOWING EDGE: where the body crosses the screen plane there is no ring, no halo, no glowing outline, no bright rim, no circle of light and no arc of light of any kind. The crossing point is completely invisible — the body simply continues from inside the screen to outside it with nothing drawn at the boundary at all. No bright shape ever appears around the person.
+      One 10-second sequence.
 
-      THE SCREEN KEEPS ITS SHAPE: the television screen stays its normal rectangular shape with its normal slightly rounded CRT corners for the entire shot. It never becomes a circle, never becomes an oval, never opens into a hole and never changes shape or size. Its brightness stays even across the whole screen and never concentrates into a bright shape or a bright edge.
+      IDENTITY LOCK:
+      The person must remain exactly the same individual shown in the uploaded input image in every shot.
 
-      NO MEMBRANE, NO STRETCHING: the screen surface never bulges, never stretches, never deforms and never behaves like a thin plastic film, cling film or rubber sheet. The glass stays perfectly flat and rigid at all times. The body passes straight through the flat plane of the screen as if the glass simply were not there. Nothing ever clings to the body, wraps around it or is pulled outward with it.
+      Preserve exactly:
+      the same facial identity,
+      the same face shape and jawline,
+      the same eyes, nose, mouth and facial proportions,
+      the same hairstyle, hair length, hairline, parting, texture and hair color,
+      the same glasses or eyewear if present,
+      the same skin tone,
+      the same age appearance,
+      the same gender presentation,
+      and the same body proportions.
 
-      THE ROOM STAYS DARK: the room stays exactly as dark as in the reference image for the whole shot. The ceiling light stays off, the curtains stay drawn, and the television screen remains the only real light source in the room. The corners, the ceiling and the open sliding door stay in deep shadow. The room never brightens, and no daylight and no new light source ever appears.
+      The person's gender must always follow the uploaded input image.
+      If the uploaded subject is male, keep the subject male.
+      If the uploaded subject is female, keep the subject female.
+      Never swap or reinterpret gender.
+      Never replace the person with another actor or a generic face.
+      Never beautify, reshape, age, de-age or redesign the face.
+      Never change the hairstyle between shots.
 
-      LIGHTING ON THE PERSON: the parts of them still inside the screen stay lit as a television image. The parts that have come out into the room are lit only by the soft glow of the screen itself, spilling onto their arms, face and shoulders from below and behind, with the dark room falling away around them. They stay clearly visible and readable at all times.
+      Use gender-neutral pronouns below so the prompt works with any uploaded person.
+
+
+      CLOTHING LOCK:
+      The person wears the same pale blue-grey premium pyjama set established in the input scene.
+
+      Fine cotton fabric with subtle woven self-stripes,
+      soft refined fabric sheen,
+      tailored but comfortable fit,
+      notched lapel collar,
+      crisp white contrast piping around the collar, front placket, cuffs and chest pocket,
+      small white buttons.
+
+      The pyjama design, color, material and fit remain identical throughout every shot.
+
+
+      STRUCTURE AND EDITING:
+      Fast-paced 10-second horror-comedy montage.
+
+      The opening scare must be very fast.
+
+      SHOT 1 lasts only about 2.0 seconds and contains the entire horror setup, approach and scare as one continuous shot.
+
+      After the scare, the video immediately switches into very short playful interaction shots.
+
+      Use clean instantaneous HARD CUTS between each later interaction.
+
+      No fade.
+      No dissolve.
+      No wipe.
+      No blur transition.
+      No morph transition.
+
+      Within every individual shot the camera is completely locked and stationary:
+      no pan,
+      no tilt,
+      no zoom,
+      no dolly,
+      no handheld drift.
+
+
+      ORIGINAL GRIM-REAPER CHARACTER LOCK:
+      The second character is an ORIGINAL cinematic grim-reaper-inspired figure.
+
+      A tall slender figure wearing a long, loose, layered black hooded cloak over simple black clothing.
+
+      The cloak hangs heavily toward the floor with slightly irregular layered fabric edges.
+      The deep black hood frames the skull face closely and casts strong shadows around the sides of the head.
+
+      The figure has pale skeletal-looking hands with long bony fingers visible when interacting with objects.
+
+      IMPORTANT:
+      The grim-reaper figure carries NOTHING.
+
+      NO SCYTHE.
+      NO SICKLE.
+      NO KNIFE.
+      NO SWORD.
+      NO BLADE.
+      NO AXE.
+      NO STAFF.
+      NO CANE.
+      NO SPEAR.
+      NO WEAPON.
+      NO TOOL.
+      NO OBJECT HELD AS A WEAPON.
+
+      Do not generate a weapon anywhere in the room or attached to the grim-reaper figure.
+      Do not place a scythe behind its back, beside the bed, leaning against a wall, or partially outside the frame.
+      The figure uses only its empty hands for all interactions.
+
+
+      ORIGINAL SKULL FACE DESIGN:
+      The grim-reaper figure has an original skull face, not a removable mask.
+
+      The skull face must remain exactly the same in every shot.
+
+      It has:
+      a pale aged bone-ivory color,
+      a narrow elongated skull structure,
+      a slightly angular forehead,
+      deep hollow black eye sockets,
+      subtle pronounced cheekbones,
+      a natural skeletal nasal cavity,
+      a clearly defined upper jaw and lower jaw,
+      small realistic human-like teeth,
+      a slightly elongated chin,
+      and faint aged bone texture with very subtle cracks and imperfections.
+
+      The skull is stylized enough to feel cinematic but still anatomically believable and photorealistic.
+
+      The eye sockets are completely dark and empty.
+      No human eyes are visible.
+      No skin or human face is visible beneath the skull.
+
+      The jaw remains mostly closed or only slightly parted.
+      The skull expression remains neutral, solemn and eerie.
+
+      IMPORTANT:
+      This is a SKULL-FACED GRIM REAPER.
+
+      It is NOT Ghostface.
+      It is NOT a screaming mask.
+      It is NOT a smooth white face mask.
+      It is NOT a stretched ghost-like face.
+      It is NOT a hockey mask.
+      It is NOT robotic.
+      It is NOT metallic.
+      It is NOT glossy black.
+      It is NOT a featureless oval.
+
+      Do not generate:
+      large screaming mouths,
+      drooping teardrop eye holes,
+      a stretched screaming face,
+      a rubber horror mask,
+      human facial skin,
+      human eyes,
+      visible pupils,
+      or recognizable existing horror-character designs.
+
+      The exact skull proportions, eye sockets, nasal cavity, teeth, jaw shape, bone color and texture remain completely stable throughout every shot.
+
+      Never morph the skull face.
+      Never replace it with a mask.
+      Never reveal a human face beneath it.
+      Never change its skull design between cuts.
+
+
+      THE ROOM:
+      The same bedroom remains identical throughout every shot.
+
+      A dim bedroom at night with deep blue-grey walls,
+      a neatly made bed with a dark blue textured blanket,
+      a single warm table lamp glowing on the left,
+      framed posters on the walls,
+      and an open doorway at the back leading into a dark hallway.
+
+      The warm table lamp is the only warm light source.
+
+      Everything away from the lamp falls into cool deep blue shadow.
+
+      Existing objects on the bed:
+      a red vintage rotary telephone,
+      a large bowl of popcorn,
+      and several magazines.
+
+      The same furniture, posters, doorway, bed, blanket and lamp remain spatially consistent throughout the sequence.
+
 
       TIMELINE:
 
-      [0-1.5s] The person stays inside the television screen, palms pressed flat against the glass, looking out at the camera. The screen's faint static flickers normally. Nothing else in the room moves.
 
-      [1.5-3s] They press harder and their hands begin to pass through the flat plane of the screen. The glass itself stays completely flat, rectangular and rigid and does not move at all. Nothing lights up at the point where their hands cross.
+      [0.0-0.8s] — SHOT 1A — NORMAL PHONE CALL
 
-      [3-5.5s] Their hands come fully out into the room, followed by their forearms, and they grip the outer edges of the television frame from outside. The screen behind them keeps its normal rectangular shape and its normal even brightness.
+      Use the exact opening composition of the input image.
 
-      [5.5-8s] Their head and shoulders push out through the screen plane into the room. They are now leaning out of the television from the waist up, hands braced on the TV frame, their upper body softly lit by the screen glow while their lower half is still inside the screen image. They pause, look slowly around the dark room, then look straight at the camera.
+      The person lies comfortably on their front on the bed, propped up on their forearms and facing the camera.
 
-      [8-10s] Still leaning half out of the screen, they smile and raise one hand off the TV frame in a friendly wave toward the camera, holding it until the final frame.
+      They casually hold the red telephone handset to their ear and talk naturally.
 
-      THROUGHOUT THE WHOLE SHOT:
-      No ring, halo, glowing outline or bright rim ever appears anywhere around the person or around the screen.
-      The screen stays rectangular with its normal even brightness at every moment and never becomes a circle, an oval or an opening.
-      The screen glass stays flat and rigid at every moment and never deforms in any way.
-      The person's face, hair, clothing and every physical detail stay exactly as they appear in the reference image at all times — the same individual throughout, with no change to their features, hairstyle or outfit as they emerge, and never replaced with a different person.
-      They stay calm, healthy and unthreatening — natural skin tone, normal eyes, a relaxed expression. All of the eeriness comes from the dark room, never from the person.
-      They do not climb all the way out — they stay half in, half out of the television for the whole shot.
-      Movements are natural, relaxed and unhurried, like someone leaning out of a window.
-      The room stays dark for the whole shot and the television stays the only light source.
-      The camera never moves and there are no cuts.
-      The image stays clean, with no text, captions, subtitles or watermark anywhere.
+      Their lips move subtly.
+      Their expression is relaxed.
+      Their free hand lightly touches the telephone cord.
 
-      Style: photorealistic, cinematic, desaturated cool palette of grey, faint green and cold blue, deep crushed shadows, the screen as the only light accent, quiet Japanese horror atmosphere with a warm friendly beat at the end, visible film grain.
+      Deep in the dark doorway behind them, the grim-reaper figure is already visible.
+
+      The figure should already be clearly readable as a dark hooded silhouette with its pale skull face visible inside the hood.
+
+      Its hands are empty.
+      There is no scythe and no weapon anywhere.
+
+      The person has not noticed it.
+
+
+      [0.8-1.4s] — SHOT 1B — FAST APPROACH
+
+      Still the same continuous shot, no cut.
+
+      The skull-faced grim-reaper figure immediately walks quickly but smoothly from the doorway toward the bed.
+
+      Only two decisive steps.
+
+      Its cloak moves naturally.
+
+      The person keeps talking and remains unaware.
+
+
+      [1.4-2.0s] — SHOT 1C — QUICK SCARE
+
+      Still the same continuous shot.
+
+      The skull-faced grim-reaper figure suddenly leans its pale bone skull face close beside the person's shoulder.
+
+      The person senses something, turns quickly, sees the skull face, and jolts in fright.
+
+      Immediate sharp reaction:
+      eyes widen,
+      shoulders jerk back,
+      the red handset slips slightly away from the ear,
+      one hand rises instinctively.
+
+      The scare is brief, clean and readable.
+
+      END THE HORROR SECTION HERE.
+
+
+      [2.0s] HARD CUT.
+
+
+      [2.0-3.6s] — SHOT 2 — DRINK TOAST
+
+      Medium-wide shot from the side of the bed.
+
+      The person and the skull-faced grim-reaper figure now sit side by side on the bed like friends.
+
+      Each holds a clear glass of colorful soda.
+
+      They quickly clink their glasses together in a cheerful toast.
+
+      The person laughs.
+      The grim-reaper figure gives a tiny polite nod.
+
+      Its skull face remains unchanged.
+
+
+      [3.6s] HARD CUT.
+
+
+      [3.6-5.2s] — SHOT 3 — NAIL POLISH
+
+      Closer shot from bed height.
+
+      The skull-faced grim-reaper figure extends one pale skeletal hand.
+
+      The person carefully paints one fingernail with dark glossy red nail polish.
+
+      A small open nail-polish bottle sits nearby on the blanket.
+
+      The grim-reaper figure sits very still and cooperative.
+
+      The skull face stays unchanged and expressionless.
+
+      No weapons appear anywhere.
+
+
+      [5.2s] HARD CUT.
+
+
+      [5.2-6.8s] — SHOT 4 — TISSUE COMFORT
+
+      Medium shot.
+
+      The skull-faced grim-reaper figure sits with exaggerated sad posture, shoulders slumped.
+
+      The person pulls a tissue and gently dabs beneath one of the dark eye sockets as if comforting it.
+
+      With the other hand, the person gives the figure a reassuring pat on the shoulder.
+
+      The humor comes from the sincerity of the comforting gesture.
+
+
+      [6.8s] HARD CUT.
+
+
+      [6.8-8.4s] — SHOT 5 — SHOULDER MASSAGE
+
+      Medium-wide shot from the foot-side corner of the bed.
+
+      The person sits upright on the bed.
+
+      The skull-faced grim-reaper figure sits or kneels behind them and gives a gentle shoulder massage using both empty hands.
+
+      The person visibly relaxes and enjoys it.
+
+      The cloak drapes over the bed.
+
+      No weapon is visible.
+
+
+      [8.4s] HARD CUT.
+
+
+      [8.4-10.0s] — SHOT 6 — FINAL PHONE GAG
+
+      Wide shot of the whole bedroom from the foot of the bed.
+
+      The skull-faced grim-reaper figure sits alone on the edge of the bed in the foreground.
+
+      It holds the red telephone handset against the side of its skull as if having a serious phone conversation.
+
+      The red rotary telephone base rests beside it on the blanket.
+
+      Its other hand is empty and relaxed on its lap.
+
+      The person stands far behind in the open doorway with arms loosely crossed, watching with a small amused smile or slight head shake.
+
+      The grim-reaper figure gives a subtle head tilt while listening on the phone.
+
+      Hold this visual until the end.
+
+
+      THROUGHOUT THE ENTIRE SEQUENCE:
+
+      IDENTITY CONSISTENCY IS LOCKED.
+
+      The uploaded person's face is the single authoritative identity reference.
+
+      Face shape,
+      eyes,
+      nose,
+      mouth,
+      jawline,
+      skin tone,
+      hairstyle,
+      hair color,
+      hair length,
+      glasses if present,
+      age appearance,
+      gender presentation
+      and overall identity remain unchanged in every shot.
+
+      Male input stays male.
+      Female input stays female.
+
+      Never substitute another actor.
+      Never alter gender.
+      Never redesign their face after a cut.
+
+
+      GRIM-REAPER CONSISTENCY IS LOCKED.
+
+      The grim-reaper figure is the same character in every shot.
+
+      Same height.
+      Same body proportions.
+      Same black hood.
+      Same black layered cloak.
+      Same skeletal-looking hands.
+      Same original pale bone-ivory skull face.
+
+      The skull's silhouette,
+      forehead,
+      eye sockets,
+      nasal cavity,
+      cheekbones,
+      teeth,
+      jaw shape,
+      bone texture
+      and color
+      never change.
+
+      The character must remain an original skull-faced grim reaper throughout the entire video.
+
+      It must never become Ghostface or any recognizable existing horror character.
+
+      It must never transform into a smooth mask.
+
+      Its face is always a pale skull.
+
+
+      WEAPON LOCK:
+
+      THE GRIM REAPER HAS NO SCYTHE.
+
+      NO SCYTHE EXISTS ANYWHERE IN THE VIDEO.
+
+      NO WEAPON EXISTS ANYWHERE IN THE VIDEO.
+
+      Do not generate:
+      scythes,
+      sickles,
+      knives,
+      swords,
+      blades,
+      axes,
+      spears,
+      staffs,
+      clubs,
+      guns,
+      or any weapon-like object.
+
+      Do not hide weapons behind the cloak.
+      Do not place weapons in the background.
+      Do not place weapons beside the bed.
+      Do not place weapons in the doorway.
+      Do not add a scythe as a traditional grim-reaper accessory.
+
+      The grim-reaper figure interacts only with harmless everyday objects already specified in the scene.
+
+
+      ROOM CONTINUITY IS LOCKED.
+
+      Same bedroom.
+      Same bed.
+      Same dark blue blanket.
+      Same lamp.
+      Same posters.
+      Same doorway.
+      Same red telephone.
+      Same overall object placement and visual geography.
+
+      Only small prop changes caused naturally by the characters' interactions are allowed.
+
+
+      LIGHTING CONTINUITY IS LOCKED.
+
+      One warm lamp on the left remains the primary warm light source in every shot.
+
+      Everything else stays in cool deep blue night shadow.
+
+      Do not suddenly brighten the room during the comedy section.
+
+      Maintain the same cinematic night lighting throughout.
+
+
+      CAMERA RULES:
+
+      Camera completely stationary inside each shot.
+
+      No pan.
+      No tilt.
+      No zoom.
+      No dolly.
+      No camera shake.
+      No drifting composition.
+
+      Every camera change happens only through a HARD CUT.
+
+
+      TONE:
+
+      0.0-2.0 seconds:
+      genuine suspense and a quick sharp scare.
+
+      2.0-10.0 seconds:
+      immediate tonal reversal into playful, absurd, wholesome horror-comedy.
+
+      The skull-faced grim-reaper figure is no longer threatening after the first scare.
+
+      The interactions should feel like two friends casually hanging out despite the figure's frightening appearance.
+
+      No violence.
+      No attacking.
+      No chasing.
+      No weapon.
+      No blood.
+      No injury.
+      Nobody is harmed.
+
+      No text.
+      No captions.
+      No subtitles.
+      No logos.
+      No watermark.
+
+      Style:
+      photorealistic cinematic horror-comedy,
+      original skull-faced grim-reaper character,
+      cool blue night color grade,
+      single warm tungsten lamp accent,
+      natural skin and fabric texture,
+      realistic aged bone skull texture,
+      shallow depth of field,
+      soft 35mm film grain,
+      high visual continuity,
+      fast comedic timing after the opening scare.
+
+    concurrent_requests: 3
 
 
 comments:

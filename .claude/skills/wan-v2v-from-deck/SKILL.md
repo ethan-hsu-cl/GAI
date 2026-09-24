@@ -278,8 +278,10 @@ These keys **are** `root_`-prefixed — the report generator only reads the
 
 - **`root_design_link`** ← the deck's Google Slides URL, written bare and
   unquoted: `root_design_link: <url>`.
-- **`root_source_video_link`** ← leave empty (`root_source_video_link:`). The
-  previous batch's link is stale once the tasks change; a new one is produced
+- **`root_source_video_link`** ← clear it, leaving a **single space after the
+  colon** (`root_source_video_link: `), not `''` and not a bare colon with no
+  space. Most editors and the `Edit` tool strip trailing whitespace, so write it
+  from a small script. The previous batch's link is stale once the tasks change; a new one is produced
   after the script runs.
 
 Do not touch any other top-level key (`template_path`, `output`,

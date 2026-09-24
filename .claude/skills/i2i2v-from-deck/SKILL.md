@@ -1,6 +1,6 @@
 ---
 name: i2i2v-from-deck
-description: Convert the image-to-image-to-video slides of a "GAI Template" Google Slides deck into the tasks list of Scripts/config/batch_i2i2v_config.yaml — both the group-shot style (one slide per style, Gemini + Kling) and the paired style (an I2I slide plus an I2V slide under one "I2I→I2V" title, OpenAI/ChatGPT image + Wan 3.0). Use when the user provides such a deck as a URL (fetched via the no-auth export/txt endpoint), a .txt export, or pasted text — with image prompts, video prompts, optional negative prompts, and model/resolution/aspect metadata — and wants it turned into i2i2v batch tasks. Also updates root_design_link to the deck URL and clears root_source_video_link. For the standalone I2V slides of the same deck use wan-i2v-from-deck; for its V2V slides use wan-v2v-from-deck; for the generic per-field paste flow across other APIs use update-batch-prompts.
+description: Convert the image-to-image-to-video slides of a "GAI Template" Google Slides deck into the tasks list of Scripts/config/batch_i2i2v_config.yaml — both the group-shot style (one slide per style, Gemini + Kling) and the paired style (an I2I slide plus an I2V slide under one "I2I→I2V" title, OpenAI/ChatGPT image + Wan 3.0). Use when the user provides such a deck as a URL (fetched via the no-auth export/txt endpoint), a .txt export, or pasted text — with image prompts, video prompts, optional negative prompts, and model/resolution/aspect metadata — and wants it turned into i2i2v batch tasks. Also updates root_design_link to the deck URL, clears root_source_video_link, and copies the sample source images (Source 50 Sample by default) into each style's Source folder. For the standalone I2V slides of the same deck use wan-i2v-from-deck; for its V2V slides use wan-v2v-from-deck; for the generic per-field paste flow across other APIs use update-batch-prompts.
 ---
 
 # i2i2v-from-deck
@@ -131,7 +131,7 @@ field values come from the deck as follows:
 
 | Config field | Source in deck | Notes |
 |---|---|---|
-| `style_name` | title | group-shot: the Chinese title, single-quoted, keep the ` V3` suffix. Paired: the title stem minus the ` I2I`/` I2V` marker — derive a short English `Underscore_Title_Case` name when the stem is Chinese, and list the mapping in Step 7 |
+| `style_name` | title | group-shot: the Chinese title, single-quoted, keep the ` V3` suffix. Paired: the title stem minus the ` I2I`/` I2V` marker and any version suffix (`V2`, `V3`), kept in its original Chinese and single-quoted (e.g. `'閨密殺人魔'`) — do not translate it into an English name |
 | `folder` | derived | `'Media Files/I2I2V/<MMDD> <N> Styles/<style_name>'` (Step 5) |
 | `image_resolution` | `Resolution:` / `Reolution:` | `'1K'` or `'2K'`; a deck's lowercase `1k` becomes `'1K'` |
 | `image_aspect_ratio` | `Aspect Ratio:` / `Ratio:` | the metadata value wins over any aspect mentioned inside the prompt text |
@@ -271,6 +271,36 @@ materially changes output and you can't infer it**:
 Do not touch any other top-level key (`template_path`, `output`, `testbed`, `schedule`,
 `reuse_original_*`, the global image-source defaults, `comments`).
 
+## Step 6.5 — Populate the Source folders
+
+For each task, create `<folder>/Source/` and copy the sample source images into
+it. The default set is `Media Files/Sources/Source 50 Sample`; use a different set
+only if the user names one.
+
+- **Copy, don't symlink.** Copy image files only (`.jpg .jpeg .png .bmp .webp`),
+  and skip `.DS_Store` and nested directories. Skip a file that already exists at
+  the destination, so a re-run is safe.
+- **Reference images go in `Additional/`, not `Source/`.** If the image prompt
+  mentions an attached reference (the slide shows a `Ref` image), set
+  `use_multi_image: true` with `multi_image_config: { mode: sequential }`. The
+  `Ref` image cannot be taken from the text export, so tell the user to drop it
+  into `<folder>/Additional/`.
+
+```python
+import shutil
+from pathlib import Path
+EXT = {'.jpg', '.jpeg', '.png', '.bmp', '.webp'}
+src = Path("Media Files/Sources/Source 50 Sample")
+for t in tasks:
+    dest = Path(t['folder']) / "Source"
+    dest.mkdir(parents=True, exist_ok=True)
+    for f in sorted(src.iterdir()):
+        if f.is_file() and f.suffix.lower() in EXT and not (dest / f.name).exists():
+            shutil.copy2(f, dest / f.name)
+```
+
+Check that every folder holds the expected image count, and report it in Step 7.
+
 ## Step 7 — Confirm
 
 Report:
@@ -287,4 +317,6 @@ Report:
 - Every other ambiguity you resolved: image-prompt variants chosen, Human/Pet
   splits, CJK reconstructed, resolution/aspect inferred, how many duplicate
   export blocks you collapsed, and how you paired the I2I/I2V halves.
+- The source copy result (which set, how many images per folder), and any
+  `Additional/` reference image the user still has to add.
 - The run command: `python runall.py i2i2v auto`.
