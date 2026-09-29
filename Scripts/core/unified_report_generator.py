@@ -1,4 +1,4 @@
-import json, yaml, logging, sys, re, tempfile, os, math, copy
+import json, yaml, logging, sys, re, tempfile, os, math, copy, shutil, subprocess
 from types import SimpleNamespace
 from datetime import datetime
 from pathlib import Path
@@ -1368,6 +1368,7 @@ class UnifiedReportGenerator:
                 fl, ft = l + (w - sw)/2, t + (h - sh)/2
                 
                 if is_video:
+                    media_path = self.shrink_video_for_report(Path(media_path))
                     # Extract first frame for video poster
                     first_frame_path = self.extract_first_frame(Path(media_path))
                     if first_frame_path and Path(first_frame_path).exists():
@@ -3136,10 +3137,22 @@ class UnifiedReportGenerator:
         }
     
     def _extract_date_from_folder(self, folder):
-        """Extract date from folder name or use current date"""
-        folder_name = Path(folder).name if isinstance(folder, (str, Path)) else str(folder)
-        m = re.match(r'(\d{4})\s*(.+)', folder_name)
-        return m.group(1) if m else datetime.now().strftime("%m%d")
+        """Extract the MMDD date from a folder's name, else its parent's, else use today.
+
+        Style folders are either dated themselves ('Kling 3.0/0623 Dominant Kiss') or
+        sit under a dated group ('Kling 3.0/0924 6 Styles/靈魂出竅'), so pass the full
+        path when you have it.
+        """
+        if isinstance(folder, (str, Path)):
+            path = Path(folder)
+            candidates = [path.name, path.parent.name]
+        else:
+            candidates = [str(folder)]
+        for name in candidates:
+            m = re.match(r'(\d{4})\s*(.+)', name)
+            if m:
+                return m.group(1)
+        return datetime.now().strftime("%m%d")
     
     def _generated_folder_name(self) -> str:
         """Name of the folder holding generated media for this API.
@@ -3272,7 +3285,8 @@ class UnifiedReportGenerator:
                 parent_folder = grouped_task.get('_parent_folder_name', '')
                 d = self._extract_date_from_folder(parent_folder) if parent_folder else datetime.now().strftime("%m%d")
             else:
-                d = self._extract_date_from_folder(folder_names[0]) if folder_names else datetime.now().strftime("%m%d")
+                first_folder = grouped_task.get('_first_folder') or (folder_names[0] if folder_names else '')
+                d = self._extract_date_from_folder(first_folder) if first_folder else datetime.now().strftime("%m%d")
             
             # Build effect string - combine all unique effects, truncating if too long
             effect_str = self._format_effect_str(effect_names, 'Combined')
@@ -3360,6 +3374,35 @@ class UnifiedReportGenerator:
         # Final fallback
         return 16/9
     
+    # Kling 3.0 returns ~19 Mbps clips; embedding those as-is pushes a 200-slide
+    # deck past PowerPoint's 2 GB limit and it refuses to open the file.
+    _MAX_EMBED_MBPS = 8
+
+    def shrink_video_for_report(self, video_path: Path) -> Path:
+        """Return a re-encoded copy of a high-bitrate video to embed, else the original."""
+        if not cv2 or not shutil.which('ffmpeg'):
+            return video_path
+        try:
+            cap = cv2.VideoCapture(str(video_path))
+            fps = cap.get(cv2.CAP_PROP_FPS)
+            frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+            cap.release()
+            duration = frames / fps if fps else 0
+            if not duration or video_path.stat().st_size * 8 / duration / 1e6 <= self._MAX_EMBED_MBPS:
+                return video_path
+
+            out = Path(tempfile.gettempdir()) / f"report_{video_path.stem}_{hash(str(video_path)) % 10000}.mp4"
+            if not out.exists():
+                subprocess.run(
+                    ['ffmpeg', '-v', 'error', '-y', '-i', str(video_path),
+                     '-c:v', 'libx264', '-crf', '22', '-preset', 'medium', '-pix_fmt', 'yuv420p',
+                     '-c:a', 'copy', '-movflags', '+faststart', str(out)],
+                    check=True)
+            return out if out.stat().st_size < video_path.stat().st_size else video_path
+        except Exception as e:
+            logger.warning(f"Failed to shrink {video_path.name}, embedding original: {e}")
+            return video_path
+
     def extract_first_frame(self, video_path):
         """Extract first frame with caching"""
         if not cv2:
@@ -3718,9 +3761,8 @@ class UnifiedReportGenerator:
             folder = task.get('folder') or (self.config.get('tasks') or [{}])[0].get('folder', '')
             folder_name = Path(folder).parent.name
         else:
+            # Full path, not just the leaf: the date may be on the parent group folder
             folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
-            if isinstance(folder_name, str):
-                folder_name = Path(folder_name).name
 
         api_display = self._api_display_names.get(self.api_name, self.api_name.title())
 
@@ -3908,9 +3950,8 @@ class UnifiedReportGenerator:
                 if task.get('_is_grouped'):
                     folder_name = task
                 else:
+                    # Full path, not just the leaf: the date may be on the parent group folder
                     folder_name = task.get('folder', Path(self.config.get('base_folder', '')).name)
-                    if isinstance(folder_name, str):
-                        folder_name = Path(folder_name).name
             
             api_display = self._api_display_names.get(self.api_name, self.api_name.title())
             
@@ -4626,6 +4667,7 @@ class UnifiedReportGenerator:
             combined['_group_number'] = group_num
             combined['_total_groups'] = total_groups
             combined['_folder_names'] = folder_names
+            combined['_first_folder'] = str(tasks[0].get('folder', ''))
             if parent_folder_name:
                 combined['_parent_folder_name'] = parent_folder_name
             combined['_all_tasks'] = tasks

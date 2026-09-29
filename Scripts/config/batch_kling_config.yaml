@@ -11,17 +11,114 @@ schedule:
   start_time: ''
 group_tasks_by: 4
 
+root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgDjwoJ2sAkoTYVMczqiJQicAYmchw7uKWpxORHGcskUJRY?e=MEhS8n
+
 tasks:
 - mode: pro
   duration: 10
   cfg: 0.5
-  folder: Media Files/Kling 3.0/0623 Dominant Kiss
-  prompt: |
-    The protagonist is suddenly backed up a step as the second person moves in with commanding intensity. The second person raises one arm and plants it firmly beside the protagonist's head — bracing an open palm against a wall, pillar, door frame, tree, or any nearby surface if one is present, or simply caging the protagonist with the forearm in open space — trapping them in a dominant kabedon pose. The second person's posture is confident and possessive, expression serious, intense, and unsmiling. He leans in until their bodies nearly touch and their faces are inches apart, eyes locked in charged, silent tension. The camera moves slowly to a side angle, keeping both profiles clearly in frame. After a brief, breathless pause, the second person closes the final distance and presses into a deep, passionate kiss — lips fully meeting, eyes closing, fully committed.
-  negative_prompt: |
-    multi-shot, smiling, grinning, laughing, giggling, silly grin, cheerful, happy expression, standing apart, keeping distance, no physical contact, bodies not touching, idle, static, motionless, no action, looking at the camera, posing, missing wall, no wall behind them, empty background, hand not touching the wall, fade in, fade out, deformed face, broken limbs, unnatural posture, glitch, awkward interaction, mismatched body position, wrong camera angle, unnatural kiss, emotionless, stiff pose, anime style, cartoon style, unrealistic lighting, floating characters, extra arms, ghost hands, face change, hairstyle change, sudden fade, dissolve, crossfade, slow transformation, morphing, identity mismatch, cropped face, headless, missing arms, missing fingers, distorted kiss
-  design_link: https://docs.google.com/presentation/d/1iuOioBj_19ea4vmuNgX73si78u4ndeY9-xVafa_K_6k/edit?slide=id.g3f230393929_1_0#slide=id.g3f230393929_1_0
-  source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgBQFd4QBjadRqQBtP1EHRfEATuKcbSAoJilO7aZr51GnYo?e=KWWebn
+  sound_enabled: true
+  resolution: 720p
+  folder: Media Files/Kling 3.0/0924 6 Styles/靈魂出竅
+  prompt: |-
+    Static camera, no camera movement, same framing and background as the input image.
+
+    0-3s: The person slowly closes their eyes and falls asleep in place. Their head drops low, tilting heavily forward and to one side, chin toward the chest. The sleeping person keeps their own head attached, with their face and hair fully visible, and stays solid, opaque and in full color in every frame until the end.
+
+    3-7s: A translucent soul gently rises up from BEHIND the sleeping person's back and shoulders, drifting upward behind them. The soul has its OWN separate head, which appears in the empty space above and behind the sleeping person's shoulders, NOT at the sleeping person's head position. The sleeping person's head stays where it is, drooped to the side, and is never pulled, lifted, erased or replaced.
+
+    7-10s: The soul straightens up behind and above the sleeping person, opens its eyes and calmly looks at the camera. In the final frame there are two heads and two faces: the sleeping person's solid head drooping in front and lower down, and the soul's translucent head upright, behind and higher up.
+
+    The soul is a faded, translucent copy of the same person, like a photo overlaid at 40% opacity, with a soft pale-white glow and a thin glowing edge line. It is fully clothed in the exact same outfit as the input image and has the same face and hairstyle. The only difference is that the whole figure is faded and see-through.
+
+    Out-of-body experience, spirit rising from behind the body, ethereal double exposure, cinematic realism.
+  negative_prompt: |-
+    headless body, missing head, head disappearing, head removed, head pulled out, empty collar, neck hole, soul head in the same position as the body head, only one head, only one person, body fading, body turning into ghost, body replaced, shirtless, topless, exposed skin, see-through clothing, different clothing, different hairstyle, different face, face morphing, opaque soul, glowing chest light, sitting down, falling, collapsing, smoke, camera movement, zoom, scene change, cartoon, blurry, flicker
+  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g40a1cf7b26a_150_0#slide=id.g40a1cf7b26a_150_0
+  source_video_link: 
+  reference_folder: ''
+  use_comparison_template: false
+  concurrent_requests: 3
+
+- mode: pro
+  duration: 5
+  cfg: 0.5
+  sound_enabled: true
+  resolution: 720p
+  folder: Media Files/Kling 3.0/0924 6 Styles/掉進後室
+  prompt: |-
+    [0-1.2s] The person is already alive and moving from the very first frame, in the same pose and place as the input image. Ordinary casual movement — natural breathing, a shift of weight, the head and gaze turning, hair and clothing responding, the background drifting slightly with the handheld motion. Calm, ordinary and completely uneventful.
+
+    [1.2-1.5s] In a single instant the floor beneath them opens and they drop through it at the same moment, with no warning. They descend straight down quickly, arms and legs drawn in close to the body, the head and shoulders passing below the floor line almost immediately, with strong motion blur across the body. The camera drops with them in the same instant.
+
+    [1.5-2.1s] The bright room above shrinks away and the frame fills with darkness, tumbling camera movement and fast rushing motion blur. Nothing can be read in the frame.
+
+    [2.1-2.6s] The descent ends. They arrive on a soft damp carpeted floor inside a long Backrooms corridor, coming down onto their front and settling onto their chest, shoulder and hip, the carpet absorbing the landing. The camera settles with a small bounce. They are unhurt.
+
+    [2.6-5s] The person stays resting on their front on the carpet in exactly the position they arrived in, in the same spot, for the rest of the shot. Their chest, stomach, hips and legs stay against the floor. Only the head, shoulders and hands move. They lift their head and look around, awake and puzzled, eyebrows raised, blinking slowly as they take in the empty corridor, catching their breath calmly. They turn their head slowly to one side, then look back over their shoulder down the corridor with quiet curiosity. The shot ends with them still resting there, alone in the long empty hallway, looking around.
+  negative_prompt: ''
+  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g3fbca53ae82_1_189#slide=id.g3fbca53ae82_1_189
+  source_video_link: 
+  reference_folder: ''
+  use_comparison_template: false
+  concurrent_requests: 3
+
+- mode: pro
+  duration: 7
+  cfg: 0.5
+  sound_enabled: true
+  resolution: 720p
+  folder: Media Files/Kling 3.0/0924 6 Styles/變身-殭屍
+  prompt: |-
+    An 8-second continuous shot using the uploaded photo as reference and first frame — same person, pose, clothing and environment, no new objects or people, the person staying in one spot. A practical special-effects makeup transformation for a Halloween horror film. 0-1.5s: every area of visible skin — face, neck, chest, shoulders, arms, hands — drains together, evenly and at the same rate, into one uniform desaturated grey-green corpse tone, so no area keeps its original warm colour and no patch differs in tone from the rest. Within that same grey palette the eye sockets sink into hollow bruised shadows with no hard edge, reading as sunken bone rather than eyeshadow painted onto normal skin — never purple, never a separate colour, never a mask-like patch. The irises cloud into milky white contact lenses, the gaze blank. 1.5-3s: the head tilts far to one side into an exaggerated broken-doll angle and holds there, jaw slack. 3-4.5s: one shoulder rolls inward and down into a crooked stance, that hand curling into a rigid claw, while many small thin dark-red scratches scatter unevenly across the shoulders, collarbone and upper arms — each short, narrow, muted and low in saturation, edges blended into the grey skin, never one large bright red slab and never a flat painted shape. 4.5-5.5s: the head tips the other way into a second broken angle while dark grey-green veining creeps up the neck to the jaw and temples, the same tone as the skin but deeper. 5.5-6.5s: the mouth falls open wide and dark red stage blood wells at one corner and runs slowly down the chin in a thin dripping thread. 6.5-7s: the shoulder seam frays open from the crooked pose, the skin beneath the same grey tone, the clothing keeping its original colour, style and coverage everywhere else. 7-8s: the figure snaps upright, head still at its broken angle, mouth stretched wide in a snarl showing teeth, both hands raised into forward-reaching claws, and charges at the camera in a fast stiff shambling run, hair and blood flying. Camera locked at eye level, static, matching the reference framing to 7s; at 7s it whips into a handheld first-person retreat, backing away fast, shaking hard, the figure nearly filling the frame by 8s. All makeup reads as one seamless full-body transformation with no colour mismatch between face, neck and body. Audio: rasping breathing, a creak at each tilt, wet dripping, a guttural roar at 7s, running footsteps. No text, no subtitles, no music.
+  negative_prompt: ''
+  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g3fbca53ae82_1_254#slide=id.g3fbca53ae82_1_254
+  source_video_link: 
+  reference_folder: ''
+  use_comparison_template: false
+  concurrent_requests: 3
+
+- mode: pro
+  duration: 10
+  cfg: 0.5
+  sound_enabled: true
+  resolution: 720p
+  folder: Media Files/Kling 3.0/0924 6 Styles/NONONONONO
+  prompt: |-
+    A 10-second unbroken take from the uploaded photo as first frame — same person, face, hair, clothing, room and framing, gender and appearance exactly as in the photo, camera static, nothing added or rearranged. Only the lighting and colour change: the light drains until the room is dim and murky, lit by a weak amber glow, the walls still there but falling into warm brown darkness, the image several stops under, amber and sickly yellow with deep brown shadows rather than black, no cool or blue light. The light rakes one side of the face, picking out the eyes, teeth, cheek edge and strands of hair, falling off fast into shadow across the shoulders. A theatrical acting performance for a seventies-style film. 0-2s: the light settles into that dim glow while the face pulls into a wide fixed open-mouthed grin, teeth showing, eyes wide, unblinking, locked into the lens, head tilted forward so they look up from under the brow, hair hanging forward. 2-4.5s: the head turns slowly and fully to one side, then all the way back in a long deliberate "no" motion, the mouth shaping one word at a time with clear pauses — "no... no... no..." — calm and patient, the grin never leaving, the body still. 4.5-7s: the rhythm accelerates, the head turning faster in a shorter arc, the pauses closing, the words quicker — "no no no no" — the grin stretching wider, the eyes fixed and widening. 7-10s: it tips into a fast frantic rhythm without stopping, the head whipping side to side, hair flying, the mouth wider on every word, the repetitions running together, the eyes still on the lens. Shoulders, arms and hands stay completely still — all motion is in the head and face. It ends mid-rhythm at full intensity. The grin never softens, the mouth never closes, the eyes never leave the camera, the tempo only increases. Audio: their own voice, close and dry, no reverb, slow, low and flat at first with silence between words, tempo building as the pauses close, pitch climbing, the voice tightening and fraying, breath catching between repetitions, raw and frantic by the end but never a scream. Under it, quiet room tone with tape hiss. No music. Subtitle: "no no no no no no" in plain white sans-serif, centred at the bottom of frame throughout. Style: photorealistic 35mm film, heavy grain in the shadows, soft rolled-off highlights, warm halation on bright edges, vignette, shallow depth of field, slightly soft image, muted amber and deep brown, seventies horror cinematography.
+  negative_prompt: ''
+  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g3fbca53ae82_1_298#slide=id.g3fbca53ae82_1_298
+  source_video_link: 
+  reference_folder: ''
+  use_comparison_template: false
+  concurrent_requests: 3
+
+- mode: pro
+  duration: 7
+  cfg: 0.5
+  sound_enabled: true
+  resolution: 720p
+  folder: Media Files/Kling 3.0/0924 6 Styles/粉紅骷髏
+  prompt: |-
+    A 7-second uncut take from the uploaded photo as first frame — same person, face, hair, clothing, location and framing, camera static, no pan, tilt or zoom. A stylised neon light-art fashion effect. 0-1.5s: the person walks slowly toward the camera with heavy loose steps, arms slack, head low — tired and drained but a smooth walk, never a stagger. The ambient light begins falling away. 1.5-4.5s: the scene settles into dim dusk, same location, nothing added or removed, only darker and cooler, the person still clearly visible, walking forward, growing larger in frame. A faint hot-pink glow appears deep in the chest, then spreads along the spine, into the ribcage, down into the pelvis and out through the arms and legs, brightening smoothly, never switching on suddenly. Both eyes begin glowing the same hot pink, strengthening with the bones. The skin cools and pales. 4.5-5.5s: they slow, stop and settle into a slouched contrapposto — weight on one leg, that hip pushed out, the other knee soft and forward, shoulders slumped and uneven, head tilted, chin down, arms hanging heavy. Languid and drained but a deliberate pose. The skeleton hits full brightness at the same moment. 5.5-7s: they hold the pose, only breathing, fabric and hair settling; skeleton and eyes stay fully lit, pulsing faintly with the breath, never fading. The glow is INSIDE the body: a hot-pink neon drawing of the bones within the person, seen through skin and clothing as if lit from inside, anatomically correct and perfectly aligned with the pose every frame — spine along the curve of the back, ribcage in the chest, pelvis at the hips, arm and leg bones in the limbs — bending and swinging exactly with each limb, locked inside the body throughout. It never slides, lags or drifts out of alignment, is never pasted on the body, never floats beside it, never a flat shape in front of the clothing. The eyes glow the same hot pink from within, two soft pink lights blooming onto the skin, never going dark or returning to normal. Colour: saturated hot pink and magenta like neon tubing, soft bloom into skin and fabric; skin pale, cool porcelain, almost white but still natural with texture; clothing keeping its shape and material with a pink cast where light passes through; faint pink light spilling onto the ground and moving with them. One person only, alive and breathing. Style: photorealistic fashion editorial, neon light art, dim dusk, soft bloom, shallow depth of field, grain. No text or watermark.
+  negative_prompt: ''
+  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g3fbca53ae82_1_359#slide=id.g3fbca53ae82_1_359
+  source_video_link: 
+  reference_folder: ''
+  use_comparison_template: false
+  concurrent_requests: 3
+
+- mode: pro
+  duration: 10
+  cfg: 0.5
+  sound_enabled: true
+  resolution: 720p
+  folder: Media Files/Kling 3.0/0924 6 Styles/爬出電視
+  prompt: |-
+    A 10-second continuous take from the uploaded photo as first frame — camera locked, static, no zoom, pan, shake or cuts. The room, furniture and curtains stay exactly as in the reference. 0-1.5s: the person stays inside the TV screen, palms flat on the glass, looking out at the camera, faint static flickering. 1.5-3s: they press harder and their hands begin passing through the flat plane of the screen. The glass stays flat and rigid, nothing lights up where the hands cross. 3-5.5s: their hands come fully out, then their forearms, gripping the outer edges of the TV frame. 5.5-8s: head and shoulders push out through the screen plane, leaning out from the waist up, hands braced on the frame, upper body softly lit by the screen glow, lower half still inside the image. They pause, look around the dark room, then straight at the camera. 8-10s: still leaning half out, they smile and raise one hand in a friendly wave to the final frame. THE SCREEN STAYS A FLAT RECTANGLE: normal rectangular shape with slightly rounded CRT corners throughout — never a circle, an oval or an opening, never changing shape or size, brightness even across it, never concentrating into a bright shape or edge. The glass stays perfectly flat and rigid, never bulging, stretching, deforming or behaving like thin plastic, cling film or rubber; nothing clings to the body, wraps around it or is pulled out with it. The body passes straight through as if it weren't there. Where the body crosses the screen plane there is no ring, halo, glowing outline, bright rim, circle or arc of light of any kind — the crossing point is invisible, the body simply continuing from inside to outside with nothing drawn at the boundary, and no bright shape ever appears around the person. THE ROOM STAYS DARK: exactly as dark as the reference  ceiling light off, curtains drawn, the screen the only light source, corners and ceiling in deep shadow, never brightening. The person's face, hair, clothing and every detail stay exactly as in the reference, the same individual, never replaced. They stay calm and unthreatening  natural skin, normal eyes, relaxed expression; the eeriness comes from the dark room, never from them. They never climb fully out, staying half in and half out, moving like someone leaning out of a window. Style: photorealistic, cinematic, desaturated grey,faint green and cold blue, crushed shadows, the screen the only light accent, quiet Japanese horror, warm ending beat, film grain. No text or watermark.
+  negative_prompt: ''
+  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g3fbca53ae82_1_414#slide=id.g3fbca53ae82_1_414
+  source_video_link: 
   reference_folder: ''
   use_comparison_template: false
   concurrent_requests: 3

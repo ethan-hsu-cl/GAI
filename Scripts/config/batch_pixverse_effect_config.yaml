@@ -20,76 +20,75 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Pixverse Effects/0921 12 Styles
+base_folder: Media Files/Pixverse Effects/0924 12 Styles
 template_path: templates/I2V standard 4col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1441759153#gid=1441759153
 provider_reference_link: https://aisphere.feishu.cn/wiki/GKwywQM3oixt4EkOM1IceWw8n5f?table=tblfxIxbTQwb57kk&view=vewTVy4A0p
-source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgBTbJ2WGxgST5NT4TE57tjqAf8LxSlOdpIeL310CsNlC0g?e=u1M7Gg
+source_video_link: 
 
 tasks:
-  - effect: Happy Chunk
+  - effect: Maritime War
     prompt: ''
-    custom_effect_id: '366944830718784'
+    custom_effect_id: '423206287932544'
     negative_prompt: ''
 
-  - effect: Twist Hip Dance
+  - effect: Please be fascinated by this dance
     prompt: ''
-    custom_effect_id: '423225362742400'
+    custom_effect_id: '423197390282432'
     negative_prompt: ''
 
-  - effect: Fashion Street Dance
+  - effect: The power of heavy machine guns
     prompt: ''
-    custom_effect_id: '423224392010880'
-    negative_prompt: ''
-    source_type: pet
-
-  - effect: Jump while walking
-    prompt: ''
-    custom_effect_id: '423223054707840'
-    negative_prompt: ''
-
-  - effect: Dance that can keep fit
-    prompt: ''
-    custom_effect_id: '423224652002432'
+    custom_effect_id: '423195294682816'
     negative_prompt: ''
     source_type: pet
 
-  - effect: Invincible whirlwind kick
+  - effect: Subway Sleep Setup
     prompt: ''
-    custom_effect_id: '423207027596416'
+    custom_effect_id: '425644454765629'
     negative_prompt: ''
 
-  - effect: Thomas Roundabout
+  - effect: Pet Pro Max Launch
     prompt: ''
-    custom_effect_id: '423201031806656'
-    negative_prompt: ''
-
-  - effect: A very spicy dance
-    prompt: ''
-    custom_effect_id: '423205029154496'
-    negative_prompt: ''
-
-  - effect: Moonlight Broom Ride
-    prompt: ''
-    custom_effect_id: '423030808985472'
+    custom_effect_id: '425531803077285'
     negative_prompt: ''
     source_type: pet
 
-  - effect: I get to school on time with my skills!
+  - effect: Spooky Step
     prompt: ''
-    custom_effect_id: '423882029371008'
+    custom_effect_id: '425508167425889'
     negative_prompt: ''
 
-  - effect: I’m late! I’m speeding full‑ahead!
+  - effect: Trick or Treat Chaos
     prompt: ''
-    custom_effect_id: '423886618670720'
+    custom_effect_id: '425703572187310'
     negative_prompt: ''
 
-  - effect: Ninja Clone Jutsu!
+  - effect: Bedroom Call Crush
     prompt: ''
-    custom_effect_id: '423908109442688'
+    custom_effect_id: '423928061732801'
+    negative_prompt: ''
+
+  - effect: Alternate Me
+    prompt: ''
+    custom_effect_id: '423383769118902'
+    negative_prompt: ''
+
+  - effect: 'GTA Japan: Bento Emergency'
+    prompt: ''
+    custom_effect_id: '424640044628727'
+    negative_prompt: ''
+
+  - effect: Bed on the Subway
+    prompt: ''
+    custom_effect_id: '425524612961301'
+    negative_prompt: ''
+
+  - effect: Popcorn Volcano
+    prompt: ''
+    custom_effect_id: '425177017628177'
     negative_prompt: ''
 
 comments:
