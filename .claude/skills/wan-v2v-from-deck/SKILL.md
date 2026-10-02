@@ -168,7 +168,7 @@ Values come from the deck as follows:
 
 | Config field | Source in deck | Notes |
 |---|---|---|
-| `style_name` | title | `Underscore_Title_Case`, see Step 4 |
+| `style_name` | title | the deck title as written (Chinese OK), single-quoted, see Step 4 |
 | `folder` | derived | `Media Files/Wan V3 V2V/<MMDD> <N> Styles/<style_name>` (Step 5) |
 | `prompt` | the `Prompt:` body | block scalar `\|` |
 | `resolution` | `Reolution:` / `Resolution:` | upper-case the suffix: `720p` → `720P`. One of `480P`, `720P`, `1080P` |
@@ -194,11 +194,11 @@ docs live only in the trailing `comments:` block, which you preserve untouched.
 
 ## Step 4 — Resolve the deck's ambiguities
 
-- **Style names.** The convention is short English `Underscore_Title_Case`
-  (`Poltergeist_Haunting`, `Pumpkin_Head_Transform`), and `style_name` doubles as
-  the folder leaf. Deck titles here are usually Chinese — derive a concise
-  English descriptor from the prompt's subject + action. **List every
-  title → style_name mapping in Step 8** so the user can correct any of them.
+- **Style names.** Keep the deck's own title, Chinese included — Ethan is fine
+  with Chinese style names, so do not translate one into English. Drop only the
+  mode prefix and any version suffix (`V2`, `V3`), and single-quote the value
+  (`style_name: '爬出電視'`). `style_name` doubles as the folder leaf. **List
+  every title → style_name mapping in Step 8** so the user can correct any of them.
 - **Quote every numeric ratio — this is a silent data-corruption bug.** YAML 1.1
   reads an unquoted `1:1` as a *sexagesimal integer*: `yaml.safe_load("ratio: 1:1")`
   returns `61`, `16:9` returns `969`, `9:16` returns `556`. Write
