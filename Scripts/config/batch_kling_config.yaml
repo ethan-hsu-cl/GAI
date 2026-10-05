@@ -15,28 +15,75 @@ root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/o
 
 tasks:
 - mode: pro
-  duration: 5
+  duration: 10
   cfg: 0.5
   sound_enabled: true
   resolution: 720p
-  folder: Media Files/Kling 3.0/0930 1 Style/小鬼
+  folder: Media Files/Kling 3.0/1002 3 Style/NONONONONO V5
   prompt: |-
-    Locked-off tripod shot of the exact scene in the imported photo. No zoom, pan, tilt or cuts.
+    A 10-second unbroken take from the uploaded photo as first frame — same person, face, hair, clothing, room and framing, gender and appearance exactly as in the photo, camera static, nothing added or rearranged. Only the lighting and colour change: the light drains until the room is dim and murky, lit by a weak amber glow, the walls still there but falling into warm brown darkness, the image several stops under, amber and sickly yellow with deep brown shadows rather than black, no cool or blue light. The light rakes one side of the face, picking out the eyes, teeth, cheek edge and strands of hair, falling off fast into shadow across the shoulders. A theatrical acting performance for a seventies-style film. 0-2s: the light settles into that dim glow while the face pulls into a wide fixed open-mouthed grin, teeth showing, eyes wide, unblinking, locked into the lens, head tilted forward so they look up from under the brow, hair hanging forward. 2-4.5s: the head turns slowly and fully to one side, then all the way back in a long deliberate "no" motion, the mouth shaping one word at a time with clear pauses — "no... no... no..." — calm and patient, the grin never leaving, the body still. 4.5-7s: the rhythm accelerates, the head turning faster in a shorter arc, the pauses closing, the words quicker — "no no no no" — the grin stretching wider, the eyes fixed and widening. 7-10s: it tips into a fast frantic rhythm without stopping, the head whipping side to side, hair flying, the mouth wider on every word, the repetitions running together, the eyes still on the lens. Shoulders, arms and hands stay completely still — all motion is in the head and face. It ends mid-rhythm at full intensity. The grin never softens, the mouth never closes, the eyes never leave the camera, the tempo only increases. Audio: their own voice, close and dry, no reverb, slow, low and flat at first with silence between words, tempo building as the pauses close, pitch climbing, the voice tightening and fraying, breath catching between repetitions, raw and frantic by the end but never a scream. Under it, quiet room tone with tape hiss. No music. Style: photorealistic 35mm film, heavy grain in the shadows, soft rolled-off highlights, warm halation on bright edges, vignette, shallow depth of field, slightly soft image, muted amber and deep brown, seventies horror cinematography. No subtitles, no captions, no on-screen text of any kind.
+  negative_prompt: ''
+  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.h36c6af42793a73fa_26_84#slide=id.h36c6af42793a73fa_26_84
+  source_video_link: 
+  reference_folder: ''
+  use_comparison_template: false
+  concurrent_requests: 3
 
-    Only carved pumpkins are added. No cobwebs, other objects or lights.
+- mode: pro
+  duration: 10
+  cfg: 0.5
+  sound_enabled: true
+  resolution: 720p
+  folder: Media Files/Kling 3.0/1002 3 Style/靈魂出竅 V5
+  prompt: |-
+    Static camera, no camera movement, same framing and background as the input image.
 
-    PEOPLE: Exactly the same number of people as in the photo, never more. If none, nobody enters. If a person is present, their face stays identical to the photo (eyes, nose, lips, jawline). One person glances at the monster, looks away, looks back and gives a small closed-lip smile. People never speak and stay in place.
+    0-3s: The person slowly closes their eyes and falls asleep in place. Their head drops low, tilting heavily forward and to one side, chin toward the chest. The sleeping person keeps their own head attached, with their face and hair fully visible, and stays solid, opaque and in full color in every frame until the end.
 
-    MONSTER: Always turn an object already in the photo into the monster. Choose the most eye-catching one, such as a bag, cushion, lamp, cup, box or book, never a person, animal, wall, floor or window, and give it cute monster features on its own surface. It keeps its exact shape, size, material and colour and is still clearly that object: no new head, body, fur or limbs. Two big round eyeballs bulge from its front: cream white, a big amber-brown iris, a black pupil, a soft satin sheen with one small soft highlight, never sparkly. Below them, a wide grin opens directly in its surface, following a seam or zip if it has one, with no lips: small pointed ivory teeth and a soft pink inside. Two short horns or rounded ears grow from its top corners. Friendly, physically real. Its body stays rigid; only its eyes blink and mouth moves. Near the start it says "Happy Halloween" once in a warm, playful little voice, mouth in sync, then keeps grinning.
+    3-7s: A translucent soul gently rises up from BEHIND the sleeping person's back and shoulders, drifting upward behind them. The soul has its OWN separate head, which appears in the empty space above and behind the sleeping person's shoulders, NOT at the sleeping person's head position. The sleeping person's head stays where it is, drooped to the side, and is never pulled, lifted, erased or replaced. As the soul rises, its hair hangs naturally in exactly the same shape as in the input image.
 
-    PUMPKINS: Five or six real carved pumpkins of different sizes are thrown in from beyond the left, right and bottom edges, already lit. Each flies in low from the side, slams down onto the ground with a heavy thud, bounces once, wobbles and settles still, never breaking, never falling from above. All settled by mid-shot. Ridged weathered orange skin, dry curved stalk, uneven hand-carved faces turned toward camera, warm candle glow inside. Two large ones land along the bottom edge.
+    7-10s: The soul straightens up behind and above the sleeping person, opens its eyes and calmly looks at the camera. In the final frame there are two heads and two faces: the sleeping person's solid head drooping in front and lower down, and the soul's translucent head upright, behind and higher up.
 
-    FALLBACK, RARE: Only if the photo truly contains no object at all, a small round fluffy monster, pumpkin-sized, is thrown in with the pumpkins the same way and lands near the front. Dark grey shaggy fur, chubby round body, paler belly, tiny stubby arms and feet, the same eyes and grin, two short horns. It says the line right after landing. Never use both.
+    The soul is a faded, translucent copy of the same person, like a photo overlaid at 60% opacity, with a thin soft edge line. It has the same face as the input image.
 
-    STYLE: Photorealistic phone footage, warm amber and purple Halloween grade, pumpkin glow the only new light, subtle film grain. Audio: the monster's one line and pumpkin thuds only. No text or watermark.
+    HAIR: the soul's hairstyle is copied exactly from the input image: the same hair color, length, volume, parting and bangs, hanging in the same places around the face and over the shoulders as in the input image. The hair keeps its original color.
+
+    CLOTHING: the soul is fully clothed in the exact same outfit as the input image: same garments, same color, same neckline height and sleeve length, covering the same areas as in the input image. Dark clothes stay dark and clearly visible. The whole figure fades as one layer, and the clothes always stay on and clearly visible.
+
+    Out-of-body experience, spirit rising from behind the body, cinematic realism.
   negative_prompt: |-
-    fur on object, limbs on object, new head on object, fluffy monster when an object is available, animal turned into monster, pet with horns, scary monster, sharp fangs, lips on monster, human lips, sparkly eyes, glittering pupils, star-shaped highlights, person speaking, person lips moving, off-screen voice, cobweb, spider web, cartoon, illustration, CGI, plastic pumpkins, googly eyes, sticker eyes, face distortion, changed facial features, different person, laughing, extra people, camera zoom, camera movement, new objects, broken pumpkin, pumpkins falling from above, pumpkins fading in, uncarved pumpkins, purple light source, text, watermark
-  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.g3fbca53ae82_1_104#slide=id.g3fbca53ae82_1_104
+    headless body, missing head, head disappearing, head removed, head pulled out, empty collar, neck hole, soul head in the same position as the body head, only one head, only one person, body fading, body turning into ghost, body replaced, shirtless, topless, exposed skin, see-through clothing, different clothing, different hairstyle, different face, face morphing, opaque soul, glowing chest light, sitting down, falling, collapsing, smoke, camera movement, zoom, scene change, cartoon, blurry, flicker
+  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.h36c6af42793a73fa_26_0#slide=id.h36c6af42793a73fa_26_0
+  source_video_link: 
+  reference_folder: ''
+  use_comparison_template: false
+  concurrent_requests: 3
+
+- mode: pro
+  duration: 10
+  cfg: 0.5
+  sound_enabled: true
+  resolution: 720p
+  folder: Media Files/Kling 3.0/1002 3 Style/靈魂出竅 V5 改Kling
+  prompt: |-
+    Static camera, no camera movement, same framing and background as the input image.
+
+    0-3s: The person slowly closes their eyes and falls asleep in place. Their head drops low, tilting heavily forward and to one side, chin toward the chest. The sleeping person keeps their own head attached, with their face and hair fully visible, and stays solid, opaque and in full color in every frame until the end.
+
+    3-7s: A translucent soul gently rises up from BEHIND the sleeping person's back and shoulders, drifting upward behind them. The soul has its OWN separate head, which appears in the empty space above and behind the sleeping person's shoulders, NOT at the sleeping person's head position. The sleeping person's head stays where it is, drooped to the side, and is never pulled, lifted, erased or replaced. As the soul rises, its hair hangs naturally in exactly the same shape as in the input image.
+
+    7-10s: The soul straightens up behind and above the sleeping person, opens its eyes and calmly looks at the camera. In the final frame there are two heads and two faces: the sleeping person's solid head drooping in front and lower down, and the soul's translucent head upright, behind and higher up.
+
+    The soul is a faded, translucent copy of the same person, like a photo overlaid at 40% opacity, with a thin soft edge line. It has the same face as the input image.
+
+    HAIR: the soul's hairstyle is copied exactly from the input image: the same hair color, length, volume, parting and bangs, hanging in the same places around the face and over the shoulders as in the input image. The hair keeps its original color.
+
+    CLOTHING: the soul is fully clothed in the exact same outfit as the input image: same garments, same color, same neckline height and sleeve length, covering the same areas as in the input image. Dark clothes stay dark and clearly visible. The whole figure fades as one layer, and the clothes always stay on and clearly visible.
+
+    Out-of-body experience, spirit rising from behind the body, cinematic realism.
+  negative_prompt: |-
+    headless body, missing head, head disappearing, head removed, head pulled out, empty collar, neck hole, soul head in the same position as the body head, only one head, only one person, body fading, body turning into ghost, body replaced, clothes disappearing, changed outfit, different clothing, different neckline, bodysuit, changed hairstyle, hair pulled back, hair tied up, shorter hair, white hair, hair color change, different face, face morphing, opaque soul, glowing chest light, sitting down, falling, collapsing, smoke, camera movement, zoom, scene change, cartoon, blurry, flicker
+  design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.h36c6af42793a73fa_26_0#slide=id.h36c6af42793a73fa_26_0
   source_video_link: 
   reference_folder: ''
   use_comparison_template: false

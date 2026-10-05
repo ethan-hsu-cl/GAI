@@ -70,29 +70,35 @@ tasks:
 
       Camera low, about knee height, static and straight on. Photorealistic, desaturated cool palette of grey, faint green and cold blue, deep crushed shadows, underexposed room with the bright screen as the only accent, quiet Japanese horror atmosphere, visible film grain, no text, no watermark.
 
-    video_service: wan_v3
-    video_resolution: '720P'
-    video_ratio: 'adaptive'
+    video_service: kling
+    video_model: v3
+    video_mode: pro
+    video_resolution: '720p'
     video_duration: 10
-    video_audio_out: true
+    video_ratio: 'auto'
+    video_sound_enabled: true
     video_prompt: |
-      Single continuous take, camera locked in the exact framing of the reference image, completely static — no zoom, no pan, no shake, no cuts. The room, the wooden floor, the rug, the sofa, the window, the TV stand and the VHS tapes stay exactly as in the reference throughout. Total duration 10 seconds.
+      A 10-second continuous take from the uploaded photo as first frame. Camera locked and static: no zoom, pan, shake or cuts. Room, furniture and curtains unchanged.
 
-      0–2s: nothing happens. An ordinary quiet living room in afternoon daylight. The CRT television is off, its curved glass screen dark and reflecting the room. Only the faintest movement — dust in the sunlight, leaves shifting outside the window. Completely normal.
+      0-1s: the person is inside the TV screen, palms flat on the glass, looking at the camera, faint static flickering.
+      1-2.5s: they push forward; both hands and forearms pass straight out through the screen into the room and grip the outer edges of the TV frame.
+      2.5-6s: using the frame for leverage, they pull their head, shoulders and chest out into the real room, leaning out until their whole upper body, down to the waist, is outside the TV. Their head and chest are physically in the room, closer to the camera than the screen. It is a real 3D body, never a flat image on the screen. Only the hips and legs remain inside the screen. Their hair falls behind their shoulders and never covers the face.
+      6-8s: still leaning out, hands braced on the frame, they look around the dark room, then straight at the camera.
+      8-10s: still half out, they smile and wave one hand in a friendly way to the final frame.
 
-      2–3s: the television suddenly switches itself on with a soft flash, and the screen fills with dense black-and-white analog snow, flickering rapidly. Its grey light spills forward onto the wooden floor. The room stays bright and normal — the daylight does not change.
+      By 6s the head, shoulders, arms and chest must be clearly outside the TV, in the room, and never shrink back in.
 
-      3–4.5s: the static rolls and distorts. A human shape forms deep inside the picture and grows steadily larger, as if someone is casually walking toward the glass from inside the screen.
+      FACE CLEARLY VISIBLE: once outside the TV, the face is never a dark silhouette. A soft, cool front light from the camera side, like pale moonlight, evenly lights the face and upper body, so the eyes, smile and skin are clearly visible, as bright as inside the screen. The screen glow adds a rim light on the hair and shoulders from behind. Only the person is lit; the room stays dark.
 
-      4.5–6s: a hand presses out through the screen surface, which stretches and ripples like a soft membrane before giving way. Then a second hand, gripping the outer edge of the TV frame. The glass is not broken — the person passes through the surface itself.
+      The screen stays a flat rectangle with slightly rounded CRT corners, never a circle, oval or opening, never changing shape, size or brightness. The glass stays flat and rigid, never bulging or stretching like film; nothing clings to the body. No light or outline where the body crosses the screen.
 
-      6–8.5s: an ordinary young man in a plain t-shirt and jeans climbs out of the television, head and shoulders first, then swings his body over the front edge of the TV stand and steps down onto the wooden floor, landing lightly on the rug. His movements are natural and relaxed, like someone climbing out of a window. He straightens up, brushes off his sleeve, and glances around the room, completely at ease.
+      The room stays as dark as the reference: ceiling light off, curtains drawn, corners and ceiling in deep shadow.
 
-      8.5–10s: standing in front of the television, he looks straight at the camera, smiles, and raises one hand in a friendly wave, holding the wave until the final frame. The television behind him keeps showing static.
+      The person's face, hair and clothing stay exactly as in the reference, the same individual. They stay calm and unthreatening, with natural skin, normal eyes and a relaxed expression. They never climb fully out, staying half in and half out, like leaning out of a window.
 
-      Lighting: normal bright afternoon daylight throughout the entire video, unchanged from the reference. The static from the screen adds a soft extra glow but does not darken the room.
+      Style: photorealistic, cinematic, desaturated grey, faint green and cold blue, crushed shadows in the room, quiet Japanese horror, warm ending beat, film grain. No text or watermark.
 
-      Realistic, cinematic, light-hearted tone, natural colors, light film grain. No new rooms, no new people, no cuts to another angle, no text.
+    video_negative_prompt: 'subtitles, captions, text, letters, watermark, logo, dark silhouette face, face in shadow, hair covering face, different face, screen bending, climbing fully out, camera movement'
 
     concurrent_requests: 3
 

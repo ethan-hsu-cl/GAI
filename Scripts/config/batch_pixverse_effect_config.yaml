@@ -20,7 +20,7 @@ schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
-base_folder: Media Files/Pixverse Effects/0924 12 Styles
+base_folder: Media Files/Pixverse Effects/1002 12 Styles
 template_path: templates/I2V standard 4col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
 
@@ -29,66 +29,67 @@ provider_reference_link: https://aisphere.feishu.cn/wiki/GKwywQM3oixt4EkOM1IceWw
 source_video_link: 
 
 tasks:
-  - effect: Maritime War
+  - effect: Earth Online
     prompt: ''
-    custom_effect_id: '423206287932544'
+    custom_effect_id: '424489175548016'
     negative_prompt: ''
 
-  - effect: Please be fascinated by this dance
+  - effect: Pixel Fight
     prompt: ''
-    custom_effect_id: '423197390282432'
+    custom_effect_id: '423573158921942'
     negative_prompt: ''
 
-  - effect: The power of heavy machine guns
+  - effect: ペット電車
     prompt: ''
-    custom_effect_id: '423195294682816'
-    negative_prompt: ''
-    source_type: pet
-
-  - effect: Subway Sleep Setup
-    prompt: ''
-    custom_effect_id: '425644454765629'
-    negative_prompt: ''
-
-  - effect: Pet Pro Max Launch
-    prompt: ''
-    custom_effect_id: '425531803077285'
+    custom_effect_id: '424593129546001'
     negative_prompt: ''
     source_type: pet
 
-  - effect: Spooky Step
+  - effect: Balance the Universe
     prompt: ''
-    custom_effect_id: '425508167425889'
+    custom_effect_id: '423029344386944'
     negative_prompt: ''
 
-  - effect: Trick or Treat Chaos
+  - effect: I’m Everywhere
     prompt: ''
-    custom_effect_id: '425703572187310'
+    custom_effect_id: '418579951584192'
     negative_prompt: ''
 
-  - effect: Bedroom Call Crush
+  - effect: Speed Glide on Winding Mountain Road
     prompt: ''
-    custom_effect_id: '423928061732801'
+    custom_effect_id: '423356832783296'
     negative_prompt: ''
 
-  - effect: Alternate Me
+  - effect: Caught up in this dance
     prompt: ''
-    custom_effect_id: '423383769118902'
+    custom_effect_id: '423194245914304'
     negative_prompt: ''
 
-  - effect: 'GTA Japan: Bento Emergency'
+  - effect: A Cat's Love
     prompt: ''
-    custom_effect_id: '424640044628727'
+    custom_effect_id: '423033758676864'
     negative_prompt: ''
 
-  - effect: Bed on the Subway
+  - effect: Skyline Daredevil
     prompt: ''
-    custom_effect_id: '425524612961301'
+    custom_effect_id: '423030053277568'
     negative_prompt: ''
 
-  - effect: Popcorn Volcano
+  - effect: Goldfish Storm
     prompt: ''
-    custom_effect_id: '425177017628177'
+    custom_effect_id: '423028898150272'
+    negative_prompt: ''
+    source_type: pet
+
+  - effect: Cats have acting skills too
+    prompt: ''
+    custom_effect_id: '423023414382464'
+    negative_prompt: ''
+    source_type: pet
+
+  - effect: Joyful Time with the Dog
+    prompt: ''
+    custom_effect_id: '423034276116352'
     negative_prompt: ''
 
 comments:

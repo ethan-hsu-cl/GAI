@@ -1,6 +1,7 @@
 """Pixverse Effect API Handler (/submit_5 — template/effect, up to 4 image inputs)."""
 from pathlib import Path
 from gradio_client import handle_file
+import json
 import shutil
 import time
 import random
@@ -21,6 +22,11 @@ class PixverseEffectHandler(BaseAPIHandler):
     template-compatible background-sound toggle. It is resolvable per task
     (falling back to default_settings), so one batch can mix sounded and silent
     effects.
+
+    `use_workflow` picks between the classic and the workflow ("new API")
+    template paths. Set it per task or in default_settings to force a mode;
+    left unset, the first iteration of each effect probes off-then-on and the
+    rest of the effect reuses whichever worked (or stays off if neither did).
     """
 
     MAX_IMAGES_PER_CALL = 4
@@ -42,6 +48,43 @@ class PixverseEffectHandler(BaseAPIHandler):
         default = self.config.get('default_settings', {}).get('sound_effect_switch', True)
         value = task_config.get('sound_effect_switch', default)
         return bool(value)
+
+    def _resolve_use_workflow(self, task_config, metadata_folder):
+        """Return (use_workflow, needs_probe) for a task.
+
+        An explicit per-task or default_settings value wins. Otherwise reuse the
+        mode a previous successful iteration recorded, so reruns don't re-probe.
+        """
+        default = self.config.get('default_settings', {}).get('use_workflow')
+        explicit = task_config.get('use_workflow', default)
+        if explicit is not None:
+            return bool(explicit), False
+        for meta_file in sorted(Path(metadata_folder).glob('*_metadata.json')):
+            try:
+                with open(meta_file, 'r') as f:
+                    meta = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                continue
+            if meta.get('success') and 'use_workflow' in meta:
+                return bool(meta['use_workflow']), False
+        return False, True
+
+    def _probe_use_workflow(self, primary, iter_task, output_folder, metadata_folder,
+                            max_retries):
+        """Run one iteration with use_workflow off, then on; return the mode that worked or None."""
+        for attempt, use_workflow in enumerate((False, True)):
+            if attempt >= max_retries:
+                break
+            iter_task['_use_workflow'] = use_workflow
+            self.logger.info(f" 🔍 Probing use_workflow={use_workflow}")
+            try:
+                if self.process(primary, iter_task, output_folder, metadata_folder,
+                                attempt, max_retries):
+                    self.logger.info(f" 🔍 use_workflow={use_workflow} works — using it for this effect")
+                    return use_workflow
+            except Exception as e:
+                self.logger.info(f"   ❌ use_workflow={use_workflow} failed: {e}")
+        return None
 
     def _resolve_selection_mode(self, task_config):
         default = self.config.get('default_settings', {}).get('selection_mode', 'sequential')
@@ -133,6 +176,7 @@ class PixverseEffectHandler(BaseAPIHandler):
         )
 
         max_retries = self.api_defs.get('max_retries', 3)
+        use_workflow, probing = self._resolve_use_workflow(task, metadata_folder)
         successful = 0
         skipped = 0
 
@@ -161,7 +205,24 @@ class PixverseEffectHandler(BaseAPIHandler):
             iter_task['_selection_mode'] = mode
             iter_task['_random_seed'] = seed if mode == 'random' else None
 
-            for attempt in range(max_retries):
+            # The first iteration that actually runs doubles as the use_workflow
+            # probe; if neither mode works, keep the default and spend the
+            # remaining attempts on it as usual.
+            first_attempt = 0
+            if probing:
+                probing = False
+                found = self._probe_use_workflow(primary, iter_task, output_folder,
+                                                 metadata_folder, max_retries)
+                if found is not None:
+                    use_workflow = found
+                    first_attempt = max_retries
+                    successful += 1
+                else:
+                    self.logger.info(f" 🔍 Both modes failed — keeping use_workflow={use_workflow}")
+                    first_attempt = 2
+            iter_task['_use_workflow'] = use_workflow
+
+            for attempt in range(first_attempt, max_retries):
                 try:
                     if attempt > 0:
                         self.logger.info(f" 🔄 Retry {attempt}/{max_retries - 1}")
@@ -238,7 +299,7 @@ class PixverseEffectHandler(BaseAPIHandler):
             selected = [Path(file_path)]
 
         # Pad unused image slots by repeating the first picked image — the API
-        # ignores anything past image_count, but every param_7..param_10 is "Required".
+        # ignores anything past image_count, but every param_8..param_11 is "Required".
         padded = list(selected) + [selected[0]] * (self.MAX_IMAGES_PER_CALL - len(selected))
         image_handles = [handle_file(str(p)) for p in padded]
 
@@ -254,6 +315,7 @@ class PixverseEffectHandler(BaseAPIHandler):
         )
 
         return self.client.predict(
+            use_workflow=task_config.get('_use_workflow', False),
             model=default_settings.get('model', 'v6'),
             duration=default_settings.get('duration', 5),
             quality=default_settings.get('quality', '1080p'),
@@ -261,14 +323,33 @@ class PixverseEffectHandler(BaseAPIHandler):
             sound_effect_switch=self._resolve_sound_effect_switch(task_config),
             image_count=len(selected),
             use_url=False,
-            param_7=image_handles[0],
-            param_8=image_handles[1],
-            param_9=image_handles[2],
-            param_10=image_handles[3],
-            param_11="",
+            param_8=image_handles[0],
+            param_9=image_handles[1],
+            param_10=image_handles[2],
+            param_11=image_handles[3],
             param_12="",
             param_13="",
             param_14="",
+            param_15="",
+            param_16="",
+            param_17="",
+            param_18="",
+            # Video/audio slots: unused by image templates, but the API now
+            # rejects the call unless every one is supplied.
+            param_19="upload_file",
+            param_20="upload_file",
+            param_21=None,
+            param_22=None,
+            param_23="",
+            param_24="",
+            param_25=0,
+            param_26=0,
+            param_27="upload_file",
+            param_28="upload_file",
+            param_29=None,
+            param_30=None,
+            param_31="",
+            param_32="",
             api_name=self.api_defs['api_name'],
         )
 
@@ -320,6 +401,7 @@ class PixverseEffectHandler(BaseAPIHandler):
             'video_id': video_id,
             'image_count': task_config.get('_image_count', len(selected_images)),
             'sound_effect_switch': self._resolve_sound_effect_switch(task_config),
+            'use_workflow': task_config.get('_use_workflow', False),
             'selection_mode': task_config.get('_selection_mode', 'sequential'),
             'random_seed': task_config.get('_random_seed'),
             'iteration_index': task_config.get('_iteration_index'),
