@@ -2363,5 +2363,92 @@
       "3:4",
       "adaptive"
     ]
+  },
+  "kling_omni": {
+    "endpoint": "http://192.168.31.161/external-testbed/kling/",
+    "api_name": "/omniGenerate",
+    "file_types": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".bmp",
+      ".webp"
+    ],
+    "validation": {
+      "max_size_mb": 10,
+      "min_dimension": 300,
+      "aspect_ratio": [
+        0.4,
+        2.5
+      ]
+    },
+    "folders": {
+      "input": "Source",
+      "output": "Generated_Video",
+      "metadata": "Metadata"
+    },
+    "rate_limit": 3,
+    "task_delay": 10,
+    "max_retries": 3,
+    "special_handling": "image_to_video",
+    "config_structure": "task_folders",
+    "report": {
+      "enabled": true,
+      "template_path": "templates/I2V standard 5col.pptx",
+      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
+      "use_comparison": false
+    },
+    "task_fields": [
+      "folder",
+      "style_name",
+      "prompt",
+      "model",
+      "mode",
+      "duration",
+      "aspect_ratio",
+      "sound_enabled",
+      "multishot_type",
+      "image_type",
+      "design_link",
+      "source_video_link",
+      "generation_count",
+      "concurrent_requests"
+    ],
+    "api_params": {
+      "model": "omni-v3",
+      "mode": "pro",
+      "duration": 5,
+      "aspect_ratio": "16:9",
+      "sound_enabled": false,
+      "multishot_type": "none",
+      "image_type": "start"
+    },
+    "model_options": [
+      "omni",
+      "omni-v3"
+    ],
+    "mode_options": [
+      "std",
+      "pro",
+      "4k"
+    ],
+    "aspect_ratio_options": [
+      "16:9",
+      "9:16",
+      "1:1"
+    ],
+    "multishot_type_options": [
+      "none",
+      "intelligence",
+      "customize"
+    ],
+    "image_type_options": [
+      "start",
+      "reference"
+    ],
+    "duration_range": [
+      3,
+      15
+    ]
   }
 }

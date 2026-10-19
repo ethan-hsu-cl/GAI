@@ -84,6 +84,8 @@ API_MAPPING = {
     'wanv3endframe': 'wan_v3_endframe',
     'wan_v3_reference': 'wan_v3_reference',
     'wanv3ref': 'wan_v3_reference',
+    'kling_omni': 'kling_omni',
+    'klingomni': 'kling_omni',
 }
 
 # Config file mapping
@@ -93,6 +95,7 @@ CONFIG_MAPPING = {
     'kling_endframe': 'config/batch_kling_endframe_config.yaml',
     'kling_ttv': 'config/batch_kling_ttv_config.yaml',
     'kling_motion': 'config/batch_kling_motion_config.yaml',
+    'kling_omni': 'config/batch_kling_omni_config.yaml',
     'vidu_effects': 'config/batch_vidu_effects_config.yaml',
     'vidu_reference': 'config/batch_vidu_reference_config.yaml',
     'vidu_i2v': 'config/batch_vidu_i2v_config.yaml',
@@ -566,6 +569,7 @@ def show_usage():
     print("  wan_v3_v2v - Wan V3 video-to-video (/wan_v3, source video as reference video)")
     print("  wan_v3_endframe - Wan V3 endframe (/wan_v3, first + last frame pairs)")
     print("  wan_v3_reference - Wan V3 reference images (/wan_v3, source + up to 9 references)")
+    print("  kling_omni - Kling Omni image-to-video (/omniGenerate, source image as start frame)")
     print("  motion_swap - Motion Swap image-video motion transfer processing")
     print("  happyhorse_vedit - HappyHorse Video Edit (video + prompt + up to 5 reference images)")
     print("  veo - Google Veo text-to-video processing")
@@ -604,6 +608,7 @@ def show_usage():
     print("  python runall.py wan_v3_v2v auto")
     print("  python runall.py wan_v3_endframe auto")
     print("  python runall.py wan_v3_reference auto")
+    print("  python runall.py kling_omni auto")
     print("  python runall.py motion_swap auto")
     print("  python runall.py happyhorse_vedit auto")
     print("  python runall.py veo auto")

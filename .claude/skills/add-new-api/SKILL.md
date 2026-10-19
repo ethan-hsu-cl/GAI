@@ -7,6 +7,8 @@ description: Add a new API platform to the GAI automation suite — creates a ha
 
 Integrate a new API platform into the GAI automation suite. Follow every step sequentially. Do not skip steps.
 
+The integration is not done until it has produced a real result from the live endpoint through the real pipeline (Step 9). Static checks passing is not "done"; do not hand back with "try running it and tell me what breaks".
+
 ## Required Input
 
 The user must provide:
@@ -19,6 +21,23 @@ If any of the three are missing, stop and ask the user via `AskUserQuestion` bef
 ## Step 1: Determine the API identifier
 
 Derive a snake_case API name from the platform name (e.g., `seedance_ttv`, `kling_effects`). This identifier is used everywhere: handler filename, config filename, `api_definitions` key, runall mappings, and report generator references.
+
+## Step 1b: Probe the live API before writing code
+
+Pasted docs drift from the server, and a call that only fails when the user runs the batch costs them a round trip. Find the problems here instead. The testbeds sit behind an OAuth proxy, so a bare `Client(url)` fails with `Could not fetch config` — pass the cookie from `get_testbed_cookie()`, which pulls the live session from Chrome by default (`TESTBED_BROWSER` in `.env` overrides the browser) and only falls back to the `.env` copy. Keep the default `auto_fetch=True`. Run from `Scripts/core` with conda `myenv`, writing probe scripts to the scratchpad:
+
+```python
+from config_loader import get_testbed_cookie
+from gradio_client import Client, handle_file
+c = Client(ENDPOINT, headers={'Cookie': get_testbed_cookie()}, verbose=False)
+ep = c.view_api(return_format='dict', print_info=False)['named_endpoints'][API_ROUTE]
+```
+
+1. **Schema check** — Print each parameter's name, default and component from `ep['parameters']` and compare against the pasted docs. Also read slider ranges and radio choices from `c.config['components']` (`props.minimum/maximum/step/choices`) — the docs omit them, and they belong in the config's `comments:`.
+2. **One real generation** — Call `predict()` exactly as the handler will: a real file from `Media Files/Sources/Source 50 Sample/` (or a short clip for video inputs), the chosen defaults, and `None` / `""` for every input the API type leaves unused. Doc "Required" often only means "no default"; this proves which empty values the server accepts. Print `repr(result)` to learn the real tuple shape (string vs dict, error slot contents on success) before writing `_handle_result`. If the call errors, change the request (empty value → `None` vs `""`, a different input type, a file the validator accepts) and call again until it returns a video — don't write the handler around a call you haven't seen succeed.
+3. **One failure** — Send a cheap invalid request (e.g. empty prompt) and note whether the error comes back in the result tuple or raises (`AppError`). Make sure its text doesn't match `CONNECTION_ERROR_PATTERNS` in `base_handler.py`, or it would be retried as an outage instead of recorded.
+
+Record each finding (accepted empties, tuple shape, ranges, error style) and design the handler around them. If the endpoint is unreachable even with the cookie, tell the user and ask them to log in to the testbed in Chrome again (then fully quit Chrome so the new session is flushed to disk) rather than writing the handler blind.
 
 ## Step 2: Create the Handler
 
@@ -175,6 +194,26 @@ Add a configuration section to `readme.md` following the pattern of existing TTV
 
 Run these checks:
 1. `python3 -c "import json; json.load(open('Scripts/core/api_definitions.json')); print('JSON valid')"`
-2. From `Scripts/` directory with conda myenv: `python -c "from core.unified_report_generator import create_report_generator; g = create_report_generator('{api_name}'); sc = g.get_slide_config(); print('Media types:', sc.get('media_types')); print('OK')"`
+2. From `Scripts/` directory with conda myenv (`core/` must be on the path — its modules import each other bare, so `from core.…` fails with `No module named 'config_loader'`): `python -c "import sys; sys.path.insert(0, 'core'); from unified_report_generator import create_report_generator; g = create_report_generator('{api_name}'); sc = g.get_slide_config(); print('Media types:', sc.get('media_types')); print('OK')"`
+3. **Coverage check** — `grep -rn "{closest_existing_api}" Scripts/core Scripts/handlers readme.md` for the existing API the new one was modeled on, and confirm the new name appears beside it in every list. The steps above name the usual spots, but routing lists get added over time; a missed one silently routes the report to the wrong folder structure.
+
+## Step 9: End-to-end smoke run
+
+Static checks don't exercise the handler, the folder layout or the report. Before handing over, run the real pipeline once on the smallest possible batch:
+
+1. Write a temporary config in the scratchpad (copy the real one) with one task, `generation_count: 1`, and a scratch `folder`/`output_folder` holding one source file from `Media Files/Sources/Source 50 Sample/` (none for TTV). Point the report `output_directory` at the scratchpad too, so nothing lands in `Report/`.
+2. From `Scripts/core`: `python runall.py {api_name} auto --config <temp config>`.
+3. Confirm: the video saved under the expected name, the metadata JSON has `success: true` and the fields the slide config lists, and the report `.pptx` was built with one non-failed slide (open it with `python-pptx` and count slides/pictures).
+4. Re-run the same command and confirm the generation is skipped as already processed (proves the resume naming matches).
+
+**Loop until it produces a result.** If any check fails — an exception, `success: false`, a missing video, an empty or failed slide, a generation that isn't skipped on re-run — read the error (console output and the metadata `error` field), fix the handler/config/definitions/report wiring, delete that generation's metadata and output so it isn't skipped, and run again. Repeat until every check passes. Don't stop after one fix to ask the user to try it.
+
+Acceptable end states:
+- **A generated video** with every check above passing. This is the goal.
+- **A content-moderation rejection** (NSFW / sensitive-content / policy / "risk" style error from the model). The request reached the model, so the wiring is proven up to generation. First retry with a different, plainly benign source image and prompt (a clothed adult half-body portrait, "the person smiles and waves"); a rejection on the first image is often the image. If benign inputs are still rejected, stop and accept it — but confirm the failure was recorded properly: metadata has `success: false` with the API's error text, the report shows the slide as failed rather than crashing, and the re-run behaves per `max_retries`. Tell the user the result was a moderation block, not a video.
+
+Not acceptable end states: a crash, a validation/schema error, a connection error you didn't resolve, or "couldn't reach the endpoint so I skipped it". If the endpoint is genuinely unreachable (testbed down, Chrome session expired after a re-login + quit), say plainly that the integration is **unverified** and why, rather than reporting done.
+
+In the final message, say what the run produced (video vs moderation block), how many fix iterations it took and what each fixed, and which options it did not exercise (other models/modes, sound, etc.). Delete the scratch media afterwards.
 
 Report a one-line summary of which files were created/edited at the end, with clickable links.

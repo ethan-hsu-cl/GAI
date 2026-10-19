@@ -1,0 +1,82 @@
+# Kling Omni Image-to-Video (I2V) Batch Configuration
+# Each style folder should contain a 'Source' subfolder with source images.
+# Generated videos land in 'Generated_Video', metadata in 'Metadata'.
+
+template_path: templates/I2V standard 5col.pptx
+
+output:
+  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
+  group_tasks_by: 0
+
+generation_count: 1
+concurrent_requests: 3
+
+root_folder: Media Files/Kling Omni
+
+testbed: http://192.168.31.161/external-testbed/kling/
+root_design_link: ""
+root_source_video_link: 
+
+schedule:
+  start_time: ''
+
+default_settings:
+  model: omni-v3
+  mode: pro
+  duration: 5
+  aspect_ratio: '16:9'
+  sound_enabled: false
+  multishot_type: none
+  image_type: start
+
+tasks:
+  - style_name: Smile_Wave
+    folder: Media Files/Kling Omni/1019 1 Style/Smile_Wave
+    prompt: |
+      The person from the input image smiles warmly and waves at the camera with one hand, then lowers it and holds a relaxed pose. Same face, hairstyle, clothing and background as the input image. Static camera, natural lighting.
+
+# Comments and documentation
+comments:
+  endpoint: |
+    /omniGenerate on the Kling testbed (Kling O1 'omni' / O3 'omni-v3').
+    Each source image is sent as img1; the video input, img2-img7 and element IDs
+    are sent empty.
+  folder: |
+    Style folder holding a 'Source' subfolder of input images. Outputs are named
+    {source_stem}_{generation_number}.mp4. Put folders under a dated group folder
+    (e.g. '1019 1 Style') — the report date is read from that parent.
+  generation_count: |
+    Videos generated per source image. Can be overridden per task.
+  concurrent_requests: |
+    Parallel API calls per task (1-10). A generation takes roughly 80s at 5s/pro.
+  default_settings: |
+    Global settings applied to every task. Any key can be overridden per task.
+  model: |
+    Options: 'omni' (O1, prompt required), 'omni-v3' (O3, supports sound and multishot)
+    Default: 'omni-v3'
+  mode: |
+    Options: 'std', 'pro', '4k'
+    Default: 'pro'
+  duration: |
+    Video duration in seconds. Range: 3-15, step 1.
+    Default: 5
+  aspect_ratio: |
+    Options: '16:9', '9:16', '1:1'
+    Default: '16:9'
+  sound_enabled: |
+    Generate audio with the video (O3 only).
+    Default: false
+  multishot_type: |
+    O3 only. Options: 'none', 'intelligence', 'customize'
+    'customize' also needs a per-task multishot_df
+    ({headers: [prompt, duration], data: [[shot prompt, seconds], ...]}).
+    Default: 'none'
+  image_type: |
+    How the source image is used. 'start' = first frame (image-to-video),
+    'reference' = subject/style reference only.
+    Default: 'start'
+  root_design_link: |
+    Design deck link shown on the report title slide; a per-task design_link is
+    appended to it.
+  root_source_video_link: |
+    Source + video folder link shown on the report title slide.

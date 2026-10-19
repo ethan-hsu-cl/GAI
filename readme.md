@@ -113,6 +113,7 @@ python core/runall.py kling auto
 | `kling_endframe` | Kling Endframe | I2V | A→B transitions, pairing modes |
 | `kling_ttv` | Kling TTV | T2V | Text-to-video, optional sound generation |
 | `klingmotion` | Kling Motion | I+V | Image × video motion cross-matching |
+| `kling_omni` (`klingomni`) | Kling Omni | I2V | `/omniGenerate`, O1/O3 omni models, source image as start frame, multi-generation per image |
 | `pixverse_i2v` | Pixverse I2V | I2V | `/submit_3`, v6 model, custom effect IDs, multi-clip, AI audio (not for templates) |
 | `pixverse_effect` | Pixverse Effects | I2V | `/submit_5` templates (1–4 images), template-compatible sound (global + per-task), sequential / deterministic-random picking |
 | `pixversettv` | Pixverse TTV | T2V | Text-to-video, v6 model, effects |
@@ -394,6 +395,33 @@ TaskFolder/
 ```
 
 **Options:** Model (`v2.6` / `v3`), Character Orientation (`image` / `video`), Mode (`std` / `pro`), `keep_original_sound`, `element_list_str` (comma-separated IDs).
+
+#### Kling Omni (`config/batch_kling_omni_config.yaml`)
+
+Drives `/omniGenerate` (Kling O1 `omni` / O3 `omni-v3`) as image-to-video: each image in a style's `Source/` folder is sent as `img1` (type `start`) with the task prompt; the video input, `img2`–`img7` and element IDs are left empty. Outputs are named `{source}_{generation}.mp4`.
+
+```yaml
+testbed: http://192.168.31.161/external-testbed/kling/
+generation_count: 1
+concurrent_requests: 3
+
+default_settings:
+  model: omni-v3
+  mode: pro
+  duration: 5
+  aspect_ratio: '16:9'
+  sound_enabled: false
+  multishot_type: none
+  image_type: start
+
+tasks:
+  - style_name: Smile_Wave
+    folder: Media Files/Kling Omni/1019 1 Style/Smile_Wave
+    prompt: |
+      The person from the input image smiles warmly and waves at the camera...
+```
+
+**Defaults:** `omni-v3`, `pro`, 5 s (range 3–15), `16:9`, no sound, no multishot. Every `default_settings` key can be overridden per task.
 
 ---
 
@@ -1324,6 +1352,7 @@ GAI/
     │   ├── batch_kling_endframe_config.yaml
     │   ├── batch_kling_ttv_config.yaml
     │   ├── batch_kling_motion_config.yaml
+    │   ├── batch_kling_omni_config.yaml
     │   ├── batch_pixverse_i2v_config.yaml
     │   ├── batch_pixverse_effect_config.yaml
     │   ├── batch_pixverse_ttv_config.yaml
