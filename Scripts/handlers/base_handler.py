@@ -8,6 +8,7 @@ from pathlib import Path
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from PIL import Image
+from core.path_utils import safe_path_name
 
 
 class ValidationError(Exception):
@@ -914,7 +915,7 @@ class BaseAPIHandler:
                 self.logger.warning(f"⚠️ Task has no {effect_key} or {custom_effect_key} specified")
                 return None, []
 
-            task_folder = base_folder / folder_name
+            task_folder = base_folder / safe_path_name(folder_name)
             task_folder.mkdir(parents=True, exist_ok=True)
             source_dir = task_folder / "Source"
             source_dir.mkdir(exist_ok=True)

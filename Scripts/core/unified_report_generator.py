@@ -13,6 +13,7 @@ from pptx.enum.text import PP_ALIGN
 from pptx.oxml.ns import qn
 
 from config_loader import get_app_base_path, get_resource_path, get_core_path
+from path_utils import safe_path_name
 
 try:
     import cv2
@@ -2284,7 +2285,7 @@ class UnifiedReportGenerator:
                 if not effect:
                     continue
 
-                folders = {k: base_folder / effect / v
+                folders = {k: base_folder / safe_path_name(effect) / v
                           for k, v in {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
 
                 if not folders['src'].exists():
@@ -2353,7 +2354,7 @@ class UnifiedReportGenerator:
                 if not effect:
                     continue
                 
-                folders = {k: base_folder / effect / v
+                folders = {k: base_folder / safe_path_name(effect) / v
                           for k, v in {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
                 
                 if not folders['src'].exists():
@@ -2381,7 +2382,7 @@ class UnifiedReportGenerator:
                     self._compute_aspect_ratios_batch(all_media, are_videos={p: True for p in videos.values()})
                 
                 # Scan Reference folder for reference images
-                ref_folder = base_folder / effect / 'Reference'
+                ref_folder = base_folder / safe_path_name(effect) / 'Reference'
                 ref_images_map, _, _ = self._scan_directory_once(ref_folder) if ref_folder.exists() else ({}, {}, {})
                 ref_image_list = sorted(ref_images_map.values(), key=lambda p: p.name.lower())
                 
@@ -2426,7 +2427,7 @@ class UnifiedReportGenerator:
                 if not effect:
                     continue
                 
-                folders = {k: base_folder / effect / v
+                folders = {k: base_folder / safe_path_name(effect) / v
                           for k, v in {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
                 
                 if not folders['src'].exists():
@@ -2480,7 +2481,7 @@ class UnifiedReportGenerator:
                 if not effect:
                     continue
 
-                effect_root = base_folder / effect
+                effect_root = base_folder / safe_path_name(effect)
                 folders = {k: effect_root / v for k, v in
                            {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
 
@@ -2560,7 +2561,7 @@ class UnifiedReportGenerator:
                 if not effect:
                     continue
                 
-                folders = {k: base_folder / effect / v
+                folders = {k: base_folder / safe_path_name(effect) / v
                           for k, v in {'src': 'Source', 'vid': 'Generated_Video', 'meta': 'Metadata'}.items()}
                 
                 if not folders['src'].exists():
@@ -3982,7 +3983,7 @@ class UnifiedReportGenerator:
                             self.report_definitions.get('output_directory', './')))))
             # Ensure output directory exists
             output_dir.mkdir(parents=True, exist_ok=True)
-            output_path = output_dir / f"{filename}.pptx"
+            output_path = output_dir / f"{safe_path_name(filename)}.pptx"
             # Save
             ppt.save(str(output_path))
             logger.info(f"✓ Saved: {output_path}")
@@ -4435,8 +4436,7 @@ class UnifiedReportGenerator:
                         self.config.get('output_directory',
                             self.report_definitions.get('output_directory', './')))))
             output_dir.mkdir(parents=True, exist_ok=True)
-            safe_vs = vs_line.replace('/', '-')
-            output_path = output_dir / f"[{date}] Comparison {safe_vs}.pptx"
+            output_path = output_dir / f"{safe_path_name(f'[{date}] Comparison {vs_line}')}.pptx"
             ppt.save(str(output_path))
             logger.info(f"✅ Saved comparison report: {output_path}")
             return True

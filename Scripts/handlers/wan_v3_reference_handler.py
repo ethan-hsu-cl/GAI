@@ -11,6 +11,7 @@ paired with all reference images in that effect folder.
 from pathlib import Path
 import time
 from PIL import Image
+from core.path_utils import safe_path_name
 from .wan_v3_base import WanV3BaseHandler
 
 
@@ -37,12 +38,12 @@ class WanV3ReferenceHandler(WanV3BaseHandler):
         base_folder = Path(config.get('base_folder', ''))
         base_folder.mkdir(parents=True, exist_ok=True)
 
-        configured_tasks = {t['effect']: t for t in tasks if t.get('effect')}
+        configured_tasks = {safe_path_name(t['effect']): t for t in tasks if t.get('effect')}
         valid_tasks = []
         errors = []
 
-        for effect_name in configured_tasks:
-            task_folder = base_folder / effect_name
+        for folder_key in configured_tasks:
+            task_folder = base_folder / folder_key
             task_folder.mkdir(parents=True, exist_ok=True)
             (task_folder / 'Source').mkdir(exist_ok=True)
             (task_folder / 'Reference').mkdir(exist_ok=True)

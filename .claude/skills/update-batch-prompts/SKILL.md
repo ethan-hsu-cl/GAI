@@ -46,6 +46,7 @@ If the user already stated count and/or mode in their message, skip those questi
 - Per-field formatting: which values are quoted (single vs double), which use block scalars (`| ` literal blocks), indentation width, and whether entries are separated by a blank line.
 - The carry-over default values (everything in the "default fields" column).
 - The `Media Files/...` **path prefix** only (the part before the dated group segment). The rest of the **folder convention** — whether there is a `<MMDD> <N> Styles` group segment and whether the per-style leaf is date-prefixed — comes from the table's `Per-style folder shape` column, **not** from the live file: I2I2V is grouped with a date-prefixed leaf (`<MMDD> <N> Styles/<MMDD> <name>`), Veo/Seedance are grouped with a plain leaf (`<MMDD> <N> Styles/<name>`). If the file's existing tasks use a flat folder, do not copy that flat shape — apply the grouped shape from the table.
+- Windows-safe leaf: in the `<name>` folder leaf (not in `style_name`) replace each of `< > : " / \ | ? *` with `_` and drop trailing dots/spaces — the suite also runs on Windows. Same rule as `Scripts/core/path_utils.py`.
 
 If the file has zero existing tasks, fall back to the table above and to the commented example block in the file.
 

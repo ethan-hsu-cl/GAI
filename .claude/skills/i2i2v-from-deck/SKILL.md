@@ -239,6 +239,9 @@ materially changes output and you can't infer it**:
   `Media Files/I2I2V/<MMDD> <N> Styles/<style_name>`. Use `Styles` (plural) for
   N ≥ 2, `Style` for N = 1. The date belongs on the group segment only — the report
   generator reads it from there (`PARENT_FOLDER_DATE_APIS`), not from the style leaf.
+  Windows-safe leaf: in the folder leaf (not in `style_name`) replace each of
+  `< > : " / \ | ? *` with `_` and drop trailing dots/spaces — the suite also runs on
+  Windows. Same rule as `Scripts/core/path_utils.py`.
 - The new `tasks:` block is large (thousands of lines). Write it **programmatically** to
   guarantee exact indentation — do not hand-assemble a giant `Edit`. Read the file,
   keep everything before the top-level `tasks:` line and everything from the top-level

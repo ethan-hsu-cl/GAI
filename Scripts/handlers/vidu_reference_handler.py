@@ -4,6 +4,7 @@ from gradio_client import handle_file
 import time
 from datetime import datetime
 from PIL import Image
+from core.path_utils import safe_path_name
 from .base_handler import BaseAPIHandler, ValidationError
 
 
@@ -29,14 +30,14 @@ class ViduReferenceHandler(BaseAPIHandler):
         base_folder = Path(config.get('base_folder', ''))
         base_folder.mkdir(parents=True, exist_ok=True)
 
-        configured_tasks = {t['effect']: t for t in tasks}
+        configured_tasks = {safe_path_name(t['effect']): t for t in tasks}
         valid_tasks = []
         errors = []
 
         for task in tasks:
             effect_name = task.get('effect', '')
             if effect_name:
-                task_folder = base_folder / effect_name
+                task_folder = base_folder / safe_path_name(effect_name)
                 task_folder.mkdir(parents=True, exist_ok=True)
                 (task_folder / 'Source').mkdir(exist_ok=True)
                 (task_folder / 'Reference').mkdir(exist_ok=True)

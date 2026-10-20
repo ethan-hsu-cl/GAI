@@ -199,6 +199,9 @@ docs live only in the trailing `comments:` block, which you preserve untouched.
   mode prefix and any version suffix (`V2`, `V3`), and single-quote the value
   (`style_name: '爬出電視'`). `style_name` doubles as the folder leaf. **List
   every title → style_name mapping in Step 8** so the user can correct any of them.
+  Windows-safe leaf: in the folder leaf (not in `style_name`) replace each of
+  `< > : " / \ | ? *` with `_` and drop trailing dots/spaces — the suite also runs on
+  Windows. Same rule as `Scripts/core/path_utils.py`.
 - **Quote every numeric ratio — this is a silent data-corruption bug.** YAML 1.1
   reads an unquoted `1:1` as a *sexagesimal integer*: `yaml.safe_load("ratio: 1:1")`
   returns `61`, `16:9` returns `969`, `9:16` returns `556`. Write
