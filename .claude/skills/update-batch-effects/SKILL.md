@@ -1,11 +1,11 @@
 ---
 name: update-batch-effects
-description: Replace the `tasks:` list in batch effects config YAMLs (Kling Effects, Vidu Effects, Pixverse) with a new list of effect entries supplied by the user. Use when the user provides a list of effect names (optionally with numeric IDs for Pixverse) and asks to replace, swap, or update the effects for one of these APIs.
+description: Replace the `tasks:` list in batch effects config YAMLs (Kling Effects, Vidu Effects, Pixverse Effects, Pixverse I2V) with a new list of effect entries supplied by the user. Use when the user provides a list of effect names (optionally with numeric IDs for Pixverse) and asks to replace, swap, or update the effects for one of these APIs.
 ---
 
 # update-batch-effects
 
-Replace the `tasks:` block in one of three batch effects config files with a new list of effect entries. Each API has its own per-task shape and formatting — match the target file exactly.
+Replace the `tasks:` block in one of four batch effects config files with a new list of effect entries. Each API has its own per-task shape and formatting — match the target file exactly.
 
 ## Supported configs
 
@@ -13,13 +13,14 @@ Replace the `tasks:` block in one of three batch effects config files with a new
 |---|---|---|
 | Kling Effects | `Scripts/config/batch_kling_effects_config.yaml` | `effect:` (empty) + `custom_effect: 'name'`, no blank line between entries |
 | Vidu Effects | `Scripts/config/batch_vidu_effects_config.yaml` | `category: People` + `custom_effect_name: name`, blank line between entries |
-| Pixverse | `Scripts/config/batch_pixverse_effect_config.yaml` | `effect: Name` + `prompt: ''` + `custom_effect_id: 'id'` + `negative_prompt: ''`, blank line between entries |
+| Pixverse Effects | `Scripts/config/batch_pixverse_effect_config.yaml` | `effect: Name` + `prompt: ''` + `custom_effect_id: 'id'` + `negative_prompt: ''`, blank line between entries |
+| Pixverse I2V | `Scripts/config/batch_pixverse_i2v_config.yaml` | same shape as Pixverse Effects |
 
 ## Step 1 — Identify the target config
 
 In order of precedence:
-1. **IDE selection** — if the user has a selection inside one of the three files, that is the target.
-2. **Keyword in the user message** — "kling" / "kling effects" → Kling Effects file; "vidu" → Vidu Effects file; "pixverse" → Pixverse file.
+1. **IDE selection** — if the user has a selection inside one of the four files, that is the target.
+2. **Keyword in the user message** — "kling" / "kling effects" → Kling Effects file; "vidu" → Vidu Effects file; "pixverse effect(s)" → Pixverse Effects file; "pixverse i2v" → Pixverse I2V file. Plain "pixverse" is ambiguous — ask which of the two.
 3. **Prior turn context** — if the user just edited one of these files and continues with a follow-up list, assume the same file.
 4. Otherwise, ask the user which API to update via `AskUserQuestion`.
 
@@ -45,7 +46,7 @@ A batch whose images are all one kind (e.g. an all-product batch) needs no `sour
 
 ### Sound column → `sound_effect_switch`
 
-Pixverse only. If the table has a sound column, a row marked `off` / `no` / `false` gets `sound_effect_switch: false` as the last line of its task entry. Rows that are blank or marked on get nothing — the config's `default_settings.sound_effect_switch` (true) applies. Kling and Vidu effects have no such field; ignore the column for them.
+Pixverse Effects only. If the table has a sound column, a row marked `off` / `no` / `false` gets `sound_effect_switch: false` as the last line of its task entry. Rows that are blank or marked on get nothing — the config's `default_settings.sound_effect_switch` (true) applies. Kling, Vidu and Pixverse I2V have no such per-task field (Pixverse I2V's audio is the global `default_settings.generate_audio`); ignore the column for them.
 
 ## Step 3 — Format the new `tasks:` block
 
@@ -123,7 +124,7 @@ Every time the `tasks:` block is replaced, also rewrite `base_folder` to reflect
 - `<MMDD>` — today's date in zero-padded month + day (e.g. `0522` for May 22). Use the `currentDate` from the context, not a date from the existing folder name.
 - `<count>` — the number of entries in the newly written `tasks:` block.
 - `<noun>` — match the API's existing convention:
-  - Pixverse → `Style` (singular) / `Styles` (plural)
+  - Pixverse Effects / Pixverse I2V → `Style` (singular) / `Styles` (plural)
   - Kling Effects → `Effect` / `Effects`
   - Vidu Effects → `Effect` / `Effects`
 
@@ -133,6 +134,7 @@ Keep the path prefix (everything before the last segment) exactly as it appears 
 
 Examples:
 - Pixverse with 7 entries on 2026-05-22 → `Media Files/Pixverse Effects/0522 7 Styles`
+- Pixverse I2V with 8 entries on 2026-05-22 → `Media Files/Pixverse/0522 8 Styles`
 - Vidu with 1 entry on 2026-05-22 → `Media Files/Vidu/0522 1 Effect`
 - Kling with 2 entries on 2026-05-22 → `Media Files/Kling Effects/0522 2 Effects`
 

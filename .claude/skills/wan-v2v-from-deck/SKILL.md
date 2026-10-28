@@ -99,6 +99,12 @@ The export is **clean UTF-8**. Read it as UTF-8 (`open(p, encoding="utf-8")`);
 do not inspect it with `cat -v`, which renders CJK as false mojibake and will
 send you chasing an encoding problem that isn't there.
 
+**Normalize soft line breaks before parsing.** Slides writes Shift+Enter breaks as
+`\x0b` (vertical tab), not `\n` — e.g. `Prompt:\x0b<prompt text>`, and paragraphs
+inside a prompt separated by `\x0b`. Run `text = text.replace("\x0b", "\n")` right
+after reading. Otherwise landmark matches anchored at a line start miss fields,
+and any `\x0b` left inside a prompt is a control character that breaks the YAML.
+
 **Check the link against the other configs.** Several batch configs carry a
 `*_design_link`. If the deck URL matches one already used by a different
 platform's config, that is normal for a multi-mode deck like this one — say so

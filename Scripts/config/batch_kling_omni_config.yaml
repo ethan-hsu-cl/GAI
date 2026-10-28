@@ -30,10 +30,41 @@ default_settings:
   image_type: start
 
 tasks:
-  - style_name: Smile_Wave
-    folder: Media Files/Kling Omni/1019 1 Style/Smile_Wave
+  - style_name: 360 Spin 16:9
+    folder: Media Files/Kling Omni/1028 3 Styles/360 Spin 16_9
+    duration: 10
+    aspect_ratio: '16:9'
+    image_type: reference
     prompt: |
-      The person from the input image smiles warmly and waves at the camera with one hand, then lowers it and holds a relaxed pose. Same face, hairstyle, clothing and background as the input image. Static camera, natural lighting.
+      0-10s: The most important thing in this film: a 360-degree spin in mid-air. The product from @Image1 turns around its own vertical axis, exactly one full turn in 10 seconds, always in the same direction, at one even speed of 36 degrees per second from the first frame to the last. It is suspended in mid-air with empty space below it, even if it is something that usually rests on a flat bottom, such as a cup, bottle, can, shoe or car, and it is held perfectly still in place, like a 3D product visualisation, at the centre of the frame at one constant size; its centre never bobs, rises, sinks, sways or drifts, it never grows, shrinks or moves closer to the camera, and the spin is the only movement. It is already clearly turning in the very first frame, with no still moment at the start or the end. Checkpoints: 0s front, 2.5s side, 5s back, 7.5s other side, 10s front again, still turning at the same speed.
+      Upright: if @Image1 is shot from above or the product lies flat or tilted, it is held upright in mid-air in its natural orientation from the first frame, front facing the camera at eye level, and turns only around its vertical axis; it never tumbles, flips or tilts.
+      @Image1 is a reference for the product only; do not use its background, surface or lighting. The product is exactly the same as in @Image1: same shape, colours, materials, markings, proportions and number of parts. If @Image1 shows a pair or a set, every item stays and they turn together as one group. Parts that belong to the product itself, such as a cap, lid or case, stay attached and turn with it as one rigid object; whatever the product rests on in @Image1 stays out of the film. Hidden sides continue the same materials, colours and design; no new buttons, text, logos or parts. Nothing opens, pours, bends or changes state.
+      Set: one flat, even light-grey backdrop seen straight on, the same shade from the top edge of the frame to the bottom edge, soft even light. The product takes up about half of the frame height, with plain backdrop all around it, below it too.
+      Camera: locked-off at eye level, no zoom or push-in; the product stays centered, the same size and fully in frame. Lights stay fixed, so reflections glide across the surface. No added text or logos, no hands or people, no wire, no extra props, no cuts. Premium e-commerce product film, photorealistic.
+
+  - style_name: 360 Spin 9:16
+    folder: Media Files/Kling Omni/1028 3 Styles/360 Spin 9_16
+    duration: 10
+    aspect_ratio: '9:16'
+    image_type: reference
+    prompt: |
+      0-10s: The most important thing in this film: a 360-degree spin in mid-air. The product from @Image1 turns around its own vertical axis, exactly one full turn in 10 seconds, always in the same direction, at one even speed of 36 degrees per second from the first frame to the last. It is suspended in mid-air with empty space below it, even if it is something that usually rests on a flat bottom, such as a cup, bottle, can, shoe or car, and it is held perfectly still in place, like a 3D product visualisation, at the centre of the frame at one constant size; its centre never bobs, rises, sinks, sways or drifts, it never grows, shrinks or moves closer to the camera, and the spin is the only movement. It is already clearly turning in the very first frame, with no still moment at the start or the end. Checkpoints: 0s front, 2.5s side, 5s back, 7.5s other side, 10s front again, still turning at the same speed.
+      Upright: if @Image1 is shot from above or the product lies flat or tilted, it is held upright in mid-air in its natural orientation from the first frame, front facing the camera at eye level, and turns only around its vertical axis; it never tumbles, flips or tilts.
+      @Image1 is a reference for the product only; do not use its background, surface or lighting. The product is exactly the same as in @Image1: same shape, colours, materials, markings, proportions and number of parts. If @Image1 shows a pair or a set, every item stays and they turn together as one group. Parts that belong to the product itself, such as a cap, lid or case, stay attached and turn with it as one rigid object; whatever the product rests on in @Image1 stays out of the film. Hidden sides continue the same materials, colours and design; no new buttons, text, logos or parts. Nothing opens, pours, bends or changes state.
+      Set: one flat, even light-grey backdrop seen straight on, the same shade from the top edge of the frame to the bottom edge, soft even light. The product takes up about half of the frame height, with plain backdrop all around it, below it too.
+      Camera: locked-off at eye level, no zoom or push-in; the product stays centered, the same size and fully in frame. Lights stay fixed, so reflections glide across the surface. No added text or logos, no hands or people, no wire, no extra props, no cuts. Premium e-commerce product film, photorealistic.
+
+  - style_name: 360 Spin 1:1
+    folder: Media Files/Kling Omni/1028 3 Styles/360 Spin 1_1
+    duration: 10
+    aspect_ratio: '1:1'
+    image_type: reference
+    prompt: |
+      0-10s: The most important thing in this film: a 360-degree spin in mid-air. The product from @Image1 turns around its own vertical axis, exactly one full turn in 10 seconds, always in the same direction, at one even speed of 36 degrees per second from the first frame to the last. It is suspended in mid-air with empty space below it, even if it is something that usually rests on a flat bottom, such as a cup, bottle, can, shoe or car, and it is held perfectly still in place, like a 3D product visualisation, at the centre of the frame at one constant size; its centre never bobs, rises, sinks, sways or drifts, it never grows, shrinks or moves closer to the camera, and the spin is the only movement. It is already clearly turning in the very first frame, with no still moment at the start or the end. Checkpoints: 0s front, 2.5s side, 5s back, 7.5s other side, 10s front again, still turning at the same speed.
+      Upright: if @Image1 is shot from above or the product lies flat or tilted, it is held upright in mid-air in its natural orientation from the first frame, front facing the camera at eye level, and turns only around its vertical axis; it never tumbles, flips or tilts.
+      @Image1 is a reference for the product only; do not use its background, surface or lighting. The product is exactly the same as in @Image1: same shape, colours, materials, markings, proportions and number of parts. If @Image1 shows a pair or a set, every item stays and they turn together as one group. Parts that belong to the product itself, such as a cap, lid or case, stay attached and turn with it as one rigid object; whatever the product rests on in @Image1 stays out of the film. Hidden sides continue the same materials, colours and design; no new buttons, text, logos or parts. Nothing opens, pours, bends or changes state.
+      Set: one flat, even light-grey backdrop seen straight on, the same shade from the top edge of the frame to the bottom edge, soft even light. The product takes up about half of the frame height, with plain backdrop all around it, below it too.
+      Camera: locked-off at eye level, no zoom or push-in; the product stays centered, the same size and fully in frame. Lights stay fixed, so reflections glide across the surface. No added text or logos, no hands or people, no wire, no extra props, no cuts. Premium e-commerce product film, photorealistic.
 
 # Comments and documentation
 comments:

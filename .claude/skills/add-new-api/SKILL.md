@@ -190,6 +190,14 @@ Add a configuration section to `readme.md` following the pattern of existing TTV
 - A YAML example showing `default_settings` and one sample task
 - A one-line summary of defaults
 
+## Step 7b: Register in the batch-editing skills
+
+So the new config can be filled from a deck later, add it to the skill that edits its `tasks:` list:
+- Tasks carry a free-text prompt over source images/videos → add a row to the `Supported APIs` table in `.claude/skills/update-batch-prompts/SKILL.md` (content fields, carry-over fields, folder shape), its Step 1 keywords, the Step 5 `Style`/`Styles` noun list, and the Step 6.4 link-field list. Add a `### <API> specifics` section if the deck's fields need mapping (model names, `Sound: off`, image roles such as `image_type`).
+- Tasks are a list of effect names/IDs → add it to the `Supported configs` table and per-task format in `.claude/skills/update-batch-effects/SKILL.md`.
+- Text-to-video or benchmark configs → add them to the **Not covered** note in `update-batch-prompts` instead.
+Also list the new API in that skill's frontmatter `description`, which decides when it triggers.
+
 ## Step 8: Validate
 
 Run these checks:

@@ -65,6 +65,12 @@ The export is **clean UTF-8**. Read it as UTF-8 (`open(p, encoding="utf-8")`); d
 not inspect it with `cat -v`, which renders CJK as false mojibake and will send
 you chasing an encoding problem that isn't there.
 
+**Normalize soft line breaks before parsing.** Slides writes Shift+Enter breaks as
+`\x0b` (vertical tab), not `\n` — e.g. `Prompt:\x0b<prompt text>`, and paragraphs
+inside a prompt separated by `\x0b`. Run `text = text.replace("\x0b", "\n")` right
+after reading. Otherwise landmark matches anchored at a line start miss fields,
+and any `\x0b` left inside a prompt is a control character that breaks the YAML.
+
 ## Step 2 — Understand the deck anatomy
 
 The `.txt` is a linear dump of the slides; text order within a slide is not
