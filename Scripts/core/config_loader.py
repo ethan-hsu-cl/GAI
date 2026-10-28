@@ -18,6 +18,76 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
+# Keys whose values are names, paths, links or prompts. A deck can name a style
+# or effect "2024" or "0914", which YAML would otherwise read as a number and
+# break every Path() / string operation downstream.
+TEXT_FIELDS = frozenset({
+    'style_name', 'effect', 'custom_effect', 'custom_effect_name', 'category',
+    'folder', 'folders', 'reference_folder', 'output_folder', 'base_folder',
+    'root_folder', 'comparison_folders', 'directory', 'output_directory',
+    'label', 'primary_label', 'source_type',
+    'prompt', 'negative_prompt', 'neg_prompt', 'image_prompt', 'img_prompt',
+    'video_prompt', 'video_negative_prompt', 'start_frame_prompt',
+    'end_frame_prompt',
+    'design_link', 'root_design_link', 'source_video_link',
+    'root_source_video_link', 'provider_reference_link',
+})
+
+_NUMBER_TAGS = ('tag:yaml.org,2002:int', 'tag:yaml.org,2002:float')
+
+
+class _TextFieldLoader(yaml.SafeLoader):
+    """SafeLoader that keeps TEXT_FIELDS values exactly as written.
+
+    Reading the raw scalar (rather than str() of the parsed number) keeps
+    "0123" from turning into octal 83 and "1.10" into "1.1".
+    """
+
+    def construct_mapping(self, node, deep=False):
+        mapping = super().construct_mapping(node, deep=deep)
+        for key_node, value_node in node.value:
+            key = self.construct_object(key_node)
+            if key in TEXT_FIELDS:
+                mapping[key] = self._as_text(value_node, deep)
+        return mapping
+
+    def _as_text(self, node, deep):
+        if isinstance(node, yaml.ScalarNode) and node.tag in _NUMBER_TAGS:
+            return node.value
+        if isinstance(node, yaml.SequenceNode):
+            return [self._as_text(item, deep) for item in node.value]
+        return self.construct_object(node, deep=deep)
+
+
+def stringify_text_fields(obj: Any) -> Any:
+    """Convert numeric TEXT_FIELDS values to str, recursively and in place.
+
+    For configs that did not come through yaml_load: JSON files, GUI-built
+    dicts and dot-notation overrides ("tasks.0.style_name=123").
+    """
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            if key in TEXT_FIELDS:
+                obj[key] = _number_to_str(value)
+            stringify_text_fields(obj[key])
+    elif isinstance(obj, list):
+        for item in obj:
+            stringify_text_fields(item)
+    return obj
+
+
+def _number_to_str(value: Any) -> Any:
+    if isinstance(value, list):
+        return [_number_to_str(v) for v in value]
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return str(value)
+    return value
+
+
+def yaml_load(stream) -> Any:
+    """yaml.safe_load, but name/path/prompt fields always come back as str."""
+    return yaml.load(stream, Loader=_TextFieldLoader)
+
 
 def get_app_base_path() -> Path:
     """
@@ -111,10 +181,10 @@ class ConfigLoader:
         try:
             with open(config_path, 'r', encoding='utf-8') as f:
                 if config_path.suffix.lower() in ['.yaml', '.yml']:
-                    self._config = yaml.safe_load(f) or {}
+                    self._config = yaml_load(f) or {}
                     logger.info(f"✓ Loaded YAML config: {config_path.name}")
                 else:
-                    self._config = json.load(f)
+                    self._config = stringify_text_fields(json.load(f))
                     logger.info(f"✓ Loaded JSON config: {config_path.name}")
                 return copy.deepcopy(self._config)
         except yaml.YAMLError as e:
@@ -410,6 +480,7 @@ def load_and_merge_config(
             config = ConfigLoader.apply_dot_notation_overrides(
                 config, dot_notation_overrides
             )
+        stringify_text_fields(config)
     
     # Resolve relative paths in tasks based on current working directory
     if resolve_paths:

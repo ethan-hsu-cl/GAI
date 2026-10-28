@@ -16,7 +16,7 @@ from pathlib import Path
 import logging
 import sys
 
-from config_loader import get_app_base_path, get_resource_path, get_core_path, get_testbed_cookie
+from config_loader import get_app_base_path, get_resource_path, get_core_path, get_testbed_cookie, yaml_load, stringify_text_fields
 
 # Register HEIC/HEIF format support for Pillow
 try:
@@ -149,10 +149,10 @@ class UnifiedAPIProcessor:
             with open(config_path, 'r', encoding='utf-8') as f:
                 # Detect format by extension
                 if config_path.suffix.lower() in ['.yaml', '.yml']:
-                    self.config = yaml.safe_load(f)
+                    self.config = yaml_load(f)
                     self.logger.info(f"✓ Configuration loaded from {self.config_file} (YAML)")
                 else:
-                    self.config = json.load(f)
+                    self.config = stringify_text_fields(json.load(f))
                     self.logger.info(f"✓ Configuration loaded from {self.config_file} (JSON)")
                 return True
         except FileNotFoundError:
@@ -173,7 +173,7 @@ class UnifiedAPIProcessor:
         Args:
             config: Configuration dictionary to use for processing.
         """
-        self.config = config
+        self.config = stringify_text_fields(config)
         self.logger.debug("Configuration set programmatically")
 
     def _get_video_info(self, video_path):

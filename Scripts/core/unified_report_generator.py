@@ -12,7 +12,7 @@ from pptx.util import Cm, Inches, Pt
 from pptx.enum.text import PP_ALIGN
 from pptx.oxml.ns import qn
 
-from config_loader import get_app_base_path, get_resource_path, get_core_path
+from config_loader import get_app_base_path, get_resource_path, get_core_path, yaml_load, stringify_text_fields
 from path_utils import safe_path_name
 
 try:
@@ -78,6 +78,14 @@ class MediaPair:
     # Status
     failed: bool = False
     ref_failed: bool = False
+
+    def __post_init__(self):
+        # Names can come from old metadata JSON or a digits-only folder ("2024"),
+        # so make sure the slide/filename code always gets text
+        for name in ('source_file', 'effect_name', 'category', 'prompt'):
+            value = getattr(self, name)
+            if value is not None and not isinstance(value, str):
+                setattr(self, name, str(value))
     
     @property
     def primary_generated(self) -> Optional[Path]:
@@ -1358,7 +1366,7 @@ class UnifiedReportGenerator:
         if media_type == 'prompt' and pair and pair.metadata:
             prompt_text = pair.metadata.get('prompt', 'No prompt available')
             box = slide.shapes.add_textbox(l, t, w, h)
-            box.text_frame.text = prompt_text
+            box.text_frame.text = str(prompt_text)
             box.text_frame.word_wrap = True
             box.fill.solid()
             box.fill.fore_color.rgb = RGBColor(245, 245, 245)
@@ -1737,7 +1745,7 @@ class UnifiedReportGenerator:
                 effect_name = self.config.get('effect') or self.config.get('effect_name')
             if not effect_name:
                 # Remove leading date (e.g., '1001 ') from folder name
-                m = re.match(r'^(\d{4})\s*(.+)', folder.name)
+                m = re.match(r'^(\d{4})(?!\d)\s*(.+)', folder.name)
                 effect_name = m.group(2) if m else folder.name
 
             # For Nano Banana multi-image mode: resolve additional source images from metadata
@@ -1863,7 +1871,7 @@ class UnifiedReportGenerator:
         # Determine effect_name from folder
         effect_name = self.config.get('effect') or self.config.get('effect_name')
         if not effect_name:
-            m = re.match(r'^(\d{4})\s*(.+)', folder.name)
+            m = re.match(r'^(\d{4})(?!\d)\s*(.+)', folder.name)
             effect_name = m.group(2) if m else folder.name
         
         # Check for Reference folder (for use_reference_images)
@@ -1984,7 +1992,7 @@ class UnifiedReportGenerator:
 
         effect_name = self.config.get('effect') or self.config.get('effect_name')
         if not effect_name:
-            m = re.match(r'^(\d{4})\s*(.+)', folder.name)
+            m = re.match(r'^(\d{4})(?!\d)\s*(.+)', folder.name)
             effect_name = m.group(2) if m else folder.name
 
         for md_key, md in sorted(metadata_cache.items()):
@@ -2167,7 +2175,7 @@ class UnifiedReportGenerator:
                 effect_name = self.config.get('effect') or self.config.get('effect_name')
                 if not effect_name:
                     # Remove leading date (e.g., '1111 ') from folder name
-                    m = re.match(r'^(\d{4})\s*(.+)', folder.name)
+                    m = re.match(r'^(\d{4})(?!\d)\s*(.+)', folder.name)
                     effect_name = m.group(2) if m else folder.name
             
             pair = MediaPair(
@@ -2216,7 +2224,7 @@ class UnifiedReportGenerator:
                     f"{len(generated_videos)} generated, {len(metadata_files)} metadata")
 
         # effect_name for section grouping: folder name minus any leading date
-        m = re.match(r'^(\d{4})\s*(.+)', folder.name)
+        m = re.match(r'^(\d{4})(?!\d)\s*(.+)', folder.name)
         default_effect = m.group(2) if m else folder.name
 
         # Pre-extract frames for all videos in parallel
@@ -3007,10 +3015,10 @@ class UnifiedReportGenerator:
             with open(config_path, 'r', encoding='utf-8') as f:
                 # Detect format by extension
                 if config_path.suffix.lower() in ['.yaml', '.yml']:
-                    self.config = yaml.safe_load(f)
+                    self.config = yaml_load(f)
                     logger.info(f"✓ Config loaded: {self.config_file} (YAML)")
                 else:
-                    self.config = json.load(f)
+                    self.config = stringify_text_fields(json.load(f))
                     logger.info(f"✓ Config loaded: {self.config_file} (JSON)")
         except Exception as e:
             logger.error(f"✗ Config error: {e}")
@@ -3027,7 +3035,7 @@ class UnifiedReportGenerator:
         Args:
             config: Configuration dictionary to use for report generation.
         """
-        self.config = config
+        self.config = stringify_text_fields(config)
         
         # Update Kling display name if applicable
         if self.api_name in ['kling', 'kling_endframe', 'kling_ttv', 'kling_motion']:
@@ -3158,7 +3166,7 @@ class UnifiedReportGenerator:
         else:
             candidates = [str(folder)]
         for name in candidates:
-            m = re.match(r'(\d{4})\s*(.+)', name)
+            m = re.match(r'(\d{4})(?!\d)\s*(.+)', name)
             if m:
                 return m.group(1)
         return datetime.now().strftime("%m%d")

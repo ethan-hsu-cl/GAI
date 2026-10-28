@@ -67,6 +67,7 @@ from core.config_loader import (
     ConfigLoader, get_default_config_path, get_testbed_cookie,
     save_testbed_cookie, get_env_file_path,
     load_browser_preference, save_browser_preference, SUPPORTED_BROWSERS,
+    yaml_load, stringify_text_fields,
 )
 
 # Logger for this module
@@ -1876,9 +1877,9 @@ class AutomationGUI:
             # Load the config file directly (no overrides, no path resolution)
             with open(config_path, 'r', encoding='utf-8') as f:
                 if config_path.endswith('.json'):
-                    config = json.load(f)
+                    config = stringify_text_fields(json.load(f))
                 else:
-                    config = yaml.safe_load(f) or {}
+                    config = yaml_load(f) or {}
 
             # Load global settings into their widgets
             self._load_global_settings_from_config(config, api_name)
@@ -1968,9 +1969,9 @@ class AutomationGUI:
             # Load the existing config to preserve structure and comments
             with open(config_path, 'r', encoding='utf-8') as f:
                 if config_path.endswith('.json'):
-                    config = json.load(f)
+                    config = stringify_text_fields(json.load(f))
                 else:
-                    config = yaml.safe_load(f) or {}
+                    config = yaml_load(f) or {}
             
             # Build tasks list from GUI entries
             new_tasks = []
