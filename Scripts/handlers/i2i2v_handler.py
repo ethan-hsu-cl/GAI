@@ -42,6 +42,7 @@ from pathlib import Path
 from gradio_client import Client, handle_file
 from PIL import Image
 
+from core.path_utils import name_room, fit_name, SUFFIX_ROOM
 from .base_handler import BaseAPIHandler, ValidationError
 from .image_generation_base import build_selection_plan
 from .kling_handler import predict_image_to_video
@@ -1461,6 +1462,9 @@ class I2i2vHandler(BaseAPIHandler):
                 if len(names) > 150:
                     names = names[:147] + "..."
                 base_name = f"iter{it_idx:03d}_{names}"
+            # Every file named from base_name must fit under Windows' path limit
+            base_name = fit_name(base_name, name_room(frames_folder, output_folder, metadata_folder)
+                                 - SUFFIX_ROOM)
 
             is_complete, status = self._get_processing_status(
                 primary, metadata_folder, base_name=base_name
@@ -1507,10 +1511,10 @@ class I2i2vHandler(BaseAPIHandler):
             f"✓ Task {task_num}: {successful}/{num_iterations} successful ({skipped} skipped)"
         )
 
-    def validate_file(self, file_path, file_type='image'):
+    def _validate_media(self, file_path, file_type='image'):
         """Validate input image with i2i2v's relaxed limits."""
         if file_type == 'video':
-            return super().validate_file(file_path, file_type)
+            return super()._validate_media(file_path, file_type)
         try:
             validation_rules = self.api_defs.get('validation', {})
             file_path_obj = file_path if isinstance(file_path, Path) else Path(file_path)

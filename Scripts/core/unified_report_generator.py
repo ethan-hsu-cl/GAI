@@ -13,7 +13,7 @@ from pptx.enum.text import PP_ALIGN
 from pptx.oxml.ns import qn
 
 from config_loader import get_app_base_path, get_resource_path, get_core_path, yaml_load, stringify_text_fields
-from path_utils import safe_path_name
+from path_utils import safe_path_name, name_room, fit_name
 
 try:
     import cv2
@@ -3408,7 +3408,12 @@ class UnifiedReportGenerator:
             if not duration or video_path.stat().st_size * 8 / duration / 1e6 <= self._MAX_EMBED_MBPS:
                 return video_path
 
-            out = Path(tempfile.gettempdir()) / f"report_{video_path.stem}_{hash(str(video_path)) % 10000}.mp4"
+            # The temp folder is deep on Windows (AppData\Local\Temp), so cut long
+            # video names to stay under the path limit
+            temp_dir = tempfile.gettempdir()
+            out_name = fit_name(f"report_{video_path.stem}_{hash(str(video_path)) % 10000}",
+                                name_room(temp_dir) - len('.mp4'))
+            out = Path(temp_dir) / f"{out_name}.mp4"
             if not out.exists():
                 subprocess.run(
                     ['ffmpeg', '-v', 'error', '-y', '-i', str(video_path),
@@ -3442,7 +3447,8 @@ class UnifiedReportGenerator:
             
             # Create temporary file for the frame
             temp_dir = tempfile.gettempdir()
-            frame_filename = f"frame_{video_path.stem}_{hash(video_key) % 10000}.jpg"
+            frame_filename = fit_name(f"frame_{video_path.stem}_{hash(video_key) % 10000}",
+                                      name_room(temp_dir) - len('.jpg')) + '.jpg'
             frame_path = Path(temp_dir) / frame_filename
             
             # Save frame as JPEG
@@ -3540,8 +3546,12 @@ class UnifiedReportGenerator:
         # First remove the _effect / _i2v suffix
         stem = re.sub(r"_(effect|i2v)$", "", stem, flags=re.IGNORECASE)
         
-        # Create multiple possible effect patterns to match
+        # Create multiple possible effect patterns to match. Handlers write the
+        # Windows-safe form ("Who Dis?" -> "Who_Dis_"), so try that first.
+        safe_effect = safe_path_name(effect_name)
         effect_variations = [
+            safe_effect.replace(' ', '_').replace('-', '_'),
+            safe_effect.replace(' ', '_'),
             effect_name.replace(' ', '_'),  # Space to underscore
             effect_name.replace('-', '_'),  # Dash to underscore
             effect_name.replace(' ', '_').replace('-', '_'),  # Both replacements
@@ -3576,6 +3586,7 @@ class UnifiedReportGenerator:
         
         # Create all possible variations of the effect name as it might appear in filename
         effect_variations = [
+            safe_path_name(effect).replace(' ', '_').replace('-', '_'),  # Handlers' Windows-safe form
             effect.replace(' ', '_').replace('-', '_'),  # "Corpse_Bride_V3_2"
             effect.replace(' ', '_'),  # Keep dashes: "Corpse_Bride_V3-2"
             effect.replace('-', '_'),  # "Corpse Bride V3_2"

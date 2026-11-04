@@ -71,7 +71,7 @@ class KlingMotionHandler(BaseAPIHandler):
             for image_file in image_files:
                 combination_num += 1
 
-                combo_base = f"{video_file.stem}_{image_file.stem}"
+                combo_base = self._combo_base(video_file, image_file, metadata_folder)
                 combo_metadata = metadata_folder / f"{combo_base}_metadata.json"
                 if combo_metadata.exists():
                     try:
@@ -222,7 +222,7 @@ class KlingMotionHandler(BaseAPIHandler):
             self.logger.info(f"   ❌ API Error: {error_msg}")
             image_name = Path(file_path).stem
             video_name = Path(task_config['video_file']).stem
-            combo_base = f"{video_name}_{image_name}"
+            combo_base = self._combo_base(task_config['video_file'], file_path, metadata_folder)
 
             metadata = {
                 'source_image': Path(file_path).name,
@@ -245,7 +245,8 @@ class KlingMotionHandler(BaseAPIHandler):
         # Build output filename: video-first ordering
         image_name = Path(file_path).stem
         video_name = Path(task_config['video_file']).stem
-        output_filename = f"{video_name}_{image_name}_motion.mp4"
+        combo_base = self._combo_base(task_config['video_file'], file_path, metadata_folder)
+        output_filename = f"{combo_base}_motion.mp4"
         output_path = Path(output_folder) / output_filename
 
         # Try to save video
@@ -268,7 +269,7 @@ class KlingMotionHandler(BaseAPIHandler):
         if not video_saved:
             self.logger.warning("   ⚠️ Failed to save video — will retry")
             # Save failure metadata
-            combo_base = f"{video_name}_{image_name}"
+            combo_base = self._combo_base(task_config['video_file'], file_path, metadata_folder)
             metadata = {
                 'source_image': Path(file_path).name,
                 'source_video': Path(task_config['video_file']).name,
@@ -289,7 +290,7 @@ class KlingMotionHandler(BaseAPIHandler):
             return False
 
         # Save success metadata
-        combo_base = f"{video_name}_{image_name}"
+        combo_base = self._combo_base(task_config['video_file'], file_path, metadata_folder)
         metadata = {
             'source_image': Path(file_path).name,
             'source_video': Path(task_config['video_file']).name,
@@ -340,7 +341,7 @@ class KlingMotionHandler(BaseAPIHandler):
         image_name = Path(file_path).stem
         video_file = task_config.get('video_file', '')
         video_name = Path(video_file).stem if video_file else 'unknown'
-        combo_base = f"{video_name}_{image_name}"
+        combo_base = self._combo_base(video_file or 'unknown', file_path, metadata_folder)
 
         processing_time = time.time() - start_time
         metadata = {

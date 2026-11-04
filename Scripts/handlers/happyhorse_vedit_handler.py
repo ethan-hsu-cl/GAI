@@ -5,6 +5,7 @@ import shutil
 import time
 import json
 from datetime import datetime
+from core.path_utils import name_room, fit_name, SUFFIX_ROOM
 from .base_handler import BaseAPIHandler, ValidationError
 
 
@@ -34,7 +35,7 @@ class HappyhorseVeditHandler(BaseAPIHandler):
     MAX_REF_IMAGES = 5
     DEFAULT_MODEL = 'happyhorse-1.0-video-edit'
 
-    def validate_file(self, file_path, file_type='image'):
+    def _validate_media(self, file_path, file_type='image'):
         """Validate a file against the HappyHorse Video Edit spec.
 
         Videos: MP4/MOV, 3–60 s, shorter side ≥ 320 px, longer side ≤ 2160 px,
@@ -45,7 +46,7 @@ class HappyhorseVeditHandler(BaseAPIHandler):
         per side, ≤ 10 MB — driven by the top-level validation rules).
         """
         if file_type != 'video':
-            return super().validate_file(file_path, file_type)
+            return super()._validate_media(file_path, file_type)
 
         try:
             rules = self.api_defs.get('validation', {}).get('video', {})
@@ -211,7 +212,9 @@ class HappyhorseVeditHandler(BaseAPIHandler):
         work_items = []
         for video_file in video_files:
             for suffix, ref_list in ref_variants:
-                base_name = f"{video_file.stem}{suffix}"
+                # A reference name on top can outgrow Windows' path limit
+                base_name = fit_name(f"{video_file.stem}{suffix}",
+                                     name_room(output_folder, metadata_folder) - SUFFIX_ROOM)
                 work_items.append((video_file, ref_list, base_name))
 
         total = len(work_items)

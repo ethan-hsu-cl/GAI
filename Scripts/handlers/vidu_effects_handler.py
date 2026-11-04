@@ -4,6 +4,7 @@ from gradio_client import handle_file
 import time
 from datetime import datetime
 from .base_handler import BaseAPIHandler
+from core.path_utils import safe_path_name, name_room
 
 
 class ViduEffectsHandler(BaseAPIHandler):
@@ -75,8 +76,12 @@ class ViduEffectsHandler(BaseAPIHandler):
         
         # Download video
         output_url = output_urls[0] if isinstance(output_urls, (tuple, list)) else output_urls
-        effect_name = (task_config.get('effect', '') or task_config.get('custom_effect_name', '')).replace(' ', '_').replace('-', '_')
+        effect_name = safe_path_name(task_config.get('effect', '') or task_config.get('custom_effect_name', '')).replace(' ', '_').replace('-', '_')
         output_video_name = f"{base_name}_{effect_name}_effect.mp4"
+        # Drop the effect if the name won't fit under Windows' path limit; the
+        # folder already names it and the report matches on base_name
+        if len(output_video_name) > name_room(output_folder):
+            output_video_name = f"{base_name}_effect.mp4"
         output_path = Path(output_folder) / output_video_name
         
         if not self.processor.download_file(output_url, output_path):

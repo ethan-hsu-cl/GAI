@@ -163,9 +163,7 @@ class VeoHandler(BaseAPIHandler):
         max_retries = self.api_defs.get('max_retries', 3)
         for gen_num in range(1, generation_count + 1):
             # Check if this generation was already processed
-            safe_style = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in style_name)
-            safe_style = safe_style.strip().replace(' ', '_')
-            base_name = f"{safe_style}-{gen_num}"
+            base_name = self._style_base_name(style_name, gen_num)
             metadata_file = metadata_folder / f"{base_name}_metadata.json"
             
             if metadata_file.exists():
@@ -217,9 +215,7 @@ class VeoHandler(BaseAPIHandler):
         gen_num = task_config.get('generation_number', 1)
         
         # Create safe filename from style name
-        safe_style = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in style_name)
-        safe_style = safe_style.strip().replace(' ', '_')
-        base_name = f"{safe_style}-{gen_num}"
+        base_name = self._style_base_name(style_name, gen_num)
         
         file_name = None  # No source file for text-to-video
         start_time = time.time()

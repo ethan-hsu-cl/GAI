@@ -8,6 +8,7 @@ import random
 import re
 from datetime import datetime
 from .base_handler import BaseAPIHandler
+from core.path_utils import safe_path_name, name_room, fit_name, SUFFIX_ROOM
 
 
 class PixverseEffectHandler(BaseAPIHandler):
@@ -181,7 +182,7 @@ class PixverseEffectHandler(BaseAPIHandler):
         skipped = 0
 
         for idx, picks in enumerate(plan):
-            base_name = self._make_base_name(idx, picks, len(plan))
+            base_name = self._make_base_name(idx, picks, len(plan), output_folder, metadata_folder)
             primary = picks[0]
 
             is_complete, status = self._get_iteration_status(base_name, metadata_folder)
@@ -243,13 +244,16 @@ class PixverseEffectHandler(BaseAPIHandler):
             f"✓ Task {task_num}: {successful}/{num_iterations} successful ({skipped} skipped)"
         )
 
-    def _make_base_name(self, iteration_index, picks, total_iterations):
-        """Build a deterministic base name from iteration index and picked image stems."""
+    def _make_base_name(self, iteration_index, picks, total_iterations, *folders):
+        """Build a deterministic base name from iteration index and picked image stems,
+        cut further if needed so every file named from it fits in folders under
+        Windows' path limit."""
         joined = "_".join(p.stem for p in picks)
         if len(joined) > 120:
             joined = joined[:117] + "..."
         width = max(3, len(str(total_iterations)))
-        return f"iter{iteration_index:0{width}d}_{joined}"
+        return fit_name(f"iter{iteration_index:0{width}d}_{joined}",
+                        name_room(*folders) - SUFFIX_ROOM)
 
     def _get_iteration_status(self, base_name, metadata_folder):
         """Check whether an iteration's metadata file marks it complete."""
@@ -377,8 +381,12 @@ class PixverseEffectHandler(BaseAPIHandler):
         output_video = result[1] if len(result) > 1 else None
 
         effect = task_config.get('effect', 'none')
-        safe_effect = effect.replace(' ', '_')
+        safe_effect = safe_path_name(effect).replace(' ', '_')
         output_video_name = f"{base_name}_{safe_effect}_effect.mp4"
+        # Drop the effect if the name won't fit under Windows' path limit; the
+        # folder already names it and the report matches on base_name
+        if len(output_video_name) > name_room(output_folder):
+            output_video_name = f"{base_name}_effect.mp4"
         output_path = Path(output_folder) / output_video_name
 
         video_saved = False

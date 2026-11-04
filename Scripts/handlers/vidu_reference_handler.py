@@ -4,7 +4,7 @@ from gradio_client import handle_file
 import time
 from datetime import datetime
 from PIL import Image
-from core.path_utils import safe_path_name
+from core.path_utils import safe_path_name, name_room
 from .base_handler import BaseAPIHandler, ValidationError
 
 
@@ -278,8 +278,12 @@ class ViduReferenceHandler(BaseAPIHandler):
         
         # Download video
         effect = task_config.get('effect', '')
-        effect_clean = effect.replace(' ', '_').replace('-', '_')
+        effect_clean = safe_path_name(effect).replace(' ', '_').replace('-', '_')
         output_filename = f"{base_name}_{effect_clean}.mp4"
+        # Drop the effect if the name won't fit under Windows' path limit; the
+        # folder already names it and the report matches on base_name
+        if len(output_filename) > name_room(output_folder):
+            output_filename = f"{base_name}.mp4"
         output_path = Path(output_folder) / output_filename
         
         if not self.processor.download_file(video_url, output_path):

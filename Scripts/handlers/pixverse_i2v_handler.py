@@ -6,6 +6,7 @@ import time
 import re
 from datetime import datetime
 from .base_handler import BaseAPIHandler
+from core.path_utils import safe_path_name, name_room
 
 
 class PixverseI2vHandler(BaseAPIHandler):
@@ -93,7 +94,11 @@ class PixverseI2vHandler(BaseAPIHandler):
         output_video = result[1] if len(result) > 1 else None
 
         effect = task_config.get("effect", "none")
-        output_video_name = f"{base_name}_{effect.replace(' ', '_')}_effect.mp4"
+        output_video_name = f"{base_name}_{safe_path_name(effect).replace(' ', '_')}_effect.mp4"
+        # Drop the effect if the name won't fit under Windows' path limit; the
+        # folder already names it and the report matches on base_name
+        if len(output_video_name) > name_room(output_folder):
+            output_video_name = f"{base_name}_effect.mp4"
         output_path = Path(output_folder) / output_video_name
         
         video_saved = False

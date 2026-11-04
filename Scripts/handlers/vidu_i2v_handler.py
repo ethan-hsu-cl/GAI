@@ -5,6 +5,7 @@ import time
 import shutil
 from datetime import datetime
 from .base_handler import BaseAPIHandler
+from core.path_utils import safe_path_name, name_room
 
 
 class ViduI2vHandler(BaseAPIHandler):
@@ -76,10 +77,14 @@ class ViduI2vHandler(BaseAPIHandler):
         if error_msg:
             raise ValueError(f"API error: {error_msg}")
 
-        effect_name = (task_config.get('effect', '') or
-                       task_config.get('custom_effect_name', '')).replace(' ', '_').replace('-', '_')
+        effect_name = (task_config.get('effect', '') or task_config.get('custom_effect_name', ''))
+        effect_name = safe_path_name(effect_name).replace(' ', '_').replace('-', '_') if effect_name else ''
         output_video_name = (f"{base_name}_{effect_name}_i2v.mp4"
                              if effect_name else f"{base_name}_i2v.mp4")
+        # Drop the effect if the name won't fit under Windows' path limit; the
+        # folder already names it and the report matches on base_name
+        if len(output_video_name) > name_room(output_folder):
+            output_video_name = f"{base_name}_i2v.mp4"
         output_path = Path(output_folder) / output_video_name
 
         video_saved = False

@@ -842,12 +842,16 @@ class UnifiedAPIProcessor:
         """Nano Banana specific metadata saving (delegates to universal save_metadata)."""
         self.save_metadata(metadata_folder, base_name, image_name, result_data, task_config)
 
-    def save_runway_metadata(self, metadata_folder, base_name, ref_stem, video_name, ref_name, result_data, task_config):
-        """Runway-specific metadata saving (delegates to universal save_metadata)."""
+    def save_runway_metadata(self, metadata_folder, base_name, ref_head, video_name, ref_name, result_data, task_config):
+        """Runway-specific metadata saving (delegates to universal save_metadata).
+
+        ref_head is "<base_name>_ref_<reference stem>", already cut to fit
+        under Windows' path limit by the handler.
+        """
         # Add runway-specific field to result_data
         if result_data and ref_name:
             result_data['reference_image'] = ref_name
-        filename = f"{base_name}_ref_{ref_stem}_runway_metadata.json"
+        filename = f"{ref_head}_runway_metadata.json"
         self.save_metadata(metadata_folder, base_name, video_name, result_data, task_config, 
                           api_specific_filename=filename, log_status=True)
 

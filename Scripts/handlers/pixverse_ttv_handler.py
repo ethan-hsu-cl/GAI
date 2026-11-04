@@ -186,9 +186,7 @@ class PixverseTTVHandler(BaseAPIHandler):
         skipped = 0
         max_retries = self.api_defs.get('max_retries', 3)
         for gen_num in range(1, generation_count + 1):
-            safe_style = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in style_name)
-            safe_style = safe_style.strip().replace(' ', '_')
-            base_name = f"{safe_style}-{gen_num}"
+            base_name = self._style_base_name(style_name, gen_num)
             metadata_file = metadata_folder / f"{base_name}_metadata.json"
 
             if metadata_file.exists():
@@ -247,9 +245,7 @@ class PixverseTTVHandler(BaseAPIHandler):
         style_name = task_config.get('style_name', 'pixverse_ttv')
         gen_num = task_config.get('generation_number', 1)
 
-        safe_style = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in style_name)
-        safe_style = safe_style.strip().replace(' ', '_')
-        base_name = f"{safe_style}-{gen_num}"
+        base_name = self._style_base_name(style_name, gen_num)
 
         file_name = None
         start_time = time.time()

@@ -24,6 +24,7 @@ from datetime import datetime
 from PIL import Image
 from gradio_client import handle_file
 
+from core.path_utils import name_room, fit_name, SUFFIX_ROOM
 from .base_handler import BaseAPIHandler
 
 
@@ -158,7 +159,7 @@ class BaseImageGenerationHandler(BaseAPIHandler):
         self._current_all_images = {}
         self._last_error_is_timeout = False
 
-    def validate_file(self, file_path, file_type='image'):
+    def _validate_media(self, file_path, file_type='image'):
         """Image validation with 32MB limit.
 
         Args:
@@ -169,7 +170,7 @@ class BaseImageGenerationHandler(BaseAPIHandler):
             tuple: (is_valid, reason_string)
         """
         if file_type == 'video':
-            return super().validate_file(file_path, file_type)
+            return super()._validate_media(file_path, file_type)
         try:
             validation_rules = self.api_defs.get('validation', {})
             file_path_obj = file_path if isinstance(file_path, Path) else Path(file_path)
@@ -932,7 +933,8 @@ class BaseImageGenerationHandler(BaseAPIHandler):
             for gen_idx in range(generations_per_source):
                 gen_base = f"{iter_base}_gen{gen_idx:02d}" if generations_per_source > 1 else iter_base
                 for ref_suffix, ref_list in ref_variants:
-                    base_name = gen_base + ref_suffix
+                    base_name = fit_name(gen_base + ref_suffix, name_room(output_folder, metadata_folder)
+                                         - SUFFIX_ROOM)
                     call_index += 1
 
                     is_complete, status = self._get_iteration_status(base_name, metadata_folder)
@@ -1043,7 +1045,8 @@ class BaseImageGenerationHandler(BaseAPIHandler):
             for gen_idx in range(generations_per_source):
                 gen_base = f"{iter_base}_gen{gen_idx:02d}" if generations_per_source > 1 else iter_base
                 for ref_suffix, ref_list in ref_variants:
-                    base_name = gen_base + ref_suffix
+                    base_name = fit_name(gen_base + ref_suffix, name_room(output_folder, metadata_folder)
+                                         - SUFFIX_ROOM)
                     call_index += 1
 
                     is_complete, status = self._get_iteration_status(base_name, metadata_folder)
@@ -1138,6 +1141,8 @@ class BaseImageGenerationHandler(BaseAPIHandler):
                 base_name = f"{source_image.stem}_ref{ref_idx:02d}_{ref_image.stem}"
                 if len(base_name) > 150:
                     base_name = base_name[:147] + "..."
+                # Every file named from base_name must fit under Windows' path limit
+                base_name = fit_name(base_name, name_room(output_folder, metadata_folder) - SUFFIX_ROOM)
                 call_index += 1
 
                 is_complete, status = self._get_iteration_status(base_name, metadata_folder)

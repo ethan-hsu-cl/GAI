@@ -11,7 +11,7 @@ paired with all reference images in that effect folder.
 from pathlib import Path
 import time
 from PIL import Image
-from core.path_utils import safe_path_name
+from core.path_utils import safe_path_name, name_room
 from .wan_v3_base import WanV3BaseHandler
 
 
@@ -284,8 +284,12 @@ class WanV3ReferenceHandler(WanV3BaseHandler):
             self.logger.info(f" Task ID: {task_id}")
 
         effect = task_config.get('effect', '')
-        effect_clean = effect.replace(' ', '_').replace('-', '_')
+        effect_clean = safe_path_name(effect).replace(' ', '_').replace('-', '_') if effect else ''
         output_filename = f"{base_name}_{effect_clean}.mp4" if effect_clean else f"{base_name}_generated.mp4"
+        # Drop the effect if the name won't fit under Windows' path limit; the
+        # folder already names it and the report matches on base_name
+        if len(output_filename) > name_room(output_folder):
+            output_filename = f"{base_name}.mp4"
         output_path = Path(output_folder) / output_filename
         video_saved = self._save_video(video_dict, output_path)
 

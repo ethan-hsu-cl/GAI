@@ -4,13 +4,14 @@ from gradio_client import handle_file
 import time
 from datetime import datetime
 from PIL import Image
+from core.path_utils import name_room, fit_name, SUFFIX_ROOM
 from .base_handler import BaseAPIHandler, ValidationError
 
 
 class RunwayHandler(BaseAPIHandler):
     """Runway video processing handler."""
 
-    def validate_file(self, file_path, file_type='image'):
+    def _validate_media(self, file_path, file_type='image'):
         """Runway-specific reference image validation.
 
         Args:
@@ -21,7 +22,7 @@ class RunwayHandler(BaseAPIHandler):
             tuple: (is_valid, reason_string)
         """
         if file_type == 'video':
-            return super().validate_file(file_path, file_type)
+            return super()._validate_media(file_path, file_type)
         try:
             validation_rules = self.api_defs.get('validation', {})
             file_path_obj = file_path if isinstance(file_path, Path) else Path(file_path)
@@ -232,13 +233,16 @@ class RunwayHandler(BaseAPIHandler):
         if not output_url:
             return False
         
-        # Generate output filename
+        # Generate output filename. Source and reference names together can
+        # outgrow Windows' path limit, so the shared head is cut to fit.
         reference_image_path = task_config.get('reference_image')
+        ref_stem = Path(reference_image_path).stem if reference_image_path else ''
+        room = name_room(output_folder, metadata_folder) - SUFFIX_ROOM
+        ref_head = fit_name(f"{base_name}_ref_{ref_stem}", room)
         if reference_image_path:
-            ref_stem = Path(reference_image_path).stem
-            output_filename = f"{base_name}_ref_{ref_stem}_runway_generated.mp4"
+            output_filename = f"{ref_head}_runway_generated.mp4"
         else:
-            output_filename = f"{base_name}_text_runway_generated.mp4"
+            output_filename = f"{fit_name(base_name, room)}_text_runway_generated.mp4"
         
         output_path = Path(output_folder) / output_filename
         video_saved = self.processor.download_file(output_url, output_path)
@@ -261,9 +265,8 @@ class RunwayHandler(BaseAPIHandler):
             'generation_type': 'image_to_video' if reference_image_path else 'text_to_video'
         }
         
-        ref_stem = Path(reference_image_path).stem if reference_image_path else ''
         self.processor.save_runway_metadata(
-            Path(metadata_folder), base_name, ref_stem, file_name,
+            Path(metadata_folder), base_name, ref_head, file_name,
             Path(reference_image_path).name if reference_image_path else None,
             metadata, task_config)
         

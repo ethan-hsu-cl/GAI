@@ -137,7 +137,7 @@ class WanV3TTVHandler(WanV3BaseHandler):
         skipped = 0
         max_retries = self.api_defs.get('max_retries', 3)
         for gen_num in range(1, generation_count + 1):
-            base_name = f"{self._safe_style(style_name)}-{gen_num}"
+            base_name = self._style_base_name(style_name, gen_num)
             metadata_file = metadata_folder / f"{base_name}_metadata.json"
 
             if metadata_file.exists():
@@ -177,12 +177,6 @@ class WanV3TTVHandler(WanV3BaseHandler):
 
         self.logger.info(f"✓ Task {task_num}: {successful}/{generation_count} successful ({skipped} skipped)")
 
-    @staticmethod
-    def _safe_style(style_name):
-        """Convert a style name into a filesystem-safe base name component."""
-        safe = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in style_name)
-        return safe.strip().replace(' ', '_')
-
     def process(self, file_path, task_config, output_folder, metadata_folder, attempt, max_retries):
         """Process a single Wan V3 TTV generation.
 
@@ -199,7 +193,7 @@ class WanV3TTVHandler(WanV3BaseHandler):
         """
         style_name = task_config.get('style_name', 'wan_v3_ttv')
         gen_num = task_config.get('generation_number', 1)
-        base_name = f"{self._safe_style(style_name)}-{gen_num}"
+        base_name = self._style_base_name(style_name, gen_num)
 
         file_name = None
         start_time = time.time()

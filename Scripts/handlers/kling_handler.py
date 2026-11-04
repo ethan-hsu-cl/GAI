@@ -39,7 +39,7 @@ def predict_image_to_video(client, image_path, *, prompt, mode='std', duration=5
 class KlingHandler(BaseAPIHandler):
     """Kling Image2Video handler."""
 
-    def validate_file(self, file_path, file_type='image'):
+    def _validate_media(self, file_path, file_type='image'):
         """Kling-specific image validation with size and ratio checks.
 
         Args:
@@ -50,7 +50,7 @@ class KlingHandler(BaseAPIHandler):
             tuple: (is_valid, reason_string)
         """
         if file_type == 'video':
-            return super().validate_file(file_path, file_type)
+            return super()._validate_media(file_path, file_type)
         try:
             validation_rules = self.api_defs.get('validation', {})
             file_path_obj = file_path if isinstance(file_path, Path) else Path(file_path)

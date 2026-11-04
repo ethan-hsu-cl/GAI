@@ -8,7 +8,8 @@ from pathlib import Path
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from PIL import Image
-from core.path_utils import safe_path_name
+from core.path_utils import (safe_path_name, name_room, fit_name, MAX_PATH,
+                              SUFFIX_ROOM, LONGEST_OUTPUT_DIR)
 
 
 class ValidationError(Exception):
@@ -467,11 +468,30 @@ class BaseAPIHandler:
             return task_config.get('_base_name') or Path(file_path).stem
 
         # For text-to-video, use style name or fallback
-        style_name = task_config.get('style_name', 'unknown')
-        gen_num = task_config.get('generation_number', 1)
+        return self._style_base_name(task_config.get('style_name', 'unknown'),
+                                     task_config.get('generation_number', 1))
+
+    # Cap on the style part of a text-to-video name. Fixed rather than measured
+    # from the folder, so every place that names a generation agrees without
+    # knowing the folder; _validate_text_to_video_structure checks it fits.
+    STYLE_NAME_MAX = 80
+
+    def _style_base_name(self, style_name, gen_num):
+        """'<style>-<n>' base name for a text-to-video generation."""
         safe_style = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in style_name)
-        safe_style = safe_style.strip().replace(' ', '_')
+        safe_style = fit_name(safe_style.strip().replace(' ', '_'), self.STYLE_NAME_MAX)
         return f"{safe_style}-{gen_num}"
+
+    def _combo_base(self, video_file, image_file, metadata_folder):
+        """'<video>_<image>' base name for a cross-match generation.
+
+        Two source names together can outgrow Windows' path limit, so the name
+        is cut to fit beside Metadata and Generated_Video. Metadata records the
+        generated file's name, which is what the report matches on.
+        """
+        folders = (metadata_folder, Path(metadata_folder).parent / 'Generated_Video')
+        return fit_name(f"{Path(video_file).stem}_{Path(image_file).stem}",
+                        name_room(*folders) - SUFFIX_ROOM)
 
     def _save_failure(self, file_path, task_config, metadata_folder, error, attempt, start_time,
                       timeout_retries=None):
@@ -644,7 +664,38 @@ class BaseAPIHandler:
     # ==================== VALIDATION METHODS ====================
 
     def validate_file(self, file_path, file_type='image'):
-        """Validate a single file. Override for API-specific validation rules.
+        """Validate a single file: its outputs must fit under Windows' path
+        limit, then the API's media rules (_validate_media) must pass.
+
+        Args:
+            file_path: Path to the file to validate.
+            file_type: 'image' or 'video'.
+
+        Returns:
+            tuple: (is_valid, reason_string)
+        """
+        room_error = self._output_room_error(file_path)
+        if room_error:
+            return False, room_error
+        return self._validate_media(file_path, file_type)
+
+    def _output_room_error(self, file_path):
+        """Why this source file's outputs wouldn't fit under MAX_PATH, or None.
+
+        Outputs are named after the source's stem, and the report pairs them by
+        it, so a stem too long can't be cut later; it has to be caught before
+        the API call.
+        """
+        task_folder = Path(file_path).parent.parent
+        room = name_room(task_folder / LONGEST_OUTPUT_DIR, task_folder / 'Metadata') - SUFFIX_ROOM
+        excess = len(Path(file_path).stem) - room
+        if excess > 0:
+            return (f"Name too long for Windows' {MAX_PATH}-character path limit: shorten it "
+                    f"by {excess} characters or move the folder closer to the drive root")
+        return None
+
+    def _validate_media(self, file_path, file_type='image'):
+        """Validate a file's media properties. Override for API-specific rules.
 
         Args:
             file_path: Path to the file to validate.
@@ -1081,6 +1132,18 @@ class BaseAPIHandler:
             output_folder.mkdir(parents=True, exist_ok=True)
             metadata_folder = output_folder.parent / "Metadata"
             metadata_folder.mkdir(parents=True, exist_ok=True)
+            # Most TTV handlers write under the config-level output_folder instead
+            folders = [output_folder, metadata_folder]
+            if self.config.get('output_folder'):
+                root = Path(self.config['output_folder'])
+                folders += [root / "Generated_Video", root / "Metadata"]
+            longest = self._style_base_name(task.get('style_name', 'unknown'),
+                                            task.get('generation_count') or self.config.get('generation_count', 1))
+            excess = len(longest) + SUFFIX_ROOM - name_room(*folders)
+            if excess > 0:
+                raise ValidationError(
+                    f"Task {i}: output folder too deep for Windows' {MAX_PATH}-character "
+                    f"path limit; move it {excess} characters closer to the drive root")
             task['task_num'] = i
             valid_tasks.append(task)
             self.logger.info(f"✓ Task {i}: Text-to-video prompt configured")

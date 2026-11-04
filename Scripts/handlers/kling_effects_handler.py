@@ -5,6 +5,7 @@ import time
 import shutil
 from datetime import datetime
 from .base_handler import BaseAPIHandler
+from core.path_utils import safe_path_name, name_room
 
 
 class KlingEffectsHandler(BaseAPIHandler):
@@ -85,7 +86,7 @@ class KlingEffectsHandler(BaseAPIHandler):
         # Determine effect name for output file and metadata (from task_config only)
         custom_effect = task_config.get('custom_effect', '')
         effect = custom_effect if custom_effect else task_config.get('effect', '3d_cartoon_1')
-        effect_safe = effect.replace(' ', '_').replace('-', '_')
+        effect_safe = safe_path_name(effect).replace(' ', '_').replace('-', '_')
         
         # Check for API error - dump all data to metadata if no video generated
         if error:
@@ -118,6 +119,10 @@ class KlingEffectsHandler(BaseAPIHandler):
         
         # Try to save video
         output_video_name = f"{base_name}_{effect_safe}_effect.mp4"
+        # Drop the effect if the name won't fit under Windows' path limit; the
+        # folder already names it and the report matches on base_name
+        if len(output_video_name) > name_room(output_folder):
+            output_video_name = f"{base_name}_effect.mp4"
         output_path = Path(output_folder) / output_video_name
         video_saved = False
         

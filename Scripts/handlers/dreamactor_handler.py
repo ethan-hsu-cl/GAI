@@ -71,7 +71,7 @@ class DreamactorHandler(BaseAPIHandler):
             for image_file in image_files:
                 combination_num += 1
 
-                combo_base = f"{image_file.stem}_{video_file.stem}"
+                combo_base = self._combo_base(video_file, image_file, metadata_folder)
                 combo_metadata = metadata_folder / f"{combo_base}_metadata.json"
                 if combo_metadata.exists():
                     try:
@@ -238,7 +238,8 @@ class DreamactorHandler(BaseAPIHandler):
         # Build output filename: video-first ordering
         image_name = Path(file_path).stem
         video_name = Path(task_config['video_file']).stem
-        output_filename = f"{video_name}_{image_name}_dreamactor.mp4"
+        combo_base = self._combo_base(task_config['video_file'], file_path, metadata_folder)
+        output_filename = f"{combo_base}_dreamactor.mp4"
         output_path = Path(output_folder) / output_filename
 
         # Save video (local copy or remote download)
@@ -271,7 +272,7 @@ class DreamactorHandler(BaseAPIHandler):
 
         self.processor.save_metadata(
             Path(metadata_folder),
-            f"{video_name}_{image_name}",
+            combo_base,
             file_name,
             metadata,
             task_config,
@@ -299,7 +300,7 @@ class DreamactorHandler(BaseAPIHandler):
         image_name = Path(file_path).stem
         video_file = task_config.get('video_file', '')
         video_name = Path(video_file).stem if video_file else 'unknown'
-        combo_base = f"{video_name}_{image_name}"
+        combo_base = self._combo_base(video_file or 'unknown', file_path, metadata_folder)
 
         processing_time = time.time() - start_time
         metadata = {
