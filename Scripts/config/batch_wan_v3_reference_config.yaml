@@ -1,7 +1,7 @@
 # Wan V3 Reference Configuration
 # Sends a source image plus its reference images together in the /wan_v3
 # reference-image gallery (10 images max, so up to 9 references per source).
-base_folder: Media Files/Wan V3 Reference/0806 1 Style
+base_folder: Media Files/Wan V3 Reference/1109 4 Style(s)
 output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 template_path: templates/I2V standard 5col.pptx
 testbed: http://192.168.31.161/external-testbed/video_effect/
@@ -14,8 +14,8 @@ output:
 schedule:
   start_time: ''
 
-design_link: ""
-source_video_link:
+design_link: "https://docs.google.com/presentation/d/1dm7tuc9Dr2FjnQemaFRaT-iQfbjl9axnZBFGBWFBDPo/edit?slide=id.h3c1164751149b50f_1_202#slide=id.h3c1164751149b50f_1_202"
+source_video_link: 
 
 default_settings:
   resolution: 1080P
@@ -26,10 +26,114 @@ default_settings:
   thinking: false
 
 tasks:
-  - effect: New Year - Japan Style
+  - effect: Clothes 服飾 1 V3
     prompt: |
-      The woman from image1 wears the kimono from image2 and walks forward through the torii gate setting of image3, lifting a hand to brush her hair aside, framed from the waist up with a slow push-in, warm morning light, elegant and serene.
-    ratio: adaptive
+      Reference images: all reference images show the garment(s) for one single outfit, possibly from different angles (front, back, side), as close-up details, or as separate pieces of the outfit (e.g. top and bottom); combine them into one complete outfit. Identify each view by its content, not by upload order: an image showing the neckline and front opening is the front, an image showing the shoulder blades or back neckline is the back, and a cropped close-up is a detail. The front view is the main reference for how the garment looks on camera; any back, side or detail images are for construction reference only. Use the reference images only for the garment; ignore any person, face, pose or background in them. Do not show the back of the garment in the video.
+
+      A beautiful young East Asian woman in her mid-twenties, slender and graceful, wearing the complete outfit from the reference images, walks barefoot toward the camera in a warm, minimalist studio. She faces the camera from the very first frame to the last frame. Long, glossy dark-brown hair worn down in soft, loose natural waves, parted slightly off-center, swept back behind her shoulders so the neckline stays fully visible, with a few soft strands framing her face. Clear, luminous porcelain skin with a soft natural flush, gentle almond-shaped dark-brown eyes, softly arched brows, a delicate nose and soft rosy-nude lips. Fresh, dewy, minimal makeup. A serene, gentle expression with a faint, soft smile.
+
+      Set: cream-white wall and floor. Strong afternoon sunlight streams in from the side through a large multi-pane window out of frame, casting a wide, crisp grid of window-pane shadows, many rectangular panes divided by thin mullions, across the wall and onto the floor. On the left, a cluster of three clear glass vases and bottles of different heights stands on the floor, filled with tall dried pampas grass. On the right, one tall clear glass bottle vase with pampas grass. The glass is transparent and catches the sunlight. No furniture, no stools, nothing else in the set. Beige, oat and cream earth tones with the clean sparkle of clear glass.
+
+      Action: the video opens with her already facing the camera, standing at the far end of the room. She walks straight forward toward the camera with a relaxed, natural stride, arms swinging gently, her hair moving softly with each step. Midway she raises one hand to lightly touch the collar or neckline at her chest, showing the neckline detail, then lowers it and keeps walking, ending in front of the camera with a calm, direct gaze into the lens.
+
+      Orientation: front view only for the entire video. She never turns around, never spins, never walks away from the camera, and her back is never shown. Her body and face stay oriented toward the camera throughout.
+
+      Camera: vertical 9:16, one continuous shot, no cuts. Starts as a full-body wide shot, slowly pushes in as she approaches, ends on a chest-up medium close-up.
+
+      Lighting & style: warm natural side light, soft shadows, the window-pane grid of light clearly visible on the wall behind her, sunlight glowing through the clear glass vases with soft refractions and gentle highlights, clean low-saturation earth palette, premium fashion brand film, fine detail, slight shallow depth of field.
+
+      Garment fidelity: the cut, length, colors, fabric texture, collar, cuffs, buttons, ties, fringe, prints and every detail must match the reference images exactly. Do not alter, add or remove any design element. Fabric moves and wrinkles naturally while walking.
+
+      Avoid: hair covering the neckline or the front of the garment, showing the model's back, turning around, walking away from the camera, any furniture or stools, distorted body or clothing, extra fingers or limbs, any text, subtitles, watermarks or logos not present on the reference garment, other people, stiff or jerky motion.
+    resolution: 720P
+    ratio: '9:16'
+    duration: 5
+
+  - effect: Clothes 服飾 3 V3
+    prompt: |
+      Reference images: all reference images show the garment(s) for one single outfit, possibly from different angles (front, back, side), as close-up details, or as separate pieces of the outfit (e.g. top and bottom); combine them into one complete outfit. Identify each view by its content, not by upload order: an image showing the neckline and front opening is the front, an image showing the shoulder blades or back neckline is the back, and a cropped close-up is a detail. The front view is the main reference for how the garment looks on camera; any back, side or detail images are for construction reference only. Use the reference images only for the garment; ignore any person, face, pose or background in them. Do not show the back of the garment in the video.
+
+      Styling: first identify every piece shown in the reference images. A skirt, shorts, trousers, jeans, leggings, a dress or a jumpsuit counts as a bottom. If the reference images include any bottom, she wears exactly that bottom and nothing else is added on her legs: no trousers, no leggings, no tights and no extra layers under or over it. A skirt or dress is worn with bare legs. Only if the reference images show a top and no bottom at all, pair the top with tailored slim-fit charcoal trousers. Only if they show a bottom and no top at all, pair it with a plain fitted top in a neutral color that matches the bottom. Shoes: she wears minimalist white leather sneakers. Any added piece must be plain, with no logos or prints, so the reference garment stays the focus.
+
+      Cinematography: one single continuous take from the first frame to the last, with no cuts, no jump cuts, no edits and no sudden changes in framing. The camera begins moving in the very first frame and performs one slow, smooth, steady push-in at a constant speed across the entire video. It starts on a full-body shot, head to shoes, and gradually closes in to a waist-up shot by the final frame, keeping the garment centered and dominant in the frame throughout. The framing changes gradually and continuously; it never jumps or snaps.
+
+      Subject: a slim young woman in her early twenties with fair, light skin and a soft natural flush on her cheeks. Glossy dark brown, almost black hair with a soft center part, gently swept back into a loose, low chignon at the nape of her neck, with soft natural volume at the crown and a few fine, wispy face-framing strands falling around her temples and cheekbones. The hair stays behind her shoulders and never covers the neckline. A delicate, slightly narrow oval face with a soft jawline. Softly arched natural light-brown eyebrows, almond-shaped light-brown eyes, a slim straight nose and natural soft-pink lips. Fresh, clear, no-makeup look. Her expression is calm and neutral, with a steady gaze into the lens. She wears the exact outfit from the reference images as the hero piece. The garment's fabric, cut and silhouette command full visual attention.
+
+      Action: for the first two seconds, she walks slowly toward the camera with three to four relaxed, natural steps, facing the camera the whole time. Her walk is calm and effortless, like an everyday walk, not a runway walk: each step lands heel first and rolls smoothly to the toe, her feet stay about hip-width apart and point straight forward, her knees bend softly and naturally, her arms swing gently and loosely forward and back at her sides in rhythm with her steps, and her shoulders stay relaxed and level. The steps are even in length and rhythm. She then slows down smoothly over her last step and comes to a natural stop, feet slightly apart, standing balanced. For the rest of the video, she stays on that spot and gently shifts her weight from one foot to the other, her torso swaying softly with a calm, confident rhythm that lets the garment's drape and texture move organically and catch the light. Her arms hang relaxed at her sides with empty hands. A skirt or dress swings lightly with each step and settles naturally when she stops. She keeps facing the camera, turning at most to a subtle three-quarter angle and back, never showing her back.
+
+      Context: shot against a matte off-white cyclorama with no props or set dressing, a perfectly clean, seamless studio environment that places the product in complete visual isolation.
+
+      Style & Ambiance: soft, even light wraps the scene with no harsh contrast, rendering the garment's fabric texture with crisp clarity against the neutral backdrop. Color grading is cool-white and precise, reinforcing the architectural, less-is-more aesthetic.
+
+      Garment fidelity: the cut, fit, length, colors, fabric texture, neckline, hood, drawstrings, pockets, cuffs, hem, seams, zipper, buttons, logos and prints must match the reference images exactly. Do not alter, add or remove any design element.
+
+      Avoid: stiff or locked knees, a runway catwalk with crossing feet, robotic or mechanical walking, feet sliding or gliding on the floor, uneven or mismatched steps, legs merging or swapping, arms held stiffly at her sides while walking, a sudden abrupt stop, wobbling after stopping, walking for the whole video, trousers, leggings or tights worn under a skirt or dress, layering pants with a skirt, cuts, jump cuts, scene changes, sudden zooms or framing jumps, a static camera, showing the model's back, holding any object, distorted body or clothing, extra fingers or limbs, any added text, subtitles or watermarks, logos not present on the reference garment, other people, props, stiff or jerky motion.
+    resolution: 720P
+    ratio: '9:16'
+    duration: 5
+
+  - effect: Clothes 服飾 5
+    prompt: |
+      Reference images: all reference images show the garment(s) for one single outfit, possibly from different angles (front, back, side), as close-up details, or as separate pieces of the outfit (e.g. top and bottom); combine them into one complete outfit. Identify each view by its content, not by upload order: an image showing the neckline and front opening is the front, an image showing the shoulder blades or back neckline is the back, and a cropped close-up is a detail. Use the front view whenever the front is visible, the back view whenever the back is visible, and the side or detail images for the side angles. If no back view is provided, keep the back simple, plain and consistent with the front's color, fabric and style, without inventing new design elements. Use the reference images only for the garment; ignore any person, face, pose, mannequin or background in them. The garment is always worn on the model's body.
+
+      Styling: first identify every piece shown in the reference images.
+      - Outer layers: jackets, coats, overcoats, parkas, puffers, down jackets, shells, anoraks, windbreakers, blazers, trucker jackets and zip-up hoodies.
+      - Tops: hoodies, sweatshirts, shirts, knitwear, vests and tees. Outer layers and tops are never worn as a dress; they always end at the hips, thighs or knees with trousers visible below.
+      - Bottoms: trousers, jeans, shorts and joggers.
+      Rules:
+      - Inner layer: whenever the garment is an outer layer, he always wears a plain cream ribbed turtleneck sweater underneath, whether the outer layer is buttoned, zipped or open. The turtleneck fills the neckline, lapel opening or collar opening completely. His chest and the area below his neck are never bare and no skin is visible between the lapels or collar. If the reference images already include an inner top, use that inner top instead.
+      - Bottoms: if the reference images include a bottom, he wears exactly that bottom. If they show no bottom, he must always wear slim-fit tapered black trousers; his legs are never bare. If they show only a bottom, pair it with a plain fitted crew-neck knit in a neutral color that matches the bottom.
+      - Shoes are always worn: clean minimalist white leather sneakers.
+      - Any added piece must be plain, with no logos or prints, so the reference garment stays the focus.
+
+      Cinematography: vertical 9:16, one single continuous take from the first frame to the last, with no cuts, no jump cuts and no sudden changes in framing. The camera begins moving in the very first frame and performs one slow, smooth, steady push-in at a constant speed across the entire video, starting on a full-body shot, head to shoes, and gradually closing in to a waist-up shot by the final frame. The framing changes gradually and continuously; it never jumps or snaps.
+
+      Subject: a handsome European man in his mid-twenties, tall and lean with broad shoulders. Thick, natural golden-blond hair, slightly longer on top and neatly swept back with soft texture, short and tidy on the sides. Fair skin with a light natural tan, light stubble, a strong defined jawline, straight nose, light blue-grey eyes and natural brows. A calm, composed, quietly confident expression. He wears the exact outfit from the reference images as the hero piece.
+
+      Action: he stands relaxed in place, feet slightly apart, arms hanging naturally at his sides with empty hands. Starting facing the camera, he slowly turns in place in one direction through one full continuous 360-degree rotation: from the front to a side profile, to a full back view where he pauses briefly so the back of the garment is clearly visible, then on through the other side profile, ending at a three-quarter front view with his gaze resting just past the lens. The rotation is slow, smooth and steady, at an even pace, with natural small steps. He does not walk away from his spot.
+
+      Context: an architectural exposed-concrete space. Behind him, a large wall of smooth, high-quality board-formed concrete in soft warm grey, with crisp horizontal and vertical formwork panel lines and evenly spaced round tie holes in a precise grid, showing subtle natural tonal variation and fine texture. The floor is polished light-grey concrete with a soft sheen. The space is clean, minimal and empty, with no props or furniture.
+
+      Lighting & style: soft natural daylight from a tall window out of frame to one side, washing gently across the concrete wall and revealing its texture, soft directional shadows, a calm neutral palette of warm greys and off-whites, true-to-life garment color, subtle shallow depth of field. Premium menswear brand film, architectural and refined, crisp fabric detail.
+
+      Garment fidelity: the cut, fit, length, colors, fabric texture, collar, lapels, hood, zipper, buttons, snaps, pockets, flaps, cuffs, hem, seams, vents, back design, logos and prints must match the reference images exactly. Do not alter, add or remove any design element. The front must match the front reference and the back must match the back reference. Fabric drapes, folds and moves naturally as he turns.
+
+      Avoid: a bare chest, no shirt under the jacket or coat, visible skin between the lapels or at the collar opening, cuts, jump cuts, sudden zooms or framing jumps, a static camera, walking away, turning back and forth instead of one continuous rotation, stopping the rotation before the full turn, wearing a jacket or top as a dress, missing trousers, bare legs, bare feet, holding any object, distorted body or clothing, extra fingers or limbs, any added text, subtitles or watermarks, logos not present on the reference garment, graffiti or marks on the concrete wall, other people, props, stiff or jerky motion.
+    resolution: 720P
+    ratio: '9:16'
+    duration: 5
+
+  - effect: Accessories 配件 2
+    prompt: |
+      Reference images: all reference images show one single jewelry or small accessory product, possibly from different angles (front, side, back), as close-up details, or as a matching pair. Treat them all as the same product. Identify each view by its content, not by upload order. Use the reference images only for the product; ignore any person, hand, ear, neck, mannequin, packaging, props or background in them. Show exactly the quantity shown in the reference images: a single item stays a single item, and a pair (such as earrings) is shown as one matching pair. No duplicates and no extra products.
+
+      Set: a warm, minimal still-life set in a single soft beige palette. A smooth matte beige surface, a plain warm-beige wall behind it, and one prop: a large, smooth, rounded sculptural stone, shaped like an oversized river-polished pebble, in matte warm sand-beige with a very fine, soft texture. The stone is the only prop. Nothing else is in the set.
+
+      Placement: the product stands or rests naturally and stably, always in direct contact with the stone, the way it is normally displayed in a jewelry campaign:
+      - Earrings: the pair stands upright on the surface, leaning gently against the curved side of the stone.
+      - Ring: standing upright on its band, the stone or main detail facing the camera, leaning gently against the stone.
+      - Bracelet or bangle: standing upright on its edge, leaning gently against the stone.
+      - Necklace: draped gracefully over the top of the stone, the pendant or main detail hanging at the front.
+      - Watch: standing upright with the face toward the camera, the strap curved behind it, leaning gently against the stone.
+      - Any other small accessory: in its most natural, stable display position, leaning gently against the stone with its front toward the camera.
+      This placement is identical in all three shots: the product keeps exactly the same position, angle and contact with the stone throughout the entire video and stays completely still. Only the camera changes between shots.
+
+      A 10-second vertical 9:16 luxury jewelry product film made of three shots with hard cuts.
+
+      Shot 1 (0-3.3s), close-up: the product leaning against the stone, filling most of the frame, the camera low at the product's own height. The camera slides slowly and smoothly sideways across the product, with a very slight push-in. The stone is right behind and touching the product, softly blurred, with the wall beyond it. Very shallow depth of field.
+
+      Shot 2 (3.3-6.5s), extreme macro: an ultra-close detail of the product's most distinctive feature that is clearly visible in the reference images, such as a clasp, hinge, setting, gemstone, engraving, chain link, texture or polished curve, framed against the plain warm-beige wall. The camera drifts very slowly sideways. Only show details that exist in the reference images; do not invent any.
+
+      Shot 3 (6.5-10s), medium shot: a wider view of the exact same placement as Shot 1. The product is still leaning against the stone, in direct contact with it, in exactly the same position and angle. The stone is clearly visible right beside and behind the product, close to it and only gently softened by depth of field, not pushed far into the background. If the product is a pair, the two pieces stand side by side, slightly overlapping, both leaning against the stone. The camera, at the product's height, slowly and smoothly pulls back until the whole product and the part of the stone it leans on sit fully in frame with calm space around them, and holds on that final composition.
+
+      Lighting & style: soft, warm, directional side light like late-afternoon window light, gentle soft-edged shadows falling across the surface and the stone, smooth glowing highlights rolling along polished metal and sparkling softly in any stones, rich but natural tones, true-to-life product color, a calm monochrome beige and warm-grey palette, very fine detail, creamy shallow depth of field. Quiet, elegant luxury jewelry campaign.
+
+      Product fidelity: the shape, proportions, size, thickness, colors, metal tone and finish (polished, brushed, matte), gemstones, settings, clasps, hinges, chains, engravings, logos and any text on the product must match the reference images exactly. Do not alter, add or remove any design element. Do not add new text or logos, and do not change or misspell any that exist. The warm light must not change the true metal tone or stone colors.
+
+      Avoid: the product standing apart from the stone, the product standing alone in front of the stone, the stone far away in the background, the product changing position between shots, a bowl, cup, dish or vase, more than one prop, the product moving, rotating, falling or floating, hands, ears, necks or people, a model wearing the product, duplicate or extra products, packaging, flowers or decorations, distorted, bent or melted metal, broken or warped shapes, added or misspelled text or logos, subtitles or watermarks, harsh blown-out highlights, flat lighting, stiff or jerky motion.
+    resolution: 720P
+    ratio: '9:16'
+    duration: 10
 
 comments:
   endpoint: |
@@ -51,6 +155,11 @@ comments:
     Text prompt guiding the generation. Reference images are addressable in the
     prompt as image1, image2, ... in gallery order (source first).
   reference_images: |
+    Paired mode: name a Reference file after its source (Reference/01.jpg or
+    Reference/01_back.jpg for Source/01.jpg) and each source is sent with only its
+    own references, e.g. one product's front + back as image1 + image2. Used when
+    any Reference file matches a source name; every source then needs a match.
+    Shared mode (no name matches): every source gets the whole Reference folder.
     Reference images are picked up from the effect's 'Reference' folder. Files named
     image2/image3/... are used in that order; otherwise all files are used in sorted
     order. Capped at 9 so source + references fit the gallery's 10-image limit.

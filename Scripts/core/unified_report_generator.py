@@ -2407,7 +2407,12 @@ class UnifiedReportGenerator:
                             if ref_path.exists():
                                 additional_source_paths.append(ref_path)
                     if not additional_source_paths and ref_image_list:
-                        additional_source_paths = list(ref_image_list)
+                        # Paired layout: Reference/<source stem>.* or <stem>_*.*
+                        stem = img.stem.lower()
+                        additional_source_paths = [
+                            p for p in ref_image_list
+                            if p.stem.lower() == stem or p.stem.lower().startswith(stem + '_')
+                        ] or list(ref_image_list)
                     
                     vid = videos.get(key)
                     pair = MediaPair(

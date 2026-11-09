@@ -5,8 +5,14 @@ reference image are sent together in the ``images`` Gallery input (max 10), with
 the task prompt describing how they should be combined. first_frame/last_frame,
 the video and audio inputs, the document, and the web page URL are left empty.
 
-Folder layout is base_folder/<effect>/{Source,Reference}: each source image is
-paired with all reference images in that effect folder.
+Folder layout is base_folder/<effect>/{Source,Reference}. Two ways to pair:
+
+- paired: Reference files named after a source (Reference/01.jpg or
+  Reference/01_back.jpg for Source/01.jpg) go with that source only, so each
+  product's 2+ views stay together. Used whenever any Reference file matches a
+  source stem; every source then needs a match.
+- shared: otherwise each source image is sent with all reference images in the
+  effect folder.
 """
 from pathlib import Path
 import time
@@ -96,20 +102,35 @@ class WanV3ReferenceHandler(WanV3BaseHandler):
         if not src_imgs:
             return None, [f"{task['effect']}: No source images"]
 
-        ref_imgs = self._find_reference_images(ref_dir)
-        if not ref_imgs:
-            return None, [f"{task['effect']}: No reference images"]
+        # Paired mode: Reference files named after a source (01.jpg, 01_back.jpg
+        # for Source/01.jpg) belong to that source only. Otherwise every source
+        # shares the whole Reference folder.
+        paired = {src: self._paired_reference_images(ref_dir, src.stem) for src in src_imgs}
+        if any(paired.values()):
+            unpaired = [src.name for src, refs in paired.items() if not refs]
+            if unpaired:
+                return None, [f"{task['effect']}: paired Reference folder has no match for "
+                              f"{', '.join(unpaired)} (name references <source stem>.* or "
+                              f"<source stem>_*.*)"]
+            self.logger.info(f" 🔗 {task['effect']}: paired references per source")
+        else:
+            shared = self._find_reference_images(ref_dir)
+            if not shared:
+                return None, [f"{task['effect']}: No reference images"]
+            paired = {src: shared for src in src_imgs}
 
-        # One source + all references must fit the Gallery cap
+        # One source + its references must fit the Gallery cap
         max_refs = self.MAX_GALLERY_IMAGES - 1
-        if len(ref_imgs) > max_refs:
-            self.logger.warning(
-                f" ⚠️ {task['effect']}: {len(ref_imgs)} references found, using first {max_refs}"
-            )
-            ref_imgs = ref_imgs[:max_refs]
+        for src, refs in paired.items():
+            if len(refs) > max_refs:
+                self.logger.warning(
+                    f" ⚠️ {task['effect']}: {len(refs)} references for {src.name}, using first {max_refs}"
+                )
+                paired[src] = refs[:max_refs]
 
         valid_sets = []
         for src in src_imgs:
+            ref_imgs = paired[src]
             invalids = []
             try:
                 with Image.open(src) as img:
@@ -145,6 +166,24 @@ class WanV3ReferenceHandler(WanV3BaseHandler):
             'image_sets': valid_sets
         })
         return task, []
+
+    def _paired_reference_images(self, ref_dir, stem):
+        """Find the Reference images paired with one source by file name.
+
+        Args:
+            ref_dir: Path to the Reference directory.
+            stem: The source image's file stem.
+
+        Returns:
+            list: Sorted reference image paths named <stem>.* or <stem>_*.*.
+        """
+        file_types = self.api_defs['file_types']
+        key = stem.lower()
+        return sorted(
+            f for f in ref_dir.iterdir()
+            if f.suffix.lower() in file_types
+            and (f.stem.lower() == key or f.stem.lower().startswith(key + '_'))
+        )
 
     def _find_reference_images(self, ref_dir):
         """Find reference images, honoring the image2/image3/... naming convention.
