@@ -22,8 +22,8 @@ testbed: http://192.168.31.161/external-testbed/image_generation/
 schedule:
   start_time: ''
 
-root_design_link: https://docs.google.com/presentation/d/1V67mCfG3uKFvdbqosfqvjhkzPRUZx0HaoV-a20skf9g/edit?slide=id.h72e9a37d139e03e4_0_41#slide=id.h72e9a37d139e03e4_0_41
-root_source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgC0MYEMlhJKRoRoqeycaRmCAX5onYuOTdHD73fO7fnwyCQ?e=AaR5vG
+root_design_link: https://docs.google.com/presentation/d/17up-p5BoTa8ZpafQfV--H4PQKHNTaVur_b33EdM445Y/edit?slide=id.h2c9de0104c757660_0_9#slide=id.h2c9de0104c757660_0_9
+root_source_video_link: 
 
 # Reuse original i2i frames (video-only). If a task folder contains a dropped-in
 # original-run folder, the handler stages a subset before processing (applied
@@ -44,31 +44,17 @@ video_resolution: '720p'
 
 tasks:
 
-  - style_name: '爬出電視'
-    folder: 'Media Files/I2I2V/1001 1 Style/爬出電視'
-    image_service: openai_image
-    image_model: gpt-image-2.5-sunburst
+  - style_name: '把自己變聖誕吊飾'
+    folder: 'Media Files/I2I2V/1110 3 Styles/把自己變聖誕吊飾'
+    image_service: nano_banana
+    image_model: gemini-nano-banana-2.1
     image_quality: auto
     image_resolution: '1K'
-    image_aspect_ratio: '1:1'
+    image_aspect_ratio: '9:16'
     image_prompt: |
-      Use the uploaded photo as the reference for one specific real person.
+      Use the person in the attached photo. Turn them into a glossy hand-painted glass Christmas ornament figurine that clearly looks like them: same face shape, hairstyle, hair color, skin tone, glasses if any, and the same outfit they wear in the photo, simplified as painted glass. Do not beautify.
 
-      MOST IMPORTANT RULE: the person appearing on the television screen must be the exact same person as in the uploaded photo — identical face, facial structure, eyes, eyebrows, nose, mouth, skin tone, hairstyle, hair length and color, and the same clothing they are wearing in the photo. Do not change their gender, age, ethnicity, hairstyle, glasses, accessories or outfit. Do not invent a different person. Their face must be immediately recognizable as the same person when compared side by side with the uploaded photo.
-
-      Generate a new square 1:1 photograph of an ordinary Japanese living room late at night. The room is dim, still and heavy with shadow. The ceiling light is switched off and its pull cord hangs motionless. Thin curtains are drawn over a window on the left, letting in only a faint cold blue-grey wash from outside. The television is the only real light source in the room. Deep shadow swallows the corners and the ceiling.
-
-      The room feels quiet and slightly abandoned: worn cream-coloured walls with faint stains near the ceiling, a sliding paper screen door standing half open onto a black hallway, low wooden furniture, a fabric sofa at one edge with a folded blanket, a potted plant drooping slightly at the other edge, a few unlabeled VHS tapes stacked on the stand. Everything is tidy but lifeless, as if nobody has been in the room for a long time. No other people anywhere in the room.
-
-      An old boxy CRT television with a deep body sits on a low wooden TV stand against the wall, centered and dominating the frame, the screen filling about 70% of the image width, facing the camera perfectly straight on. The bottom quarter of the frame is empty wooden floor with a patterned rug between the camera and the TV.
-
-      The television is switched on. On the screen, the person from the uploaded photo appears from the waist up, facing the camera directly and filling most of the screen. They are pressed up close against the inside of the glass: both palms flat against the screen surface at shoulder height, fingers spread, leaning slightly forward, looking straight out at the camera with a calm, natural expression.
-
-      THE PERSON ON SCREEN STAYS NORMAL AND UNTHREATENING: render them clearly and sharply in full natural color, with correct even exposure on the face, healthy natural skin tone and normal eyes, so every feature stays recognizable and they look like an ordinary living person. Their expression is calm and neutral. They are not pale, not grey, not distorted, not wounded, not hollow-eyed and not frightening in any way. Apply only a very light CRT look to them: faint horizontal scanlines and a subtle glow. Grainy static appears only in the background area around and behind them on the screen, never across their face or body. All of the eeriness comes from the dark room around the television, never from the person themselves.
-
-      The lit screen is the strongest light in the frame and casts a cold blue-white glow forward across the wooden floor and the rug, throwing long soft shadows out toward the camera and lighting the nearest edges of the furniture while everything beyond it falls into darkness.
-
-      Camera low, about knee height, static and straight on. Photorealistic, desaturated cool palette of grey, faint green and cold blue, deep crushed shadows, underexposed room with the bright screen as the only accent, quiet Japanese horror atmosphere, visible film grain, no text, no watermark.
+      Vertical 9:16 photo. The figurine hangs on a thin gold string from a Christmas tree branch, full body, facing the camera, arms relaxed at the sides. The whole figurine is in the frame from the gold cap down to its shoes, with a little empty space below the feet; if the photo does not show their legs or shoes, complete the outfit with matching trousers or skirt and shoes. Shiny lacquered surface with soft highlights, a small gold cap on the head. Background: pine branches and warm golden bokeh of tree lights. No text, no logo.
 
     video_service: kling
     video_model: v3
@@ -78,27 +64,61 @@ tasks:
     video_ratio: 'auto'
     video_sound_enabled: true
     video_prompt: |
-      A 10-second continuous take from the uploaded photo as first frame. Camera locked and static: no zoom, pan, shake or cuts. Room, furniture and curtains unchanged.
+      Static camera with a very slow push-in. The figurine slowly rotates on its string to one side, then slowly rotates back to face the camera. Its arms stay still in the same pose; no waving. Glossy highlights slide across its lacquered surface. The tree lights twinkle softly. It stays hanging on the string and keeps its shape and size.
 
-      0-1s: the person is inside the TV screen, palms flat on the glass, looking at the camera, faint static flickering.
-      1-2.5s: they push forward; both hands and forearms pass straight out through the screen into the room and grip the outer edges of the TV frame.
-      2.5-6s: using the frame for leverage, they pull their head, shoulders and chest out into the real room, leaning out until their whole upper body, down to the waist, is outside the TV. Their head and chest are physically in the room, closer to the camera than the screen. It is a real 3D body, never a flat image on the screen. Only the hips and legs remain inside the screen. Their hair falls behind their shoulders and never covers the face.
-      6-8s: still leaning out, hands braced on the frame, they look around the dark room, then straight at the camera.
-      8-10s: still half out, they smile and wave one hand in a friendly way to the final frame.
+    video_negative_prompt: 'text, letters, watermark, logo, timestamp, extra people, duplicate person, extra fingers, extra limbs, deformed hands, face distortion, face morphing, flicker, jitter, waving, raised hand'
 
-      By 6s the head, shoulders, arms and chest must be clearly outside the TV, in the room, and never shrink back in.
+    concurrent_requests: 3
 
-      FACE CLEARLY VISIBLE: once outside the TV, the face is never a dark silhouette. A soft, cool front light from the camera side, like pale moonlight, evenly lights the face and upper body, so the eyes, smile and skin are clearly visible, as bright as inside the screen. The screen glow adds a rim light on the hair and shoulders from behind. Only the person is lit; the room stays dark.
+  - style_name: '跟聖誕老人開趴'
+    folder: 'Media Files/I2I2V/1110 3 Styles/跟聖誕老人開趴'
+    image_service: nano_banana
+    image_model: gemini-nano-banana-2.1
+    image_quality: auto
+    image_resolution: '1K'
+    image_aspect_ratio: '9:16'
+    image_prompt: |
+      Use the reference photo for identity: the subject in this image is exactly the same person as in the reference photo, with the same face, facial features, skin tone, hair color and hairstyle, age and body type. Do not make her younger, do not change her ethnicity, do not change her hairstyle, do not beautify. If the reference photo shows an animal instead of a person, the subject is that same animal, with the same breed, fur colors and markings, wearing a small cozy red sweater, peeking out of the box with its front paws on the edge.
 
-      The screen stays a flat rectangle with slightly rounded CRT corners, never a circle, oval or opening, never changing shape, size or brightness. The glass stays flat and rigid, never bulging or stretching like film; nothing clings to the body. No light or outline where the body crosses the screen.
+      Vertical 9:16 image. The person from the reference photo, photorealistic with real skin texture and her own hairstyle, wearing a cozy red sweater, is crouched inside one big gift box; only her head, shoulders and both hands showing as she grips the front edge of the box, peeking out with a mischievous excited grin, face toward the camera. Her face is clearly visible and recognizable. The gift box is a large cube of plain glossy solid red paper with no pattern, seen straight on with its front face parallel to the camera, and one flat gold satin ribbon band running straight down the middle of the front face; the box itself has no bow. There is exactly one lid: a matching square glossy red lid with a gold satin ribbon cross and a single big gold satin bow on top, resting directly on top of her head and touching her hair, tilted back like a half-opened lid with its front edge on her head and its back edge lifted; the lid is not floating in the air. This bow on the lid is the only bow in the whole picture. The box sits on the floor in front of a decorated Christmas tree in a warm living room; there are no other real gift boxes or bows around it. Out of the gap under the lid, playful stylized 3D cartoon props are starting to burst out: candy canes, a smiling gingerbread man, glossy gold stars, curly ribbons, mini presents and sparkles, rendered in a bright Pixar-like 3D cartoon style with saturated colors, clearly contrasting with the realistic person. Bright, cheerful, high saturation. No text, no logo. She is the only person in the picture.
 
-      The room stays as dark as the reference: ceiling light off, curtains drawn, corners and ceiling in deep shadow.
+    video_service: kling
+    video_model: v3
+    video_mode: pro
+    video_resolution: '720p'
+    video_duration: 10
+    video_ratio: 'auto'
+    video_sound_enabled: true
+    video_prompt: |
+      A 10-second video of a person bursting out of a big gift box into a Christmas party. One continuous shot, the camera close in front of them. They pop up through the lid with both arms raised, cheering in a burst of gold confetti, then a golden blast sweeps across the room and turns it into a huge party with disco balls, colorful light beams and a cartoon Santa DJ. Bright 3D cartoon Santas, elves, reindeer and snowmen dance around them, while they stay photorealistic and dance and laugh right in front of the camera.
 
-      The person's face, hair and clothing stay exactly as in the reference, the same individual. They stay calm and unthreatening, with natural skin, normal eyes and a relaxed expression. They never climb fully out, staying half in and half out, like leaning out of a window.
+    video_negative_prompt: 'text, letters, watermark, logo, timestamp, extra people, duplicate person, extra fingers, extra limbs, deformed hands, face distortion, face morphing, flicker, jitter, objects suddenly disappearing, a second Christmas tree, merged characters, hybrid creatures, fused bodies, elf with antlers, snowman with reindeer head, reindeer with elf hat, characters blending into each other,cartoon dog, cartoon pet, 3D animated animal, stylized pet, Pixar-style dog, plush toy dog'
 
-      Style: photorealistic, cinematic, desaturated grey, faint green and cold blue, crushed shadows in the room, quiet Japanese horror, warm ending beat, film grain. No text or watermark.
+    concurrent_requests: 3
 
-    video_negative_prompt: 'subtitles, captions, text, letters, watermark, logo, dark silhouette face, face in shadow, hair covering face, different face, screen bending, climbing fully out, camera movement'
+  - style_name: '丟雪球'
+    folder: 'Media Files/I2I2V/1110 3 Styles/丟雪球'
+    image_service: nano_banana
+    image_model: gemini-nano-banana-2.1
+    image_quality: auto
+    image_resolution: '1K'
+    image_aspect_ratio: '9:16'
+    image_prompt: |
+      Use the reference photo for identity: the subject in this image is exactly the same person as in the reference photo, with the same face, facial features, skin tone, hair color and hairstyle, age and body type. Do not make her younger, do not change her ethnicity, do not change her hairstyle, do not beautify. Her face must be an exact match of the reference photo: the same face shape, jawline, chin, cheekbones, nose, lips, eyes and eyebrows, and her true natural skin tone; do not round, widen or slim her face, do not lighten or darken her skin, do not change her features to fit the style. The sunlight, haze and lens flare stay around her and must never cover or wash out her face: her face is evenly lit, in sharp focus and shows her true skin tone, and her own hair stays clearly visible below the beanie. If the reference photo shows an animal instead of a person, the subject is that same animal, photorealistic with real fur, with the same breed, fur colors and markings, wearing a small red knit beanie and playfully pawing at a snowball.
+
+      Vertical 9:16 photo, eye level, medium shot. The person from the reference photo, photorealistic with real skin texture and her own hairstyle, in a black leather jacket with a cream-white shearling collar and shearling-lined cuffs, worn open over a black top, a chunky red wool scarf wrapped loosely around her neck, a red knit beanie and red mittens, stands in a wide open snowfield in the late afternoon, her body and shoulders turned toward the camera, square to the lens, facing the camera and laughing, her right arm pulled back about to throw a snowball straight at the camera, the snowball held in her mitten. Behind her: a wide, flat, untouched snowfield like a frozen lake, stretching back to a long line of tall bare winter trees and dark pine trees along the far edge, under a pale bright sky; no buildings, no houses, no fences, no decorations at all. Dreamy cinematic film look, strongly backlit: the low winter sun is visible in the frame just behind her shoulder, shining straight toward the camera, creating a large warm lens flare with soft orange-pink flare orbs and a hazy halation glow that washes over the image; her hair and the edges of her jacket glow with a bright golden rim light, and her face is softly lit by light bouncing off the snow and stays clearly visible and recognizable; light snow drifts through the sunlight. Heavily overexposed, washed-out, hazy image like an old film photo shot straight into the sun: very low contrast, a milky white haze veiling the whole frame, faded lifted shadows with no deep blacks, soft pale desaturated colors (whitish blue sky, glowing white snow, warm golden highlights in the air), slightly soft focus and shallow depth of field, visible 35mm film grain, real skin texture. No text, no logo.
+
+    video_service: kling
+    video_model: v3
+    video_mode: pro
+    video_resolution: '720p'
+    video_duration: 10
+    video_ratio: 'auto'
+    video_sound_enabled: true
+    video_prompt: |
+      A 10-second video of a person having a snowball fight with the camera in a sunny snowfield, throwing at the lens and then getting hit back. Handheld camera at eye level, facing them the whole time. They throw a snowball straight at the lens; it hits, the camera shakes in a burst of snow, then clears. The camera holder's gloved hand throws one back from the bottom of the frame, and it bursts on the chest of their puffer jacket. They laugh, bend down, scoop snow from the ground, press it into a new snowball and throw it at the camera again. They face the camera and laugh the whole time.
+
+    video_negative_prompt: 'text, letters, watermark, logo, timestamp, extra people, duplicate person, extra fingers, extra limbs, deformed hands, face distortion, face morphing, flicker, jitter, floating sheet, sheet hovering in the air, changing outfit, different person, another person''s face or body, a second full person, turning her back to the camera, face turned away from the camera, throwing to the side, throwing sideways, snowball thrown upward into the sky'
 
     concurrent_requests: 3
 

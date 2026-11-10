@@ -152,7 +152,10 @@ field values come from the deck as follows:
 |---|---|---|
 | `Gemini 3` | `nano_banana` | `gemini-3-pro-image` (note: **no** `-preview` suffix) |
 | `Gemini 3.1` | `nano_banana` | `gemini-3.1-flash-image` |
+| `nano-banana-2.1` (deck line `Image model: nano-banana-2.1`) | `nano_banana` | `gemini-nano-banana-2.1` |
 | `ChatGPT image …` / `gpt-image …` | `openai_image` | the matching `gpt-image-*` id — see below |
+
+These decks also use a third layout: one slide per style headed `NN　<Chinese title>`, with `prompt :` (the video prompt), `Negative prompt:`, `作法: I2I→I2V`, the image prompt paragraphs, and `Image model: / Video model: Kling-v3_Pro / Duration: / Resolution: / Ratio:` lines, followed by stale `【首幀圖 prompt】【影片 prompt】【負向 prompt】【參數】` blocks from an older draft. Use the labelled fields; ignore the 【…】 blocks. `style_name` is the Chinese title without the `NN` number. The live `/nano_banana` Gemini Model dropdown is the source of truth for model ids (read it from the testbed's `/config` with the `TESTBED_COOKIE` from `.env`).
 
 `openai_image` currently offers `gpt-image-1`, `gpt-image-1-mini`,
 `gpt-image-1.5`, `gpt-image-2`, `gpt-image-2.5-flare`, `gpt-image-2.5-sunburst`.
