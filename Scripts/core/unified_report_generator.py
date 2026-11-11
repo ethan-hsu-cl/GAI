@@ -3855,7 +3855,7 @@ class UnifiedReportGenerator:
         info_box.text_frame.clear()
 
         # Get API-specific links
-        testbed_url = self.config.get('testbed', f'http://192.168.31.161/external-testbed/{self.api_name}/')
+        testbed_url = self.config.get('testbed', f'https://192.168.27.155/external-testbed/{self.api_name}/')
         
         # Get design link - combine root + task-level if both exist
         root_design_link = self.config.get('root_design_link', '')

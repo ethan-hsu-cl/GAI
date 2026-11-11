@@ -18,7 +18,7 @@ default_settings:
 
 base_folder: Media Files/Pixverse Effects/0618 6 Styles
 template_path: templates/I2V standard 4col.pptx
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 
 schedule:
   start_time: ''

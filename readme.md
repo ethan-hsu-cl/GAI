@@ -69,7 +69,9 @@ Key dependencies:
 
 ## 🔐 Testbed Cookie Setup
 
-The testbed at `192.168.31.161` requires browser cookie authentication. Each user must provide their own cookie. **Cookies are never committed to Git.**
+The testbed at `192.168.27.155` requires browser cookie authentication. Each user must provide their own cookie. **Cookies are never committed to Git.**
+
+**HTTPS testbed (`https://192.168.27.155`):** it uses a self-signed certificate. Every `.crt` in `Scripts/core/certs/` is trusted automatically when `config_loader` is imported (it builds a CA bundle and sets `SSL_CERT_FILE` / `REQUESTS_CA_BUNDLE`), so no `verify=False` is needed. When the server's certificate is renewed, replace the file there.
 
 ### Option 1 — `.env` file (recommended for CLI use)
 
@@ -257,7 +259,7 @@ These apply across most config files (each API will only use the subset relevant
 #### Kling I2V (`config/batch_kling_config.yaml`)
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/kling/
+testbed: https://192.168.27.155/external-testbed/kling/
 model_version: v2.5-turbo
 group_tasks_by: 4
 
@@ -281,7 +283,7 @@ Applies premade video effects to images. Supports both preset effects and custom
 
 ```yaml
 base_folder: Media Files/Kling Effects/1127 Test
-testbed: http://192.168.31.161/external-testbed/kling/
+testbed: https://192.168.27.155/external-testbed/kling/
 duration: '5'
 effect: 3d_cartoon_1       # Preset effect from dropdown
 custom_effect: ''           # Custom effect name (takes priority if specified)
@@ -317,7 +319,7 @@ BaseFolder/
 Generates videos from start/end image pairs, producing smooth A→B transitions.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/kling/
+testbed: https://192.168.27.155/external-testbed/kling/
 model_version: v2.1
 generation_count: 1
 
@@ -347,7 +349,7 @@ Pairing modes:
 Text-to-video — no source images needed.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/kling/
+testbed: https://192.168.27.155/external-testbed/kling/
 model: "v2.5-turbo"
 output_folder: Media Files/Kling TTV/Test
 generation_count: 1
@@ -370,7 +372,7 @@ tasks:
 Cross-matches all reference images with all motion source videos.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/kling/
+testbed: https://192.168.27.155/external-testbed/kling/
 
 default_params:
   prompt: ''
@@ -401,7 +403,7 @@ TaskFolder/
 Drives `/omniGenerate` (Kling O1 `omni` / O3 `omni-v3`) as image-to-video: each image in a style's `Source/` folder is sent as `img1` (type `start`) with the task prompt; the video input, `img2`–`img7` and element IDs are left empty. Outputs are named `{source}_{generation}.mp4`.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/kling/
+testbed: https://192.168.27.155/external-testbed/kling/
 generation_count: 1
 concurrent_requests: 3
 
@@ -433,7 +435,7 @@ Single-image image-to-video via `/submit_3`. Exposes prompt / negative_prompt, m
 
 ```yaml
 base_folder: Media Files/Pixverse
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 
 default_settings:
   model: v6
@@ -461,7 +463,7 @@ PixVerse templates/effects via `/submit_5`. Each task consumes images from `base
 
 ```yaml
 base_folder: Media Files/Pixverse Multi/0526 Multi Input
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 
 default_settings:
   model: v6
@@ -495,7 +497,7 @@ Notes from the PixVerse testbed page:
 
 ```yaml
 output_folder: Media Files/Pixverse TTV
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 generation_count: 1
 
 default_settings:
@@ -531,7 +533,7 @@ tasks:
 
 ```yaml
 base_folder: Media Files/Vidu/1027 Product
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 model_version: viduq2-pro
 
 tasks:
@@ -543,7 +545,7 @@ tasks:
 
 ```yaml
 base_folder: Media Files/Vidu_Ref/1201 1 Style
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 model: viduq1
 duration: 5
 resolution: 1080p
@@ -560,7 +562,7 @@ tasks:
 
 ```yaml
 base_folder: Media Files/Vidu I2V/0518 3 Styles
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 model: viduq2-pro
 resolution: 720p
 movement: auto
@@ -583,7 +585,7 @@ tasks:
 
 ```yaml
 output_folder: Media Files/Seedance TTV
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 generation_count: 1
 
 default_settings:
@@ -611,7 +613,7 @@ tasks:
 
 ```yaml
 root_folder: Media Files/Seedance I2V
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 generation_count: 1
 
 default_settings:
@@ -644,7 +646,7 @@ Each task folder must contain a `Source/` subfolder with input images.
 Text-to-video — no source images needed.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/google_veo/
+testbed: https://192.168.27.155/external-testbed/google_veo/
 generation_count: 1
 
 tasks:
@@ -700,7 +702,7 @@ single call returns the finished video. Switch `mode` to `Sync（等待結果）
 preferred.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/google_veo/
+testbed: https://192.168.27.155/external-testbed/google_veo/
 generation_count: 1
 
 output_folder: Media Files/Gemini Omni TTV/0624 21 Styles
@@ -728,7 +730,7 @@ reference images are left empty). Videos save to
 Two modes: **Random Source Selection** (pick N random images from Source folder per call) and **Multi-Image** (Source + Additional folder pairing).
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/image_generation/
+testbed: https://192.168.27.155/external-testbed/image_generation/
 
 output:
   group_tasks_by: 2
@@ -792,7 +794,7 @@ Nano Banana retries `429 RESOURCE_EXHAUSTED` errors across runs. The count persi
 Image generation using OpenAI's `gpt-image-N` family — same multi-image / random-source / reference-image features as Nano Banana.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/image_generation/
+testbed: https://192.168.27.155/external-testbed/image_generation/
 
 output:
   directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
@@ -829,7 +831,7 @@ Options:
 Image generation on the `dola-seedream-N` models — same multi-image / random-source / reference-image / text-to-image features as Nano Banana and OpenAI Image, plus Seedream's own output controls.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/image_generation/
+testbed: https://192.168.27.155/external-testbed/image_generation/
 
 output:
   directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
@@ -871,7 +873,7 @@ Defaults (from `api_definitions.json`): model `dola-seedream-5-0-pro-260628`, `1
 #### GenVideo (`config/batch_genvideo_config.yaml`)
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/genvideo/
+testbed: https://192.168.27.155/external-testbed/genvideo/
 
 tasks:
   - folder: /path/to/TaskName1
@@ -937,7 +939,7 @@ root_folder/
 Generic two-step pipeline: **image generation** (Nano Banana **or** OpenAI Image) **→ video generation** (Kling **or** Wan V3). Each task picks its image service with `image_service` and its video service with `video_service`.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/image_generation/
+testbed: https://192.168.27.155/external-testbed/image_generation/
 
 output:
   directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
@@ -1011,7 +1013,7 @@ Folder layout:
 #### Runway (`config/batch_runway_config.yaml`)
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/runway/
+testbed: https://192.168.27.155/external-testbed/runway/
 model: gen4_aleph
 ratio: 1280:720
 public_figure_moderation: low   # low / medium / high
@@ -1053,7 +1055,7 @@ The `/wan_v3` route on the `video_effect` testbed takes a prompt plus a referenc
 All five share the same `default_settings` block, and every key in it can be overridden per task:
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 
 default_settings:
   resolution: 1080P      # 480P / 720P / 1080P
@@ -1149,7 +1151,7 @@ tasks:
 Same `Source Image/` + `Source Video/` cross-match pattern as Wan 2.2; targets face reenactment.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 
 tasks:
   - folder: Media Files/DreamActor/Style1
@@ -1164,7 +1166,7 @@ tasks:
 Same `Source Image/` + `Source Video/` cross-match pattern as DreamActor; transfers the motion of each reference video onto each subject image. Takes no extra API parameters.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 
 tasks:
   - folder: Media Files/Motion Swap/0529 9 Style
@@ -1178,7 +1180,7 @@ tasks:
 Edits a source video guided by a prompt and up to 5 optional reference images. Each task folder holds source videos in `Source/` and (optionally) reference images in `Reference/`. Reference behavior mirrors Nano Banana: by default all references are appended after the source video (sent as `i1..i5`), or set `reference_cross_match: true` to pair each source video with each reference image individually.
 
 ```yaml
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 
 default_settings:
   model: happyhorse-1.0-video-edit

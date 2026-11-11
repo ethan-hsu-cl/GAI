@@ -140,6 +140,52 @@ def get_core_path(filename: str) -> Path:
     return get_resource_path(f"core/{filename}")
 
 
+_TESTBED_CA_BUNDLE = 'gai_testbed_ca_bundle.pem'
+
+
+def install_testbed_ca() -> Optional[Path]:
+    """
+    Trust the testbed's self-signed HTTPS certificate(s) process-wide.
+
+    Writes a CA bundle of the normal public roots plus every core/certs/*.crt
+    to the temp dir, then points SSL_CERT_FILE (httpx / gradio_client) and
+    REQUESTS_CA_BUNDLE (requests) at it. Verification stays on; public sites
+    keep working because the public roots are still in the bundle.
+
+    Returns:
+        Path of the bundle, or None when there is nothing to add.
+    """
+    import tempfile
+
+    certs = sorted(get_core_path('certs').glob('*.crt'))
+    if not certs:
+        return None
+    bundle = Path(tempfile.gettempdir()) / _TESTBED_CA_BUNDLE
+
+    base = os.environ.get('SSL_CERT_FILE') or os.environ.get('REQUESTS_CA_BUNDLE')
+    if not base or Path(base).name == _TESTBED_CA_BUNDLE or not Path(base).is_file():
+        try:
+            import certifi
+            base = certifi.where()
+        except ImportError:
+            base = None
+
+    try:
+        parts = [Path(base).read_text()] if base else []
+        parts += [c.read_text() for c in certs]
+        bundle.write_text('\n'.join(p.strip() + '\n' for p in parts))
+    except OSError as e:
+        logger.warning(f"Could not build testbed CA bundle: {e}")
+        return None
+
+    os.environ['SSL_CERT_FILE'] = str(bundle)
+    os.environ['REQUESTS_CA_BUNDLE'] = str(bundle)
+    return bundle
+
+
+install_testbed_ca()
+
+
 class ConfigLoader:
     """
     Loads and manages configuration for API processing.
@@ -719,7 +765,7 @@ def get_testbed_cookie(auto_fetch: bool = True, browser: Optional[str] = None) -
         load_env_file()
         existing_cookie = os.environ.get('TESTBED_COOKIE', '')
         # Try each known testbed host until we find cookies
-        testbed_hosts = ['192.168.31.161', '210.244.31.18']
+        testbed_hosts = ['192.168.27.155', '192.168.31.161', '210.244.31.18']
         for host in testbed_hosts:
             cookie = fetch_cookie_from_browser(domain=host, browser=chosen_browser)
             if cookie:

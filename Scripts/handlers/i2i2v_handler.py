@@ -324,7 +324,7 @@ class I2i2vHandler(BaseAPIHandler):
                 if self._kling_client is None:
                     endpoint = self.api_defs.get(
                         'kling_endpoint',
-                        'http://192.168.31.161/external-testbed/kling/',
+                        'https://192.168.27.155/external-testbed/kling/',
                     )
                     headers = {}
                     cookie = self.config.get('testbed_cookie') or self.processor._testbed_cookie
@@ -345,7 +345,7 @@ class I2i2vHandler(BaseAPIHandler):
                 if self._wan_client is None:
                     endpoint = self.api_defs.get(
                         'wan_endpoint',
-                        'http://192.168.31.161/external-testbed/video_effect/',
+                        'https://192.168.27.155/external-testbed/video_effect/',
                     )
                     headers = {}
                     cookie = self.config.get('testbed_cookie') or self.processor._testbed_cookie

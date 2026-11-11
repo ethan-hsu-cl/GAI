@@ -4,7 +4,7 @@
 template_path: templates/I2V standard 5col.pptx
 comparison_template_path: templates/I2V comparison 5col.pptx
 output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
-testbed: http://192.168.31.161/external-testbed/kling/
+testbed: https://192.168.27.155/external-testbed/kling/
 model_version: v2.1
 schedule:
   start_time: ''

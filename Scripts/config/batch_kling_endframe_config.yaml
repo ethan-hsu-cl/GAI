@@ -5,7 +5,7 @@ comparison_template_path: templates/I2V comparison 5col.pptx
 output:
   directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 3
-testbed: http://192.168.31.161/external-testbed/kling/
+testbed: https://192.168.27.155/external-testbed/kling/
 model_version: v2.1
 generation_count: 10
 schedule:

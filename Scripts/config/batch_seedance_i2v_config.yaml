@@ -16,7 +16,7 @@ generation_count: 1
 # Root folder containing all style subfolders
 root_folder: Media Files/Seedance I2V
 
-testbed: http://192.168.31.161/external-testbed/video_effect/
+testbed: https://192.168.27.155/external-testbed/video_effect/
 design_link: ""
 source_video_link: ""
 
