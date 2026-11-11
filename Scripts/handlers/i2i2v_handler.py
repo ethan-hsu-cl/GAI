@@ -42,6 +42,7 @@ from pathlib import Path
 from gradio_client import Client, handle_file
 from PIL import Image
 
+from core.config_loader import expand_testbed
 from core.path_utils import name_room, fit_name, SUFFIX_ROOM
 from .base_handler import BaseAPIHandler, ValidationError
 from .image_generation_base import build_selection_plan
@@ -323,9 +324,7 @@ class I2i2vHandler(BaseAPIHandler):
             with self._kling_client_lock:
                 if self._kling_client is None:
                     endpoint = self.api_defs.get(
-                        'kling_endpoint',
-                        'https://192.168.27.155/external-testbed/kling/',
-                    )
+                        'kling_endpoint', expand_testbed('{testbed}/kling/'))
                     headers = {}
                     cookie = self.config.get('testbed_cookie') or self.processor._testbed_cookie
                     if cookie:
@@ -344,9 +343,7 @@ class I2i2vHandler(BaseAPIHandler):
             with self._wan_client_lock:
                 if self._wan_client is None:
                     endpoint = self.api_defs.get(
-                        'wan_endpoint',
-                        'https://192.168.27.155/external-testbed/video_effect/',
-                    )
+                        'wan_endpoint', expand_testbed('{testbed}/video_effect/'))
                     headers = {}
                     cookie = self.config.get('testbed_cookie') or self.processor._testbed_cookie
                     if cookie:

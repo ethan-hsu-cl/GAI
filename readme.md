@@ -6,6 +6,7 @@ A Python automation framework for batch processing images/videos through 30 AI A
 
 - [Quick Start](#-quick-start)
 - [Installation](#-installation)
+- [Testbed Location & Certificate](#-testbed-location--certificate)
 - [Testbed Cookie Setup](#-testbed-cookie-setup)
 - [Platforms at a Glance](#-platforms-at-a-glance)
 - [Folder Conventions](#-folder-conventions)
@@ -16,8 +17,8 @@ A Python automation framework for batch processing images/videos through 30 AI A
   - [Seedance family](#seedance-family)
   - [Google Veo family](#google-veo-family)
   - [Image generation (Nano Banana, OpenAI Image, Seedream Image, GenVideo)](#image-generation-nano-banana-openai-image-seedream-image-genvideo)
-  - [Pipelines (FIFA I2I2V, I2I2V)](#pipelines-fifa-i2i2v-i2i2v)
-  - [Other (Runway, Wan 2.2, DreamActor)](#other-runway-wan-22-dreamactor)
+  - [Pipelines (I2I2V)](#pipelines-i2i2v)
+  - [Other (Wan 2.2, DreamActor)](#other-wan-22-dreamactor)
 - [Report Generation](#-report-generation)
 - [Desktop GUI](#%EF%B8%8F-desktop-gui)
 - [Building the Desktop App](#-building-the-desktop-app)
@@ -67,11 +68,32 @@ Key dependencies:
 | `wakepy` | Cross-platform sleep prevention (non-macOS) |
 | `tqdm` | Progress bars |
 
+## 🌐 Testbed Location & Certificate
+
+Configs and `api_definitions.json` never spell out the testbed host. They write endpoints as `'{testbed}/kling/'`, `'{testbed}/video_effect/'` and so on (quoted — YAML would read a bare `{` as a mapping), and `{testbed}` expands at load time to:
+
+1. `TESTBED_URL` from the environment or `Scripts/.env`, else
+2. `DEFAULT_TESTBED_URL` in `Scripts/core/config_loader.py` (currently `https://192.168.27.155/external-testbed`).
+
+Browser-cookie auto-fetch looks up the current host first, then the older hosts in `LEGACY_TESTBED_HOSTS`.
+
+**When the testbed moves:**
+
+1. Change `DEFAULT_TESTBED_URL` (or, for just your machine, add `TESTBED_URL=https://new-host/external-testbed` to `Scripts/.env`).
+2. If it serves a self-signed certificate, fetch it on the office network and check the printed fingerprint and dates:
+
+   ```bash
+   python Scripts/core/config_loader.py --fetch-cert
+   ```
+
+   This writes `Scripts/core/certs/testbed_<host>.crt`. Delete the old host's `.crt` once that host is gone.
+3. `python Scripts/core/config_loader.py --show` prints the URL and cookie hosts in use.
+
+Every `.crt` in `Scripts/core/certs/` is trusted automatically when `config_loader` is imported (it builds a CA bundle and sets `SSL_CERT_FILE` / `REQUESTS_CA_BUNDLE`), so no `verify=False` is needed. When the server renews its certificate, rerun `--fetch-cert`.
+
 ## 🔐 Testbed Cookie Setup
 
-The testbed at `192.168.27.155` requires browser cookie authentication. Each user must provide their own cookie. **Cookies are never committed to Git.**
-
-**HTTPS testbed (`https://192.168.27.155`):** it uses a self-signed certificate. Every `.crt` in `Scripts/core/certs/` is trusted automatically when `config_loader` is imported (it builds a CA bundle and sets `SSL_CERT_FILE` / `REQUESTS_CA_BUNDLE`), so no `verify=False` is needed. When the server's certificate is renewed, replace the file there.
+The testbed requires browser cookie authentication. Each user must provide their own cookie. **Cookies are never committed to Git.**
 
 ### Option 1 — `.env` file (recommended for CLI use)
 
@@ -108,6 +130,8 @@ python core/runall.py kling auto
 
 ### Command short names
 
+Every API's full name also works (e.g. `veo_itv`); `python Scripts/core/runall.py` prints the current list from `api_definitions.json`.
+
 | Short name | Full name | Type | Key feature |
 | --- | --- | --- | --- |
 | `kling` | Kling I2V | I2V | Streaming downloads, negative prompts, v1.6 – v3.0 models |
@@ -131,7 +155,6 @@ python core/runall.py kling auto
 | `openai_image` | OpenAI Image | I2I | `gpt-image-1` / `gpt-image-2`, multi-image, reference images |
 | `seedream_image` (`seedream`) | Seedream Image | I2I | `dola-seedream-5-0-pro`, transparent background, layer decomposition, sequential images |
 | `genvideo` | GenVideo | I2I | Gashapon-style image transformation |
-| `runway` | Runway Gen4 | V2V | Face swap / motion, `one_to_one` or `all_combinations` pairing |
 | `wan` | Wan 2.2 | I+V | Auto-cropping, video × image cross-match |
 | `wan_v3_ttv` (`wanv3ttv`) | Wan V3 TTV | T2V | `/wan_v3`, prompt only |
 | `wan_v3_i2v` (`wanv3i2v`) | Wan V3 I2V | I2V | `/wan_v3`, source image as first frame |
@@ -141,7 +164,6 @@ python core/runall.py kling auto
 | `dreamactor` | DreamActor | I+V | Face reenactment via image × video cross-match |
 | `motion_swap` | Motion Swap | I+V | Motion transfer via subject image × motion video cross-match |
 | `happyhorse_vedit` | HappyHorse Video Edit | V2V | Prompt-driven video edit with up to 5 reference images (append or cross-match) |
-| `fifa` | FIFA I2I2V | I2I2V | Per-image start/end-frame generation → video |
 | `i2i2v` | I2I2V | I2I2V | Generic image → image → video pipeline (Nano Banana / OpenAI Image + Kling / Wan V3) |
 | `all` | All Platforms | — | Run every API in sequence (or `--parallel`) |
 
@@ -166,12 +188,11 @@ python core/runall.py kling auto
 | OpenAI Image | 32 MB | 100 px / — | JPG, PNG, WebP |
 | Seedream Image | 32 MB | 100 px / — | JPG, PNG, WebP |
 | GenVideo | 50 MB | 128 px / — | JPG, PNG, WebP |
-| Runway | image 500 MB / video 500 MB | 320 px / — | image: JPG, PNG, BMP; video: MP4, MOV, AVI, MKV, WebM |
 | Wan 2.2 | image 50 MB / video 500 MB | 128 px / — | image: JPG, PNG, WebP; video: MP4, MOV, AVI, MKV, WebM |
 | DreamActor | image 50 MB / video 500 MB | 128 px / — | image: JPG, PNG, WebP; video: MP4, MOV, AVI, MKV, WebM |
 | Motion Swap | image 50 MB / video 500 MB | 128 px / — | image: JPG, PNG, WebP; video: MP4, MOV, AVI, MKV, WebM |
 | HappyHorse Video Edit | image 10 MB / video 100 MB | image ≥ 300 px; video shorter ≥ 320 px, longer ≤ 2160 px, 3–60 s, AR 1:2.5–2.5:1 | image: JPG, PNG, WebP; video: MP4, MOV |
-| FIFA I2I2V / I2I2V | 30 MB | 256 px / — | JPG, PNG, WebP |
+| I2I2V | 30 MB | 256 px / — | JPG, PNG, WebP |
 
 (Text-to-video APIs — Kling TTV, Pixverse TTV, Seedance TTV, Veo, Gemini Omni TTV, Wan V3 TTV — take no source files.)
 
@@ -186,7 +207,6 @@ python core/runall.py kling auto
 | Kling Motion | `{video}_{image}_motion.mp4` |
 | Veo / Veo ITV | `{style}-{n}_generated.mp4` / `{source_image}_{n}.mp4` |
 | Pixverse Multi | `iter{NNN}_{img1_stem}_{img2_stem}_..._{Effect}_effect.mp4` |
-| Runway | `{filename}_ref_{ref}_runway_generated.mp4` |
 | Wan 2.2 / DreamActor | `{video}_{image}_{mode}.mp4` |
 | Motion Swap | `{video}_{image}_motion_swap.mp4` |
 | HappyHorse Video Edit | `{video}_generated.mp4` (cross-match: `{video}_ref{NN}_{refname}_generated.mp4`) |
@@ -199,7 +219,6 @@ python core/runall.py kling auto
 | Wan V3 V2V | `{source_video}_{n}.mp4` |
 | Wan V3 Endframe | `{filename}_generated.mp4` (multi-gen: `{filename}_generated_{n}.mp4`) |
 | Wan V3 Reference | `{filename}_{effect}.mp4` |
-| FIFA I2I2V | video `{source_image}_{n}.mp4`, frames `{source_image}_{n}_{start\|end}.png` |
 | I2I2V | video `{source_image}_{n}.mp4`, frames `{source_image}_{n}.{ext}` |
 
 All metadata is stored alongside the outputs as `{filename}_metadata.json` (includes success, processing time, API params, attempt count).
@@ -214,11 +233,11 @@ TaskFolder/
 ├── Source Image/        # Wan 2.2, DreamActor, Motion Swap, Kling Motion: source images
 ├── Source Video/        # Wan 2.2, DreamActor, Motion Swap, Kling Motion: source videos
 ├── Additional/          # Nano Banana / OpenAI Image / Seedream Image: extra images for multi-image mode
-├── Reference/           # Runway, Vidu Reference, Nano Banana, OpenAI Image, Seedream Image: reference images
+├── Reference/           # Vidu Reference, Nano Banana, OpenAI Image, Seedream Image: reference images
 ├── Generated_Video/     # Auto-created video outputs (video APIs)
 ├── Generated_Output/    # Auto-created outputs (Nano Banana, OpenAI Image)
 ├── Generated_Image/     # Auto-created outputs (Seedream Image, GenVideo)
-├── Generated_Frames/    # Auto-created intermediate frames (FIFA I2I2V, I2I2V)
+├── Generated_Frames/    # Auto-created intermediate frames (I2I2V)
 └── Metadata/            # Auto-created metadata JSONs
 ```
 
@@ -229,11 +248,10 @@ API-specific input layouts:
 - Nano Banana multi-image → `Source/` + `Additional/` (or `Source/` only with random selection) + optional `Reference/`
 - OpenAI Image → same as Nano Banana
 - Seedream Image → same as Nano Banana, but outputs land in `Generated_Image/`
-- Runway → `Source/` (videos) + `Reference/` (images)
 - HappyHorse Video Edit → `Source/` (videos) + optional `Reference/` (up to 5 images, append or cross-match)
 - Vidu Reference / Wan V3 Reference → `Source/` + `Reference/`
 - Pixverse Effects → `Source/` (Source pool is consumed in chunks of `image_count`)
-- FIFA I2I2V / I2I2V → `Source/` (frames in `Generated_Frames/`, videos in `Generated_Video/`)
+- I2I2V → `Source/` (frames in `Generated_Frames/`, videos in `Generated_Video/`)
 
 ## ⚙️ Configuration Reference
 
@@ -248,9 +266,9 @@ These apply across most config files (each API will only use the subset relevant
 - **`reference_folder`** — Path to a reference comparison folder
 - **`use_comparison_template`** — Enable the 3-media comparison template
 - **`schedule.start_time`** — Delayed start in `HH:MM` 24-hour format; empty = immediate
-- **`output.directory`** — Directory for generated PPTX reports
+- **`output.directory`** — Directory for generated PPTX reports (optional; defaults to the repo's `Report/`, or `$REPORT_DIR`)
 - **`output.group_tasks_by`** — Group N tasks into one combined report (0 = individual)
-- **`template_path`** — Path to the PowerPoint template
+- **`template_path`** / **`comparison_template_path`** — PowerPoint templates (optional; default is the API's `report.template_path` in `api_definitions.json`, else the 5col templates)
 
 ---
 
@@ -259,7 +277,7 @@ These apply across most config files (each API will only use the subset relevant
 #### Kling I2V (`config/batch_kling_config.yaml`)
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 model_version: v2.5-turbo
 group_tasks_by: 4
 
@@ -283,7 +301,7 @@ Applies premade video effects to images. Supports both preset effects and custom
 
 ```yaml
 base_folder: Media Files/Kling Effects/1127 Test
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 duration: '5'
 effect: 3d_cartoon_1       # Preset effect from dropdown
 custom_effect: ''           # Custom effect name (takes priority if specified)
@@ -319,12 +337,11 @@ BaseFolder/
 Generates videos from start/end image pairs, producing smooth A→B transitions.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 model_version: v2.1
 generation_count: 1
 
 output:
-  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 3
 
 tasks:
@@ -349,7 +366,7 @@ Pairing modes:
 Text-to-video — no source images needed.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 model: "v2.5-turbo"
 output_folder: Media Files/Kling TTV/Test
 generation_count: 1
@@ -372,7 +389,7 @@ tasks:
 Cross-matches all reference images with all motion source videos.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 
 default_params:
   prompt: ''
@@ -403,7 +420,7 @@ TaskFolder/
 Drives `/omniGenerate` (Kling O1 `omni` / O3 `omni-v3`) as image-to-video: each image in a style's `Source/` folder is sent as `img1` (type `start`) with the task prompt; the video input, `img2`–`img7` and element IDs are left empty. Outputs are named `{source}_{generation}.mp4`.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 generation_count: 1
 concurrent_requests: 3
 
@@ -435,7 +452,7 @@ Single-image image-to-video via `/submit_3`. Exposes prompt / negative_prompt, m
 
 ```yaml
 base_folder: Media Files/Pixverse
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 
 default_settings:
   model: v6
@@ -463,7 +480,7 @@ PixVerse templates/effects via `/submit_5`. Each task consumes images from `base
 
 ```yaml
 base_folder: Media Files/Pixverse Multi/0526 Multi Input
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 
 default_settings:
   model: v6
@@ -497,7 +514,7 @@ Notes from the PixVerse testbed page:
 
 ```yaml
 output_folder: Media Files/Pixverse TTV
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 generation_count: 1
 
 default_settings:
@@ -533,7 +550,7 @@ tasks:
 
 ```yaml
 base_folder: Media Files/Vidu/1027 Product
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 model_version: viduq2-pro
 
 tasks:
@@ -545,7 +562,7 @@ tasks:
 
 ```yaml
 base_folder: Media Files/Vidu_Ref/1201 1 Style
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 model: viduq1
 duration: 5
 resolution: 1080p
@@ -562,7 +579,7 @@ tasks:
 
 ```yaml
 base_folder: Media Files/Vidu I2V/0518 3 Styles
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 model: viduq2-pro
 resolution: 720p
 movement: auto
@@ -585,7 +602,7 @@ tasks:
 
 ```yaml
 output_folder: Media Files/Seedance TTV
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 generation_count: 1
 
 default_settings:
@@ -613,7 +630,7 @@ tasks:
 
 ```yaml
 root_folder: Media Files/Seedance I2V
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 generation_count: 1
 
 default_settings:
@@ -646,7 +663,7 @@ Each task folder must contain a `Source/` subfolder with input images.
 Text-to-video — no source images needed.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/google_veo/
+testbed: '{testbed}/google_veo/'
 generation_count: 1
 
 tasks:
@@ -702,7 +719,7 @@ single call returns the finished video. Switch `mode` to `Sync（等待結果）
 preferred.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/google_veo/
+testbed: '{testbed}/google_veo/'
 generation_count: 1
 
 output_folder: Media Files/Gemini Omni TTV/0624 21 Styles
@@ -730,7 +747,7 @@ reference images are left empty). Videos save to
 Two modes: **Random Source Selection** (pick N random images from Source folder per call) and **Multi-Image** (Source + Additional folder pairing).
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/image_generation/
+testbed: '{testbed}/image_generation/'
 
 output:
   group_tasks_by: 2
@@ -794,10 +811,9 @@ Nano Banana retries `429 RESOURCE_EXHAUSTED` errors across runs. The count persi
 Image generation using OpenAI's `gpt-image-N` family — same multi-image / random-source / reference-image features as Nano Banana.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/image_generation/
+testbed: '{testbed}/image_generation/'
 
 output:
-  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 1
 
 tasks:
@@ -831,10 +847,9 @@ Options:
 Image generation on the `dola-seedream-N` models — same multi-image / random-source / reference-image / text-to-image features as Nano Banana and OpenAI Image, plus Seedream's own output controls.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/image_generation/
+testbed: '{testbed}/image_generation/'
 
 output:
-  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 1
 
 tasks:
@@ -873,7 +888,7 @@ Defaults (from `api_definitions.json`): model `dola-seedream-5-0-pro-260628`, `1
 #### GenVideo (`config/batch_genvideo_config.yaml`)
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/genvideo/
+testbed: '{testbed}/genvideo/'
 
 tasks:
   - folder: /path/to/TaskName1
@@ -886,63 +901,18 @@ tasks:
 
 ---
 
-### Pipelines (FIFA I2I2V, I2I2V)
+### Pipelines (I2I2V)
 
-Two image-to-image-to-video pipelines that chain an image-generation step with a video-generation step.
-
-#### FIFA I2I2V (`config/batch_fifa_i2i2v_config.yaml`)
-
-Per source image, optionally generate a start frame and/or end frame from prompts, then generate the final video from whichever frames were produced. Defaults to Kling 3.0 Pro for the video step.
-
-```yaml
-root_folder: Media Files/FIFA_I2I2V
-generation_count: 1
-
-default_settings:
-  frame_model: gemini-3-pro-image-preview
-  generate_start: true
-  generate_end: false
-  service: kling
-  model: v3              # Kling 3.0
-  kling_mode: pro
-  kling_duration: '5'
-  kling_ratio: '16:9'
-
-tasks:
-  - style_name: Statue Selfie
-    folder: Media Files/FIFA_I2I2V/0518 1 Styles/Statue Selfie
-    generate_start: true
-    generate_end: false
-    start_frame_prompt: "Person standing next to a marble statue in a museum, golden-hour light."
-    end_frame_prompt: ""
-    video_prompt: "Cinematic slow push-in; statue subtly comes alive."
-    video_negative_prompt: ""
-```
-
-**Pipeline:** `/on_generate_frame` (if `generate_start`) → `/on_generate_frame_1` (if `generate_end`) → `/on_generate_video`. At least one of `generate_start` / `generate_end` must be true.
-
-**Supported video services:** `kling`, `wan`, `pixverse`, `google_veo`, `seedance`.
-
-Folder layout:
-
-```bash
-root_folder/
-├── {style_name}/
-│   ├── Source/             # input images
-│   ├── Generated_Frames/   # {name}_{n}_start.png / {name}_{n}_end.png
-│   ├── Generated_Video/    # {name}_{n}.mp4
-│   └── Metadata/
-```
+An image-to-image-to-video pipeline that chains an image-generation step with a video-generation step.
 
 #### I2I2V (`config/batch_i2i2v_config.yaml`)
 
 Generic two-step pipeline: **image generation** (Nano Banana **or** OpenAI Image) **→ video generation** (Kling **or** Wan V3). Each task picks its image service with `image_service` and its video service with `video_service`.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/image_generation/
+testbed: '{testbed}/image_generation/'
 
 output:
-  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 2
 
 tasks:
@@ -1008,24 +978,7 @@ Folder layout:
 
 ---
 
-### Other (Runway, Wan 2.2, DreamActor)
-
-#### Runway (`config/batch_runway_config.yaml`)
-
-```yaml
-testbed: https://192.168.27.155/external-testbed/runway/
-model: gen4_aleph
-ratio: 1280:720
-public_figure_moderation: low   # low / medium / high
-
-tasks:
-  - folder: /path/to/TaskName1
-    prompt: "Face swap effect"
-    pairing_strategy: all_combinations   # or 'one_to_one'
-```
-
-**Pairing:** `one_to_one` (1:1 mapping) or `all_combinations` (N × M outputs).
-**Ratios:** `1280:720`, `720:1280`, `1104:832`, `960:960`, `832:1104`, `1584:672`, `848:480`, `640:480`.
+### Other (Wan 2.2, DreamActor)
 
 #### Wan 2.2 (`config/batch_wan_config.yaml`)
 
@@ -1055,7 +1008,7 @@ The `/wan_v3` route on the `video_effect` testbed takes a prompt plus a referenc
 All five share the same `default_settings` block, and every key in it can be overridden per task:
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 
 default_settings:
   resolution: 1080P      # 480P / 720P / 1080P
@@ -1151,7 +1104,7 @@ tasks:
 Same `Source Image/` + `Source Video/` cross-match pattern as Wan 2.2; targets face reenactment.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 
 tasks:
   - folder: Media Files/DreamActor/Style1
@@ -1166,7 +1119,7 @@ tasks:
 Same `Source Image/` + `Source Video/` cross-match pattern as DreamActor; transfers the motion of each reference video onto each subject image. Takes no extra API parameters.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 
 tasks:
   - folder: Media Files/Motion Swap/0529 9 Style
@@ -1180,7 +1133,7 @@ tasks:
 Edits a source video guided by a prompt and up to 5 optional reference images. Each task folder holds source videos in `Source/` and (optionally) reference images in `Reference/`. Reference behavior mirrors Nano Banana: by default all references are appended after the source video (sent as `i1..i5`), or set `reference_cross_match: true` to pair each source video with each reference image individually.
 
 ```yaml
-testbed: https://192.168.27.155/external-testbed/video_effect/
+testbed: '{testbed}/video_effect/'
 
 default_settings:
   model: happyhorse-1.0-video-edit
@@ -1206,8 +1159,8 @@ Defaults: `happyhorse-1.0-video-edit` model, `720P`, `origin` audio, random seed
 
 PowerPoint reports are generated automatically with title slides, side-by-side comparisons, per-slide metadata boxes, and hyperlinks.
 
-- **Templates:** `Scripts/templates/` holds four templates, named for the two properties that vary — media layout (`standard` = 2-media, `comparison` = 3-media) and Executive Summary table (`5col` = `Pass符合prompt`/`Pass不合prompt`, `4col` = single `Pass`). Pick via `template_path` and `comparison_template_path`.
-- **Output:** `Report/[MMDD] API Name Task Name.pptx`
+- **Templates:** `Scripts/templates/` holds four templates, named for the two properties that vary — media layout (`standard` = 2-media, `comparison` = 3-media) and Executive Summary table (`5col` = `Pass符合prompt`/`Pass不合prompt`, `4col` = single `Pass`). Each API's default lives in `api_definitions.json` (`report.template_path`, 5col when absent); a config's `template_path` / `comparison_template_path` overrides it.
+- **Output:** `Report/[MMDD] API Name Task Name.pptx` — the repo's `Report/` folder unless `$REPORT_DIR` or a config's `output.directory` says otherwise
 
 Run `python core/runall.py <platform> report` to regenerate the report from existing media (no re-processing).
 
@@ -1339,7 +1292,9 @@ The framework uses an auto-discovery handler system.
   - **Sleep prevention** — on macOS uses native `caffeinate -di` subprocess tracked by PID; on other platforms uses `wakepy`. Cleanup is guaranteed via `finally`, `atexit`, and `SIGINT` / `SIGTERM` handlers so orphaned processes can't block sleep. Multiple concurrent script instances are safe.
 - **`UnifiedReportGenerator`** — PowerPoint generation with parallel metadata loading
 
-**23 API handlers:** Kling, KlingEffects, KlingEndframe, KlingTTV, KlingMotion, PixverseI2v, PixverseEffect, PixverseTTV, ViduEffects, ViduReference, ViduI2v, SeedanceTtv, SeedanceI2v, Veo, VeoItv, NanoBanana, OpenaiImage, Genvideo, Runway, Wan, DreamActor, FifaI2i2v, I2i2v.
+- **`api_definitions.json`** — one entry per API and the single place an API is registered: endpoint, params and validation, plus `display_name`, `aliases` (runall short names), `description` (runall help) and `traits`. `runall.py` builds its platform and config maps from it, and the report generator its display names. Shared code checks `traits` (`self._is('image_output')`, ...) instead of lists of API names; the `_traits` block at the top of the file explains each one.
+
+One handler per API lives in `handlers/`; `python core/runall.py` (no arguments) lists every platform with its aliases.
 
 All APIs use deterministic file sorting for reproducible results.
 
@@ -1369,10 +1324,8 @@ GAI/
     │   ├── batch_openai_image_config.yaml
     │   ├── batch_seedream_image_config.yaml
     │   ├── batch_genvideo_config.yaml
-    │   ├── batch_runway_config.yaml
     │   ├── batch_wan_config.yaml
     │   ├── batch_dreamactor_config.yaml
-    │   ├── batch_fifa_i2i2v_config.yaml
     │   └── batch_i2i2v_config.yaml
     ├── core/
     │   ├── api_definitions.json            # API specifications (endpoints, params, defaults)
@@ -1401,10 +1354,8 @@ GAI/
     │   ├── openai_image_handler.py
     │   ├── seedream_image_handler.py
     │   ├── genvideo_handler.py
-    │   ├── runway_handler.py
     │   ├── wan_handler.py
     │   ├── dreamactor_handler.py
-    │   ├── fifa_i2i2v_handler.py
     │   └── i2i2v_handler.py
     ├── templates/                           # PowerPoint templates
     │   ├── I2V standard 5col.pptx           # 2-media layout, split Pass columns

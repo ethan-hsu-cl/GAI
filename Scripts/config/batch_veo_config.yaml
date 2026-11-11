@@ -1,5 +1,3 @@
-template_path: templates/I2V standard 5col.pptx
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 generation_count: 1
 source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCGY0yVSb4KRqBWqVs4vFo0AbjUj7wyRcvGl6WlhrALCiI?e=5SOcnM
 schedule:
@@ -327,7 +325,7 @@ tasks:
 
 comments:
   source_video_link: 'URL link to the source + generated video folder (e.g., SharePoint). Included in PPTX report.'
-  output_directory: 'Optional: Global output directory for all generated PPTX files. Default is current directory.'
+  output_directory: "Optional. Folder for the generated PPTX reports. Defaults to the repo's Report/ folder (or $REPORT_DIR)."
   generation_count: Global default number of videos to generate per task. Default is 1. Can be overridden per task.
   schedule: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
   style_name: 'Task-specific style identifier used in output filename: [Style name]-[Number].mp4'

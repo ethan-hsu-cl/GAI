@@ -1,9 +1,4 @@
-template_path: templates/I2V standard 5col.pptx
-comparison_template_path: templates/I2V comparison 5col.pptx
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
-comment_output_directory: 'Optional: Global output directory for all generated images. Can be overridden per task. Default
-  is current directory.'
-testbed: https://192.168.27.155/external-testbed/genvideo/
+testbed: '{testbed}/genvideo/'
 schedule:
   start_time: ''
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
@@ -52,8 +47,8 @@ comments:
     Set to true to use comparison_template_path (3 placeholders: source, reference, output).
     Set to false to use template_path (2 placeholders: source, output).
   output_directory: |
-    Global output directory for all generated PPTX report files.
-    Default is current directory.
+    Optional. Folder for the generated PPTX reports. Defaults to the repo's
+    Report/ folder (or $REPORT_DIR). Only set it to send reports elsewhere.
   schedule: |
     start_time: HH:MM (24-hour format). Leave empty to start immediately.
     Allows delayed start for batch processing.

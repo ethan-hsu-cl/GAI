@@ -2,8 +2,7 @@
 # Uses the /submitI2V API endpoint
 # Each style folder under base_folder should contain a 'Source' subfolder with source images
 
-testbed: https://192.168.27.155/external-testbed/video_effect/
-template_path: templates/I2V standard 4col.pptx
+testbed: '{testbed}/video_effect/'
 
 # Global defaults (per-task can override)
 model: viduq2-turbo
@@ -12,7 +11,6 @@ movement: auto
 audio: true
 
 output:
-  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 3
 
 schedule:
@@ -20,7 +18,6 @@ schedule:
   comment: 'Time format: HH:MM (24-hour format). Leave empty to start immediately'
 
 base_folder: Media Files/Vidu I2V/0518 3 Styles
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 
 design_link: https://docs.google.com/spreadsheets/d/1uhsTRRRXbU-PW99G8_GxqEKiVyLy6fAwImZ1zSjsVy8/edit?gid=1601579607#gid=1601579607
 source_video_link: https://cyberlinkcorp-my.sharepoint.com/:f:/g/personal/onedrive_qa1_cyberlink_com/IgCjqsNsah3BQ4XY0sAeiXFuAUjNBVQ4pISdKbGd200pFzU?e=iXOJVo

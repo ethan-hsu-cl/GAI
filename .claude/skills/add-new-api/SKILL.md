@@ -1,6 +1,6 @@
 ---
 name: add-new-api
-description: Add a new API platform to the GAI automation suite — creates a handler, config YAML, api_definitions entry, runall registration, unified report generator support, README section, and runs validation. Use when the user wants to integrate a new Gradio-based generation API (image_to_video, text_to_video, effects, endframe, motion, or reference) and provides API documentation, an API type, and default parameter values.
+description: Add a new API platform to the GAI automation suite — creates a handler, config YAML, api_definitions entry (which also registers it with runall and the report generator via display_name/aliases/traits), report slide config, README section, and runs validation. Use when the user wants to integrate a new Gradio-based generation API (image_to_video, text_to_video, effects, endframe, motion, or reference) and provides API documentation, an API type, and default parameter values.
 ---
 
 # add-new-api
@@ -27,8 +27,9 @@ Derive a snake_case API name from the platform name (e.g., `seedance_ttv`, `klin
 Pasted docs drift from the server, and a call that only fails when the user runs the batch costs them a round trip. Find the problems here instead. The testbeds sit behind an OAuth proxy, so a bare `Client(url)` fails with `Could not fetch config` — pass the cookie from `get_testbed_cookie()`, which pulls the live session from Chrome by default (`TESTBED_BROWSER` in `.env` overrides the browser) and only falls back to the `.env` copy. Keep the default `auto_fetch=True`. Run from `Scripts/core` with conda `myenv`, writing probe scripts to the scratchpad:
 
 ```python
-from config_loader import get_testbed_cookie
+from config_loader import get_testbed_cookie, expand_testbed  # importing also trusts core/certs/*.crt
 from gradio_client import Client, handle_file
+ENDPOINT = expand_testbed('{testbed}/video_effect/')  # or kling/, image_generation/ ...
 c = Client(ENDPOINT, headers={'Cookie': get_testbed_cookie()}, verbose=False)
 ep = c.view_api(return_format='dict', print_info=False)['named_endpoints'][API_ROUTE]
 ```
@@ -73,9 +74,7 @@ Create `Scripts/config/batch_{api_name}_config.yaml`.
 **Structure:**
 ```yaml
 # {Platform} Configuration
-template_path: templates/I2V standard 5col.pptx
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
-testbed: {endpoint_url}
+testbed: '{testbed}/{testbed_dir}/'
 design_link: ""
 source_video_link: ""
 generation_count: 1
@@ -92,6 +91,8 @@ tasks:
     # Per-task overrides here
 ```
 
+Leave out `template_path`, `comparison_template_path` and `output_directory`: the 5col templates are the default (a 4col API sets it once in `api_definitions.json` `report`), and reports go to the repo's `Report/` folder (`get_default_report_dir()`).
+
 **Task content:** Copy the 21 standard benchmark tasks from `batch_pixverse_ttv_config.yaml` or `batch_veo_config.yaml`, adapting fields to match the new API's parameter names. Preserve the same `style_name` values and `prompt` text. Keep aspect ratios consistent with veo and pixverse_ttv configs.
 
 ## Step 4: Add API Definitions
@@ -99,9 +100,15 @@ tasks:
 Add an entry to `Scripts/core/api_definitions.json` under the API name key.
 
 **Required fields:**
+`{testbed}` is literal — keep it; it expands to the testbed base URL at load time (see `DEFAULT_TESTBED_URL` in `config_loader.py`). Only `{testbed_dir}` is yours to fill (e.g. `kling`, `video_effect`, `image_generation`). Never hardcode the host.
+
 ```json
 {
-    "endpoint": "{testbed_url}",
+    "display_name": "{Display Name}",
+    "description": "{one-line summary for runall's help}",
+    "aliases": ["{shorthand}"],
+    "traits": ["text_to_video", "video_media"],
+    "endpoint": "{testbed}/{testbed_dir}/",
     "api_name": "/{gradio_api_route}",
     "file_types": [],
     "validation": {},
@@ -114,12 +121,6 @@ Add an entry to `Scripts/core/api_definitions.json` under the API name key.
     "max_retries": 3,
     "special_handling": "text_to_video",
     "config_structure": "task_list",
-    "report": {
-        "enabled": true,
-        "template_path": "templates/I2V standard 5col.pptx",
-        "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-        "use_comparison": false
-    },
     "task_fields": ["prompt", ...],
     "api_params": { ... },
     "model_options": [...],
@@ -127,61 +128,32 @@ Add an entry to `Scripts/core/api_definitions.json` under the API name key.
 }
 ```
 
+- This one entry registers the API everywhere: `runall.py` builds its platform names (the API name plus `aliases`), its default config path (`config/batch_{api_name}_config.yaml`) and its `--help` line from it; the report generator takes `display_name` and its supported-API list from it. There is nothing to add in `runall.py`, and no API-name list to extend in the report generator.
+- **`traits`** replace the old hard-coded API-name lists in the shared code. The `_traits` block at the top of `api_definitions.json` explains each one. Copy the traits of the closest existing API, then add or drop any whose description doesn't fit (e.g. a TTV API whose outputs sit under the config's `output_folder` also needs `ttv_output_folder`; one that writes images needs `image_output`). A missing trait sends the report down the wrong folder path without an error, so check every description.
+- **`report`** only when the API uses a non-default template, e.g. `"report": {"template_path": "templates/I2V standard 4col.pptx"}`. The 5col standard/comparison templates are the default.
 - For image/video input APIs, populate `file_types` (e.g., `[".jpg", ".jpeg", ".png"]`) and `validation` (max_size_mb, min_dimension, aspect_ratio range).
 - For text-to-video APIs, set `"special_handling": "text_to_video"` and `"config_structure": "task_list"`.
 - For effects/base-folder APIs, set `"config_structure": "base_folder"`.
 - Validate the JSON after editing: `python3 -c "import json; json.load(open('Scripts/core/api_definitions.json')); print('JSON valid')"`.
 
-## Step 5: Register in runall.py
+## Step 5: runall.py examples (optional)
 
-Edit `Scripts/core/runall.py` — add entries in **all four** locations:
-
-1. **`API_MAPPING`** dict — Add both the canonical name and a shorthand alias:
-   ```python
-   '{api_name}': '{api_name}',
-   '{shorthand}': '{api_name}',
-   ```
-
-2. **`CONFIG_MAPPING`** dict:
-   ```python
-   '{api_name}': 'config/batch_{api_name}_config.yaml',
-   ```
-
-3. **Help text** — Add a `print()` line in the PLATFORMS section.
-
-4. **Examples** — Add a `print()` line in the EXAMPLES section.
+Registration is automatic (Step 4). Optionally add a `print()` line in the EXAMPLES section of `print_usage()`.
 
 ## Step 6: Add Report Support
 
-Edit `Scripts/core/unified_report_generator.py` — add the API name to **all** of the following locations:
+Edit `Scripts/core/unified_report_generator.py`:
 
-1. **Display name** — In the `DISPLAY_NAMES`-style dict in `__init__()`, add: `'{api_name}': '{Display Name}'`
-
-2. **Slide config** — In `get_slide_config()`, add a config block. Use the same format as the closest matching API type:
+1. **Slide config** — In `get_slide_config()`, add a config block. Use the same format as the closest matching API type:
    - Text-to-video: `media_types: ['prompt', 'generated']` with 2-media layout
    - Image-to-video: `media_types: ['source', 'generated']` with 2-media layout
    - Effects: `media_types: ['source', 'generated']` with 2-media layout
 
    Set `metadata_fields` to match the fields saved in `_handle_result`.
 
-3. **Video detection** — Add to the `is_video` check list (search for `'pixverse_ttv'` in the `is_video` line).
+2. **Routing** — handled by the `traits` from Step 4 (`self._is('<trait>')` checks). Only if the new API needs behaviour no trait describes, add a new trait: document it in `_traits`, list it on every API that should have it, and check it with `self._is(...)` — never a new `self.api_name in [...]` list.
 
-4. **`process_batch()`** — Add to the appropriate routing condition:
-   - Text-to-video: the `["veo", "kling_ttv", "pixverse_ttv", ...]` list
-   - Base folder: the `["vidu_effects", "vidu_reference", ...]` list
-   - Otherwise falls through to task folder structure
-
-5. **`process_text_to_video_batch()`** (text-to-video only) — Add to the folder resolution condition:
-   - If config uses `output_folder` at root level: add to `['kling_ttv', 'pixverse_ttv', ...]`
-   - If config uses per-task `output_folder`: it falls through to the `else` (veo-style)
-
-6. **`run()` method** — Add to the appropriate routing condition (same list as `process_batch`).
-
-7. **Filename generation** — Search for all lists containing `'pixverse_ttv'` in `_get_filename_parts()` and `_get_grouped_filename()`. Add the new API name to each list where style count display is appropriate.
-
-8. **`create_report_generator()`** — Add to the `supported_apis` list.
-
-9. **`main()` argparse** — Add to the `choices` list.
+3. **GUI (optional)** — to show it in the desktop GUI dropdown, add an `API_FIELD_SCHEMAS` entry in `Scripts/gui_app.py`; its `name` is the dropdown label.
 
 ## Step 7: Update README
 
@@ -203,7 +175,8 @@ Also list the new API in that skill's frontmatter `description`, which decides w
 Run these checks:
 1. `python3 -c "import json; json.load(open('Scripts/core/api_definitions.json')); print('JSON valid')"`
 2. From `Scripts/` directory with conda myenv (`core/` must be on the path — its modules import each other bare, so `from core.…` fails with `No module named 'config_loader'`): `python -c "import sys; sys.path.insert(0, 'core'); from unified_report_generator import create_report_generator; g = create_report_generator('{api_name}'); sc = g.get_slide_config(); print('Media types:', sc.get('media_types')); print('OK')"`
-3. **Coverage check** — `grep -rn "{closest_existing_api}" Scripts/core Scripts/handlers readme.md` for the existing API the new one was modeled on, and confirm the new name appears beside it in every list. The steps above name the usual spots, but routing lists get added over time; a missed one silently routes the report to the wrong folder structure.
+3. **Trait check** — `grep -rn "'{closest_existing_api}'" Scripts/core Scripts/handlers` for the API the new one was modeled on. Any remaining single-name checks (`self.api_name == '...'`) are API-specific; decide for each whether the new API needs the same branch. Then compare the new entry's `traits` with that API's and confirm each difference is intended.
+4. `python Scripts/core/runall.py` lists the new API (with its aliases) under PLATFORMS.
 
 ## Step 9: End-to-end smoke run
 

@@ -2,10 +2,7 @@
 # Same 10 prompts and same source images as the baseline config, run on v3 and
 # reported on the 3-media comparison template: Source | Video 1 (baseline) | Video 2 (v3),
 # via reference_first below, which swaps the generated/reference slots.
-template_path: templates/I2V standard 5col.pptx
-comparison_template_path: templates/I2V comparison 5col.pptx
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 model_version: v3
 schedule:
   start_time: ''

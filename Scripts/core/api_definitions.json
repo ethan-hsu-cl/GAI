@@ -1,6 +1,34 @@
 {
+  "_traits": {
+    "_about": "Keys starting with _ are documentation and are ignored by the loader. 'traits' tell the shared processor/report code how an API behaves; add the matching ones when adding an API instead of editing api-name lists in code.",
+    "image_output": "Generates images (Generated_Output), text_to_image and random-source/reference cross-match modes; image-gen testbed override.",
+    "endframe_pairs": "Source images come as _a/_b start/end pairs; only A images seed report rows.",
+    "kling_model_name": "Report display name is refined from the configured Kling model version.",
+    "model_per_task": "Model may be set on the first task rather than at config root (display-name lookup).",
+    "video_combination": "Source images × source videos cross-combination layout (tiered failure ordering, grouped by video).",
+    "base_folder_layout": "Report collects rows via process_base_folder_structure (base_folder or task folders).",
+    "text_to_video": "Prompt-only generation; report built by process_text_to_video_batch.",
+    "ttv_output_folder": "TTV outputs live under the config's output_folder/Generated_Video (not per-task folders).",
+    "multi_source_images": "A row may carry extra source images shown alongside the main source.",
+    "video_media": "Source/generated media slots in the report are always video.",
+    "show_source_file": "Report metadata box starts with 'File: <source>'.",
+    "task_folders": "Each task has its own folder (with Source/) under a dated group folder that supplies the report date.",
+    "effect_folders": "base_folder/<effect>/ subfolders per effect (Vidu effects / I2V).",
+    "reference_folder": "Per-effect Reference/ folder of extra images paired with each source.",
+    "base_folder_name": "Report title/filename uses the config's base_folder name.",
+    "source_image_metadata": "Per-file metadata names its input 'source_image' (else 'source_file')."
+  },
   "kling_effects": {
-    "endpoint": "https://192.168.27.155/external-testbed/kling/",
+    "display_name": "Kling Effects",
+    "description": "Kling Video Effects (premade effects)",
+    "aliases": [
+      "klingfx"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "base_folder_name"
+    ],
+    "endpoint": "{testbed}/kling/",
     "api_name": "/VideoEffect",
     "file_types": [
       ".jpg",
@@ -28,10 +56,7 @@
     "config_structure": "base_folder",
     "structure_type": "base_folder",
     "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
+      "template_path": "templates/I2V standard 4col.pptx"
     },
     "task_fields": [
       "effect",
@@ -165,7 +190,13 @@
     ]
   },
   "kling": {
-    "endpoint": "https://192.168.27.155/external-testbed/kling/",
+    "display_name": "Kling",
+    "description": "Kling Image2Video processing",
+    "traits": [
+      "kling_model_name",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/kling/",
     "api_name": "/Image2Video",
     "file_types": [
       ".jpg",
@@ -191,13 +222,6 @@
     "task_delay": 10,
     "max_retries": 3,
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "prompt",
@@ -215,7 +239,14 @@
     }
   },
   "kling_endframe": {
-    "endpoint": "https://192.168.27.155/external-testbed/kling/",
+    "display_name": "Kling Endframe",
+    "description": "Kling Endframe (start/end image pairs)",
+    "traits": [
+      "endframe_pairs",
+      "kling_model_name",
+      "show_source_file"
+    ],
+    "endpoint": "{testbed}/kling/",
     "api_name": "/EndFrame",
     "file_types": [
       ".jpg",
@@ -242,13 +273,6 @@
     "max_retries": 3,
     "special_handling": "image_pairs",
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "prompt",
@@ -282,7 +306,20 @@
     ]
   },
   "openai_image": {
-    "endpoint": "https://192.168.27.155/external-testbed/image_generation/",
+    "display_name": "OpenAI Image",
+    "description": "OpenAI Image (gpt-image-N) generation",
+    "aliases": [
+      "openaiimage",
+      "gptimage",
+      "gpt_image"
+    ],
+    "traits": [
+      "image_output",
+      "multi_source_images",
+      "show_source_file",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/image_generation/",
     "api_name": "/openai_image",
     "file_types": [
       ".jpg",
@@ -307,13 +344,6 @@
     "max_retries_error429": 3,
     "max_retries_timeout": 3,
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "prompt",
@@ -371,7 +401,19 @@
     }
   },
   "seedream_image": {
-    "endpoint": "https://192.168.27.155/external-testbed/image_generation/",
+    "display_name": "Seedream Image",
+    "description": "Seedream Image (dola-seedream-N) generation",
+    "aliases": [
+      "seedreamimage",
+      "seedream"
+    ],
+    "traits": [
+      "image_output",
+      "multi_source_images",
+      "show_source_file",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/image_generation/",
     "api_name": "/seedream_image",
     "file_types": [
       ".jpg",
@@ -396,13 +438,6 @@
     "max_retries_error429": 3,
     "max_retries_timeout": 3,
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "prompt",
@@ -473,7 +508,18 @@
     }
   },
   "nano_banana": {
-    "endpoint": "https://192.168.27.155/external-testbed/image_generation/",
+    "display_name": "Nano Banana",
+    "description": "Google Flash/Nano Banana processing",
+    "aliases": [
+      "nano"
+    ],
+    "traits": [
+      "image_output",
+      "multi_source_images",
+      "show_source_file",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/image_generation/",
     "api_name": "/nano_banana",
     "file_types": [
       ".jpg",
@@ -498,13 +544,6 @@
     "max_retries_error429": 3,
     "special_handling": "base64_images",
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "prompt",
@@ -521,7 +560,18 @@
     }
   },
   "vidu_effects": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Vidu Effects",
+    "description": "Vidu Effects processing",
+    "aliases": [
+      "vidu"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "base_folder_name",
+      "effect_folders",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/effect_submit_api",
     "file_types": [
       ".jpg",
@@ -561,10 +611,7 @@
     "structure_type": "base_folder",
     "config_structure": "base_folder",
     "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
+      "template_path": "templates/I2V standard 4col.pptx"
     },
     "task_fields": [
       "category",
@@ -578,7 +625,18 @@
     }
   },
   "vidu_i2v": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Vidu I2V",
+    "description": "Vidu Image-to-Video (/submitI2V) processing",
+    "aliases": [
+      "viduit2v"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "base_folder_name",
+      "effect_folders",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/submitI2V",
     "file_types": [
       ".jpg",
@@ -636,10 +694,7 @@
     "structure_type": "base_folder",
     "config_structure": "base_folder",
     "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 4col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
+      "template_path": "templates/I2V standard 4col.pptx"
     },
     "task_fields": [
       "custom_effect_name",
@@ -656,7 +711,19 @@
     }
   },
   "vidu_reference": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Vidu Reference",
+    "description": "Vidu Reference processing",
+    "aliases": [
+      "viduref"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "base_folder_name",
+      "multi_source_images",
+      "reference_folder",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/reference_api",
     "file_types": [
       ".jpg",
@@ -689,12 +756,6 @@
       "1:1"
     ],
     "config_structure": "base_folder",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "effect",
       "prompt",
@@ -714,87 +775,14 @@
       "multilingual_prompts": true
     }
   },
-  "runway": {
-    "endpoint": "https://192.168.27.155/external-testbed/runway/",
-    "api_name": "/submit_1",
-    "file_types": {
-      "video": [
-        ".mp4",
-        ".mov",
-        ".avi",
-        ".mkv",
-        ".webm"
-      ],
-      "image": [
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".bmp"
-      ]
-    },
-    "validation": {
-      "video": {
-        "max_size_mb": 500,
-        "min_dimension": 320,
-        "duration": [
-          1,
-          300
-        ]
-      },
-      "image": {
-        "max_size_mb": 500,
-        "min_dimension": 320
-      }
-    },
-    "folders": {
-      "input": "Source",
-      "reference": "Reference",
-      "output": "Generated_Video",
-      "metadata": "Metadata"
-    },
-    "rate_limit": 3,
-    "task_delay": 10,
-    "max_retries": 3,
-    "special_handling": "video_with_reference",
-    "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
-    "task_fields": [
-      "folder",
-      "prompt",
-      "pairing_strategy",
-      "design_link",
-      "source_video_link",
-      "reference_folder",
-      "use_comparison_template"
-    ],
-    "api_params": {
-      "model": "gen4_aleph",
-      "ratio": "1280:720",
-      "public_figure_moderation": "low"
-    },
-    "pairing_strategies": [
-      "one_to_one",
-      "all_combinations"
-    ],
-    "available_ratios": [
-      "1280:720",
-      "720:1280",
-      "1104:832",
-      "960:960",
-      "832:1104",
-      "1584:672",
-      "848:480",
-      "640:480"
-    ]
-  },
   "genvideo": {
-    "endpoint": "https://192.168.27.155/external-testbed/genvideo/",
+    "display_name": "GenVideo",
+    "description": "GenVideo image generation processing",
+    "traits": [
+      "show_source_file",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/genvideo/",
     "api_name": "/submit_img2img",
     "file_types": [
       ".jpg",
@@ -817,13 +805,6 @@
     "task_delay": 10,
     "max_retries": 2,
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "img_prompt",
@@ -850,7 +831,19 @@
     ]
   },
   "pixverse_i2v": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Pixverse I2V",
+    "description": "Pixverse Image-to-Video processing (/submit_3)",
+    "aliases": [
+      "pixversei2v",
+      "pixverse"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "base_folder_name",
+      "show_source_file",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/submit_3",
     "file_types": [
       ".jpg",
@@ -880,10 +873,7 @@
     "structure_type": "base_folder",
     "config_structure": "base_folder",
     "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
+      "template_path": "templates/I2V standard 4col.pptx"
     },
     "task_fields": [
       "effect",
@@ -907,7 +897,21 @@
     "parallel_validation": true
   },
   "pixverse_effect": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Pixverse Effects",
+    "description": "Pixverse Effects/templates, 1-4 image inputs + sound (/submit_5)",
+    "aliases": [
+      "pixverseeffect",
+      "pixverse_multi",
+      "pixversemulti"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "base_folder_name",
+      "multi_source_images",
+      "show_source_file",
+      "source_image_metadata"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/submit_5",
     "file_types": [
       ".jpg",
@@ -936,10 +940,7 @@
     "config_structure": "base_folder",
     "max_images_per_call": 4,
     "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 4col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
+      "template_path": "templates/I2V standard 4col.pptx"
     },
     "task_fields": [
       "effect",
@@ -979,7 +980,17 @@
     "parallel_validation": true
   },
   "pixverse_ttv": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Pixverse TTV",
+    "description": "Pixverse Text-to-Video processing",
+    "aliases": [
+      "pixversettv"
+    ],
+    "traits": [
+      "text_to_video",
+      "ttv_output_folder",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/submit_4",
     "file_types": [],
     "validation": {},
@@ -992,12 +1003,6 @@
     "max_retries": 3,
     "special_handling": "text_to_video",
     "config_structure": "task_list",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "prompt",
       "negative_prompt",
@@ -1050,6 +1055,11 @@
     ]
   },
   "wan": {
+    "display_name": "Wan 2.2",
+    "description": "Wan 2.2 image-video animation processing",
+    "traits": [
+      "video_combination"
+    ],
     "endpoint": "http://210.244.31.18:7007/",
     "api_name": "/fn_wan_animate",
     "file_types": {
@@ -1094,13 +1104,6 @@
     "max_retries": 3,
     "special_handling": "image_video_cross_match",
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "prompt",
@@ -1126,7 +1129,13 @@
     ]
   },
   "veo": {
-    "endpoint": "https://192.168.27.155/external-testbed/google_veo/",
+    "display_name": "Veo",
+    "description": "Google Veo text-to-video processing",
+    "traits": [
+      "text_to_video",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/google_veo/",
     "api_name": "/text_to_video",
     "file_types": [],
     "validation": {},
@@ -1139,12 +1148,6 @@
     "max_retries": 3,
     "special_handling": "text_to_video",
     "config_structure": "task_list",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "prompt",
       "negative_prompt",
@@ -1201,7 +1204,16 @@
     ]
   },
   "veo_itv": {
-    "endpoint": "https://192.168.27.155/external-testbed/google_veo/",
+    "display_name": "Veo ITV",
+    "description": "Google Veo image-to-video processing",
+    "aliases": [
+      "veoitv"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "task_folders"
+    ],
+    "endpoint": "{testbed}/google_veo/",
     "api_name": "/image_to_video",
     "file_types": [
       ".jpg",
@@ -1224,12 +1236,6 @@
     "max_retries": 3,
     "config_structure": "base_folder",
     "structure_type": "base_folder",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "prompt",
       "negative_prompt",
@@ -1288,7 +1294,12 @@
     ]
   },
   "dreamactor": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "DreamActor",
+    "description": "DreamActor face reenactment (source images × driving videos)",
+    "traits": [
+      "video_combination"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/process_dreamactor",
     "file_types": {
       "image": [
@@ -1332,13 +1343,6 @@
     "max_retries": 3,
     "special_handling": "image_video_cross_match",
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "use_base64",
@@ -1356,7 +1360,15 @@
     }
   },
   "motion_swap": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Motion Swap",
+    "description": "Motion Swap image-video motion transfer processing",
+    "aliases": [
+      "motionswap"
+    ],
+    "traits": [
+      "video_combination"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/motion_swap_submit",
     "file_types": {
       "image": [
@@ -1400,13 +1412,6 @@
     "max_retries": 3,
     "special_handling": "image_video_cross_match",
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "design_link",
@@ -1417,7 +1422,16 @@
     "api_params": {}
   },
   "kling_ttv": {
-    "endpoint": "https://192.168.27.155/external-testbed/kling/",
+    "display_name": "Kling TTV",
+    "description": "Kling Text-to-Video processing",
+    "traits": [
+      "kling_model_name",
+      "model_per_task",
+      "text_to_video",
+      "ttv_output_folder",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/kling/",
     "api_name": "/TextToVideo",
     "file_types": [],
     "validation": {},
@@ -1430,12 +1444,6 @@
     "max_retries": 3,
     "special_handling": "text_to_video",
     "config_structure": "task_list",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "prompt",
       "neg_prompt",
@@ -1479,7 +1487,17 @@
     ]
   },
   "kling_motion": {
-    "endpoint": "https://192.168.27.155/external-testbed/kling/",
+    "display_name": "Kling Motion",
+    "description": "Kling Motion Control (image + motion video)",
+    "aliases": [
+      "klingmotion"
+    ],
+    "traits": [
+      "kling_model_name",
+      "model_per_task",
+      "video_combination"
+    ],
+    "endpoint": "{testbed}/kling/",
     "api_name": "/MotionControlSubmit",
     "file_types": {
       "image": [
@@ -1523,13 +1541,6 @@
     "max_retries": 3,
     "special_handling": "image_video_cross_match",
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "folder",
       "prompt",
@@ -1564,7 +1575,17 @@
     ]
   },
   "seedance_ttv": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Seedance TTV",
+    "description": "Seedance Text-to-Video processing",
+    "aliases": [
+      "seedancettv"
+    ],
+    "traits": [
+      "text_to_video",
+      "ttv_output_folder",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/gen_t2v",
     "file_types": [],
     "validation": {},
@@ -1577,12 +1598,6 @@
     "max_retries": 3,
     "special_handling": "text_to_video",
     "config_structure": "task_list",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "prompt",
       "aspect_ratio"
@@ -1616,7 +1631,16 @@
     ]
   },
   "seedance_i2v": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Seedance I2V",
+    "description": "Seedance Image-to-Video processing",
+    "aliases": [
+      "seedancei2v"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/gen_i2v",
     "file_types": [
       ".jpg",
@@ -1639,12 +1663,6 @@
     "max_retries": 3,
     "config_structure": "base_folder",
     "structure_type": "base_folder",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": true
-    },
     "task_fields": [
       "prompt",
       "aspect_ratio",
@@ -1679,7 +1697,15 @@
     ]
   },
   "i2i2v": {
-    "endpoint": "https://192.168.27.155/external-testbed/image_generation/",
+    "display_name": "I2I2V",
+    "description": "Image → image → video pipeline (Nano Banana / OpenAI Image + Kling / Wan V3)",
+    "traits": [
+      "base_folder_layout",
+      "multi_source_images",
+      "task_folders",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/image_generation/",
     "api_name": "/i2i2v",
     "file_types": [
       ".jpg",
@@ -1698,9 +1724,9 @@
       "output": "Generated_Video",
       "metadata": "Metadata"
     },
-    "kling_endpoint": "https://192.168.27.155/external-testbed/kling/",
+    "kling_endpoint": "{testbed}/kling/",
     "kling_api_name": "/Image2Video",
-    "wan_endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "wan_endpoint": "{testbed}/video_effect/",
     "wan_api_name": "/wan_v3",
     "image_api_names": {
       "nano_banana": "/nano_banana",
@@ -1712,10 +1738,7 @@
     "config_structure": "base_folder",
     "structure_type": "base_folder",
     "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 4col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
+      "template_path": "templates/I2V standard 4col.pptx"
     },
     "task_fields": [
       "folder",
@@ -1797,118 +1820,18 @@
       "adaptive"
     ]
   },
-  "fifa_i2i2v": {
-    "endpoint": "https://192.168.27.155/external-testbed/fifa/",
-    "api_name": "/on_generate_video",
-    "file_types": [
-      ".jpg",
-      ".jpeg",
-      ".png",
-      ".bmp",
-      ".webp"
-    ],
-    "validation": {
-      "max_size_mb": 30,
-      "min_dimension": 256
-    },
-    "folders": {
-      "input": "Source",
-      "frames": "Generated_Frames",
-      "output": "Generated_Video",
-      "metadata": "Metadata"
-    },
-    "rate_limit": 5,
-    "task_delay": 10,
-    "max_retries": 3,
-    "config_structure": "base_folder",
-    "structure_type": "base_folder",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 4col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
-    "task_fields": [
-      "folder",
-      "style_name",
-      "generate_start",
-      "generate_end",
-      "start_frame_prompt",
-      "end_frame_prompt",
-      "video_prompt",
-      "video_negative_prompt",
-      "frame_model",
-      "service",
-      "model",
-      "kling_mode",
-      "kling_duration",
-      "kling_ratio",
-      "wan_resolution",
-      "wan_duration",
-      "pv_duration",
-      "pv_motion",
-      "pv_quality",
-      "veo_duration",
-      "veo_aspect",
-      "veo_resolution",
-      "sd_duration",
-      "sd_ratio",
-      "sd_resolution",
-      "generation_count"
-    ],
-    "api_params": {
-      "frame_model": "gemini-3-pro-image-preview",
-      "generate_start": true,
-      "generate_end": false,
-      "service": "kling",
-      "model": "v3",
-      "kling_mode": "pro",
-      "kling_duration": "5",
-      "kling_ratio": "16:9",
-      "wan_resolution": "1080P",
-      "wan_duration": 5,
-      "pv_duration": 5,
-      "pv_motion": "normal",
-      "pv_quality": "540p",
-      "veo_duration": 8,
-      "veo_aspect": "16:9",
-      "veo_resolution": "1080p",
-      "sd_duration": 5,
-      "sd_ratio": "16:9",
-      "sd_resolution": "720p"
-    },
-    "frame_model_options": [
-      "flux-2-pro",
-      "flux-2-flex",
-      "gpt-image-2",
-      "gpt-image-1",
-      "kling-image-o1",
-      "kling-v3-omni",
-      "seedream-5-0-260128",
-      "gemini-2.5-flash-image",
-      "gemini-3-pro-image-preview",
-      "gemini-3.1-flash-image-preview"
-    ],
-    "service_options": [
-      "wan",
-      "pixverse",
-      "kling",
-      "google_veo",
-      "seedance"
-    ],
-    "kling_model_options": [
-      "v1.6",
-      "v1.5",
-      "v2.0-master",
-      "v2.1",
-      "v2.1-master",
-      "v2.5-turbo",
-      "v2.6",
-      "v3"
-    ]
-  },
   "happyhorse_vedit": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "HappyHorse Video Edit",
+    "description": "HappyHorse Video Edit (video + prompt + up to 5 reference images)",
+    "aliases": [
+      "vedit",
+      "videoedit",
+      "happyhorse"
+    ],
+    "traits": [
+      "video_media"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/vedit",
     "file_types": {
       "image": [
@@ -1950,13 +1873,6 @@
     "max_retries": 3,
     "special_handling": "video_edit",
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "comparison_template_path": "templates/I2V comparison 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "folder",
       "prompt",
@@ -1988,7 +1904,17 @@
     ]
   },
   "gemini_omni_ttv": {
-    "endpoint": "https://192.168.27.155/external-testbed/google_veo/",
+    "display_name": "Gemini Omni TTV",
+    "description": "Gemini Omni (Google Veo) text-to-video (/gemini_omni_async_submit)",
+    "aliases": [
+      "omni"
+    ],
+    "traits": [
+      "text_to_video",
+      "ttv_output_folder",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/google_veo/",
     "api_name": "/gemini_omni_async_submit",
     "file_types": [],
     "validation": {},
@@ -2001,12 +1927,6 @@
     "max_retries": 3,
     "special_handling": "text_to_video",
     "config_structure": "task_list",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "prompt",
       "parent_id"
@@ -2021,7 +1941,17 @@
     ]
   },
   "wan_v3_ttv": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Wan V3 TTV",
+    "description": "Wan V3 text-to-video (/wan_v3, prompt only)",
+    "aliases": [
+      "wanv3ttv"
+    ],
+    "traits": [
+      "text_to_video",
+      "ttv_output_folder",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/wan_v3",
     "file_types": [],
     "validation": {},
@@ -2034,12 +1964,6 @@
     "max_retries": 1,
     "special_handling": "text_to_video",
     "config_structure": "task_list",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "prompt",
       "resolution",
@@ -2074,7 +1998,17 @@
     ]
   },
   "wan_v3_i2v": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Wan V3 I2V",
+    "description": "Wan V3 image-to-video (/wan_v3, source image as first frame)",
+    "aliases": [
+      "wanv3i2v"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "task_folders",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/wan_v3",
     "file_types": [
       ".jpg",
@@ -2102,12 +2036,6 @@
     "special_handling": "image_to_video",
     "config_structure": "base_folder",
     "structure_type": "base_folder",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "folder",
       "style_name",
@@ -2144,7 +2072,17 @@
     ]
   },
   "wan_v3_v2v": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Wan V3 V2V",
+    "description": "Wan V3 video-to-video (/wan_v3, source video as reference video)",
+    "aliases": [
+      "wanv3v2v"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "task_folders",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/wan_v3",
     "file_types": {
       "video": [
@@ -2176,12 +2114,6 @@
     "special_handling": "video_to_video",
     "config_structure": "base_folder",
     "structure_type": "base_folder",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "folder",
       "style_name",
@@ -2218,7 +2150,16 @@
     ]
   },
   "wan_v3_endframe": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Wan V3 Endframe",
+    "description": "Wan V3 endframe (/wan_v3, first + last frame pairs)",
+    "aliases": [
+      "wanv3endframe"
+    ],
+    "traits": [
+      "endframe_pairs",
+      "show_source_file"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/wan_v3",
     "file_types": [
       ".jpg",
@@ -2245,13 +2186,6 @@
     "max_retries": 1,
     "special_handling": "image_pairs",
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false,
-      "comparison_template_path": "templates/I2V comparison 5col.pptx"
-    },
     "task_fields": [
       "folder",
       "pairing_mode",
@@ -2292,7 +2226,18 @@
     ]
   },
   "wan_v3_reference": {
-    "endpoint": "https://192.168.27.155/external-testbed/video_effect/",
+    "display_name": "Wan V3 Reference",
+    "description": "Wan V3 reference images (/wan_v3, source + up to 9 references)",
+    "aliases": [
+      "wanv3ref"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "base_folder_name",
+      "multi_source_images",
+      "reference_folder"
+    ],
+    "endpoint": "{testbed}/video_effect/",
     "api_name": "/wan_v3",
     "file_types": [
       ".jpg",
@@ -2326,12 +2271,6 @@
     ],
     "config_structure": "base_folder",
     "structure_type": "base_folder",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "effect",
       "prompt",
@@ -2366,7 +2305,17 @@
     ]
   },
   "kling_omni": {
-    "endpoint": "https://192.168.27.155/external-testbed/kling/",
+    "display_name": "Kling Omni",
+    "description": "Kling Omni image-to-video (/omniGenerate, source image as start frame)",
+    "aliases": [
+      "klingomni"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "task_folders",
+      "video_media"
+    ],
+    "endpoint": "{testbed}/kling/",
     "api_name": "/omniGenerate",
     "file_types": [
       ".jpg",
@@ -2393,12 +2342,6 @@
     "max_retries": 3,
     "special_handling": "image_to_video",
     "config_structure": "task_folders",
-    "report": {
-      "enabled": true,
-      "template_path": "templates/I2V standard 5col.pptx",
-      "output_directory": "/Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report",
-      "use_comparison": false
-    },
     "task_fields": [
       "folder",
       "style_name",

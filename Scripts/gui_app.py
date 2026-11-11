@@ -342,23 +342,6 @@ API_FIELD_SCHEMAS = {
              'help': 'Optional folder for comparison report'},
         ]
     },
-    'runway': {
-        'name': 'Runway Gen4',
-        'fields': [
-            {'key': 'folder', 'label': 'Task Folder', 'type': 'folder', 'required': True,
-             'help': 'Folder with Source Image and Source Video subfolders'},
-            {'key': 'prompt', 'label': 'Prompt', 'type': 'multiline', 'height': 3, 'required': True},
-            {'key': 'model', 'label': 'Model', 'type': 'dropdown',
-             'options': ['gen4_aleph', 'gen3a_turbo'], 'default': 'gen4_aleph'},
-            {'key': 'ratio', 'label': 'Aspect Ratio', 'type': 'dropdown',
-             'options': ['1280:720', '720:1280', '1024:1024'], 'default': '1280:720'},
-            {'key': 'pairing_strategy', 'label': 'Pairing Strategy', 'type': 'dropdown',
-             'options': ['one_to_one', 'all_combinations'], 'default': 'all_combinations',
-             'help': 'one_to_one: pair by index | all_combinations: every image × video'},
-            {'key': 'use_comparison_template', 'label': 'Use Comparison Template', 'type': 'checkbox', 'default': False},
-            {'key': 'reference_folder', 'label': 'Reference Folder', 'type': 'folder'},
-        ]
-    },
     'wan': {
         'name': 'Wan 2.2 (Image + Video)',
         'fields': [
@@ -476,7 +459,6 @@ API_LINK_KEYS = {
         'source_link': 'root_source_video_link',
         'design_link': 'root_design_link',
     },
-    'runway': {},
     'wan': {
         'source_link': 'source_video_link',
         'design_link': 'root_design_link',
@@ -500,27 +482,9 @@ API_LINK_KEYS = {
 }
 
 
-# Platform display names for the dropdown
-PLATFORM_DISPLAY_NAMES = {
-    'kling': 'Kling 2.1 (Image-to-Video)',
-    'klingfx': 'Kling Effects (Premade Effects)',
-    'kling_endframe': 'Kling Endframe (A→B Transitions)',
-    'kling_ttv': 'Kling TTV (Text-to-Video)',
-    'klingmotion': 'Kling Motion (Image + Video)',
-    'pixverse_i2v': 'Pixverse I2V',
-    'pixverse_effect': 'Pixverse Effects (Templates + Sound)',
-    'genvideo': 'GenVideo (Image Generation)',
-    'openai_image': 'OpenAI Image (gpt-image-N)',
-    'nano': 'Nano Banana / Google Flash',
-    'vidu': 'Vidu Effects',
-    'viduref': 'Vidu Reference',
-    'runway': 'Runway Gen4',
-    'wan': 'Wan 2.2 (Image + Video)',
-    'dreamactor': 'DreamActor (Image + Video)',
-    'veo': 'Veo (Text-to-Video)',
-    'veoitv': 'Veo ITV (Image-to-Video)',
-    'all': '🔄 All Platforms',
-}
+# Platform dropdown: every API that has a GUI form, labelled by its form name.
+PLATFORM_DISPLAY_NAMES = {api: schema['name'] for api, schema in API_FIELD_SCHEMAS.items()}
+PLATFORM_DISPLAY_NAMES['all'] = '🔄 All Platforms'
 
 ACTION_DISPLAY_NAMES = {
     'auto': 'Auto (Process + Report)',

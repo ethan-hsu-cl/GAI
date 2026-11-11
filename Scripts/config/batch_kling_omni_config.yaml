@@ -2,10 +2,8 @@
 # Each style folder should contain a 'Source' subfolder with source images.
 # Generated videos land in 'Generated_Video', metadata in 'Metadata'.
 
-template_path: templates/I2V standard 5col.pptx
 
 output:
-  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 0
 
 generation_count: 1
@@ -13,7 +11,7 @@ concurrent_requests: 3
 
 root_folder: Media Files/Kling Omni
 
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 root_design_link: ""
 root_source_video_link: 
 

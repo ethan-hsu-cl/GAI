@@ -528,7 +528,7 @@ class BaseAPIHandler:
     
     def _get_source_field(self):
         """Get appropriate source field name based on API."""
-        return "source_video" if self.api_name == "runway" else "source_image"
+        return "source_image"
     
     def _get_processing_status(self, file_path, metadata_folder, base_name=None):
         """Get detailed processing status for a file.
@@ -658,8 +658,7 @@ class BaseAPIHandler:
     
     def _get_task_files(self, task, source_folder):
         """Get files for this task. Override for special handling."""
-        file_type = 'video' if self.api_name == 'runway' else 'image'
-        return self.processor._get_files_by_type(source_folder, file_type)
+        return self.processor._get_files_by_type(source_folder, 'image')
 
     # ==================== VALIDATION METHODS ====================
 

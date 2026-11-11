@@ -11,13 +11,11 @@
 #   ├── Generated_Video/    # final mp4 videos
 #   └── Metadata/
 
-template_path: templates/I2V standard 4col.pptx
 
 output:
-  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 3
 
-testbed: https://192.168.27.155/external-testbed/image_generation/
+testbed: '{testbed}/image_generation/'
 
 schedule:
   start_time: ''

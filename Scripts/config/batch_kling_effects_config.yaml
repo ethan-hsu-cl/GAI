@@ -1,15 +1,13 @@
 # Kling Video Effects Configuration
 # Applies premade video effects to images using the Kling API
 
-testbed: https://192.168.27.155/external-testbed/kling/
-template_path: templates/I2V standard 4col.pptx
+testbed: '{testbed}/kling/'
 
 # Global settings (can be overridden per task)
 duration: 5
 concurrent_requests: 3
 
 output:
-  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 4
 
 schedule:

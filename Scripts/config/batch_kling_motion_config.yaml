@@ -1,7 +1,4 @@
-testbed: https://192.168.27.155/external-testbed/kling/
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
-template_path: templates/I2V standard 5col.pptx
-comparison_template_path: templates/I2V comparison 5col.pptx
+testbed: '{testbed}/kling/'
 default_params:
   prompt: ''
   model: v3
@@ -10,7 +7,6 @@ default_params:
   keep_original_sound: true
   element_list_str: ''
 output:
-  output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 0
 schedule:
   start_time: ''

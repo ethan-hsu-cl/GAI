@@ -140,6 +140,99 @@ def get_core_path(filename: str) -> Path:
     return get_resource_path(f"core/{filename}")
 
 
+# ---------------------------------------------------------------------------
+# Testbed location — the ONE place the testbed host lives.
+#
+# Configs and api_definitions.json write endpoints as "{testbed}/kling/" etc.;
+# the placeholder expands to TESTBED_URL from the environment / .env, falling
+# back to DEFAULT_TESTBED_URL. Moving the testbed = change DEFAULT_TESTBED_URL
+# (or set TESTBED_URL in .env), then run `python config_loader.py --fetch-cert`
+# if it serves a self-signed cert.
+# ---------------------------------------------------------------------------
+DEFAULT_TESTBED_URL = 'https://192.168.27.155/external-testbed'
+TESTBED_PLACEHOLDER = '{testbed}'
+# Earlier testbed hosts, still tried for browser cookies after the current one.
+LEGACY_TESTBED_HOSTS = ('192.168.31.161', '210.244.31.18')
+
+
+def get_testbed_url() -> str:
+    """Base testbed URL (no trailing slash): $TESTBED_URL, else the default."""
+    load_env_file()
+    return (os.environ.get('TESTBED_URL') or DEFAULT_TESTBED_URL).rstrip('/')
+
+
+def expand_testbed(obj: Any) -> Any:
+    """
+    Return a copy of obj with every "{testbed}" in its strings replaced by
+    get_testbed_url(). Walks dicts and lists; the input is left untouched, so
+    a config dict the GUI later writes back keeps its placeholder.
+    """
+    if isinstance(obj, str):
+        if TESTBED_PLACEHOLDER not in obj:
+            return obj
+        return obj.replace(TESTBED_PLACEHOLDER, get_testbed_url())
+    if isinstance(obj, dict):
+        return {k: expand_testbed(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [expand_testbed(v) for v in obj]
+    return obj
+
+
+def get_testbed_hosts() -> list:
+    """Hostnames to look up browser cookies for, current testbed first."""
+    from urllib.parse import urlparse
+    current = urlparse(get_testbed_url()).hostname
+    return list(dict.fromkeys([h for h in (current, *LEGACY_TESTBED_HOSTS) if h]))
+
+
+def get_default_report_dir() -> Path:
+    """
+    Where PPTX reports go when a config doesn't say: $REPORT_DIR if set, else
+    the Report folder at the repo root (next to the executable when frozen).
+    """
+    load_env_file()
+    if os.environ.get('REPORT_DIR'):
+        return Path(os.environ['REPORT_DIR']).expanduser()
+    if getattr(sys, 'frozen', False):
+        return Path(sys.executable).parent / 'Report'
+    return Path(__file__).resolve().parent.parent.parent / 'Report'
+
+
+_API_DEFINITIONS: Optional[Dict[str, Any]] = None
+
+
+def load_api_definitions() -> Dict[str, Any]:
+    """
+    All API definitions from core/api_definitions.json, keyed by API name,
+    with "{testbed}" expanded. Cached; callers must not mutate the result.
+    Keys starting with "_" (file-level notes) are dropped.
+    """
+    global _API_DEFINITIONS
+    if _API_DEFINITIONS is None:
+        raw = json.loads(get_core_path('api_definitions.json').read_text(encoding='utf-8'))
+        _API_DEFINITIONS = {k: v for k, v in expand_testbed(raw).items() if not k.startswith('_')}
+    return _API_DEFINITIONS
+
+
+def api_has_trait(api_name: str, trait: str) -> bool:
+    """True if api_definitions.json lists `trait` under that API's "traits"."""
+    return trait in load_api_definitions().get(api_name, {}).get('traits', ())
+
+
+def get_api_aliases() -> Dict[str, str]:
+    """Every accepted CLI platform name -> API name (each API name maps to itself)."""
+    aliases = {}
+    for api, d in load_api_definitions().items():
+        aliases[api] = api
+        for alias in d.get('aliases', ()):
+            aliases[alias] = api
+    return aliases
+
+
+def get_api_display_name(api_name: str) -> str:
+    return load_api_definitions().get(api_name, {}).get('display_name') or api_name.replace('_', ' ').title()
+
+
 _TESTBED_CA_BUNDLE = 'gai_testbed_ca_bundle.pem'
 
 
@@ -181,6 +274,44 @@ def install_testbed_ca() -> Optional[Path]:
     os.environ['SSL_CERT_FILE'] = str(bundle)
     os.environ['REQUESTS_CA_BUNDLE'] = str(bundle)
     return bundle
+
+
+def fetch_testbed_cert() -> Optional[Path]:
+    """
+    Download the current testbed's HTTPS certificate into core/certs/.
+
+    Writes core/certs/testbed_<host>.crt (overwriting a renewed one) and
+    prints its fingerprint and validity so it can be eyeballed before
+    committing. Only run this on the office network, against the real
+    testbed: whatever the host presents is trusted from then on.
+    """
+    import hashlib
+    import ssl
+    from urllib.parse import urlparse
+
+    parsed = urlparse(get_testbed_url())
+    if parsed.scheme != 'https':
+        print(f"Testbed {get_testbed_url()} is not HTTPS; no certificate needed.")
+        return None
+    host, port = parsed.hostname, parsed.port or 443
+
+    pem = ssl.get_server_certificate((host, port))
+    out = get_core_path('certs') / f'testbed_{host}.crt'
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(pem)
+
+    der = ssl.PEM_cert_to_DER_cert(pem)
+    print(f"Saved {out}")
+    print(f"  SHA-256: {hashlib.sha256(der).hexdigest()}")
+    try:
+        info = ssl._ssl._test_decode_cert(str(out))
+        print(f"  Valid:   {info.get('notBefore')} -> {info.get('notAfter')}")
+    except Exception:
+        pass
+    stale = [c.name for c in out.parent.glob('*.crt') if c != out]
+    if stale:
+        print(f"  Other certs still trusted (delete if that host is gone): {', '.join(stale)}")
+    return out
 
 
 install_testbed_ca()
@@ -696,7 +827,7 @@ def save_browser_preference(browser: str) -> None:
 
 
 def fetch_cookie_from_browser(
-    domain: str = '192.168.31.18',
+    domain: Optional[str] = None,
     browser: str = 'chrome',
 ) -> str:
     """
@@ -707,7 +838,8 @@ def fetch_cookie_from_browser(
     still be valid. On macOS, the system may prompt once for Keychain access.
 
     Args:
-        domain: Hostname (or IP) to match against stored cookies.
+        domain: Hostname (or IP) to match against stored cookies. Defaults
+            to the current testbed host.
         browser: Browser name supported by browser-cookie3 (e.g. 'chrome',
             'brave', 'edge', 'safari', 'firefox'). Defaults to 'chrome'.
 
@@ -726,6 +858,7 @@ def fetch_cookie_from_browser(
         if loader is None:
             logger.warning(f"browser-cookie3 does not support browser: {browser}")
             return ''
+        domain = domain or get_testbed_hosts()[0]
         jar = loader(domain_name=domain)
         pairs = [f"{c.name}={c.value}" for c in jar]
         if not pairs:
@@ -765,8 +898,7 @@ def get_testbed_cookie(auto_fetch: bool = True, browser: Optional[str] = None) -
         load_env_file()
         existing_cookie = os.environ.get('TESTBED_COOKIE', '')
         # Try each known testbed host until we find cookies
-        testbed_hosts = ['192.168.27.155', '192.168.31.161', '210.244.31.18']
-        for host in testbed_hosts:
+        for host in get_testbed_hosts():
             cookie = fetch_cookie_from_browser(domain=host, browser=chosen_browser)
             if cookie:
                 if cookie == existing_cookie:
@@ -788,3 +920,18 @@ def get_testbed_cookie(auto_fetch: bool = True, browser: Optional[str] = None) -
     # Fall back to .env file / environment variable
     load_env_file()
     return os.environ.get('TESTBED_COOKIE', '')
+
+
+if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='Testbed connection helpers.')
+    parser.add_argument('--fetch-cert', action='store_true',
+                        help="Save the testbed's HTTPS certificate into core/certs/.")
+    parser.add_argument('--show', action='store_true',
+                        help='Print the testbed URL and cookie hosts in use.')
+    args = parser.parse_args()
+    if args.fetch_cert:
+        fetch_testbed_cert()
+    if args.show or not args.fetch_cert:
+        print(f"TESTBED_URL: {get_testbed_url()}")
+        print(f"Cookie hosts: {', '.join(get_testbed_hosts())}")

@@ -1,6 +1,7 @@
 import os
 import time
 import shutil
+import copy
 import json
 import yaml
 import requests
@@ -16,7 +17,7 @@ from pathlib import Path
 import logging
 import sys
 
-from config_loader import get_app_base_path, get_resource_path, get_core_path, get_testbed_cookie, yaml_load, stringify_text_fields
+from config_loader import get_app_base_path, get_resource_path, get_core_path, get_testbed_cookie, yaml_load, stringify_text_fields, expand_testbed, load_api_definitions, api_has_trait
 
 # Register HEIC/HEIF format support for Pillow
 try:
@@ -52,7 +53,6 @@ class UnifiedAPIProcessor:
     - Google Flash/Nano Banana (with base64 handling and parallel validation)
     - Vidu Effects (with parallel validation and optimizations)
     - Vidu Reference (with smart reference finding and aspect ratio detection)
-    - Runway Video Processing (with video validation and pairing strategies)
     """
 
     def __init__(self, api_name, config_file=None):
@@ -112,29 +112,18 @@ class UnifiedAPIProcessor:
         self._ref_image_exts = ['.jpg', '.jpeg', '.png', '.bmp']
 
     def load_api_definitions(self):
-        """Load API-specific configurations from JSON file."""
-        # Use the path helper to find api_definitions.json
-        api_def_path = get_core_path("api_definitions.json")
-        
-        # Also try relative path as fallback
-        if not api_def_path.exists():
-            script_dir = Path(__file__).parent
-            api_def_path = script_dir / "api_definitions.json"
-        
+        """Load this API's entry from api_definitions.json (shared, cached loader)."""
         try:
-            with open(api_def_path, 'r', encoding='utf-8') as f:
-                all_definitions = json.load(f)
-                self.api_definitions = all_definitions.get(self.api_name, {})
-                if not self.api_definitions:
-                    self.logger.warning(f"⚠️ No API definition found for '{self.api_name}'")
-                else:
-                    self.logger.info(f"✓ API definitions loaded from: {api_def_path}")
+            # Own copy: handlers may adjust it; the shared cache must stay pristine.
+            self.api_definitions = copy.deepcopy(load_api_definitions().get(self.api_name, {}))
         except FileNotFoundError:
-            self.logger.error(f"❌ API definitions file not found at: {api_def_path}")
+            self.logger.error(f"❌ API definitions file not found at: {get_core_path('api_definitions.json')}")
             raise
         except json.JSONDecodeError as e:
             self.logger.error(f"❌ Invalid JSON in api_definitions.json: {e}")
             raise
+        if not self.api_definitions:
+            self.logger.warning(f"⚠️ No API definition found for '{self.api_name}'")
 
     def load_config(self):
         """Load and validate configuration from YAML or JSON"""
@@ -149,10 +138,10 @@ class UnifiedAPIProcessor:
             with open(config_path, 'r', encoding='utf-8') as f:
                 # Detect format by extension
                 if config_path.suffix.lower() in ['.yaml', '.yml']:
-                    self.config = yaml_load(f)
+                    self.config = expand_testbed(yaml_load(f))
                     self.logger.info(f"✓ Configuration loaded from {self.config_file} (YAML)")
                 else:
-                    self.config = stringify_text_fields(json.load(f))
+                    self.config = expand_testbed(stringify_text_fields(json.load(f)))
                     self.logger.info(f"✓ Configuration loaded from {self.config_file} (JSON)")
                 return True
         except FileNotFoundError:
@@ -173,11 +162,11 @@ class UnifiedAPIProcessor:
         Args:
             config: Configuration dictionary to use for processing.
         """
-        self.config = stringify_text_fields(config)
+        self.config = expand_testbed(stringify_text_fields(config))
         self.logger.debug("Configuration set programmatically")
 
     def _get_video_info(self, video_path):
-        """Get video information using ffprobe (from runway processor)"""
+        """Get video information using ffprobe"""
         try:
             result = subprocess.run([
                 'ffprobe', '-v', 'quiet', '-print_format', 'json',
@@ -564,7 +553,7 @@ class UnifiedAPIProcessor:
             endpoint = self.api_definitions.get('endpoint', '')
 
             # Handle testbed URL override for the image-generation endpoints
-            if self.api_name in ("nano_banana", "openai_image", "seedream_image") and self.config.get('testbed'):
+            if api_has_trait(self.api_name, 'image_output') and self.config.get('testbed'):
                 endpoint = self.config['testbed']
 
             # Build optional headers (cookie for authenticated testbed access)
@@ -663,25 +652,6 @@ class UnifiedAPIProcessor:
                 continue
         
         return False
-
-    def get_optimal_runway_ratio(self, video_width, video_height):
-        input_ratio = video_width / video_height
-        available_ratios = self.api_definitions.get('available_ratios', [...])
-        
-        # Find closest match by calculating ratio differences
-        best_ratio = "1280:720"  # fallback
-        smallest_difference = float('inf')
-        
-        for ratio_str in available_ratios:
-            w, h = map(int, ratio_str.split(':'))
-            ratio_value = w / h
-            difference = abs(input_ratio - ratio_value)
-            
-            if difference < smallest_difference:
-                smallest_difference = difference
-                best_ratio = ratio_str
-        
-        return best_ratio
 
     def _capture_all_api_fields(self, result, known_field_names=None):
         """
@@ -787,13 +757,11 @@ class UnifiedAPIProcessor:
             source_name: Name of the source file
             result_data: Dict containing API result data
             task_config: Dict containing task configuration
-            api_specific_filename: Optional custom filename (e.g., for runway with ref_stem)
+            api_specific_filename: Optional custom filename (overrides <base_name>_metadata.json)
             log_status: If True, logs success/failure status after saving
         """
         # Determine source field name based on API
-        if self.api_name == "runway":
-            source_field = "source_video"
-        elif self.api_name in ["kling", "nano_banana", "vidu_effects", "vidu_i2v", "vidu_reference", "genvideo", "openai_image", "seedream_image", "pixverse_i2v", "pixverse_effect"]:
+        if api_has_trait(self.api_name, 'source_image_metadata'):
             source_field = "source_image"
         else:
             source_field = "source_file"
@@ -841,19 +809,6 @@ class UnifiedAPIProcessor:
     def save_nano_metadata(self, metadata_folder, base_name, image_name, result_data, task_config):
         """Nano Banana specific metadata saving (delegates to universal save_metadata)."""
         self.save_metadata(metadata_folder, base_name, image_name, result_data, task_config)
-
-    def save_runway_metadata(self, metadata_folder, base_name, ref_head, video_name, ref_name, result_data, task_config):
-        """Runway-specific metadata saving (delegates to universal save_metadata).
-
-        ref_head is "<base_name>_ref_<reference stem>", already cut to fit
-        under Windows' path limit by the handler.
-        """
-        # Add runway-specific field to result_data
-        if result_data and ref_name:
-            result_data['reference_image'] = ref_name
-        filename = f"{ref_head}_runway_metadata.json"
-        self.save_metadata(metadata_folder, base_name, video_name, result_data, task_config, 
-                          api_specific_filename=filename, log_status=True)
 
     def process_task(self, task, task_num, total_tasks):
         """Process task using registered handler."""
@@ -1106,7 +1061,7 @@ if __name__ == "__main__":
     # Enhanced command line support
     if len(sys.argv) < 2:
         print("Usage: python unified_api_processor.py [api_name] [config_file]")
-        print("Supported APIs: kling, nano_banana, vidu_effects, vidu_reference, runway, genvideo")
+        print("Supported APIs: kling, nano_banana, vidu_effects, vidu_reference, genvideo")
         sys.exit(1)
 
     api_name = sys.argv[1]

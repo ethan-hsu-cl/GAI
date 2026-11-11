@@ -18,112 +18,15 @@ from typing import Dict, Optional, Any
 # Import unified processors and report generators
 from unified_api_processor import create_processor, ValidationError
 from unified_report_generator import create_report_generator
-from config_loader import load_and_merge_config, get_default_config_path
+from config_loader import load_and_merge_config, get_default_config_path, get_api_aliases, load_api_definitions
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 
-# API mapping for backward compatibility
-API_MAPPING = {
-    'kling': 'kling',
-    'klingfx': 'kling_effects',
-    'kling_effects': 'kling_effects',
-    'kling_endframe': 'kling_endframe',
-    'kling_ttv': 'kling_ttv',
-    'kling_motion': 'kling_motion',
-    'klingmotion': 'kling_motion',
-    'vidu': 'vidu_effects',
-    'viduref': 'vidu_reference',
-    'vidu_i2v': 'vidu_i2v',
-    'viduit2v': 'vidu_i2v',
-    'nano': 'nano_banana',
-    'runway': 'runway',
-    'genvideo': 'genvideo',
-    'pixverse_i2v': 'pixverse_i2v',
-    'pixversei2v': 'pixverse_i2v',
-    'pixverse': 'pixverse_i2v',          # backward-compat alias
-    'pixverse_effect': 'pixverse_effect',
-    'pixverseeffect': 'pixverse_effect',
-    'pixverse_multi': 'pixverse_effect',  # backward-compat alias
-    'pixversemulti': 'pixverse_effect',   # backward-compat alias
-    'pixverse_ttv': 'pixverse_ttv',
-    'pixversettv': 'pixverse_ttv',
-    'seedance_ttv': 'seedance_ttv',
-    'seedancettv': 'seedance_ttv',
-    'seedance_i2v': 'seedance_i2v',
-    'seedancei2v': 'seedance_i2v',
-    'wan': 'wan',
-    'veo': 'veo',
-    'veoitv': 'veo_itv',
-    'dreamactor': 'dreamactor',
-    'motion_swap': 'motion_swap',
-    'motionswap': 'motion_swap',
-    'happyhorse_vedit': 'happyhorse_vedit',
-    'vedit': 'happyhorse_vedit',
-    'videoedit': 'happyhorse_vedit',
-    'happyhorse': 'happyhorse_vedit',
-    'openai_image': 'openai_image',
-    'openaiimage': 'openai_image',
-    'gptimage': 'openai_image',
-    'gpt_image': 'openai_image',
-    'seedream_image': 'seedream_image',
-    'seedreamimage': 'seedream_image',
-    'seedream': 'seedream_image',
-    'fifa_i2i2v': 'fifa_i2i2v',
-    'fifa': 'fifa_i2i2v',
-    'i2i2v': 'i2i2v',
-    'gemini_omni_ttv': 'gemini_omni_ttv',
-    'omni': 'gemini_omni_ttv',
-    'wan_v3_ttv': 'wan_v3_ttv',
-    'wanv3ttv': 'wan_v3_ttv',
-    'wan_v3_i2v': 'wan_v3_i2v',
-    'wanv3i2v': 'wan_v3_i2v',
-    'wan_v3_v2v': 'wan_v3_v2v',
-    'wanv3v2v': 'wan_v3_v2v',
-    'wan_v3_endframe': 'wan_v3_endframe',
-    'wanv3endframe': 'wan_v3_endframe',
-    'wan_v3_reference': 'wan_v3_reference',
-    'wanv3ref': 'wan_v3_reference',
-    'kling_omni': 'kling_omni',
-    'klingomni': 'kling_omni',
-}
-
-# Config file mapping
-CONFIG_MAPPING = {
-    'kling': 'config/batch_kling_config.yaml',
-    'kling_effects': 'config/batch_kling_effects_config.yaml',
-    'kling_endframe': 'config/batch_kling_endframe_config.yaml',
-    'kling_ttv': 'config/batch_kling_ttv_config.yaml',
-    'kling_motion': 'config/batch_kling_motion_config.yaml',
-    'kling_omni': 'config/batch_kling_omni_config.yaml',
-    'vidu_effects': 'config/batch_vidu_effects_config.yaml',
-    'vidu_reference': 'config/batch_vidu_reference_config.yaml',
-    'vidu_i2v': 'config/batch_vidu_i2v_config.yaml',
-    'nano_banana': 'config/batch_nano_banana_config.yaml',
-    'runway': 'config/batch_runway_config.yaml',
-    'genvideo': 'config/batch_genvideo_config.yaml',
-    'pixverse_i2v': 'config/batch_pixverse_i2v_config.yaml',
-    'pixverse_effect': 'config/batch_pixverse_effect_config.yaml',
-    'pixverse_ttv': 'config/batch_pixverse_ttv_config.yaml',
-    'seedance_ttv': 'config/batch_seedance_ttv_config.yaml',
-    'seedance_i2v': 'config/batch_seedance_i2v_config.yaml',
-    'wan': 'config/batch_wan_config.yaml',
-    'veo': 'config/batch_veo_config.yaml',
-    'veo_itv': 'config/batch_veo_itv_config.yaml',
-    'dreamactor': 'config/batch_dreamactor_config.yaml',
-    'motion_swap': 'config/batch_motion_swap_config.yaml',
-    'happyhorse_vedit': 'config/batch_happyhorse_vedit_config.yaml',
-    'openai_image': 'config/batch_openai_image_config.yaml',
-    'seedream_image': 'config/batch_seedream_image_config.yaml',
-    'fifa_i2i2v': 'config/batch_fifa_i2i2v_config.yaml',
-    'i2i2v': 'config/batch_i2i2v_config.yaml',
-    'gemini_omni_ttv': 'config/batch_gemini_omni_ttv_config.yaml',
-    'wan_v3_ttv': 'config/batch_wan_v3_ttv_config.yaml',
-    'wan_v3_i2v': 'config/batch_wan_v3_i2v_config.yaml',
-    'wan_v3_v2v': 'config/batch_wan_v3_v2v_config.yaml',
-    'wan_v3_endframe': 'config/batch_wan_v3_endframe_config.yaml',
-    'wan_v3_reference': 'config/batch_wan_v3_reference_config.yaml'
-}
+# Platform name / alias -> API name, and API name -> default config. Both come
+# from api_definitions.json ("aliases"); add a new API there, not here.
+API_MAPPING = get_api_aliases()
+CONFIG_MAPPING = {api: f'config/batch_{api}_config.yaml' for api in load_api_definitions()}
 
 
 def run_automation(
@@ -546,36 +449,9 @@ def show_usage():
     print("Usage: python runall.py [platform] [action] [options]")
     print()
     print("PLATFORMS:")
-    print("  kling - Kling Image2Video processing")
-    print("  klingfx - Kling Video Effects (premade effects)")
-    print("  kling_endframe - Kling Endframe (start/end image pairs)")
-    print("  kling_ttv - Kling Text-to-Video processing")
-    print("  vidu - Vidu Effects processing")
-    print("  viduref - Vidu Reference processing")
-    print("  vidu_i2v - Vidu Image-to-Video (/submitI2V) processing")
-    print("  nano - Google Flash/Nano Banana processing")
-    print("  runway - Runway face swap processing")
-    print("  genvideo - GenVideo image generation processing")
-    print("  openai_image - OpenAI Image (gpt-image-N) generation")
-    print("  seedream_image - Seedream Image (dola-seedream-N) generation")
-    print("  pixverse_i2v - Pixverse Image-to-Video processing (/submit_3)")
-    print("  pixverse_effect - Pixverse Effects/templates, 1-4 image inputs + sound (/submit_5)")
-    print("  pixverse_ttv - Pixverse Text-to-Video processing")
-    print("  seedance_ttv - Seedance Text-to-Video processing")
-    print("  seedance_i2v - Seedance Image-to-Video processing")
-    print("  wan - Wan 2.2 image-video animation processing")
-    print("  wan_v3_ttv - Wan V3 text-to-video (/wan_v3, prompt only)")
-    print("  wan_v3_i2v - Wan V3 image-to-video (/wan_v3, source image as first frame)")
-    print("  wan_v3_v2v - Wan V3 video-to-video (/wan_v3, source video as reference video)")
-    print("  wan_v3_endframe - Wan V3 endframe (/wan_v3, first + last frame pairs)")
-    print("  wan_v3_reference - Wan V3 reference images (/wan_v3, source + up to 9 references)")
-    print("  kling_omni - Kling Omni image-to-video (/omniGenerate, source image as start frame)")
-    print("  motion_swap - Motion Swap image-video motion transfer processing")
-    print("  happyhorse_vedit - HappyHorse Video Edit (video + prompt + up to 5 reference images)")
-    print("  veo - Google Veo text-to-video processing")
-    print("  veoitv - Google Veo image-to-video processing")
-    print("  gemini_omni_ttv - Gemini Omni (Google Veo) text-to-video (/gemini_omni_async_submit)")
-    print("  fifa - FIFA image-to-image-to-video pipeline (start/end frame → video)")
+    for api, d in load_api_definitions().items():
+        names = ', '.join([api, *d.get('aliases', [])])
+        print(f"  {names} - {d.get('description') or d.get('display_name', api)}")
     print("  all - Run all platforms")
     print()
     print("ACTIONS:")
@@ -613,9 +489,8 @@ def show_usage():
     print("  python runall.py happyhorse_vedit auto")
     print("  python runall.py veo auto")
     print("  python runall.py gemini_omni_ttv auto")
-    print("  python runall.py fifa auto")
     print("  python runall.py all auto --parallel")
-    print("  python runall.py runway process --config custom_runway_config.json")
+    print("  python runall.py kling process --config custom_kling_config.yaml")
     print("  python runall.py genvideo process")
     print("  python runall.py seedream_image auto")
 
@@ -672,7 +547,7 @@ def validate_arguments(args):
 def get_platforms_to_run(platform_arg):
     """Get list of platforms to run based on argument"""
     if platform_arg == 'all':
-        return list(API_MAPPING.keys())
+        return list(CONFIG_MAPPING.keys())
     else:
         return [platform_arg]
 

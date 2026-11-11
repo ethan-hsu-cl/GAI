@@ -1,14 +1,10 @@
 # HappyHorse Video Edit Configuration
 # Edits a source video guided by a prompt and up to 5 optional reference images.
-template_path: templates/I2V standard 5col.pptx
-comparison_template_path: templates/I2V comparison 5col.pptx
-testbed: https://192.168.27.155/external-testbed/video_effect/
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
+testbed: '{testbed}/video_effect/'
 design_link: ""
 source_video_link: ""
 
 output:
-  directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
   group_tasks_by: 0
 
 schedule:

@@ -1,9 +1,6 @@
 # Kling Text-to-Video Configuration
 # Generates videos from text prompts (no input images required)
-template_path: templates/I2V standard 5col.pptx
-comparison_template_path: templates/I2V comparison 5col.pptx
 # Report Output Directory 
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
 # Root folder where generated videos will be saved. Metadata folder will be created automatically.
 output_folder: Media Files/Kling TTV/1229 21 Styles 2.5
 generation_count: 1

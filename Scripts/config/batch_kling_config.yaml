@@ -1,10 +1,7 @@
 # Kling Image-to-Video Configuration
 # Generates videos from input images using the Kling testbed.
-template_path: templates/I2V standard 5col.pptx
-comparison_template_path: templates/I2V comparison 5col.pptx
 # Report Output Directory
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 model_version: v3
 schedule:
   # Time format: HH:MM (24-hour format). Leave empty to start immediately
@@ -92,8 +89,8 @@ tasks:
 # Comments and documentation
 comments:
   output_directory: |
-    Optional: Global output directory for all generated PPTX files.
-    Can be overridden per task. Default is current directory.
+    Optional. Folder for the generated PPTX reports. Defaults to the repo's
+    Report/ folder (or $REPORT_DIR). Only set it to send reports elsewhere.
   testbed: |
     Kling testbed endpoint used for video generation API calls.
   model_version: |

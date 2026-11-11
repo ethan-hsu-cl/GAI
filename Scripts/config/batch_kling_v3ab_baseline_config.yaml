@@ -1,10 +1,7 @@
 # Kling v3 A/B Benchmark — BASELINE (control) side
 # 10 prompts on the model version each one currently ships with (7x v2.1, 3x v1.6).
 # Run 'process' only; the deck comes from batch_kling_v3ab_config.yaml.
-template_path: templates/I2V standard 5col.pptx
-comparison_template_path: templates/I2V comparison 5col.pptx
-output_directory: /Users/ethanhsu/Desktop/ethan-hsu-cl/GAI/Report
-testbed: https://192.168.27.155/external-testbed/kling/
+testbed: '{testbed}/kling/'
 model_version: v2.1
 schedule:
   start_time: ''
