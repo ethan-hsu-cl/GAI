@@ -2394,5 +2394,96 @@
       3,
       15
     ]
+  },
+  "yce_reference": {
+    "display_name": "YCE Reference",
+    "description": "PerfectCorp YCE reference-to-video (/gen_ref_v2, Seedance, source + up to 29 references)",
+    "aliases": [
+      "yceref"
+    ],
+    "traits": [
+      "base_folder_layout",
+      "base_folder_name",
+      "multi_source_images",
+      "reference_folder"
+    ],
+    "endpoint": "{testbed}/yce/",
+    "api_name": "/gen_ref_v2",
+    "file_types": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".webp",
+      ".bmp",
+      ".tiff",
+      ".gif"
+    ],
+    "validation": {
+      "max_size_mb": 30,
+      "min_dimension": 300,
+      "max_dimension": 6000,
+      "aspect_ratio": [
+        0.4,
+        2.5
+      ]
+    },
+    "folders": {
+      "input": "Source",
+      "reference": "Reference",
+      "output": "Generated_Video",
+      "metadata": "Metadata"
+    },
+    "rate_limit": 3,
+    "task_delay": 10,
+    "max_retries": 2,
+    "special_handling": "multi_image_reference",
+    "max_references": 29,
+    "config_structure": "base_folder",
+    "structure_type": "base_folder",
+    "task_fields": [
+      "effect",
+      "prompt",
+      "model",
+      "resolution",
+      "generate_audio",
+      "ratio",
+      "duration",
+      "seed",
+      "duration_auto",
+      "output_format",
+      "omni_task_type"
+    ],
+    "api_params": {
+      "model": "dreamina-seedance-2-5-260628",
+      "resolution": "720p",
+      "generate_audio": false,
+      "ratio": "adaptive",
+      "duration": 5,
+      "seed": -1,
+      "duration_auto": false,
+      "output_format": "mp4",
+      "omni_task_type": "auto"
+    },
+    "model_options": [
+      "dreamina-seedance-2-5-260628",
+      "dreamina-seedance-2-0-260128",
+      "dreamina-seedance-2-0-fast-260128",
+      "dreamina-seedance-2-0-mini-260615"
+    ],
+    "resolution_options": [
+      "480p",
+      "720p",
+      "1080p",
+      "4k"
+    ],
+    "ratio_options": [
+      "16:9",
+      "9:16",
+      "4:3",
+      "1:1",
+      "3:4",
+      "21:9",
+      "adaptive"
+    ]
   }
 }

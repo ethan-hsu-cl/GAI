@@ -1,6 +1,6 @@
 ---
 name: update-batch-prompts
-description: Add or replace prompt-driven tasks in a custom-prompt image/video-to-video batch config YAML (Kling I2V, Kling Omni, I2I2V, Veo ITV, Seedance I2V, Kling Endframe, Vidu I2V, Wan V3 I2V, Wan V3 V2V, Wan V3 Endframe, Wan V3 Reference). Use when the user wants to add the per-task parameters for one of these APIs — typically pasting prompt / negative-prompt text blocks copied from a Google Slides deck, or giving the deck URL itself. Asks which API, how many tasks, and whether to replace or append, then collects the content for each task's arguments.
+description: Add or replace prompt-driven tasks in a custom-prompt image/video-to-video batch config YAML (Kling I2V, Kling Omni, I2I2V, Veo ITV, Seedance I2V, Kling Endframe, Vidu I2V, Wan V3 I2V, Wan V3 V2V, Wan V3 Endframe, Wan V3 Reference, YCE Reference). Use when the user wants to add the per-task parameters for one of these APIs — typically pasting prompt / negative-prompt text blocks copied from a Google Slides deck, or giving the deck URL itself. Asks which API, how many tasks, and whether to replace or append, then collects the content for each task's arguments.
 ---
 
 # update-batch-prompts
@@ -26,6 +26,7 @@ This skill is for configs whose tasks carry a free-text `prompt` / `*_prompt`. F
 | Wan V3 V2V | `Scripts/config/batch_wan_v3_v2v_config.yaml` | `style_name`, `prompt`; overrides `resolution`, `ratio`, `duration`, `audio_out` | — (`default_settings`) | grouped: `Media Files/Wan V3 V2V/<MMDD> <N> Styles/<style_name>` (Source holds **videos**) |
 | Wan V3 Endframe | `Scripts/config/batch_wan_v3_endframe_config.yaml` | `prompt`, `ratio` | `pairing_mode`, `design_link`, `source_video_link`, `reference_folder`, `use_comparison_template` | grouped: `Media Files/Wan V3 Endframe/<MMDD> <N> Style(s)/<name>` |
 | Wan V3 Reference | `Scripts/config/batch_wan_v3_reference_config.yaml` | `effect`, `prompt`; overrides `resolution`, `ratio`, `duration` where the deck states them | — (`default_settings`) | no folder field; top-level `base_folder: Media Files/Wan V3 Reference/<MMDD> <N> Style(s)`, one subfolder per `effect` (with `Source` + `Reference`, paired by file name — see specifics) |
+| YCE Reference | `Scripts/config/batch_yce_reference_config.yaml` | `effect`, `prompt`; overrides `model`, `resolution`, `ratio`, `duration`, `duration_auto`, `generate_audio` where the deck states them | — (`default_settings`) | same as Wan V3 Reference: top-level `base_folder: Media Files/YCE Reference/<MMDD> <N> Style(s)`, one subfolder per `effect` |
 
 The table is a guide. **Always treat the last existing task in the target file as the source of truth** for exact field order, quoting style, block-scalar (`|`) usage, indentation, and default values. If the file's shape disagrees with the table, follow the file — **with one exception: the folder naming convention always follows the `Per-style folder shape` column in the table above, never a stale folder in the live file.** If the file's existing tasks use a flat, un-grouped folder (e.g. `Media Files/I2I2V/0603 <name>`) but the table specifies a grouped shape (`Media Files/I2I2V/<MMDD> <N> Styles/<MMDD> <name>`), write the grouped shape. A flat folder already in the file is treated as stale, not as the convention.
 
@@ -33,7 +34,7 @@ The table is a guide. **Always treat the last existing task in the target file a
 
 Resolve in this order, then call `AskUserQuestion` only if still ambiguous:
 1. **IDE selection / open file** — if the user has a selection in, or just opened, one of the supported config files, that is the target.
-2. **Keyword in the user message** — "i2i2v", "kling endframe", "kling omni"/"omni-v3"/"O3"/"O1", "kling", "veo"/"veo itv", "seedance", "vidu", "wan v3 i2v", "wan v3 v2v"/"v2v", "wan endframe", "wan reference" → the matching file. A deck's `MODEL: Wan 3.0 — Text to video with multiple images Reference` line → Wan V3 Reference (despite "text to video", it sends images). `MODEL: Wan 3.0 — Image-to-Video (I2V) Reference` is a different, single-image mode — don't put those slides in the Reference config; ask. A deck's `Model:` line counts as a keyword: `Kling omni-v3` / `Kling O3` → Kling Omni; `Kling 3.0` / `kling-v3` → Kling I2V. ("Gemini Omni" is a text-to-video config — not Kling Omni.)
+2. **Keyword in the user message** — "i2i2v", "kling endframe", "kling omni"/"omni-v3"/"O3"/"O1", "kling", "veo"/"veo itv", "seedance", "vidu", "wan v3 i2v", "wan v3 v2v"/"v2v", "wan endframe", "wan reference", "yce"/"yce reference"/"perfectcorp"/"seedance reference" → the matching file. A deck's `MODEL: Wan 3.0 — Text to video with multiple images Reference` line → Wan V3 Reference (despite "text to video", it sends images). `MODEL: Wan 3.0 — Image-to-Video (I2V) Reference` is a different, single-image mode — don't put those slides in the Reference config; ask. A deck's `Model:` line counts as a keyword: `Kling omni-v3` / `Kling O3` → Kling Omni; `Kling 3.0` / `kling-v3` → Kling I2V. ("Gemini Omni" is a text-to-video config — not Kling Omni.)
 3. **Prior turn context** — if the user was just editing one of these files, assume the same one.
 4. Otherwise ask via `AskUserQuestion` (header `API`) listing the supported APIs above. Disambiguate "kling" between Kling I2V, Kling Omni and Kling Endframe, and "wan" between the four Wan V3 rows, if unclear.
 
@@ -108,6 +109,10 @@ Map the deck's slide fields as follows:
 
 Keep `@Image1` tokens verbatim — they are passed through to the testbed as written.
 
+### YCE Reference specifics
+
+Same folder layout and Source/Reference pairing as Wan V3 Reference below. The prompt addresses the images as `@Image 1` (source), `@Image 2`, … — keep those tokens verbatim (a deck written for Wan's `image1` style should be converted to `@Image N`). `Audio: Yes` → `generate_audio: true`; `Duration: Auto` → `duration_auto: true`. Seedance 2.5 accepts 480p/720p/1080p; 4k needs `model: dreamina-seedance-2-0-260128`.
+
 ### Wan V3 Reference specifics
 
 The prompt addresses the gallery as `image1` (source), `image2`, … (files from the effect's `Reference` folder). Keep those tokens verbatim.
@@ -125,9 +130,9 @@ The prompt addresses the gallery as `image1` (source), `image2`, … (files from
 For APIs with a `folder` field, build each task's folder from the convention learned in Step 3:
 - **Date `<MMDD>`** — always use today's date (the `currentDate` from context) in zero-padded month + day (e.g. `0616` for June 16), **not** a date carried over from the existing folder prefix. Writing the config starts a new batch, so the folder date should reflect when it is written.
 - **Group count `<N>`** — the total number of tasks in the final list (existing + new, for Append; just the new ones, for Replace). Apply the same `<MMDD> <N> Style(s)` group segment to **every** task in the written block, since that segment is embedded in each folder path.
-  - **Grammar:** `1 Style` (singular) when N = 1; `2 Styles` (plural) when N ≥ 2. Match the file's existing noun (`Styles` for I2I2V/Veo/Seedance/Wan V3 I2V/V2V, `Style(s)` for Kling Endframe/Kling Omni/Wan V3 Endframe/Wan V3 Reference). Never write `1 Styles`.
+  - **Grammar:** `1 Style` (singular) when N = 1; `2 Styles` (plural) when N ≥ 2. Match the file's existing noun (`Styles` for I2I2V/Veo/Seedance/Wan V3 I2V/V2V, `Style(s)` for Kling Endframe/Kling Omni/Wan V3 Endframe/Wan V3 Reference/YCE Reference). Never write `1 Styles`.
 - **Per-style leaf** — match the file's leaf convention (date-prefixed for I2I2V, plain `style_name` for Veo/Seedance/Kling Omni/Wan V3, the `name` for Kling/Endframe), made Windows-safe (Step 3).
-- **Wan V3 Reference** has no per-task folder: rewrite `base_folder` instead (Step 6.3); each `effect` name must match a subfolder under it.
+- **Wan V3 Reference** and **YCE Reference** have no per-task folder: rewrite `base_folder` instead (Step 6.3); each `effect` name must match a subfolder under it.
 
 ## Step 6 — Build and apply the edit
 
@@ -136,15 +141,15 @@ For APIs with a `folder` field, build each task's folder from the convention lea
    - **Replace** — `old_string` = the whole existing `tasks:` block (from `tasks:` through the last task entry, not including trailing blank lines before the next top-level key or comment); `new_string` = `tasks:` + the newly formatted entries.
    - **Append** — `old_string` = the last existing task entry; `new_string` = that same entry + the new entries after it (with the file's separator style).
    - For grouped-folder APIs on Append where `<N>` changed, the group segment in the **existing** task folders also changes — rewrite the full `tasks:` block (treat it like Replace but keep the existing tasks' content) so every folder reflects the new count.
-3. If the API has a separate `base_folder`/group key outside the tasks (currently only Wan V3 Reference), rewrite its last segment to `<MMDD> <N> Style(s)` with today's date and the final task count.
-4. **Clear the source-video-link field** — in a separate `Edit`, blank the top-level link field, leaving a **single space after the colon** (`<field>: `), not `''` and not a bare colon with no space. The field name varies by file: `root_source_video_link` (I2I2V, Veo ITV, Kling Omni, Wan V3 I2V/V2V) or `source_video_link` (Seedance, Vidu I2V, Wan V3 Endframe/Reference, and the `root_*` block in Kling I2V / Kling Endframe). (Note: most editors and the `Edit` tool strip trailing whitespace, so add the space via a small script write rather than an `Edit`.) The previous link is stale once the tasks change; a new one is produced after the script runs. On a **Replace**, also empty any per-task `source_video_link` values (Kling I2V / Kling Endframe) rather than cloning the old batch's links into the new tasks.
-5. **Check the inputs exist.** For every task folder (or `base_folder/<effect>`), check that `Source/` holds inputs — images, or videos for Wan V3 V2V; Wan V3 Reference also needs `Reference/`. The handlers silently skip a task with an empty `Source/`, so list any missing ones in the summary and offer to copy a set from `Media Files/Sources/` (e.g. `Source 20 Product` for product prompts, `Source 50 Sample` for people).
+3. If the API has a separate `base_folder`/group key outside the tasks (Wan V3 Reference, YCE Reference), rewrite its last segment to `<MMDD> <N> Style(s)` with today's date and the final task count.
+4. **Clear the source-video-link field** — in a separate `Edit`, blank the top-level link field, leaving a **single space after the colon** (`<field>: `), not `''` and not a bare colon with no space. The field name varies by file: `root_source_video_link` (I2I2V, Veo ITV, Kling Omni, Wan V3 I2V/V2V) or `source_video_link` (Seedance, Vidu I2V, Wan V3 Endframe/Reference, YCE Reference, and the `root_*` block in Kling I2V / Kling Endframe). (Note: most editors and the `Edit` tool strip trailing whitespace, so add the space via a small script write rather than an `Edit`.) The previous link is stale once the tasks change; a new one is produced after the script runs. On a **Replace**, also empty any per-task `source_video_link` values (Kling I2V / Kling Endframe) rather than cloning the old batch's links into the new tasks.
+5. **Check the inputs exist.** For every task folder (or `base_folder/<effect>`), check that `Source/` holds inputs — images, or videos for Wan V3 V2V; Wan V3 Reference and YCE Reference also need `Reference/`. The handlers silently skip a task with an empty `Source/`, so list any missing ones in the summary and offer to copy a set from `Media Files/Sources/` (e.g. `Source 20 Product` for product prompts, `Source 50 Sample` for people).
 6. Validate with `python3 -c "import yaml; yaml.safe_load(open('<config>'))"` and print each task's key fields.
 7. Confirm with a one-line summary including a clickable `file:line` link to the new tasks region, e.g. `[batch_i2i2v_config.yaml:28-60](Scripts/config/batch_i2i2v_config.yaml#L28-L60)`.
 
 ## What NOT to change
 
-- Don't touch `comments`, `template_path`, `output`, `testbed`, `schedule`, `default_settings`, `root_design_link`, `root_folder`, `model_version`, or any top-level key outside the `tasks:` list, the source-video-link field (which is cleared, see Step 6.4), `base_folder` (Wan V3 Reference, Step 6.3), and the group-count segment inside folder paths. Per-task overrides go on the task, never into `default_settings`.
+- Don't touch `comments`, `template_path`, `output`, `testbed`, `schedule`, `default_settings`, `root_design_link`, `root_folder`, `model_version`, or any top-level key outside the `tasks:` list, the source-video-link field (which is cleared, see Step 6.4), `base_folder` (Wan V3 / YCE Reference, Step 6.3), and the group-count segment inside folder paths. Per-task overrides go on the task, never into `default_settings`.
 - Don't reorder or rename fields; clone the existing shape exactly.
 - Don't add YAML commentary or leave the commented example block altered.
 - Don't change the `Media Files/...` path prefix — only the `<MMDD> <N> Style(s)` segment and the per-style leaf.

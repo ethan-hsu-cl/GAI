@@ -1,0 +1,76 @@
+# YCE Reference-to-Video Configuration
+# PerfectCorp YCE testbed, "Reference to Video" tab (/gen_ref_v2, bpRef2Vid,
+# Seedance models). The source image is sent as Image 1 and its references as
+# Image 2, 3, ...; address them in the prompt as @Image 1, @Image 2, ....
+# Seedance 2.5 takes up to 30 images per request, the 2.0 series 9.
+base_folder: Media Files/YCE Reference/1111 1 Style
+testbed: '{testbed}/yce/'
+default_prompt: ''
+
+output:
+  group_tasks_by: 0
+
+schedule:
+  start_time: ''
+
+design_link: ""
+source_video_link:
+
+default_settings:
+  model: dreamina-seedance-2-5-260628
+  resolution: 720p
+  generate_audio: false
+  ratio: adaptive
+  duration: 5
+  seed: -1
+  duration_auto: false
+  output_format: mp4
+  omni_task_type: auto
+
+tasks:
+  - effect: Product Showcase
+    prompt: |
+      The product from @Image 1, shown from the angles in @Image 2 and @Image 3, slowly rotates on a clean white studio table under soft, even light. One continuous shot, gentle push-in, premium commercial look.
+
+comments:
+  model: |
+    dreamina-seedance-2-5-260628 (30 images, 480p/720p/1080p, 4-30 s),
+    dreamina-seedance-2-0-260128 (9 images, up to 4k, 4-15 s),
+    dreamina-seedance-2-0-fast-260128, dreamina-seedance-2-0-mini-260615 (9 images, 480p/720p).
+    Default: dreamina-seedance-2-5-260628
+  resolution: |
+    480p, 720p, 1080p, 4k (model-aware, see model).
+    Default: 720p
+  generate_audio: |
+    Generate an audio track with the video.
+    Default: false
+  ratio: |
+    16:9, 9:16, 4:3, 1:1, 3:4, 21:9, adaptive. YCE recommends adaptive on this
+    tab: edit/extend requests (inferred from the prompt) reject a fixed ratio.
+    Default: adaptive
+  duration: |
+    Seconds, 4-30 on Seedance 2.5, 4-15 on the 2.0 series.
+    Default: 5
+  seed: |
+    -1 for random.
+    Default: -1
+  duration_auto: |
+    Let the model pick the length (sends duration -1). Edit requests require it.
+    Default: false
+  output_format: |
+    mp4 or mov (mov on Seedance 2.5 only).
+    Default: mp4
+  omni_task_type: |
+    auto, reference, edit, extend (Seedance 2.5 only). auto lets the model infer it.
+    Default: auto
+  per_task_overrides: |
+    Any default_settings key can be set on a task to override it for that task.
+  images: |
+    JPEG/PNG/WEBP/BMP/TIFF/GIF, aspect ratio 0.4-2.5, 300-6000 px, < 30 MB each.
+  expected_folder_structure: |
+    base_folder/
+    └── Product Showcase/
+        ├── Source/            # source images (one generation each, sent as Image 1)
+        ├── Reference/         # shared references, or <source stem>_*.jpg paired per source
+        ├── Generated_Video/   # {source}_{Effect}.mp4 (auto-created)
+        └── Metadata/          # auto-created

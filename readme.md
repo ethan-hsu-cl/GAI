@@ -161,6 +161,7 @@ Every API's full name also works (e.g. `veo_itv`); `python Scripts/core/runall.p
 | `wan_v3_v2v` (`wanv3v2v`) | Wan V3 V2V | V2V | `/wan_v3`, source video in the reference-video gallery |
 | `wan_v3_endframe` (`wanv3endframe`) | Wan V3 Endframe | I2V | `/wan_v3`, A→B first/last frame pairs |
 | `wan_v3_reference` (`wanv3ref`) | Wan V3 Reference | I2V | `/wan_v3`, source + up to 9 references in one gallery |
+| `yce_reference` (`yceref`) | YCE Reference | I2V | PerfectCorp YCE `/gen_ref_v2` (Seedance 2.5), source + up to 29 references as `@Image 1…N` |
 | `dreamactor` | DreamActor | I+V | Face reenactment via image × video cross-match |
 | `motion_swap` | Motion Swap | I+V | Motion transfer via subject image × motion video cross-match |
 | `happyhorse_vedit` | HappyHorse Video Edit | V2V | Prompt-driven video edit with up to 5 reference images (append or cross-match) |
@@ -183,6 +184,7 @@ Every API's full name also works (e.g. `veo_itv`); `python Scripts/core/runall.p
 | Veo ITV | 30 MB | 300 px / — | JPG, PNG, WebP |
 | Wan V3 I2V / Endframe | 30 MB | 300 px / — | JPG, PNG, BMP, WebP |
 | Wan V3 Reference | 30 MB | 300 px / — | JPG, PNG, WebP |
+| YCE Reference | 30 MB | 300 px / 6000 px, ratio 0.4–2.5 | JPG, PNG, WebP, BMP, TIFF, GIF |
 | Wan V3 V2V | 500 MB | 320 px / — | MP4, MOV, AVI, MKV, WebM (**1–15 s**) |
 | Nano Banana | 32 MB | 300 px / — | JPG, PNG, WebP |
 | OpenAI Image | 32 MB | 100 px / — | JPG, PNG, WebP |
@@ -219,6 +221,7 @@ Every API's full name also works (e.g. `veo_itv`); `python Scripts/core/runall.p
 | Wan V3 V2V | `{source_video}_{n}.mp4` |
 | Wan V3 Endframe | `{filename}_generated.mp4` (multi-gen: `{filename}_generated_{n}.mp4`) |
 | Wan V3 Reference | `{filename}_{effect}.mp4` |
+| YCE Reference | `{filename}_{effect}.mp4` |
 | I2I2V | video `{source_image}_{n}.mp4`, frames `{source_image}_{n}.{ext}` |
 
 All metadata is stored alongside the outputs as `{filename}_metadata.json` (includes success, processing time, API params, attempt count).
@@ -249,7 +252,7 @@ API-specific input layouts:
 - OpenAI Image → same as Nano Banana
 - Seedream Image → same as Nano Banana, but outputs land in `Generated_Image/`
 - HappyHorse Video Edit → `Source/` (videos) + optional `Reference/` (up to 5 images, append or cross-match)
-- Vidu Reference / Wan V3 Reference → `Source/` + `Reference/`
+- Vidu Reference / Wan V3 Reference / YCE Reference → `Source/` + `Reference/`
 - Pixverse Effects → `Source/` (Source pool is consumed in chunks of `image_count`)
 - I2I2V → `Source/` (frames in `Generated_Frames/`, videos in `Generated_Video/`)
 
@@ -1098,6 +1101,33 @@ tasks:
 ```
 
 **Defaults:** 1080P, adaptive ratio, 5 s, auto-duration off, audio on, thinking off. Outputs are `{style}-{n}_generated.mp4` (TTV), `{source_image}_{n}.mp4` (I2V), `{name}_A_generated.mp4` (Endframe), and `{source}_{Effect}.mp4` (Reference).
+
+#### YCE Reference (`config/batch_yce_reference_config.yaml`)
+
+PerfectCorp YCE testbed, Reference to Video tab (`{testbed}/yce/`, `/gen_ref_v2`). Same `base_folder/<effect>/{Source,Reference}` layout and per-source pairing as Wan V3 Reference. The source is sent as `@Image 1` and its references as `@Image 2`, `@Image 3`, … (Seedance 2.5: 30 images per request; 2.0 series: 9). Reference video/audio slots are left empty.
+
+```yaml
+base_folder: Media Files/YCE Reference/1111 1 Style
+testbed: '{testbed}/yce/'
+
+default_settings:
+  model: dreamina-seedance-2-5-260628
+  resolution: 720p
+  generate_audio: false
+  ratio: adaptive
+  duration: 5
+  seed: -1
+  duration_auto: false
+  output_format: mp4
+  omni_task_type: auto
+
+tasks:
+  - effect: Product Showcase
+    prompt: |
+      The product from @Image 1, shown from the angles in @Image 2 and @Image 3, slowly rotates on a white studio table.
+```
+
+**Defaults:** Seedance 2.5, 720p, adaptive ratio, 5 s, audio off, mp4, omni task type auto; any key can be overridden per task. API errors (including moderation blocks) are recorded in the metadata `error` field. Output: `{source}_{Effect}.mp4`.
 
 #### DreamActor (`config/batch_dreamactor_config.yaml`)
 

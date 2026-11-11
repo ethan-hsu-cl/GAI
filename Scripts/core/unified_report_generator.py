@@ -529,6 +529,14 @@ class UnifiedReportGenerator:
                 'metadata_fields': ['effect_name', 'reference_count', 'resolution', 'ratio', 'duration', 'task_id', 'processing_time_seconds', 'success'],
                 'supports_multi_image': True,
             },
+            'yce_reference': {
+                **base_config,
+                'media_types': ['source', 'generated'],
+                **self.LAYOUT_2_MEDIA,
+                'title_format': 'Generation {index}: {source_file}',
+                'metadata_fields': ['effect_name', 'reference_count', 'model', 'resolution', 'ratio', 'duration', 'task_id', 'processing_time_seconds', 'success'],
+                'supports_multi_image': True,
+            },
             'i2i2v': {
                 **base_config,
                 'media_types': ['source', 'reference', 'generated'],

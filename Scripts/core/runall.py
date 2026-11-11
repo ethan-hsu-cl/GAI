@@ -484,6 +484,7 @@ def show_usage():
     print("  python runall.py wan_v3_v2v auto")
     print("  python runall.py wan_v3_endframe auto")
     print("  python runall.py wan_v3_reference auto")
+    print("  python runall.py yce_reference auto")
     print("  python runall.py kling_omni auto")
     print("  python runall.py motion_swap auto")
     print("  python runall.py happyhorse_vedit auto")
