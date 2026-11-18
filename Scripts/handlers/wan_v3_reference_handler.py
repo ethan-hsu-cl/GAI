@@ -12,7 +12,7 @@ Folder layout is base_folder/<effect>/{Source,Reference}. Two ways to pair:
   product's 2+ views stay together. Used whenever any Reference file matches a
   source stem; every source then needs a match.
 - shared: otherwise each source image is sent with all reference images in the
-  effect folder.
+  effect folder. An empty Reference folder sends each source image alone.
 """
 from pathlib import Path
 import time
@@ -116,7 +116,7 @@ class WanV3ReferenceHandler(WanV3BaseHandler):
         else:
             shared = self._find_reference_images(ref_dir)
             if not shared:
-                return None, [f"{task['effect']}: No reference images"]
+                self.logger.info(f" 🖼️ {task['effect']}: no reference images, sending source only")
             paired = {src: shared for src in src_imgs}
 
         # One source + its references must fit the Gallery cap
@@ -287,9 +287,6 @@ class WanV3ReferenceHandler(WanV3BaseHandler):
             tuple: API response tuple.
         """
         reference_images = task_config.get('reference_images', [])
-        if not reference_images:
-            raise ValueError("No reference images provided")
-
         all_images = [Path(file_path)] + [Path(ref) for ref in reference_images]
 
         self.logger.info(
